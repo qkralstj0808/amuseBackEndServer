@@ -1,8 +1,7 @@
-package com.example.amusetravelproejct;
+package com.example.amusetravelproejct.repository;
 
-import com.example.amusetravelproejct.domain.*;
+import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.person_enum.Gender;
-import com.example.amusetravelproejct.repository.*;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,24 +10,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserBasicTest {
-
-
+class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-
-
-
-
     @Test
-    public void testSaveUser() {
+    public void create() {
         User user = new User();
         user.setNickName("TestUser");
         user.setProfileImgLink("http://test.com/profile.jpg");
@@ -55,7 +49,7 @@ public class UserBasicTest {
     }
 
     @Test
-    public void testFindUserById() {
+    public void reade() {
         User user = new User();
         user.setNickName("TestUser");
         user.setProfileImgLink("http://test.com/profile.jpg");
@@ -84,7 +78,7 @@ public class UserBasicTest {
 
     // Update test
     @Test
-    public void testUpdateUser() {
+    public void update() {
         // create new user
         User user = new User();
         user.setEmail("test@test.com");
@@ -111,7 +105,7 @@ public class UserBasicTest {
 
     // Delete test
     @Test
-    public void testDeleteUser() {
+    public void delete() {
         userRepository.deleteAll();
         // create new user
         User user = new User();
@@ -136,5 +130,3 @@ public class UserBasicTest {
         assertNull(deletedUser);
     }
 }
-
-

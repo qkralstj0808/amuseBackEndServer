@@ -41,9 +41,4 @@ public class PaymentInfo {
     // payment_info와 tourist은 1:N 관계
     @OneToMany(mappedBy = "paymentInfo")
     private List<Tourist> tourists = new ArrayList<>();
-
-
-
-
-
 }

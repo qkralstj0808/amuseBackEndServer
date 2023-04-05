@@ -1,32 +1,26 @@
-package com.example.amusetravelproejct;
+package com.example.amusetravelproejct.repository;
 
 import com.example.amusetravelproejct.domain.Alarm;
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.UserAlarm;
 import com.example.amusetravelproejct.domain.person_enum.Gender;
-import com.example.amusetravelproejct.repository.*;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.util.Optional;
 
-import static org.junit.Assert.*;
-@Slf4j
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserAlarmBasicTest {
+class UserAlarmRepositoryTest {
 
 
     @Autowired
@@ -67,7 +61,7 @@ public class UserAlarmBasicTest {
 
 
     @Test
-    public void testSaveUserAlarm() {
+    public void create() {
         // Create user
         User user = new User();
         user.setEmail("test@test.com");
@@ -105,9 +99,8 @@ public class UserAlarmBasicTest {
         assertEquals(userAlarm.getAlarm().getId(), savedUserAlarm.getAlarm().getId());
     }
 
-
     @Test
-    public void testUpdateUserAlarm() {
+    public void update() {
         // Create new UserAlarm
         UserAlarm userAlarm = new UserAlarm();
         userAlarm.setStatus(true);
@@ -125,7 +118,7 @@ public class UserAlarmBasicTest {
     }
 
     @Test
-    public void testDeleteUserAlarm() {
+    public void delete() {
         // Create new UserAlarm
         UserAlarm userAlarm = new UserAlarm();
         userAlarm.setStatus(true);
@@ -140,6 +133,6 @@ public class UserAlarmBasicTest {
         UserAlarm deletedUserAlarm = userAlarmRepository.findById(userAlarm.getId()).orElse(null);
         assertNull(deletedUserAlarm);
     }
+
+
 }
-
-

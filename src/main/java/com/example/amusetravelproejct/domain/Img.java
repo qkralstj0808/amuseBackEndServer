@@ -21,15 +21,5 @@ public class Img {
     @JoinColumn(name = "iteminfo_id")
     private Iteminfo iteminfo;
 
-
-
-
-
-
-
-
-
-
-
 }
 
