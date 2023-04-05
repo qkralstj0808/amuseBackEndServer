@@ -26,3 +26,17 @@
     logging.level.root=INFO
 
 #### 각자 환경에 맞게 설정
+
+# 폴더 구성
+
+controller
+service
+domain
+repository
+exception
+dao
+dto
+    - request
+    - response
+    
+
