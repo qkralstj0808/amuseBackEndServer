@@ -1,8 +1,8 @@
 package com.example.amusetravelproejct.domain;
 
-import com.example.amusetravelproejct.domain.person_enum.Gender;
 import lombok.Getter;
 import lombok.Setter;
+import com.example.amusetravelproejct.domain.person_enum.Gender;
 
 import javax.persistence.*;
 

@@ -8,8 +8,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import java.time.LocalDate;
-
 @Entity(name = "user_alarm")
 @Getter
 @Setter
@@ -28,12 +26,6 @@ public class UserAlarm {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "alarm_id")
     private Alarm alarm;
-
-
-
-
-
-
 
 
 

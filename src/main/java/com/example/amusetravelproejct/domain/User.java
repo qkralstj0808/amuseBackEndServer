@@ -21,6 +21,7 @@ public class User {
     private String nickName;
     private String profileImgLink;
     private String email;
+    private String password;
     private String name;
     private LocalDate birthday;
     private Gender gender;

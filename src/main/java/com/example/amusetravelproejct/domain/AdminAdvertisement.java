@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
+
 @Entity(name = "admin_advertisement")
 @Getter
 @Setter

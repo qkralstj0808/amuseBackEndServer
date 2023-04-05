@@ -17,7 +17,7 @@ public class Alarm {
     private Long id;
     private String title;
     private String subTitle;
-    private String contents;
+    private String content;
     private LocalDate createDate;
     private LocalDate updateDate;
 
