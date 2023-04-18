@@ -11,28 +11,17 @@ import java.util.List;
 @Entity(name = "iteminfo")
 @Getter
 @Setter
-public class Iteminfo {
+public class    Iteminfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String itemCode;
     private String itemTitle;
     private Long startingPrice;
-    private Long maxPrice;
-    private String province;
-    private DomesticOverseas domesticOverseas;
-    private String cityInProvince;
+    private String cityLocation;
     private Long duration;
-    private String notIncluded;
-    private String included;
     private Long good; // (수정) like는 예약어라서 good으로 변경
     private String itemIntroduction;
-    private Long usageTime;
-    private String locationGuide;
-    private Double Latitude;
-    private Double Longitude;
-    private String usageMethod;
-    private String location;
     private Double mapTopLeftLatitude;
     private Double mapTopLeftLongitude;
     private Double mapBottomRightLatitude;

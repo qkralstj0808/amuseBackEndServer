@@ -39,7 +39,7 @@ public class SupervisorInfoRepositoryTest {
         // create iteminfo
         Iteminfo iteminfo = new Iteminfo();
         iteminfo.setItemTitle("Test Item");
-        iteminfo.setMaxPrice(10000l);
+
         iteminfoRepository.save(iteminfo);
 
         supervisorInfo.setAdmin(admin);
@@ -69,7 +69,7 @@ public class SupervisorInfoRepositoryTest {
         // create iteminfo
         Iteminfo iteminfo = new Iteminfo();
         iteminfo.setItemTitle("Test Item");
-        iteminfo.setMaxPrice(10000l);
+
         iteminfoRepository.save(iteminfo);
 
         supervisorInfo.setAdmin(admin);
@@ -99,7 +99,7 @@ public class SupervisorInfoRepositoryTest {
         // create iteminfo
         Iteminfo iteminfo = new Iteminfo();
         iteminfo.setItemTitle("Test Item");
-        iteminfo.setMaxPrice(10000l);
+
         iteminfoRepository.save(iteminfo);
 
         supervisorInfo.setAdmin(admin);

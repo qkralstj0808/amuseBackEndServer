@@ -25,12 +25,4 @@ public class ItemCourse {
      private Iteminfo iteminfo;
 
 
-
-
-
-
-
-
-
-
 }

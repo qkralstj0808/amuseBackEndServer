@@ -11,7 +11,6 @@ import java.util.List;
 @Getter
 @Setter
 public class Category {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,7 +19,4 @@ public class Category {
     // category와 iteminfo는 1:N 관계
      @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
      private List<Iteminfo> iteminfos = new ArrayList<>();
-
-
-
 }
