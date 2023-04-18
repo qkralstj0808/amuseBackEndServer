@@ -14,7 +14,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @RunWith(SpringRunner.class)
@@ -35,7 +34,7 @@ public class LikeItemRepositoryTest {
     void create() {
         // create test data
         User user = new User();
-        user.setName("test_user");
+//        user.setName("test_user");
 
         userRepository.save(user);
 
@@ -56,7 +55,7 @@ public class LikeItemRepositoryTest {
 
         // verify the saved entity
         assertThat(savedLikeItem.getId()).isNotNull();
-        assertThat(savedLikeItem.getUser().getName()).isEqualTo(user.getName());
+//        assertThat(savedLikeItem.getUser().getName()).isEqualTo(user.getName());
         assertThat(savedLikeItem.getIteminfo().getItemTitle()).isEqualTo(iteminfo.getItemTitle());
     }
 

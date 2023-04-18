@@ -1,7 +1,6 @@
 package com.example.amusetravelproejct.repository;
 
 import com.example.amusetravelproejct.domain.Alarm;
-import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.UserAlarm;
 import com.example.amusetravelproejct.domain.person_enum.Gender;
 import org.junit.Before;
@@ -16,7 +15,6 @@ import javax.persistence.EntityManager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

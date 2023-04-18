@@ -1,6 +1,5 @@
 package com.example.amusetravelproejct.repository;
 
-import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.person_enum.Gender;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +12,6 @@ import java.time.LocalDate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
