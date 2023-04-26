@@ -10,7 +10,7 @@ public class TestController {
 
     @GetMapping("/amusetest")
     public String ctest(){
-        return "어뮤즈트레블 테스트 55";
+        return "어뮤즈트레블 테스트 66";
     }
 
 }
