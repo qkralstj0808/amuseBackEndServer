@@ -10,7 +10,7 @@ public class TestController {
 
     @GetMapping("/amusetest")
     public String ctest(){
-        return "어뮤즈트레블 테스트 13";
+        return "어뮤즈트레블 테스트 docker1";
     }
 
 }
