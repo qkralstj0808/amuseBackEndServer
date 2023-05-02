@@ -1,4 +1,4 @@
-package com.example.amusetravelproejct.controller.admin.DTO;
+package com.example.amusetravelproejct.controller.admin.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

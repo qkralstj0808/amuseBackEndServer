@@ -19,4 +19,7 @@ public class Category {
     // category와 iteminfo는 1:N 관계
      @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
      private List<Iteminfo> iteminfos = new ArrayList<>();
+
+     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+     private List<AdminAdvertisement> adminAdvertisements = new ArrayList<>();
 }
