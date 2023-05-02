@@ -2,7 +2,6 @@ package com.example.amusetravelproejct.controller.admin.service;
 
 import com.example.amusetravelproejct.domain.AdminAdvertisement;
 import com.example.amusetravelproejct.domain.Category;
-import com.example.amusetravelproejct.domain.Iteminfo;
 import com.example.amusetravelproejct.exception.ResourceNotFoundException;
 import com.example.amusetravelproejct.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
@@ -47,21 +46,5 @@ public class CategoryService {
         }
     }
 
-    public List<Iteminfo> getAllIteminfosByCategoryId(Long categoryId) {
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        if (category.isPresent()) {
-            return category.get().getIteminfos();
-        } else {
-            throw new ResourceNotFoundException("Category not found with id " + categoryId);
-        }
-    }
 
-    public List<AdminAdvertisement> getAllAdminAdvertisementsByCategoryId(Long categoryId) {
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        if (category.isPresent()) {
-            return category.get().getAdminAdvertisements();
-        } else {
-            throw new ResourceNotFoundException("Category not found with id " + categoryId);
-        }
-    }
 }

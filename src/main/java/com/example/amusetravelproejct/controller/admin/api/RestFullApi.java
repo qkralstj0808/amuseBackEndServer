@@ -8,8 +8,6 @@ import com.example.amusetravelproejct.controller.admin.service.AdminService;
 import com.example.amusetravelproejct.controller.admin.service.CategoryService;
 import com.example.amusetravelproejct.domain.AdminAdvertisement;
 import com.example.amusetravelproejct.domain.Category;
-import com.example.amusetravelproejct.domain.Img;
-import com.example.amusetravelproejct.domain.Iteminfo;
 import com.example.amusetravelproejct.domain.person_enum.Adver;
 import com.example.amusetravelproejct.domain.person_enum.DateOption;
 import com.example.amusetravelproejct.domain.person_enum.ImgRole;
