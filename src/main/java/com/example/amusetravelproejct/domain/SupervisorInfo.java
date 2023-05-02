@@ -18,8 +18,8 @@ public class SupervisorInfo {
 
     // supervisor_info와 iteminfo는 N:1 관계
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_unique_id")
-    private Iteminfo iteminfo;
+    @JoinColumn(name = "item_id")
+    private Item item;
 
     // supervisor_info와 admin은 N:1 관계
     @ManyToOne(fetch = FetchType.LAZY)

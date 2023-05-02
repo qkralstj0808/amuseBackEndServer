@@ -15,7 +15,6 @@ public class PaymentTicket {
 
     private Long count;
 
-
     // payment_ticket과 item_ticket은 N:1 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_ticket_id")

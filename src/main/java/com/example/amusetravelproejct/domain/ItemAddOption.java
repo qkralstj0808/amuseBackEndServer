@@ -12,14 +12,14 @@ public class ItemAddOption {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String optionName;
-    private String optionContent;
+    private String name;
+    private String content;
 
 
     // item_add_option과 iteminfo는 N:1 관계
     @ManyToOne
-    @JoinColumn(name = "iteminfo_id")
-    private Iteminfo iteminfo;
+    @JoinColumn(name = "item_id")
+    private Item item;
 
 
 }
