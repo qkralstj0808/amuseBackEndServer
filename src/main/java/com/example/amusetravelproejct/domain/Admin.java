@@ -16,16 +16,15 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String email;
-
     private String password;
-
     private String name;
-
     private String profileImgLink;
 
     // admin과 supervisor_info는 1:N 관계
      @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
      private List<SupervisorInfo> supervisorInfos = new ArrayList<>();
+
+     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AdminAdvertisement> adminAdvertisements = new ArrayList<>();
 }
