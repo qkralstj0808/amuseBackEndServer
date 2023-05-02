@@ -16,8 +16,8 @@ public class LikeItem {
 
     // iteminfo와 like_item는 1:N 관계
     @ManyToOne
-    @JoinColumn(name = "iteminfo_id")
-    private Iteminfo iteminfo;
+    @JoinColumn(name = "tiem_id")
+    private Item item;
 
  // user와 like_item는 N:1 관계
     @ManyToOne

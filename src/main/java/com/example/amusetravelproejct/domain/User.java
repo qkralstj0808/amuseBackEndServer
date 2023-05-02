@@ -102,7 +102,7 @@ public class User {
 
     // user와 item_estimation는 1:N 관계
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ItemEstimation> itemEstimations = new ArrayList<>();
+    private List<ItemReview> itemReviews = new ArrayList<>();
 
     // user와 payment_info는 1:N 관계
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
