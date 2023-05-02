@@ -8,29 +8,29 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name = "item_estimation")
+@Entity(name = "item_review")
 @Getter
 @Setter
-public class ItemEstimation {
+public class ItemReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long rating;
-    private String reviewContent;
+    private Float rating;
+    private String content;
 
     // item_estimation과 iteminfo는 N:1 관계
-    @ManyToOne
-    @JoinColumn(name = "iteminfo_id")
-    private Iteminfo iteminfo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    private Item item;
 
-    // user와 item_estimation은 1:N 관계
+    // user와 iem_review 1:N 관계
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     // item_estimation과 estimation_img은 1:N 관계
-    @OneToMany(mappedBy = "itemEstimation")
-    private List<EstimationImg> estimationImgs = new ArrayList<>();
+    @OneToMany(mappedBy = "itemReview")
+    private List<ItemReviewImg> itemReviewImgs = new ArrayList<>();
 
 
 

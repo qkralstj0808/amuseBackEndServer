@@ -16,8 +16,8 @@ public class OrderItem {
 
     // order와 order_item은 N:1 관계
     @ManyToOne
-    @JoinColumn(name = "iteminfo_id")
-    private Iteminfo iteminfo;
+    @JoinColumn(name = "item_id")
+    private Item item;
 
     // user와 order_item은 1:N 관계
     @ManyToOne
