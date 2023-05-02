@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.domain;
 
+import com.example.amusetravelproejct.domain.person_enum.ImgRole;
 import lombok.Getter;
 import lombok.Setter;
 

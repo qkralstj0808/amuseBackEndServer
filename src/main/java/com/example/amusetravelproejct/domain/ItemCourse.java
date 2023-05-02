@@ -27,12 +27,4 @@ public class ItemCourse {
      private Item item;
 
 
-
-
-
-
-
-
-
-
 }
