@@ -55,7 +55,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .from(item)
                 .where(item.category.id.eq(category_id))
                 .orderBy(item.like_num.desc())
-                .offset(1)
+                .offset(0)
                 .limit(10)
                 .fetch();
     }
@@ -65,7 +65,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
         return jpaQueryFactory.selectFrom(item)
                 .orderBy(item.createdDate.desc())
                 .where(item.category.id.eq(category_id))
-                .offset(1)
+                .offset(0)
                 .limit(10)
                 .fetch();
     }
