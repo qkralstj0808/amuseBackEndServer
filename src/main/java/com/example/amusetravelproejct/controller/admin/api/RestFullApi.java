@@ -169,7 +169,7 @@ public class RestFullApi {
         log.info(productRegisterDto.toString());
 
 
-        com.example.amusetravelproejct.domain.Item item = new com.example.amusetravelproejct.domain.Item();
+        Item item = new Item();
         item = productService.saveItem(item);
 
         item.setItemCode(productRegisterDto.getProductId());

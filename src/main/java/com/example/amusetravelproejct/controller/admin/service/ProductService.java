@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.controller.admin.service;
 
+import com.example.amusetravelproejct.domain.Item;
 import com.example.amusetravelproejct.repository.ItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,15 +66,15 @@ public class ProductService {
 //        return itemTicketRepository.save(itemTicket);
 //    }
 
-    public com.example.amusetravelproejct.domain.Item saveItem(com.example.amusetravelproejct.domain.Item item) {
+    public Item saveItem(Item item) {
         return itemInforRepository.save(item);
     }
 
-    public com.example.amusetravelproejct.domain.Item getItemById(Long id) {
+    public Item getItemById(Long id) {
         return itemInforRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Item not found with id " + id));
     }
 
-    public List<com.example.amusetravelproejct.domain.Item> getAllItems() {
+    public List<Item> getAllItems() {
         return itemInforRepository.findAll();
     }
 
