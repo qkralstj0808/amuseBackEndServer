@@ -87,7 +87,7 @@ public class DetailPageResponse {
         private String title;
         private String content;
         private Long sequenceId;
-        private Long timeCost;
+        private String timeCost;
         private String imageUrl;
         private Double latitude;
         private Double longitude;
