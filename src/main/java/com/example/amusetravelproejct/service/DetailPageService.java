@@ -5,7 +5,7 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
 import com.example.amusetravelproejct.domain.Item;
 import com.example.amusetravelproejct.dto.response.DetailPageResponse;
-import com.example.amusetravelproejct.repository.ItemInforRepository;
+import com.example.amusetravelproejct.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DetailPageService {
 
-    private final ItemInforRepository itemInforRepository;
+    private final ItemRepository itemInforRepository;
 
     public ResponseTemplate<DetailPageResponse.getTitle> getTitle(Long product_id) {
         Item findItem = itemInforRepository.findById(product_id).orElseThrow(

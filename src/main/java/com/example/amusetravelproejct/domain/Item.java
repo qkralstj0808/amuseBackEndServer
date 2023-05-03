@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.domain;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class    Item {
+public class Item extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ITEM_ID")
@@ -30,6 +31,7 @@ public class    Item {
     private Long maxPrice;          // 많은 상품 가격 중 가장 비싼 것
     private Long duration;          // 기간 (2박 3일 에서 3)
     private Long like_num;          // 좋아요 수
+
 
     // item과 Category는 N:1 관계
     @ManyToOne(fetch = FetchType.LAZY)

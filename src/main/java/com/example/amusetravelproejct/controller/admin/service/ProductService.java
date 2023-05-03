@@ -1,14 +1,12 @@
 package com.example.amusetravelproejct.controller.admin.service;
 
-import com.example.amusetravelproejct.domain.*;
-import com.example.amusetravelproejct.repository.*;
+import com.example.amusetravelproejct.domain.Item;
+import com.example.amusetravelproejct.repository.ItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Base64;
 import java.util.List;
 
 @AllArgsConstructor
@@ -16,7 +14,7 @@ import java.util.List;
 @Slf4j
 public class ProductService {
 
-    private final ItemInforRepository itemInforRepository;
+    private final ItemRepository itemInforRepository;
 
 
 //        public List<ItemTicket> saveItemTicket(List<ItemTicket> itemTickets, Long id){
