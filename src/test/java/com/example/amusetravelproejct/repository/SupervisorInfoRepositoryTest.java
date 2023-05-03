@@ -1,7 +1,9 @@
 package com.example.amusetravelproejct.repository;
 
 import com.example.amusetravelproejct.domain.Admin;
-import com.example.amusetravelproejct.domain.Iteminfo;
+<<<<<<< HEAD
+=======
+>>>>>>> develop
 import com.example.amusetravelproejct.domain.SupervisorInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

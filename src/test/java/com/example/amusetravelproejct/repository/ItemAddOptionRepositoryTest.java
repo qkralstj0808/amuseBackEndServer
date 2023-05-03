@@ -1,7 +1,9 @@
 package com.example.amusetravelproejct.repository;
 
 import com.example.amusetravelproejct.domain.ItemAddOption;
-import com.example.amusetravelproejct.domain.Iteminfo;
+<<<<<<< HEAD
+=======
+>>>>>>> develop
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -19,5 +19,5 @@ public class AdminAdvertisementRegisterDbDto {
     private String adCategory;
     private String adContent;
     private LocalDateTime adDate;
-    private String createdAd;
+    private String updatedAd;
 }

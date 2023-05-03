@@ -6,23 +6,23 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "img")
+import static javax.persistence.FetchType.LAZY;
+
+@Entity(name = "item_img")
 @Getter
 @Setter
-public class Img {
+public class ItemImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String imgUrl;
 
-    private ImgRole imgRole;
-
 
   // img와 iteminfo는 N:1 관계
-    @ManyToOne
-    @JoinColumn(name = "iteminfo_id")
-    private Iteminfo iteminfo;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "item_id")
+    private Item item;
 
 }
 

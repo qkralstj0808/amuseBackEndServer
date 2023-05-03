@@ -1,18 +1,20 @@
 package com.example.amusetravelproejct.repository;
 
 import com.example.amusetravelproejct.domain.ItemEstimation;
-import com.example.amusetravelproejct.domain.Iteminfo;
+<<<<<<< HEAD
 import com.example.amusetravelproejct.domain.User;
-import org.junit.Before;
+=======
+>>>>>>> develop
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.testng.annotations.TestInstance;
+<<<<<<< HEAD
 
-import java.util.Optional;
+=======
+>>>>>>> develop
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;

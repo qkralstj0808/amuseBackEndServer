@@ -12,17 +12,19 @@ public class ItemCourse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String itemCourseTitle;
-    private String itemCourseContent;
-    private Long itemCourseSequenceId;
-    private String itemImageUrl;
+
+    private String title;
+    private String content;
+    private Long sequenceId;
+    private String timeCost;
+    private String imageUrl;
     private Double latitude;
     private Double longitude;
 
     // item_course와 iteminfo는 N:1 관계 ManyToOne
      @ManyToOne(fetch = FetchType.LAZY)
-     @JoinColumn(name = "iteminfo_id")
-     private Iteminfo iteminfo;
+     @JoinColumn(name = "item_id")
+     private Item item;
 
 
 }

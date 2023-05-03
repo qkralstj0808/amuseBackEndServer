@@ -5,10 +5,10 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "estimation_img")
+@Entity(name = "item_review_img")
 @Getter
 @Setter
-public class EstimationImg {
+public class ItemReviewImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,6 +16,6 @@ public class EstimationImg {
 
     // item_estimation과 estimation_img는 1:N 관계
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_estimation_id")
-    private ItemEstimation itemEstimation;
+    @JoinColumn(name = "item_review_id")
+    private ItemReview itemReview;
 }

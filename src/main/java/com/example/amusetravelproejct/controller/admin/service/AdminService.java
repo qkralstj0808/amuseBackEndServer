@@ -25,8 +25,6 @@ public class AdminService {
     }
 
     public Optional<Admin> getAdminById(Long id) {
-        log.info("getAdminById: " + id);
-        log.info("getAdminById: " + adminRepository.findById(id));
         return adminRepository.findById(id);
     }
 

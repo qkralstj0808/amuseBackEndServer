@@ -1,5 +1,7 @@
 package com.example.amusetravelproejct.controller.admin.service;
 
+import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
+import com.example.amusetravelproejct.controller.admin.dto.resp.AdvertisementPageResponse;
 import com.example.amusetravelproejct.domain.AdminAdvertisement;
 import com.example.amusetravelproejct.exception.ResourceNotFoundException;
 import com.example.amusetravelproejct.repository.AdminAdvertisementRepository;
@@ -21,6 +23,9 @@ public class AdminAdvertisementService {
     private final AdminAdvertisementRepository adminAdvertisementRepository;
 
     public List<AdminAdvertisement> getAllAdvertisements() {
+        List<AdminAdvertisement> advertisements = adminAdvertisementRepository.findAll();
+
+
         return adminAdvertisementRepository.findAll();
     }
 
@@ -29,16 +34,12 @@ public class AdminAdvertisementService {
     }
 
     public AdminAdvertisement createAdvertisement(AdminAdvertisement advertisement) {
+
         return adminAdvertisementRepository.save(advertisement);
     }
 
     public AdminAdvertisement updateAdvertisement(AdminAdvertisement advertisement) {
-        Optional<AdminAdvertisement> existingAdvertisement = adminAdvertisementRepository.findById(advertisement.getId());
-        if (existingAdvertisement.isPresent()) {
-            return adminAdvertisementRepository.save(advertisement);
-        } else {
-            throw new ResourceNotFoundException("Advertisement not found with id " + advertisement.getId());
-        }
+        return adminAdvertisementRepository.save(advertisement);
     }
 
     public void deleteAdvertisement(Long id) {

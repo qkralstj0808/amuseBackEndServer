@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity(name = "item_price")
 @Getter
@@ -14,11 +13,13 @@ public class ItemPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date date;
-    private Long price;
+
+    private String startDate;
+    private String endDate;
+    private String price;
 
     // iteminfo와 item_price는 1:N 관계
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iteminfo_id")
-    private Iteminfo iteminfo;
+    @JoinColumn(name = "item_id")
+    private Item item;
 }

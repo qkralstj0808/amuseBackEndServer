@@ -1,7 +1,9 @@
 package com.example.amusetravelproejct.repository;
 
 import com.example.amusetravelproejct.domain.EstimateContact;
-import com.example.amusetravelproejct.domain.Iteminfo;
+<<<<<<< HEAD
+=======
+>>>>>>> develop
 import com.example.amusetravelproejct.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+<<<<<<< HEAD
+=======
+>>>>>>> develop
 
 
 @RunWith(SpringRunner.class)

@@ -78,6 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                     .antMatchers("**").permitAll()
                     .anyRequest().authenticated()   // 위에 언급한 url 말고 나머지는 authenticated 된 사용자만 이용할 수 있도록 한다.
+
                 .and()
                     .oauth2Login()
                     .authorizationEndpoint()

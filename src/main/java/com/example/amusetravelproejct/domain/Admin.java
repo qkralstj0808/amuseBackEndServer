@@ -27,4 +27,6 @@ public class Admin {
 
      @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AdminAdvertisement> adminAdvertisements = new ArrayList<>();
+
+
 }

@@ -1,7 +1,9 @@
 package com.example.amusetravelproejct.repository;
 
 import com.example.amusetravelproejct.domain.ItemPrice;
-import com.example.amusetravelproejct.domain.Iteminfo;
+<<<<<<< HEAD
+=======
+>>>>>>> develop
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,9 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+<<<<<<< HEAD
+=======
+>>>>>>> develop
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

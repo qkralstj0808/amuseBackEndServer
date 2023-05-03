@@ -43,6 +43,12 @@ public class AdminAdvertisement {
     private Admin admin;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "update_admin")
+    private Admin updateAdmin;
+
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 }

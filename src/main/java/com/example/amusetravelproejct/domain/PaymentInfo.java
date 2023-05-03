@@ -26,8 +26,8 @@ public class PaymentInfo {
 
     // iteminfo와 payment_info는 1:N 관계
     @ManyToOne
-    @JoinColumn(name = "iteminfo_id")
-    private Iteminfo iteminfo;
+    @JoinColumn(name = "item_id")
+    private Item item;
 
     // user와 payment_info는 1:N 관계
     @ManyToOne

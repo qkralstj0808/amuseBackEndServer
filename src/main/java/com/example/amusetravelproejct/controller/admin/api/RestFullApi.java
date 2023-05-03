@@ -1,15 +1,13 @@
 package com.example.amusetravelproejct.controller.admin.api;
 
+import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDto;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDbDto;
 import com.example.amusetravelproejct.controller.admin.dto.ItemInfoDto;
-import com.example.amusetravelproejct.controller.admin.service.AdminAdvertisementService;
-import com.example.amusetravelproejct.controller.admin.service.AdminService;
-import com.example.amusetravelproejct.controller.admin.service.CategoryService;
-import com.example.amusetravelproejct.domain.AdminAdvertisement;
-import com.example.amusetravelproejct.domain.Category;
-import com.example.amusetravelproejct.domain.Img;
-import com.example.amusetravelproejct.domain.Iteminfo;
+import com.example.amusetravelproejct.controller.admin.dto.ProductRegisterDto;
+import com.example.amusetravelproejct.controller.admin.dto.resp.AdvertisementPageResponse;
+import com.example.amusetravelproejct.controller.admin.service.*;
+import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.domain.person_enum.Adver;
 import com.example.amusetravelproejct.domain.person_enum.DateOption;
 import com.example.amusetravelproejct.domain.person_enum.ImgRole;
@@ -29,13 +27,22 @@ import java.util.Optional;
 @RequestMapping("/test/api")
 @Slf4j
 public class RestFullApi {
-
+    private final ItemInforRepository itemInforRepository;
+    private final ImgRepository imgRepository;
+    private final ItemTicketRepository itemTicketRepository;
+    private final ItemCourseRepository itemCourseRepository;
+    private final ItemIconRepository itemIconRepository;
+    private final ItemPriceRepository itemPriceRepository;
+    private final ItemContentRepository itemContentRepository;
+    private final PaymentTicketRepository paymentTicketRepository;
     private final CategoryRepository categoryRepository;
     private final AdminRepository adminRepository;
     private final AdminAdvertisementRepository adminAdvertisementRepository;
+    private final ItemCourseRepository courseRepository;
+    private final ItemOtherContentRepository itemOtherContentRepository;
 
     @PostMapping("/ad/register")
-    public AdminAdvertisementRegisterDbDto reqAdvertisementRegister(@RequestBody AdminAdvertisementRegisterDto adminAdvertisementRegisterDto){
+    public ResponseTemplate<AdvertisementPageResponse.advertisementRegister> reqAdvertisementRegister(@RequestBody AdminAdvertisementRegisterDto adminAdvertisementRegisterDto){
 
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
         CategoryService categoryService = new CategoryService(categoryRepository);
@@ -67,25 +74,27 @@ public class RestFullApi {
         }
 
         switch (adminAdvertisementRegisterDto.getAdCategory()){
-            case "컨시어지":
+            case "컨시어지 여행":
                 advertisement.setCategory(categoryService.getCategoryById(1L).get());
                 break;
-            case "아이돌봄":
+            case "아이돌봄 여행":
                 advertisement.setCategory(categoryService.getCategoryById(2L).get());
                 break;
-            case "어르신돌봄":
+            case "어르신돌봄 여행":
                 advertisement.setCategory(categoryService.getCategoryById(3L).get());
                 break;
             default:
                 break;
         }
-
-        advertisement = adminAdvertisementService.createAdvertisement(advertisement);
-        return advertiseToDTO(advertisement, DateOption.CREATE);
+        AdminAdvertisement advertisementTemp = adminAdvertisementService.createAdvertisement(advertisement);
+        return new ResponseTemplate<>(new AdvertisementPageResponse.advertisementRegister(advertisementTemp.getId(),
+                advertisementTemp.getAdvertisementTitle(), advertisementTemp.getAdvertisementStartDate(),
+                advertisementTemp.getAdvertisementEndDate(), advertisementTemp.getAdvertisementType().name(), advertisementTemp.getCategory().getCategoryName(),
+                advertisementTemp.getAdvertisementContent(), advertisementTemp.getCreatedAdDate(), advertisementTemp.getAdmin().getEmail()));
     }
 
     @PostMapping("/ad/edit")
-    public AdminAdvertisementRegisterDbDto reqAdvertisementEdit(@RequestBody AdminAdvertisementRegisterDbDto adminAdvertisementRegisterDbDto) {
+    public ResponseTemplate<AdvertisementPageResponse.advertisementEdit> reqAdvertisementEdit(@RequestBody AdminAdvertisementRegisterDbDto adminAdvertisementRegisterDbDto) {
 
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
         CategoryService categoryService = new CategoryService(categoryRepository);
@@ -98,7 +107,7 @@ public class RestFullApi {
         advertisement.setAdvertisementContent(adminAdvertisementRegisterDbDto.getAdContent());
         advertisement.setAdvertisementStartDate(adminAdvertisementRegisterDbDto.getStartDate());
         advertisement.setAdvertisementEndDate(adminAdvertisementRegisterDbDto.getEndDate());
-        advertisement.setAdmin(adminService.getAdminByEmail(adminAdvertisementRegisterDbDto.getCreatedAd()).get());
+        advertisement.setUpdateAdmin(adminService.getAdminByEmail(adminAdvertisementRegisterDbDto.getUpdatedAd()).get());
 
         switch (adminAdvertisementRegisterDbDto.getAdType()){
             case "ad1":
@@ -115,204 +124,138 @@ public class RestFullApi {
         }
 
         switch (adminAdvertisementRegisterDbDto.getAdCategory()){
-            case "컨시지어":
+            case "컨시어지 여행":
                 advertisement.setCategory(categoryService.getCategoryById(1L).get());
                 break;
-            case "아이돌봄":
-                advertisement.setCategory(categoryService.getCategoryById(1L).get());
+            case "아이돌봄 여행":
+                advertisement.setCategory(categoryService.getCategoryById(2L).get());
                 break;
-            case "어르신돌봄":
-                advertisement.setCategory(categoryService.getCategoryById(1L).get());
+            case "어르신돌봄 여행":
+                advertisement.setCategory(categoryService.getCategoryById(3L).get());
                 break;
             default:
                 break;
         }
 
-
-        advertisement = adminAdvertisementService.updateAdvertisement(advertisement);
-        return advertiseToDTO(advertisement,DateOption.UPDATE);
+        AdminAdvertisement advertisementTemp = adminAdvertisementService.updateAdvertisement(advertisement);
+        return new ResponseTemplate<>(new AdvertisementPageResponse.advertisementEdit(advertisementTemp.getId(),
+                advertisementTemp.getAdvertisementTitle(), advertisementTemp.getAdvertisementStartDate(),
+                advertisementTemp.getAdvertisementEndDate(), advertisementTemp.getAdvertisementType().name(), advertisementTemp.getCategory().getCategoryName(),
+                advertisementTemp.getAdvertisementContent(), advertisementTemp.getModifiedDate(), advertisementTemp.getUpdateAdmin().getEmail()));
     }
 
     @GetMapping("/ad/getList")
-    public List<AdminAdvertisementRegisterDbDto> reqAdvertisementList(){
+    public ResponseTemplate<List<AdvertisementPageResponse.advertisementList>> reqAdvertisementList(){
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
-        List<AdminAdvertisement> advertisementList = adminAdvertisementService.getAllAdvertisements();
-        List<AdminAdvertisementRegisterDbDto> advertisementRegisterDbDtoList = new ArrayList<>();
 
-        for (int i = 0; i < advertisementList.size(); i++) {
-            advertisementRegisterDbDtoList.add(advertiseToDTO(advertisementList.get(i),DateOption.UPDATE));
+        List<AdminAdvertisement> advertisementList = adminAdvertisementService.getAllAdvertisements();
+        List<AdvertisementPageResponse.advertisementList> advertisementListResponse = new ArrayList<>();
+
+        for (int i = 0; i < advertisementList.size(); i++){
+            advertisementListResponse.add(new AdvertisementPageResponse.advertisementList(advertisementList.get(i).getId(),
+                    advertisementList.get(i).getAdvertisementTitle(), advertisementList.get(i).getAdvertisementStartDate(),
+                    advertisementList.get(i).getAdvertisementEndDate(), advertisementList.get(i).getAdvertisementType().name(), advertisementList.get(i).getCategory().getCategoryName(),
+                    advertisementList.get(i).getAdvertisementContent(), advertisementList.get(i).getCreatedAdDate(), advertisementList.get(i).getAdmin().getEmail(),advertisementList.get(i).getModifiedDate(),
+                    advertisementList.get(i).getUpdateAdmin() == null ? "NULL" : advertisementList.get(i).getUpdateAdmin().getEmail()));
         }
 
-        return advertisementRegisterDbDtoList;
+        return new ResponseTemplate<>(advertisementListResponse);
     }
-//    @GetMapping("/getItem")
-//    public ItemInfoDto getItem(@Param("id") String id){
+
+    @PostMapping("/product/create")
+    public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto){
+        CategoryService categoryService = new CategoryService(categoryRepository);
+        ProductService productService = new ProductService(itemInforRepository);
+        ItemImgService itemImgService = new ItemImgService(imgRepository);
+        PaymentTicketService paymentTicketService = new PaymentTicketService(paymentTicketRepository);
+        ItemTicketService itemTicketService = new ItemTicketService(itemTicketRepository);
+        ItemCourseService itemCourseService = new ItemCourseService(itemCourseRepository);
+
+        log.info(productRegisterDto.toString());
+
+
+        Item item = new Item();
+        item = productService.saveItem(item);
+
+        item.setItemCode(productRegisterDto.getProductId());
+        item.setCategory(categoryRepository.findByCategoryName(productRegisterDto.getCategory()).get());
+
+        item.setCountry(productRegisterDto.getLocation().getCountry());
+        item.setCity(productRegisterDto.getLocation().getCity());
+        item.setItemIntroduce(productRegisterDto.getProductInfo());
+
+        item.setAddInfo(productRegisterDto.getExtraInfo());
+
+
+        List<String> imgUrls = new ArrayList<>();
+        for (int i = 0; i < productRegisterDto.getMainImg().size(); i++){
+            imgUrls.add(productRegisterDto.getMainImg().get(i).getImageURL());
+        }
+        itemImgService.saveItemImgs(imgUrls, item);
 //
-//        //get item info from DB
-//        Iteminfo iteminfo = iteminfoRepository.findByItemCode(id);
 //
-//        //response
-//        ItemInfoDto itemInfoDto = new ItemInfoDto();
-//        itemInfoDto.setItemCode(iteminfo.getItemCode());
-//        itemInfoDto.setCategory(iteminfo.getCategory().getId());
-//        itemInfoDto.setItemTitle(iteminfo.getItemTitle());
-//
-//
-//        for(Img img : iteminfo.getImgs()){
-//            if (img.getImgRole().equals(ImgRole.THUMBNAIL)){
-//                itemInfoDto.setThumbnailImgUrl(img.getImgUrl());
+//        for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
+//            ItemTicket itemTicket = new ItemTicket();
+//            itemTicket.setItem(item);
+//            for (int j = 0; j < productRegisterDto.getTicket().get(i).getPriceList().size(); j++) {
+//               PaymentTicket paymentTicket = new PaymentTicket();
+//               paymentTicket.setItemTicket(itemTicket);
+//               paymentTicket.setPrice(Long.getLong(productRegisterDto.getTicket().get(i).getPriceList().get(j).getPrice()));
+//               paymentTicket.setStartDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getStartDate());
+//               paymentTicket.setEndDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getEndDate());
+//               paymentTicketService.savePaymentTicket(paymentTicket);
 //            }
 //        }
-//
-//        itemInfoDto.setLocation(iteminfo.getCityLocation());
-//        itemInfoDto.setStartingPrice(iteminfo.getStartingPrice());
-//
-//        return itemInfoDto;
-//    }
-//
-//    @PostMapping("/createItem")
-//    public ResponseEntity<String> createItem(@RequestBody ItemInfoDto itemInfoDto){
-//        Iteminfo iteminfo = new Iteminfo();
-//        Img img = new Img();
-//
-//        iteminfo.setCategory(categoryRepository.findById(itemInfoDto.getCategory()).get());
-//
-//        iteminfo.setCityLocation(itemInfoDto.getLocation());
-//
-//        if (iteminfo.getCityLocation().equals("강원도")){
-//            iteminfo.setItemCode("033-1");
-//        }
-//
-//        iteminfo.setItemTitle(itemInfoDto.getItemTitle());
-//        iteminfo.setStartingPrice(itemInfoDto.getStartingPrice());
-//        iteminfoRepository.save(iteminfo);
-//
-//
-//        // 1. Img 파일(base64, multipart)로 정보를 받는다
-//        // 2. Img 정보를 S3에 보내고 S3에서 받은 url을 DB에 저장한다.
-//
-//        img.setImgUrl("https://s3.ap-northeast-2.amazonaws.com/amuse-travel-project/IMG_20200831_162000.jpg");
-//        img.setImgRole(ImgRole.THUMBNAIL);
-//        img.setIteminfo(iteminfo);
-//
-//        imgRepository.save(img);
-//
-//
-//
-//        return ResponseEntity.ok("Item created successfully!");
-//    }
-//
-//    @PostMapping("/updateItem")
-//
-//    public ResponseEntity<String> updateItem(@RequestBody ItemInfoDto itemInfoDto){
-//        Iteminfo iteminfo = iteminfoRepository.findByItemCode(itemInfoDto.getItemCode());
-//        List<Img> imgs = iteminfo.getImgs();
-//
-//        iteminfo.setCategory(categoryRepository.findById(itemInfoDto.getCategory()).get());
-//        iteminfo.setCityLocation(itemInfoDto.getLocation());
-//        iteminfo.setItemTitle(itemInfoDto.getItemTitle());
-//        iteminfo.setStartingPrice(itemInfoDto.getStartingPrice());
-//        iteminfoRepository.save(iteminfo);
-//
-//        for (Img img : imgs){
-//           if (!img.getImgUrl().equals(itemInfoDto.getThumbnailImgUrl())){
-//               imgRepository.delete(img);
-//
-//               // S3 Img 삭제 필요
-//
-//
-//               // 1. Img 파일(base64, multipart)로 정보를 받는다
-//               // 2. Img 정보를 S3에 보내고 S3에서 받은 url을 DB에 저장한다.
-//
-//               img.setImgUrl("https://s3.ap-northeast-2.amazonaws.com/amuse-travel-project/JPG_123213_12322.jpg");
-//               img.setImgRole(ImgRole.THUMBNAIL);
-//               img.setIteminfo(iteminfo);
-//
-//               imgRepository.save(img);
-//           }
-//        }
-//
-//
-//
-//        return ResponseEntity.ok("Item updated successfully!");
-//    }
-//
-//    @GetMapping("/deleteItem")
-//    public ResponseEntity<String> deleteItem(@Param("itemCode") String itemCode){
-//        Iteminfo iteminfo = iteminfoRepository.findByItemCode(itemCode);
-//        System.out.println(iteminfo.toString());
-//        iteminfoRepository.delete(iteminfo);
-//        return ResponseEntity.ok("Item deleted successfully!");
-//    }
-//
-//
-//    @GetMapping("/readCategory")
-//    public ResponseEntity<String> readCategory(){
-//
-//        List<Category> category = categoryRepository.findAll();
-//        String result = "";
-//        for (Category temp : category){
-//            result += temp.getCategoryName() + " ";
-//        }
-//        return ResponseEntity.ok(result);
-//    }
-//
-//
-//    @GetMapping("/createCategory")
-//    public ResponseEntity<String> createCategory(@Param("categoryName") String categoryName){
-//
-//        Category category1 = new Category();
-//        category1.setCategoryName(categoryName);
-//        categoryRepository.save(category1);
-//        return ResponseEntity.ok("create category success!!");
-//    }
-//
-//    @GetMapping("/updateCategory")
-//    public ResponseEntity<String> updateCategory(@Param("id") Long id, @Param("categoryName") String categoryName){
-//
-//        Category category1 = categoryRepository.findById(id).get();
-//        category1.setCategoryName(categoryName);
-//        categoryRepository.save(category1);
-//        return ResponseEntity.ok("update category success!!");
-//    }
-//
-//    @GetMapping("/deleteCategory")
-//    public ResponseEntity<String> deleteCategory(@Param("id") Long id){
-//
-//        Category category1 = categoryRepository.findById(id).get();
-//        categoryRepository.delete(category1);
-//        return ResponseEntity.ok("delete category success!!");
-//    }
-//
-//
-    public AdminAdvertisementRegisterDbDto advertiseToDTO(AdminAdvertisement advertisement, DateOption dateOption){
-        AdminAdvertisementRegisterDbDto adminAdvertisementRegisterDbDto = new AdminAdvertisementRegisterDbDto();
 
-        adminAdvertisementRegisterDbDto.setTitle(advertisement.getAdvertisementTitle());
-        adminAdvertisementRegisterDbDto.setId(advertisement.getId());
-        adminAdvertisementRegisterDbDto.setAdContent(advertisement.getAdvertisementContent());
-        adminAdvertisementRegisterDbDto.setAdCategory(advertisement.getCategory().getCategoryName());
-        adminAdvertisementRegisterDbDto.setCreatedAd(advertisement.getAdmin().getEmail());
-        adminAdvertisementRegisterDbDto.setStartDate(advertisement.getAdvertisementStartDate());
-        adminAdvertisementRegisterDbDto.setEndDate(advertisement.getAdvertisementEndDate());
-        if (dateOption.equals(DateOption.CREATE)){
-            adminAdvertisementRegisterDbDto.setAdDate(advertisement.getCreatedAdDate());
-        } else {
-            adminAdvertisementRegisterDbDto.setAdDate(advertisement.getModifiedDate());
+
+
+
+//        List<ItemTicket> itemTickets = new ArrayList<>();
+//
+//        for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
+//
+//            ItemTicket itemTicket = new ItemTicket();
+//            List<PaymentTicket> paymentTickets = new ArrayList<>();
+//
+//            itemTicket.setItem(item);
+//            itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
+//            itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
+//
+//            for (int j = 0; j < productRegisterDto.getTicket().get(i).getPriceList().size(); j++) {
+//               PaymentTicket paymentTicket = new PaymentTicket();
+//                paymentTicket.setItemTicket(itemTicket);
+//                paymentTicket.setPrice(Long.getLong(productRegisterDto.getTicket().get(i).getPriceList().get(j).getPrice()));
+//                paymentTicket.setStartDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getStartDate());
+//                paymentTicket.setEndDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getEndDate());
+//                paymentTickets.add(paymentTicketService.savePaymentTicket(paymentTicket));
+//            }
+//
+//            itemTicket.setPaymentTickets(paymentTickets);
+//            itemTickets.add(itemTicketService.saveItemTicket(itemTicket));
+//        }
+//
+//
+//        item.setItemTickets(itemTickets);
+        productService.saveItem(item);
+
+
+
+        List<ItemCourse> itemCourses = new ArrayList<>();
+        for(int i = 0; i < productRegisterDto.getCourse().size(); i++){
+            ItemCourse itemCourse = new ItemCourse();
+            itemCourse.setItem(item);
+            itemCourse.setTitle(productRegisterDto.getCourse().get(i).getTitle());
+            itemCourse.setContent(productRegisterDto.getCourse().get(i).getContent());
+            itemCourse.setSequenceId(Long.valueOf(i));
+            itemCourse.setImageUrl(productRegisterDto.getCourse().get(i).getImageURL());
+            itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
+
+            itemCourseService.saveItemCourse(itemCourse);
+            itemCourses.add(itemCourse);
         }
-        switch (advertisement.getAdvertisementType().ordinal()){
-            case 0:
-                adminAdvertisementRegisterDbDto.setAdType("ad1");
-                break;
-            case 1:
-                adminAdvertisementRegisterDbDto.setAdType("ad2");
-                break;
-            case 2:
-                adminAdvertisementRegisterDbDto.setAdType("ad3");
-                break;
-            default:
-                break;
-        }
-        return adminAdvertisementRegisterDbDto;
+
+        item.setItemCourses(itemCourses);
+
+        return new ResponseTemplate<>("상품 등록 완료");
     }
 }
