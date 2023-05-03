@@ -19,10 +19,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DetailPageService {
 
-    private final ItemRepository itemInforRepository;
+
+    private final ItemRepository itemRepository;
 
     public ResponseTemplate<DetailPageResponse.getTitle> getTitle(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+        Item findItem = itemRepository.findById(product_id).orElseThrow(
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 
@@ -31,7 +32,7 @@ public class DetailPageService {
     }
 
     public ResponseTemplate<DetailPageResponse.getIcon> getIcon(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+        Item findItem = itemRepository.findById(product_id).orElseThrow(
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 
@@ -41,7 +42,7 @@ public class DetailPageService {
     }
 
     public ResponseTemplate<DetailPageResponse.getPicture> getPicture(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+        Item findItem = itemRepository.findById(product_id).orElseThrow(
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 
@@ -50,7 +51,7 @@ public class DetailPageService {
     }
 
     public ResponseTemplate<DetailPageResponse.getTicket> getTicket(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+        Item findItem = itemRepository.findById(product_id).orElseThrow(
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 
@@ -65,7 +66,7 @@ public class DetailPageService {
     }
 
     public ResponseTemplate<DetailPageResponse.getContent> getContent(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+        Item findItem = itemRepository.findById(product_id).orElseThrow(
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 
@@ -75,7 +76,7 @@ public class DetailPageService {
     }
 
     public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+        Item findItem = itemRepository.findById(product_id).orElseThrow(
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 
@@ -88,7 +89,7 @@ public class DetailPageService {
     }
 
     public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+        Item findItem = itemRepository.findById(product_id).orElseThrow(
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 

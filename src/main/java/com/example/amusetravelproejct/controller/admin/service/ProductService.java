@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 public class ProductService {
 
-    private final ItemRepository itemInforRepository;
+    private final ItemRepository itemRepository;
 
 
 //        public List<ItemTicket> saveItemTicket(List<ItemTicket> itemTickets, Long id){
@@ -67,19 +67,19 @@ public class ProductService {
 //    }
 
     public Item saveItem(Item item) {
-        return itemInforRepository.save(item);
+        return itemRepository.save(item);
     }
 
     public Item getItemById(Long id) {
-        return itemInforRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Item not found with id " + id));
+        return itemRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Item not found with id " + id));
     }
 
     public List<Item> getAllItems() {
-        return itemInforRepository.findAll();
+        return itemRepository.findAll();
     }
 
     public void deleteItemById(Long id) {
-        itemInforRepository.deleteById(id);
+        itemRepository.deleteById(id);
     }
 
 

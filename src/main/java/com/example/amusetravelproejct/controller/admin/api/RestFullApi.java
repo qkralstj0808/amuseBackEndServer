@@ -22,7 +22,7 @@ import java.util.Optional;
 @RequestMapping("/test/api")
 @Slf4j
 public class RestFullApi {
-    private final ItemRepository itemInforRepository;
+    private final ItemRepository itemRepository;
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
     private final ItemCourseRepository itemCourseRepository;
@@ -160,7 +160,7 @@ public class RestFullApi {
     @PostMapping("/product/create")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto){
         CategoryService categoryService = new CategoryService(categoryRepository);
-        ProductService productService = new ProductService(itemInforRepository);
+        ProductService productService = new ProductService(itemRepository);
         ItemImgService itemImgService = new ItemImgService(imgRepository);
         PaymentTicketService paymentTicketService = new PaymentTicketService(paymentTicketRepository);
         ItemTicketService itemTicketService = new ItemTicketService(itemTicketRepository);
