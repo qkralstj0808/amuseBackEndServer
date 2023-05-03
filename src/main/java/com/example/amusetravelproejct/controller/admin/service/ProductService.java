@@ -1,14 +1,11 @@
 package com.example.amusetravelproejct.controller.admin.service;
 
-import com.example.amusetravelproejct.domain.*;
-import com.example.amusetravelproejct.repository.*;
+import com.example.amusetravelproejct.repository.ItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Base64;
 import java.util.List;
 
 @AllArgsConstructor
@@ -16,7 +13,7 @@ import java.util.List;
 @Slf4j
 public class ProductService {
 
-    private final ItemInforRepository itemInforRepository;
+    private final ItemRepository itemInforRepository;
 
 
 //        public List<ItemTicket> saveItemTicket(List<ItemTicket> itemTickets, Long id){
@@ -68,15 +65,15 @@ public class ProductService {
 //        return itemTicketRepository.save(itemTicket);
 //    }
 
-    public Item saveItem(Item item) {
+    public com.example.amusetravelproejct.domain.Item saveItem(com.example.amusetravelproejct.domain.Item item) {
         return itemInforRepository.save(item);
     }
 
-    public Item getItemById(Long id) {
+    public com.example.amusetravelproejct.domain.Item getItemById(Long id) {
         return itemInforRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Item not found with id " + id));
     }
 
-    public List<Item> getAllItems() {
+    public List<com.example.amusetravelproejct.domain.Item> getAllItems() {
         return itemInforRepository.findAll();
     }
 

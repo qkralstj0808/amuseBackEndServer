@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.domain;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class    Item {
+public class Item extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ITEM_ID")

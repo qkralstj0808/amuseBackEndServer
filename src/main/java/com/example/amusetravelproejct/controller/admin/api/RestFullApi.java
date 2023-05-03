@@ -3,20 +3,15 @@ package com.example.amusetravelproejct.controller.admin.api;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDto;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDbDto;
-import com.example.amusetravelproejct.controller.admin.dto.ItemInfoDto;
 import com.example.amusetravelproejct.controller.admin.dto.ProductRegisterDto;
 import com.example.amusetravelproejct.controller.admin.dto.resp.AdvertisementPageResponse;
 import com.example.amusetravelproejct.controller.admin.service.*;
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.domain.person_enum.Adver;
-import com.example.amusetravelproejct.domain.person_enum.DateOption;
-import com.example.amusetravelproejct.domain.person_enum.ImgRole;
 import com.example.amusetravelproejct.repository.*;
+import com.example.amusetravelproejct.repository.ItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,7 +22,7 @@ import java.util.Optional;
 @RequestMapping("/test/api")
 @Slf4j
 public class RestFullApi {
-    private final ItemInforRepository itemInforRepository;
+    private final ItemRepository itemInforRepository;
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
     private final ItemCourseRepository itemCourseRepository;
@@ -174,7 +169,7 @@ public class RestFullApi {
         log.info(productRegisterDto.toString());
 
 
-        Item item = new Item();
+        com.example.amusetravelproejct.domain.Item item = new com.example.amusetravelproejct.domain.Item();
         item = productService.saveItem(item);
 
         item.setItemCode(productRegisterDto.getProductId());
