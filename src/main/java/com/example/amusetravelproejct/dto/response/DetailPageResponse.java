@@ -15,7 +15,7 @@ public class DetailPageResponse {
         private String country;
         private String city;
         private String title;
-        private float rated;
+        private Double rated;
     }
 
     @Data

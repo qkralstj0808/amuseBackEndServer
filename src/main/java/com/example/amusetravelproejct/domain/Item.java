@@ -26,7 +26,7 @@ public class Item extends BaseEntity {
     private String title;           // 상품 제목
     private String itemIntroduce;           // 상품 설명
     private String addInfo;           // 상품 추가 정보
-    private Float rated;            // 모든 리뷰들 평점의 평균
+    private Double rated;            // 모든 리뷰들 평점의 평균
     private Long startingPrice;     // 많은 상품 가격 중 가장 싼 것
     private Long maxPrice;          // 많은 상품 가격 중 가장 비싼 것
     private Long duration;          // 기간 (2박 3일 에서 3)
