@@ -32,6 +32,7 @@ public class Item extends BaseEntity {
     private Long duration;          // 기간 (2박 3일 에서 3)
     private Long like_num;          // 좋아요 수
 
+
     // item과 Category는 N:1 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ITEM_CATEGORY_ID")

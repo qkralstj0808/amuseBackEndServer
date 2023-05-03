@@ -68,7 +68,7 @@ public class MainPageService {
                 item -> new MainPageResponse.ItemInfo(
                         item.getItemCode(),item.getCategory().getCategoryName(),
                         item.getItemImg_list().get(0).getImgUrl(),item.getTitle(), item.getCountry(),
-                        item.getCity(), item.getLike_num(), item.getStartPrice())
+                        item.getCity(), item.getLike_num(), item.getStartingPrice())
         ).collect(Collectors.toList())));
     }
 

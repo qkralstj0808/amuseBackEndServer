@@ -43,8 +43,8 @@ public class MainPageResponse {
         private String title;
         private String country;
         private String city;
-        private int likeNum;
-        private int startPrice;
+        private Long likeNum;
+        private Long startPrice;
     }
 
 }

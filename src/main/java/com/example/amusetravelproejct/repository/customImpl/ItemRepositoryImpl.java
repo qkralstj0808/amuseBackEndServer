@@ -73,7 +73,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
     @Override
     public Page<Item> findCategoryAllItemPage(Long category_id, Pageable pageable) {
         QueryResults<Item> itemQueryResults = jpaQueryFactory.selectFrom(item)
-                .orderBy(item.like_num.desc(), item..desc())
+                .orderBy(item.like_num.desc(), item.createdDate.desc())
                 .where(item.category.id.eq(category_id))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
