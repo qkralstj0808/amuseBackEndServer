@@ -12,7 +12,7 @@ public class TestController {
     @GetMapping("/amusetest")
     public ResponseDto ctest(){
         ResponseDto responseDto = new ResponseDto();
-        responseDto.setTestText("어뮤즈트레블 테스트 웹훅13");
+        responseDto.setTestText("어뮤즈트레블 테스트 웹훅16");
         return responseDto;
     }
 
