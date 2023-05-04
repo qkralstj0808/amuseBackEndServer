@@ -50,4 +50,10 @@ public class MainPageController {
     public ResponseTemplate<MainPageResponse.getItem> getCategoryAllItem(@PathVariable("category-id") Long category_id){
         return mainPageService.getCategoryAllItem(category_id);
     }
+
+    // 카테고리별 모든 상품 보기
+    @GetMapping("/province/{category-id}")
+    public ResponseTemplate<MainPageResponse.getItem> getCityAllItem(@PathVariable("category-id") Long category_id){
+        return mainPageService.getCategoryAllItem(category_id);
+    }
 }

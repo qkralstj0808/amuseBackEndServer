@@ -177,9 +177,9 @@ public class RestFullApi {
 
         item.setCountry(productRegisterDto.getLocation().getCountry());
         item.setCity(productRegisterDto.getLocation().getCity());
-        item.setItemIntroduce(productRegisterDto.getProductInfo());
+        item.setContent_1(productRegisterDto.getProductInfo());
 
-        item.setAddInfo(productRegisterDto.getExtraInfo());
+        item.setContent_2(productRegisterDto.getExtraInfo());
 
 
         List<String> imgUrls = new ArrayList<>();

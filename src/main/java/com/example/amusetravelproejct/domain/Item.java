@@ -22,23 +22,19 @@ public class Item extends BaseEntity {
 
     private String itemCode;          // 상품 코드
     private String country;         // 나라
-    private String province;        // 도 (경기도)
-    private String city;            // 시 (강릉)
+    private String city;            // 시 (강원도 까지만 하기로 했습니다!)
     private String title;           // 상품 제목
-    private String itemIntroduce;           // 상품 설명
-    private String addInfo;           // 상품 추가 정보
+    private String content_1;       // html을 String으로 바꾼 내용 1번째
+    private String content_2;       // html을 String으로 바꾼 내용 2번째
     private Double rated;            // 모든 리뷰들 평점의 평균
-    private Long startingPrice;     // 많은 상품 가격 중 가장 싼 것
-    private Long maxPrice;          // 많은 상품 가격 중 가장 비싼 것
+    private Long startPrice;     // 많은 상품 가격 중 가장 싼 것
     private Integer duration;          // 기간 (2박 3일 에서 3)
     private Integer like_num;          // 좋아요 수
 
-
-    // item과 Category는 N:1 관계
+    // item와 category는 N:1 관계 ManyToOne
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ITEM_CATEGORY_ID")
-    private Category itemCategory;
-
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     // item와 ItemImg 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,24 +44,31 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemIcon> itemIcon_list = new ArrayList<>();
 
+
+//    // item과 Category는 N:1 관계
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "ITEM_CATEGORY_ID")
+//    private Category itemCategory;
+
+
     // item에는 여러개 티켓이 있다.
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemTicket> itemTickets = new ArrayList<>();
 
     // item에는 여러개 itemprice가 있다.
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemPrice> itemPrices = new ArrayList<>();
+//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ItemPrice> itemPrices = new ArrayList<>();
 
-    // 상품 상세 정보에서 상품 상세 내용에 여러가지 내용들이 들어갈 수 있다.
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemContent> itemContents = new ArrayList<>();
+//    // 상품 상세 정보에서 상품 상세 내용에 여러가지 내용들이 들어갈 수 있다.
+//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ItemContent> itemContents = new ArrayList<>();
 
     // item와 item_course는 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemCourse> itemCourses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemOtherContent> itemOtherContents = new ArrayList<>();
+//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ItemOtherContent> itemOtherContents = new ArrayList<>();
 
 
             // 위에는 상품 상페 페이지 api짜면서 새로 짠 코드입니다.
@@ -74,28 +77,18 @@ public class Item extends BaseEntity {
                     // 밑에 있는 거 지우시고 위에 작성해 주세여
                     // 나중에 밑에 있는 코드는 다 지울 생각입니다.!
 
-
-
-    private String itemIntroduction;    // 상품 소개 (html)
-    private Long usageTime;             //
-    private String locationGuide;
     private Double Latitude;
     private Double Longitude;
-    private String usageMethod;
-    private String location;                    //
     private Double mapTopLeftLatitude;          // 지도 왼쪽 위 - 위도
     private Double mapTopLeftLongitude;         // 지도 왼쪽 위 - 경도
     private Double mapBottomRightLatitude;      // 지도 오른쪽 아래 - 위도
     private Double mapBottomRightLongitude;     // 지도 오른쪽 아래 - 경도
 
-    // item와 category는 N:1 관계 ManyToOne
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
 
-    // item와 item_option은 1:N 관계
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemOption> itemOptions = new ArrayList<>();
+//
+//    // item와 item_option은 1:N 관계
+//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ItemOption> itemOptions = new ArrayList<>();
 
 
 
@@ -109,9 +102,9 @@ public class Item extends BaseEntity {
     // item와 item_price는 N:1 관계(수정)
 
 
-    // item와 item_add_option는 1:N 관계
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemAddOption> itemAddOptions = new ArrayList<>();
+//    // item와 item_add_option는 1:N 관계
+//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ItemAddOption> itemAddOptions = new ArrayList<>();
 
     // item와 item_estimation는 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -132,10 +125,10 @@ public class Item extends BaseEntity {
     // item와 supervisor_info는 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SupervisorInfo> supervisorInfos = new ArrayList<>();
-
-    // item와 item_introduction_image는 1:N 관계
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemIntroductionImage> itemIntroductionImages = new ArrayList<>();
+//
+//    // item와 item_introduction_image는 1:N 관계
+//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ItemIntroductionImage> itemIntroductionImages = new ArrayList<>();
 
 
 }
