@@ -3,6 +3,7 @@ package com.example.amusetravelproejct.service;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.Category;
 import com.example.amusetravelproejct.domain.Item;
+import com.example.amusetravelproejct.domain.ItemImg;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.repository.CategoryRepository;
 import com.example.amusetravelproejct.repository.ItemRepository;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,33 +65,89 @@ public class MainPageService {
     }
 
     private ResponseTemplate<MainPageResponse.getBestItem> returnBestItem(List<Item> items) {
+        List<MainPageResponse.ItemInfo> itemInfo = new ArrayList<>();
 
-        return new ResponseTemplate(new MainPageResponse.getBestItem(items.stream().map(
-                item -> new MainPageResponse.ItemInfo(
-                        item.getItemCode(),item.getCategory().getCategoryName(),
-                        item.getItemImg_list().get(0).getImgUrl(),item.getTitle(), item.getCountry(),
-                        item.getCity(),item.getDuration(), item.getLike_num(), item.getStartPrice())
-        ).collect(Collectors.toList())));
+        if(items.size() != 0){
+            for(int i = 0 ; i < items.size() ; i++){
+                Item item = items.get(i);
+                String categoryName = null;
+                String itemImg = null;
+
+                // category가 있다면
+                if(item.getCategory() != null){
+                    categoryName = item.getCategory().getCategoryName();
+                }
+
+                // img가 하나라도 있다면
+                if(item.getItemImg_list().size() != 0){
+                    itemImg = item.getItemImg_list().get(0).getImgUrl();
+                }
+
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getItemCode(),categoryName,
+                        itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
+                        item.getLike_num(),item.getStartPrice()));
+
+            }
+        }
+        return new ResponseTemplate(new MainPageResponse.getBestItem(itemInfo));
     }
 
     private ResponseTemplate<MainPageResponse.getCurrentItem> returnCurrentItem(List<Item> items) {
+        List<MainPageResponse.ItemInfo> itemInfo = new ArrayList<>();
 
-        return new ResponseTemplate(new MainPageResponse.getCurrentItem(items.stream().map(
-                item -> new MainPageResponse.ItemInfo(
-                        item.getItemCode(),item.getCategory().getCategoryName(),
-                        item.getItemImg_list().get(0).getImgUrl(),item.getTitle(), item.getCountry(),
-                        item.getCity(),item.getDuration(), item.getLike_num(), item.getStartPrice())
-        ).collect(Collectors.toList())));
+        if(items.size() != 0){
+            for(int i = 0 ; i < items.size() ; i++){
+                Item item = items.get(i);
+                String categoryName = null;
+                String itemImg = null;
+
+                // category가 있다면
+                if(item.getCategory() != null){
+                    categoryName = item.getCategory().getCategoryName();
+                }
+
+                // img가 하나라도 있다면
+                if(item.getItemImg_list().size() != 0){
+                    itemImg = item.getItemImg_list().get(0).getImgUrl();
+                }
+
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getItemCode(),categoryName,
+                        itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
+                        item.getLike_num(),item.getStartPrice()));
+
+            }
+        }
+
+        return new ResponseTemplate(new MainPageResponse.getCurrentItem(itemInfo));
     }
 
     private ResponseTemplate<MainPageResponse.getItem> returnAllItem(List<Item> items) {
+        List<MainPageResponse.ItemInfo> itemInfo = new ArrayList<>();
 
-        return new ResponseTemplate(new MainPageResponse.getItem(items.stream().map(
-                item -> new MainPageResponse.ItemInfo(
-                        item.getItemCode(),item.getCategory().getCategoryName(),
-                        item.getItemImg_list().get(0).getImgUrl(),item.getTitle(), item.getCountry(),
-                        item.getCity(),item.getDuration(), item.getLike_num(), item.getStartPrice())
-        ).collect(Collectors.toList())));
+        if(items.size() != 0){
+            for(int i = 0 ; i < items.size() ; i++){
+                Item item = items.get(i);
+                String categoryName = null;
+                String itemImg = null;
+
+                // category가 있다면
+                if(item.getCategory() != null){
+                    categoryName = item.getCategory().getCategoryName();
+                }
+
+                // img가 하나라도 있다면
+                if(item.getItemImg_list().size() != 0){
+                    itemImg = item.getItemImg_list().get(0).getImgUrl();
+                }
+
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getItemCode(),categoryName,
+                        itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
+                        item.getLike_num(),item.getStartPrice()));
+
+            }
+        }
+
+        return new ResponseTemplate(new MainPageResponse.getItem(itemInfo));
     }
 
     private ResponseTemplate<MainPageResponse.getItem> returnItemDto(List<MainPageResponse.ItemInfo> items) {

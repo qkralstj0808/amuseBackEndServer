@@ -20,14 +20,8 @@ public class DetailPageController {
     @GetMapping("/title")
     public ResponseTemplate<DetailPageResponse.getTitle> getTitle(@PathVariable("id")  Long product_id) throws IOException, ResponseException {
 //        Long user_id = jwtService.getmemberId();
-        ResponseTemplate<DetailPageResponse.getTitle> title = null;
-        try{
-            title = detailPageService.getTitle(product_id);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        return detailPageService.getTitle(product_id);
 
-        return title;
     }
 
     @GetMapping("/icon-info")

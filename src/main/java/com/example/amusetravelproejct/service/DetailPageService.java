@@ -1,8 +1,6 @@
 package com.example.amusetravelproejct.service;
 
-import com.example.amusetravelproejct.config.resTemplate.ResponseException;
-import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
-import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
+import com.example.amusetravelproejct.config.resTemplate.*;
 import com.example.amusetravelproejct.domain.Item;
 import com.example.amusetravelproejct.dto.response.DetailPageResponse;
 import com.example.amusetravelproejct.repository.ItemRepository;
@@ -23,7 +21,7 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getTitle> getTitle(Long product_id) {
         Item findItem = itemInforRepository.findById(product_id).orElseThrow(
-                () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
+                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
         return new ResponseTemplate<>(new DetailPageResponse.getTitle(findItem.getCountry(),findItem.getCity(),
@@ -32,7 +30,7 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getIcon> getIcon(Long product_id) {
         Item findItem = itemInforRepository.findById(product_id).orElseThrow(
-                () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
+                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
         return new ResponseTemplate<>(new DetailPageResponse.getIcon(findItem.getItemIcon_list().stream().map(
@@ -42,7 +40,7 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getPicture> getPicture(Long product_id) {
         Item findItem = itemInforRepository.findById(product_id).orElseThrow(
-                () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
+                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
         return new ResponseTemplate<>(new DetailPageResponse.getPicture(findItem.getItemImg_list().stream().map(itemImg ->
@@ -51,7 +49,7 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getTicket> getTicket(Long product_id) {
         Item findItem = itemInforRepository.findById(product_id).orElseThrow(
-                () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
+                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
         return new ResponseTemplate<>(new DetailPageResponse.getTicket(
@@ -66,7 +64,7 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getContent> getContent(Long product_id) {
         Item findItem = itemInforRepository.findById(product_id).orElseThrow(
-                () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
+                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
         return new ResponseTemplate<>(new DetailPageResponse.getContent(findItem.getContent_1()));
@@ -74,7 +72,7 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(Long product_id) {
         Item findItem = itemInforRepository.findById(product_id).orElseThrow(
-                () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
+                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
         return new ResponseTemplate<>(new DetailPageResponse.getCourseContent(findItem.getItemCourses().stream().map(
@@ -87,7 +85,7 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(Long product_id) {
         Item findItem = itemInforRepository.findById(product_id).orElseThrow(
-                () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
+                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
         return new ResponseTemplate<>(new DetailPageResponse.getOtherContent(findItem.getContent_2()));
