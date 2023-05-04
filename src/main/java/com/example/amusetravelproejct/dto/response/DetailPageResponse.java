@@ -13,9 +13,10 @@ public class DetailPageResponse {
     @NoArgsConstructor
     public static class getTitle {
         private String country;
+        private String province;
         private String city;
         private String title;
-        private float rated;
+        private Double rated;
     }
 
     @Data
@@ -87,7 +88,7 @@ public class DetailPageResponse {
         private String title;
         private String content;
         private Long sequenceId;
-        private Long timeCost;
+        private String timeCost;
         private String imageUrl;
         private Double latitude;
         private Double longitude;

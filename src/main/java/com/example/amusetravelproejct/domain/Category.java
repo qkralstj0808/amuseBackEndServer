@@ -11,7 +11,6 @@ import java.util.List;
 @Getter
 @Setter
 public class Category {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,6 +20,8 @@ public class Category {
      @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
      private List<Item> items = new ArrayList<>();
 
+     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+     private List<AdminAdvertisement> adminAdvertisements = new ArrayList<>();
 
-
+//오류확
 }

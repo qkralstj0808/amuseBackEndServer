@@ -16,7 +16,7 @@ public class ItemCourse {
     private String title;
     private String content;
     private Long sequenceId;
-    private Long timeCost;
+    private String timeCost;
     private String imageUrl;
     private Double latitude;
     private Double longitude;
@@ -25,14 +25,6 @@ public class ItemCourse {
      @ManyToOne(fetch = FetchType.LAZY)
      @JoinColumn(name = "item_id")
      private Item item;
-
-
-
-
-
-
-
-
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.domain;
 
+import com.example.amusetravelproejct.domain.person_enum.ImgRole;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ public class ItemImg {
     private Long id;
 
     private String imgUrl;
+
 
   // img와 iteminfo는 N:1 관계
     @ManyToOne(fetch = LAZY)
