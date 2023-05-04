@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.controller.admin.api;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDto;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDbDto;
@@ -12,6 +13,7 @@ import com.example.amusetravelproejct.repository.*;
 import com.example.amusetravelproejct.repository.ItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -35,6 +37,12 @@ public class RestFullApi {
     private final AdminAdvertisementRepository adminAdvertisementRepository;
     private final ItemCourseRepository courseRepository;
     private final ItemOtherContentRepository itemOtherContentRepository;
+    private final AmazonS3 amazonS3Client;
+
+
+
+
+
 
     @PostMapping("/ad/register")
     public ResponseTemplate<AdvertisementPageResponse.advertisementRegister> reqAdvertisementRegister(@RequestBody AdminAdvertisementRegisterDto adminAdvertisementRegisterDto){
@@ -161,7 +169,7 @@ public class RestFullApi {
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto){
         CategoryService categoryService = new CategoryService(categoryRepository);
         ProductService productService = new ProductService(itemRepository);
-        ItemImgService itemImgService = new ItemImgService(imgRepository);
+        ItemImgService itemImgService = new ItemImgService(imgRepository,amazonS3Client);
         PaymentTicketService paymentTicketService = new PaymentTicketService(paymentTicketRepository);
         ItemTicketService itemTicketService = new ItemTicketService(itemTicketRepository);
         ItemCourseService itemCourseService = new ItemCourseService(itemCourseRepository);
@@ -183,57 +191,14 @@ public class RestFullApi {
 
 
         List<String> imgUrls = new ArrayList<>();
+        List<String> keys = new ArrayList<>();
         for (int i = 0; i < productRegisterDto.getMainImg().size(); i++){
-            imgUrls.add(productRegisterDto.getMainImg().get(i).getImageURL());
+            imgUrls.add(productRegisterDto.getMainImg().get(i).getBase64Data());
+            keys.add(productRegisterDto.getMainImg().get(i).getFileName());
         }
-        itemImgService.saveItemImgs(imgUrls, item);
-//
-//
-//        for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
-//            ItemTicket itemTicket = new ItemTicket();
-//            itemTicket.setItem(item);
-//            for (int j = 0; j < productRegisterDto.getTicket().get(i).getPriceList().size(); j++) {
-//               PaymentTicket paymentTicket = new PaymentTicket();
-//               paymentTicket.setItemTicket(itemTicket);
-//               paymentTicket.setPrice(Long.getLong(productRegisterDto.getTicket().get(i).getPriceList().get(j).getPrice()));
-//               paymentTicket.setStartDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getStartDate());
-//               paymentTicket.setEndDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getEndDate());
-//               paymentTicketService.savePaymentTicket(paymentTicket);
-//            }
-//        }
 
-
-
-
-//        List<ItemTicket> itemTickets = new ArrayList<>();
-//
-//        for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
-//
-//            ItemTicket itemTicket = new ItemTicket();
-//            List<PaymentTicket> paymentTickets = new ArrayList<>();
-//
-//            itemTicket.setItem(item);
-//            itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
-//            itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
-//
-//            for (int j = 0; j < productRegisterDto.getTicket().get(i).getPriceList().size(); j++) {
-//               PaymentTicket paymentTicket = new PaymentTicket();
-//                paymentTicket.setItemTicket(itemTicket);
-//                paymentTicket.setPrice(Long.getLong(productRegisterDto.getTicket().get(i).getPriceList().get(j).getPrice()));
-//                paymentTicket.setStartDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getStartDate());
-//                paymentTicket.setEndDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getEndDate());
-//                paymentTickets.add(paymentTicketService.savePaymentTicket(paymentTicket));
-//            }
-//
-//            itemTicket.setPaymentTickets(paymentTickets);
-//            itemTickets.add(itemTicketService.saveItemTicket(itemTicket));
-//        }
-//
-//
-//        item.setItemTickets(itemTickets);
+        itemImgService.saveItemImgs(imgUrls, keys,item);
         productService.saveItem(item);
-
-
 
         List<ItemCourse> itemCourses = new ArrayList<>();
         for(int i = 0; i < productRegisterDto.getCourse().size(); i++){
