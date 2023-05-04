@@ -26,7 +26,7 @@ public class DetailPageService {
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 
-        return new ResponseTemplate<>(new DetailPageResponse.getTitle(findItem.getCountry(),
+        return new ResponseTemplate<>(new DetailPageResponse.getTitle(findItem.getCountry(),findItem.getProvince(),
                 findItem.getCity(), findItem.getTitle(), findItem.getRated()));
     }
 

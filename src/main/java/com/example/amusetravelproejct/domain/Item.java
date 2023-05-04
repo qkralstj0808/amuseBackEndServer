@@ -22,15 +22,16 @@ public class Item extends BaseEntity {
 
     private String itemCode;          // 상품 코드
     private String country;         // 나라
-    private String city;            // 도시
+    private String province;        // 도 (경기도)
+    private String city;            // 시 (강릉)
     private String title;           // 상품 제목
     private String itemIntroduce;           // 상품 설명
     private String addInfo;           // 상품 추가 정보
-    private Float rated;            // 모든 리뷰들 평점의 평균
+    private Double rated;            // 모든 리뷰들 평점의 평균
     private Long startingPrice;     // 많은 상품 가격 중 가장 싼 것
     private Long maxPrice;          // 많은 상품 가격 중 가장 비싼 것
-    private Long duration;          // 기간 (2박 3일 에서 3)
-    private Long like_num;          // 좋아요 수
+    private Integer duration;          // 기간 (2박 3일 에서 3)
+    private Integer like_num;          // 좋아요 수
 
 
     // item과 Category는 N:1 관계

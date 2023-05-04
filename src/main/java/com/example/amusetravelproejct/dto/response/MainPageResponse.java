@@ -36,14 +36,30 @@ public class MainPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class getBestItem {
+        private List<ItemInfo> bestItems;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getCurrentItem {
+        private List<ItemInfo> currentItems;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ItemInfo {
         private String productId;
         private String category;
         private String imageUrl;
         private String title;
         private String country;
+        private String province;
         private String city;
-        private Long likeNum;
+        private Integer duration;
+        private Integer likeNum;
         private Long startPrice;
     }
 

@@ -34,27 +34,26 @@ public class MainPageService {
         ).collect(Collectors.toList())));
     }
 
-    public ResponseTemplate<MainPageResponse.getItem> getBestItem() {
+    public ResponseTemplate<MainPageResponse.getBestItem> getBestItem() {
         List<Item> bestItems = itemRepository.find10BestItem();
-        return returnItem(bestItems);
+        return returnBestItem(bestItems);
     }
 
-    public ResponseTemplate<MainPageResponse.getItem> getCurrentItem() {
+    public ResponseTemplate<MainPageResponse.getCurrentItem> getCurrentItem() {
         List<Item> currentItems = itemRepository.find10CurrentItem();
 
-//        System.out.println(currentItems.get(0));
-        return returnItem(currentItems);
+        return returnCurrentItem(currentItems);
 
     }
 
-    public ResponseTemplate<MainPageResponse.getItem> getCategoryBestItem(Long category_id) {
+    public ResponseTemplate<MainPageResponse.getBestItem> getCategoryBestItem(Long category_id) {
         List<Item> categoryBestItems = itemRepository.find10CategoryBestItem(category_id);
-        return returnItem(categoryBestItems);
+        return returnBestItem(categoryBestItems);
     }
 
-    public ResponseTemplate<MainPageResponse.getItem> getCategoryCurrentItem(Long category_id) {
+    public ResponseTemplate<MainPageResponse.getCurrentItem> getCategoryCurrentItem(Long category_id) {
         List<Item> categoryCurrentItems = itemRepository.find10CategoryCurrentItem(category_id);
-        return returnItem(categoryCurrentItems);
+        return returnCurrentItem(categoryCurrentItems);
     }
 
     public ResponseTemplate<MainPageResponse.getItem> getCategoryAllItem(Long category_id) {
@@ -62,13 +61,33 @@ public class MainPageService {
         return null;
     }
 
-    private ResponseTemplate<MainPageResponse.getItem> returnItem(List<Item> items) {
+    private ResponseTemplate<MainPageResponse.getBestItem> returnBestItem(List<Item> items) {
+
+        return new ResponseTemplate(new MainPageResponse.getBestItem(items.stream().map(
+                item -> new MainPageResponse.ItemInfo(
+                        item.getItemCode(),item.getCategory().getCategoryName(),
+                        item.getItemImg_list().get(0).getImgUrl(),item.getTitle(), item.getCountry(),
+                        item.getProvince(),item.getCity(),item.getDuration(), item.getLike_num(), item.getStartingPrice())
+        ).collect(Collectors.toList())));
+    }
+
+    private ResponseTemplate<MainPageResponse.getCurrentItem> returnCurrentItem(List<Item> items) {
+
+        return new ResponseTemplate(new MainPageResponse.getCurrentItem(items.stream().map(
+                item -> new MainPageResponse.ItemInfo(
+                        item.getItemCode(),item.getCategory().getCategoryName(),
+                        item.getItemImg_list().get(0).getImgUrl(),item.getTitle(), item.getCountry(),
+                        item.getProvince(),item.getCity(),item.getDuration(), item.getLike_num(), item.getStartingPrice())
+        ).collect(Collectors.toList())));
+    }
+
+    private ResponseTemplate<MainPageResponse.getItem> returnAllItem(List<Item> items) {
 
         return new ResponseTemplate(new MainPageResponse.getItem(items.stream().map(
                 item -> new MainPageResponse.ItemInfo(
                         item.getItemCode(),item.getCategory().getCategoryName(),
                         item.getItemImg_list().get(0).getImgUrl(),item.getTitle(), item.getCountry(),
-                        item.getCity(), item.getLike_num(), item.getStartingPrice())
+                        item.getProvince(),item.getCity(),item.getDuration(), item.getLike_num(), item.getStartingPrice())
         ).collect(Collectors.toList())));
     }
 
