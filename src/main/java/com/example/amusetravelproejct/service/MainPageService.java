@@ -36,6 +36,7 @@ public class MainPageService {
 
     public ResponseTemplate<MainPageResponse.getBestItem> getBestItem() {
         List<Item> bestItems = itemRepository.find10BestItem();
+        System.out.println("bestItems.size() : " + bestItems.size());
         return returnBestItem(bestItems);
     }
 
@@ -67,7 +68,7 @@ public class MainPageService {
                 item -> new MainPageResponse.ItemInfo(
                         item.getItemCode(),item.getCategory().getCategoryName(),
                         item.getItemImg_list().get(0).getImgUrl(),item.getTitle(), item.getCountry(),
-                        item.getProvince(),item.getCity(),item.getDuration(), item.getLike_num(), item.getStartingPrice())
+                        item.getCity(),item.getDuration(), item.getLike_num(), item.getStartPrice())
         ).collect(Collectors.toList())));
     }
 
@@ -77,7 +78,7 @@ public class MainPageService {
                 item -> new MainPageResponse.ItemInfo(
                         item.getItemCode(),item.getCategory().getCategoryName(),
                         item.getItemImg_list().get(0).getImgUrl(),item.getTitle(), item.getCountry(),
-                        item.getProvince(),item.getCity(),item.getDuration(), item.getLike_num(), item.getStartingPrice())
+                        item.getCity(),item.getDuration(), item.getLike_num(), item.getStartPrice())
         ).collect(Collectors.toList())));
     }
 
@@ -87,7 +88,7 @@ public class MainPageService {
                 item -> new MainPageResponse.ItemInfo(
                         item.getItemCode(),item.getCategory().getCategoryName(),
                         item.getItemImg_list().get(0).getImgUrl(),item.getTitle(), item.getCountry(),
-                        item.getProvince(),item.getCity(),item.getDuration(), item.getLike_num(), item.getStartingPrice())
+                        item.getCity(),item.getDuration(), item.getLike_num(), item.getStartPrice())
         ).collect(Collectors.toList())));
     }
 

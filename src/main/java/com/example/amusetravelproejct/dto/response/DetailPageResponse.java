@@ -45,8 +45,7 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getTicket {
-        private List<TicketInfo> ticketList;
-        private List<ProductPrice> priceList;
+        private List<TicketInfo> ticket;
     }
 
     @Data
@@ -55,6 +54,14 @@ public class DetailPageResponse {
     public static class TicketInfo {
         private String title;
         private String content;
+        private List<TicketPrice> priceList;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TicketPrice {
+        private String startDate;
         private String price;
     }
 
@@ -71,7 +78,7 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getContent {
-        private List<String> content;
+        private String content;
     }
 
     @Data
@@ -98,7 +105,7 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getOtherContent {
-        private List<String> content;
+        private String content;
     }
 
 

@@ -24,6 +24,10 @@ public class CategoryService {
         return categoryRepository.findById(id);
     }
 
+    public Optional<Category> getCategoryByName(String name) {
+        return categoryRepository.findByCategoryName(name);
+    }
+
     public Category createCategory(Category category) {
         return categoryRepository.save(category);
     }

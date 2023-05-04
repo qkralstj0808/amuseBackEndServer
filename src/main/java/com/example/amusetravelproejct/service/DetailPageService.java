@@ -27,7 +27,7 @@ public class DetailPageService {
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 
-        return new ResponseTemplate<>(new DetailPageResponse.getTitle(findItem.getCountry(),findItem.getProvince(),
+        return new ResponseTemplate<>(new DetailPageResponse.getTitle(findItem.getCountry(),findItem.getCity(),
                 findItem.getCity(), findItem.getTitle(), findItem.getRated()));
     }
 
@@ -58,11 +58,11 @@ public class DetailPageService {
         return new ResponseTemplate<>(new DetailPageResponse.getTicket(
                 findItem.getItemTickets().stream().map(itemTicket ->
                         new DetailPageResponse.TicketInfo(itemTicket.getTitle()
-                        ,itemTicket.getContent(),itemTicket.getPrice())).collect(Collectors.toList()),
-                findItem.getItemPrices().stream().map(itemPrice ->
-                        new DetailPageResponse.ProductPrice(
-                                itemPrice.getStartDate(),itemPrice.getEndDate(),itemPrice.getPrice())).collect(Collectors.toList())));
-
+                        ,itemTicket.getContent(),itemTicket.getItemTicketPrices().stream().map(
+                                itemTicketPrice -> new DetailPageResponse.TicketPrice(
+                                        itemTicketPrice.getStartDate(),itemTicketPrice.getPrice()
+                                )
+                        ).collect(Collectors.toList()))).collect(Collectors.toList()) ));
     }
 
     public ResponseTemplate<DetailPageResponse.getContent> getContent(Long product_id) {
@@ -70,9 +70,7 @@ public class DetailPageService {
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 
-        return new ResponseTemplate<>(new DetailPageResponse.getContent(findItem.getItemContents().stream().map(
-                itemContent -> itemContent.getContent()
-        ).collect(Collectors.toList())));
+        return new ResponseTemplate<>(new DetailPageResponse.getContent(findItem.getContent_1()));
     }
 
     public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(Long product_id) {
@@ -93,8 +91,6 @@ public class DetailPageService {
                 () -> new ResponseException(ResponseTemplateStatus.ITEM_NOT_FOUND)
         );
 
-        return new ResponseTemplate<>(new DetailPageResponse.getOtherContent(findItem.getItemOtherContents().stream().map(
-                itemOtherContent -> itemOtherContent.getContent()
-        ).collect(Collectors.toList())));
+        return new ResponseTemplate<>(new DetailPageResponse.getOtherContent(findItem.getContent_2()));
     }
 }

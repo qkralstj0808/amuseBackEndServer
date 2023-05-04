@@ -6,27 +6,24 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity(name = "payment_ticket")
+@Entity(name = "item_ticket_price")
 @Getter
 @Setter
-public class PaymentTicket {
+public class ItemTicketPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Date startDate;
-    private Long price;
+    private String startDate;
+    private String price;
 
     // payment_ticket과 item_ticket은 N:1 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "itemTicket")
     private ItemTicket itemTicket;
-
-    private Long count;
-    // payment_ticket과 payment_info는 N:1 관계
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_info_id")
-    private PaymentInfo paymentInfo;
-
-
+//
+//    // payment_ticket과 payment_info는 N:1 관계
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "payment_info_id")
+//    private PaymentInfo paymentInfo;
 }

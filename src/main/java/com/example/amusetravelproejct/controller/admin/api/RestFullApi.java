@@ -75,20 +75,9 @@ public class RestFullApi {
             default:
                 break;
         }
+        advertisement.setCategory(categoryService.getCategoryByName(adminAdvertisementRegisterDto.getAdCategory()).get());
 
-        switch (adminAdvertisementRegisterDto.getAdCategory()){
-            case "컨시어지 여행":
-                advertisement.setCategory(categoryService.getCategoryById(1L).get());
-                break;
-            case "아이돌봄 여행":
-                advertisement.setCategory(categoryService.getCategoryById(2L).get());
-                break;
-            case "어르신돌봄 여행":
-                advertisement.setCategory(categoryService.getCategoryById(3L).get());
-                break;
-            default:
-                break;
-        }
+
         AdminAdvertisement advertisementTemp = adminAdvertisementService.createAdvertisement(advertisement);
         return new ResponseTemplate<>(new AdvertisementPageResponse.advertisementRegister(advertisementTemp.getId(),
                 advertisementTemp.getAdvertisementTitle(), advertisementTemp.getAdvertisementStartDate(),
@@ -125,20 +114,7 @@ public class RestFullApi {
             default:
                 break;
         }
-
-        switch (adminAdvertisementRegisterDbDto.getAdCategory()){
-            case "컨시어지 여행":
-                advertisement.setCategory(categoryService.getCategoryById(1L).get());
-                break;
-            case "아이돌봄 여행":
-                advertisement.setCategory(categoryService.getCategoryById(2L).get());
-                break;
-            case "어르신돌봄 여행":
-                advertisement.setCategory(categoryService.getCategoryById(3L).get());
-                break;
-            default:
-                break;
-        }
+        advertisement.setCategory(categoryService.getCategoryByName(adminAdvertisementRegisterDbDto.getAdCategory()).get());
 
         AdminAdvertisement advertisementTemp = adminAdvertisementService.updateAdvertisement(advertisement);
         return new ResponseTemplate<>(new AdvertisementPageResponse.advertisementEdit(advertisementTemp.getId(),
@@ -166,7 +142,7 @@ public class RestFullApi {
     }
 
     @PostMapping("/product/create")
-    public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto){
+    public ResponseTemplate<List<String>> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto){
         CategoryService categoryService = new CategoryService(categoryRepository);
         ProductService productService = new ProductService(itemRepository);
         ItemImgService itemImgService = new ItemImgService(imgRepository,amazonS3Client);
@@ -179,15 +155,16 @@ public class RestFullApi {
 
         Item item = new Item();
         item = productService.saveItem(item);
+        List<String> imgUrl = new ArrayList<>();
 
         item.setItemCode(productRegisterDto.getProductId());
-        item.setCategory(categoryRepository.findByCategoryName(productRegisterDto.getCategory()).get());
+        item.setCategory(categoryService.getCategoryByName(productRegisterDto.getCategory()).get());
 
         item.setCountry(productRegisterDto.getLocation().getCountry());
         item.setCity(productRegisterDto.getLocation().getCity());
-        item.setItemIntroduce(productRegisterDto.getProductInfo());
+        item.setContent_1(productRegisterDto.getProductInfo());
 
-        item.setAddInfo(productRegisterDto.getExtraInfo());
+        item.setContent_2(productRegisterDto.getExtraInfo());
 
 
         List<String> imgUrls = new ArrayList<>();
@@ -197,7 +174,7 @@ public class RestFullApi {
             keys.add(productRegisterDto.getMainImg().get(i).getFileName());
         }
 
-        itemImgService.saveItemImgs(imgUrls, keys,item);
+        imgUrl = itemImgService.saveItemImgs(imgUrls, keys,item);
         productService.saveItem(item);
 
         List<ItemCourse> itemCourses = new ArrayList<>();
@@ -216,6 +193,6 @@ public class RestFullApi {
 
         item.setItemCourses(itemCourses);
 
-        return new ResponseTemplate<>("상품 등록 완료");
+        return new ResponseTemplate<>(imgUrl);
     }
 }
