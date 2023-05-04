@@ -56,8 +56,10 @@ public class MainPageResponse {
         private String imageUrl;
         private String title;
         private String country;
+        private String province;
         private String city;
-        private Long likeNum;
+        private Integer duration;
+        private Integer likeNum;
         private Long startPrice;
     }
 
