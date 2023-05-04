@@ -17,19 +17,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DetailPageService {
 
-    private final ItemRepository itemInforRepository;
+    private final ItemRepository itemRepository;
 
-    public ResponseTemplate<DetailPageResponse.getTitle> getTitle(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+    public ResponseTemplate<DetailPageResponse.getTitle> getTitle(Long item_id) {
+        Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
-        return new ResponseTemplate<>(new DetailPageResponse.getTitle(findItem.getCountry(),findItem.getCity(),
+        return new ResponseTemplate<>(new DetailPageResponse.getTitle(findItem.getCountry(),
                 findItem.getCity(), findItem.getTitle(), findItem.getRated()));
     }
 
-    public ResponseTemplate<DetailPageResponse.getIcon> getIcon(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+    public ResponseTemplate<DetailPageResponse.getIcon> getIcon(Long item_id) {
+        Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
@@ -38,8 +38,8 @@ public class DetailPageService {
         ).collect(Collectors.toList())));
     }
 
-    public ResponseTemplate<DetailPageResponse.getPicture> getPicture(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+    public ResponseTemplate<DetailPageResponse.getPicture> getPicture(Long item_id) {
+        Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
@@ -47,8 +47,8 @@ public class DetailPageService {
         itemImg.getImgUrl()).collect(Collectors.toList())));
     }
 
-    public ResponseTemplate<DetailPageResponse.getTicket> getTicket(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+    public ResponseTemplate<DetailPageResponse.getTicket> getTicket(Long item_id) {
+        Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
@@ -62,16 +62,16 @@ public class DetailPageService {
                         ).collect(Collectors.toList()))).collect(Collectors.toList()) ));
     }
 
-    public ResponseTemplate<DetailPageResponse.getContent> getContent(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+    public ResponseTemplate<DetailPageResponse.getContent> getContent(Long item_id) {
+        Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
         return new ResponseTemplate<>(new DetailPageResponse.getContent(findItem.getContent_1()));
     }
 
-    public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+    public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(Long item_id) {
+        Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
@@ -83,8 +83,8 @@ public class DetailPageService {
         ).collect(Collectors.toList())));
     }
 
-    public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(Long product_id) {
-        Item findItem = itemInforRepository.findById(product_id).orElseThrow(
+    public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(Long item_id) {
+        Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
