@@ -13,7 +13,6 @@ public class DetailPageResponse {
     @NoArgsConstructor
     public static class getTitle {
         private String country;
-        private String province;
         private String city;
         private String title;
         private Double rated;
