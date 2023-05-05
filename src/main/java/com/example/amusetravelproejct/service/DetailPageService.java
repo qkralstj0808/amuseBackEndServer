@@ -34,7 +34,7 @@ public class DetailPageService {
         );
 
         return new ResponseTemplate<>(new DetailPageResponse.getIcon(findItem.getItemIcon_list().stream().map(
-                itemIcon -> new DetailPageResponse.IconInfo(itemIcon.getIcon().getIcon(),itemIcon.getIcon().getText())
+                itemIcon -> new DetailPageResponse.IconInfo(itemIcon.getIcon(),itemIcon.getText())
         ).collect(Collectors.toList())));
     }
 
