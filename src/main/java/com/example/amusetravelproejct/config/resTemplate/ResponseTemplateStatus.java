@@ -43,7 +43,8 @@ public enum ResponseTemplateStatus {
     INCORRECT_NICKNAME(false, "닉네임 형식을 다시 한 번 확인해주세요", 4017),
     FAIL_WITHDRAW(false, "탈퇴에 실패하였습니다.", 4018),
     MODIFY_FAIL_INTRODUCTION(false, "한줄소개 변경에 실패하였습니다.", 4019),
-    ITEM_NOT_FOUND(false,"해당 상품은 존재하지 않습니다",4000),;
+    ITEM_NOT_FOUND(false,"해당 상품은 존재하지 않습니다",4000),
+    OUT_BOUND_PAGE(false,"페이지 범위를 벗어났습니다. 페이지는 1페이지부터 totalPage까지 입니다.",4001);
 
 
     private final boolean isSuccess;
