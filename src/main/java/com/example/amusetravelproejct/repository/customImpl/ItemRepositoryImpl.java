@@ -31,6 +31,15 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
     }
 
     @Override
+    public Long findItem(Long item_id) {
+        return jpaQueryFactory
+                .select(item.id)
+                .from(item)
+                .where(item.id.eq(item_id))
+                .fetchOne();
+    }
+
+    @Override
     public List<Item> find10BestItem() {
 
         return jpaQueryFactory.selectFrom(item)

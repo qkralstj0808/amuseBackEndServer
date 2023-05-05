@@ -2,13 +2,16 @@ package com.example.amusetravelproejct.service;
 
 import com.example.amusetravelproejct.config.resTemplate.*;
 import com.example.amusetravelproejct.domain.Item;
+import com.example.amusetravelproejct.domain.ItemCourse;
 import com.example.amusetravelproejct.dto.response.DetailPageResponse;
+import com.example.amusetravelproejct.repository.ItemCourseRepository;
 import com.example.amusetravelproejct.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 public class DetailPageService {
 
     private final ItemRepository itemRepository;
+    private final ItemCourseRepository itemCourseRepository;
 
     public ResponseTemplate<DetailPageResponse.getTitle> getTitle(Long item_id) {
         Item findItem = itemRepository.findById(item_id).orElseThrow(
@@ -71,11 +75,16 @@ public class DetailPageService {
     }
 
     public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(Long item_id) {
-        Item findItem = itemRepository.findById(item_id).orElseThrow(
-                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
-        );
+        Long findItem_id = itemRepository.findItem(item_id);
 
-        return new ResponseTemplate<>(new DetailPageResponse.getCourseContent(findItem.getItemCourses().stream().map(
+        if(findItem_id == null){
+            return new ResponseTemplate(ResponseTemplateStatus.ITEM_NOT_FOUND);
+        }
+
+
+        List<ItemCourse> itemCourseBySequence = itemCourseRepository.findItemCourseBySequence(item_id);
+
+        return new ResponseTemplate<>(new DetailPageResponse.getCourseContent(itemCourseBySequence.stream().map(
                 itemCourse -> new DetailPageResponse.CourseInfo(
                         itemCourse.getTitle(),itemCourse.getContent(),itemCourse.getSequenceId(),
                         itemCourse.getTimeCost(),itemCourse.getImageUrl(),itemCourse.getLatitude(),
