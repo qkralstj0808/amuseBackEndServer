@@ -70,7 +70,8 @@ public class MainPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ItemInfo {
-        private String productId;
+        private Long item_db_id;
+        private String product_code;
         private String category;
         private String imageUrl;
         private String title;

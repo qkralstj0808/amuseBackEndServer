@@ -108,7 +108,7 @@ public class MainPageService {
                     itemImg = item.getItemImg_list().get(0).getImgUrl();
                 }
 
-                itemInfo.add(new MainPageResponse.ItemInfo(item.getItemCode(),categoryName,
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),categoryName,
                         itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
                         item.getLike_num(),item.getStartPrice()));
 
@@ -143,7 +143,7 @@ public class MainPageService {
                     itemImg = item.getItemImg_list().get(0).getImgUrl();
                 }
 
-                itemInfo.add(new MainPageResponse.ItemInfo(item.getItemCode(),categoryName,
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),categoryName,
                         itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
                         item.getLike_num(),item.getStartPrice()));
 
