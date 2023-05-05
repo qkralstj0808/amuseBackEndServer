@@ -18,11 +18,15 @@ public class ItemIcon {
     @Column(name = "ItemIcon_ID")
     private Long id;
 
+    private String icon;
+    private String text;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "icon_id")
-    private Icon icon;
+//    @ManyToOne(fetch = LAZY)
+//    @JoinColumn(name = "icon_id")
+//    private Icon icon;
+
 }
