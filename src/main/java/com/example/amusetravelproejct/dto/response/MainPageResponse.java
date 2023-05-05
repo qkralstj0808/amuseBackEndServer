@@ -30,7 +30,26 @@ public class MainPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getItem {
+        private List<ItemInfo> items;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getBestItemPage {
         private List<ItemInfo> bestItems;
+        private Integer totalPage;
+        private Integer currentPage;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getCurrentItemPage {
+        private List<ItemInfo> currentItems;
+        private Integer totalPage;
+        private Integer currentPage;
     }
 
     @Data

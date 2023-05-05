@@ -16,5 +16,6 @@ public interface ItemRepositoryCustom {
 
     List<Item> find10CategoryCurrentItem(Long category_id);
 
-    Page<Item> findCategoryAllItemPage(Long category_id, Pageable pageable);
+    Page<Item> findCategoryBestItemPage(Long category_id, Pageable pageable);
+    Page<Item> findCategoryCurrentItemPage(Long category_id, Pageable pageable);
 }

@@ -13,6 +13,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.bytebuddy.asm.Advice;
 import org.hibernate.criterion.Projection;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -63,21 +64,50 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
     @Override
     public List<Item> find10CategoryCurrentItem(Long category_id) {
         return jpaQueryFactory.selectFrom(item)
-                .orderBy(item.createdDate.desc())
                 .where(item.category.id.eq(category_id))
+                .orderBy(item.createdDate.desc())
                 .offset(0)
                 .limit(10)
                 .fetch();
     }
 
     @Override
-    public Page<Item> findCategoryAllItemPage(Long category_id, Pageable pageable) {
-        QueryResults<Item> itemQueryResults = jpaQueryFactory.selectFrom(item)
+    public Page<Item> findCategoryBestItemPage(Long category_id, Pageable pageable) {
+        List<Item> content = jpaQueryFactory.selectFrom(item)
                 .orderBy(item.like_num.desc(), item.createdDate.desc())
                 .where(item.category.id.eq(category_id))
+                .orderBy(item.like_num.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
-        return null;
+                .fetch();
+
+        Long total = jpaQueryFactory
+                .select(item.count())
+                .from(item)
+                .where(item.category.id.eq(category_id))
+                .fetchOne();
+
+        return new PageImpl<>(content,pageable, total);
+
+    }
+
+    @Override
+    public Page<Item> findCategoryCurrentItemPage(Long category_id, Pageable pageable) {
+        List<Item> content = jpaQueryFactory.selectFrom(item)
+                .orderBy(item.like_num.desc(), item.createdDate.desc())
+                .where(item.category.id.eq(category_id))
+                .orderBy(item.createdDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = jpaQueryFactory
+                .select(item.count())
+                .from(item)
+                .where(item.category.id.eq(category_id))
+                .fetchOne();
+
+        return new PageImpl<>(content,pageable, total);
+
     }
 }
