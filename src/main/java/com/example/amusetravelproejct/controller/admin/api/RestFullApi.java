@@ -2,6 +2,7 @@ package com.example.amusetravelproejct.controller.admin.api;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
+import com.example.amusetravelproejct.controller.admin.UtilMethod;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDto;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDbDto;
 import com.example.amusetravelproejct.controller.admin.dto.ProductRegisterDto;
@@ -14,6 +15,7 @@ import com.example.amusetravelproejct.repository.*;
 import com.example.amusetravelproejct.repository.ItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -141,59 +143,69 @@ public class RestFullApi {
         return new ResponseTemplate<>(advertisementListResponse);
     }
 
+    @Transactional
     @PostMapping("/product/create")
-    public ResponseTemplate<List<String>> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto){
+    public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto){
         CategoryService categoryService = new CategoryService(categoryRepository);
         ProductService productService = new ProductService(itemRepository);
-        ItemImgService itemImgService = new ItemImgService(imgRepository,amazonS3Client);
+        ItemImgService itemImgService = new ItemImgService(imgRepository);
         PaymentTicketService paymentTicketService = new PaymentTicketService(paymentTicketRepository);
         ItemTicketService itemTicketService = new ItemTicketService(itemTicketRepository);
-        ItemCourseService itemCourseService = new ItemCourseService(itemCourseRepository);
+        ItemCourseService itemCourseService = new ItemCourseService(itemCourseRepository,amazonS3Client);
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
-        log.info(productRegisterDto.toString());
+        log.info(String.valueOf(productRegisterDto.getMainImg().size()));
 
 
         Item item = new Item();
         item = productService.saveItem(item);
-        List<String> imgUrl = new ArrayList<>();
 
         item.setItemCode(productRegisterDto.getProductId());
+        item.setTitle(productRegisterDto.getTitle());
         item.setCategory(categoryService.getCategoryByName(productRegisterDto.getCategory()).get());
-
         item.setCountry(productRegisterDto.getLocation().getCountry());
         item.setCity(productRegisterDto.getLocation().getCity());
-        item.setContent_1(productRegisterDto.getProductInfo());
-
+        item.setContent_1(productRegisterDto.getMainInfo());
         item.setContent_2(productRegisterDto.getExtraInfo());
 
 
-        List<String> imgUrls = new ArrayList<>();
-        List<String> keys = new ArrayList<>();
-        for (int i = 0; i < productRegisterDto.getMainImg().size(); i++){
-            imgUrls.add(productRegisterDto.getMainImg().get(i).getBase64Data());
-            keys.add(productRegisterDto.getMainImg().get(i).getFileName());
-        }
+        //ticket
 
-        imgUrl = itemImgService.saveItemImgs(imgUrls, keys,item);
-        productService.saveItem(item);
+
+
+
+        //course
+        for (int i = 0; i < productRegisterDto.getMainImg().size(); i++){
+            ItemImg itemImg = new ItemImg();
+            String url = utilMethod.getCourseImgUrl(productRegisterDto.getMainImg().get(i).getBase64Data(),
+                    productRegisterDto.getMainImg().get(i).getFileName());
+
+            itemImg.setImgUrl(url);
+            itemImg.setItem(item);
+            itemImgService.create(itemImg);
+        }
 
         List<ItemCourse> itemCourses = new ArrayList<>();
         for(int i = 0; i < productRegisterDto.getCourse().size(); i++){
             ItemCourse itemCourse = new ItemCourse();
             itemCourse.setItem(item);
             itemCourse.setTitle(productRegisterDto.getCourse().get(i).getTitle());
+            itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
             itemCourse.setContent(productRegisterDto.getCourse().get(i).getContent());
             itemCourse.setSequenceId(Long.valueOf(i));
-            itemCourse.setImageUrl(productRegisterDto.getCourse().get(i).getImageURL());
-            itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
 
+            String url = utilMethod.getCourseImgUrl(productRegisterDto.getCourse().get(i).getImage().getBase64Data(),
+                    productRegisterDto.getCourse().get(i).getImage().getFileName());
+
+            itemCourse.setImageUrl(url);
+            itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
             itemCourseService.saveItemCourse(itemCourse);
             itemCourses.add(itemCourse);
         }
 
-        item.setItemCourses(itemCourses);
+        productService.saveItem(item);
 
-        return new ResponseTemplate<>(imgUrl);
+        return new ResponseTemplate<>("상품 생성 완료");
     }
 
     @PostMapping("/category/register")
