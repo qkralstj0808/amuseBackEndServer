@@ -11,7 +11,9 @@ import java.util.Optional;
 public class CookieUtil {
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
+        System.out.println("CookieUtill 에서 getCookie 실행");
         Cookie[] cookies = request.getCookies();
+        System.out.println("cookies : " + cookies);
 
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {

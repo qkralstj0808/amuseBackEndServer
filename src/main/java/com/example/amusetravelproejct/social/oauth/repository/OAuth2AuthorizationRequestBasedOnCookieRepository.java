@@ -13,7 +13,7 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
     public final static String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public final static String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
     public final static String REFRESH_TOKEN = "refresh_token";
-    private final static int cookieExpireSeconds = 180;
+    private final static int cookieExpireSeconds = 18000;
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
@@ -30,7 +30,8 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
 
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
-
+        System.out.println("OAuth2AuthorizationRequestBasedOnCookieRepository 에서 saveAuthorizationRequest 진입");
+        System.out.println("authorizationRequest : " + authorizationRequest.getAuthorizationRequestUri() + "\n" +authorizationRequest.getAuthorizationUri());
         System.out.println("request : " + request);
         System.out.println("response : " + response);
         if (authorizationRequest == null) {
@@ -40,7 +41,6 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
             CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
             return;
         }
-
 
         CookieUtil.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, CookieUtil.serialize(authorizationRequest), cookieExpireSeconds);
         String redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);

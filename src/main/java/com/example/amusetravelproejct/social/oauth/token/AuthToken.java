@@ -1,10 +1,15 @@
 package com.example.amusetravelproejct.social.oauth.token;
 
+import com.example.amusetravelproejct.domain.UserRefreshToken;
+import com.example.amusetravelproejct.social.common.ApiResponse;
+import com.example.amusetravelproejct.social.oauth.entity.RoleType;
+import com.example.amusetravelproejct.social.utils.CookieUtil;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.servlet.http.Cookie;
 import java.security.Key;
 import java.util.Date;
 
@@ -46,10 +51,13 @@ public class AuthToken {
     }
 
     public boolean validate() {
-        return this.getTokenClaims() != null;
+        System.out.println("AuthToken 에서 validate() 실행");
+        Claims claims = this.getTokenClaims();
+        return claims != null;
     }
 
     public Claims getTokenClaims() {
+//        System.out.println("AuthToken 에서 getTokenClaims 실행");
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -62,6 +70,7 @@ public class AuthToken {
             log.info("Invalid JWT token.");
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT token.");
+            return e.getClaims();
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token.");
         } catch (IllegalArgumentException e) {
@@ -71,6 +80,7 @@ public class AuthToken {
     }
 
     public Claims getExpiredTokenClaims() {
+        System.out.println("AuthToken 에서 getExpiredTokenClaims 실행");
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)
