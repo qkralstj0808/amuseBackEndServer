@@ -28,4 +28,12 @@ public class ResponseTemplate<T> {
 
     }
 
+    //요청 실패시
+    public ResponseTemplate(ResponseTemplateStatus status) {
+        this.isSuccess = status.isSuccess();
+        this.message = status.getMessage();
+        this.code = status.getCode();
+
+    }
+
 }

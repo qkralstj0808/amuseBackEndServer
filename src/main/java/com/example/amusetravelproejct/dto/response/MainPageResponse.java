@@ -30,7 +30,26 @@ public class MainPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getItem {
+        private List<ItemInfo> items;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getBestItemPage {
         private List<ItemInfo> bestItems;
+        private Integer totalPage;
+        private Integer currentPage;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getCurrentItemPage {
+        private List<ItemInfo> currentItems;
+        private Integer totalPage;
+        private Integer currentPage;
     }
 
     @Data
@@ -51,7 +70,8 @@ public class MainPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ItemInfo {
-        private String productId;
+        private Long item_db_id;
+        private String product_code;
         private String category;
         private String imageUrl;
         private String title;

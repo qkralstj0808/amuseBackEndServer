@@ -18,51 +18,45 @@ public class DetailPageController {
     private final DetailPageService detailPageService;
 
     @GetMapping("/title")
-    public ResponseTemplate<DetailPageResponse.getTitle> getTitle(@PathVariable("id")  Long product_id) throws IOException, ResponseException {
+    public ResponseTemplate<DetailPageResponse.getTitle> getTitle(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
 //        Long user_id = jwtService.getmemberId();
-        ResponseTemplate<DetailPageResponse.getTitle> title = null;
-        try{
-            title = detailPageService.getTitle(product_id);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        return detailPageService.getTitle(item_id);
 
-        return title;
     }
 
     @GetMapping("/icon-info")
-    public ResponseTemplate<DetailPageResponse.getIcon> getIcon(@PathVariable("id")  Long product_id) throws IOException, ResponseException {
+    public ResponseTemplate<DetailPageResponse.getIcon> getIcon(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
 //        Long user_id = jwtService.getmemberId();
-        return detailPageService.getIcon(product_id);
+        return detailPageService.getIcon(item_id);
     }
 
     @GetMapping("/picture")
-    public ResponseTemplate<DetailPageResponse.getPicture> getPicture(@PathVariable("id")  Long product_id) throws IOException, ResponseException {
+    public ResponseTemplate<DetailPageResponse.getPicture> getPicture(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
 //        Long user_id = jwtService.getmemberId();
-        return detailPageService.getPicture(product_id);
+        return detailPageService.getPicture(item_id);
     }
 
     @GetMapping("/ticket-select")
-    public ResponseTemplate<DetailPageResponse.getTicket> getTicket(@PathVariable("id")  Long product_id) throws IOException, ResponseException {
+    public ResponseTemplate<DetailPageResponse.getTicket> getTicket(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
 //        Long user_id = jwtService.getmemberId();
-        return detailPageService.getTicket(product_id);
+        return detailPageService.getTicket(item_id);
     }
 
     @GetMapping("/product-intro")
-    public ResponseTemplate<DetailPageResponse.getContent> getContent(@PathVariable("id")  Long product_id) throws IOException, ResponseException {
+    public ResponseTemplate<DetailPageResponse.getContent> getContent(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
 //        Long user_id = jwtService.getmemberId();
-        return detailPageService.getContent(product_id);
+        return detailPageService.getContent(item_id);
     }
 
     @GetMapping("/course-intro")
-    public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(@PathVariable("id")  Long product_id) throws IOException, ResponseException {
+    public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
 //        Long user_id = jwtService.getmemberId();
-        return detailPageService.getCourseContent(product_id);
+        return detailPageService.getCourseContent(item_id);
     }
 
     @GetMapping("/other-info")
-    public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(@PathVariable("id")  Long product_id) throws IOException, ResponseException {
+    public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
 //        Long user_id = jwtService.getmemberId();
-        return detailPageService.getOtherContent(product_id);
+        return detailPageService.getOtherContent(item_id);
     }
 }
