@@ -211,4 +211,39 @@ public class RestFullApi {
         return new ResponseTemplate<>(new AdminPageResponse.categoryRegister(categoryTemp.getId(), categoryTemp.getCategoryName(), categoryTemp.getCreatedAdDate() , categoryTemp.getAdmin().getEmail()));
     }
 
+
+    @PostMapping("/category/detail")
+    public ResponseTemplate<AdminPageResponse.categoryDetailList> categoryDetail(@RequestBody AdminPageRequest.categoryDetail categoryDetailDto){
+        CategoryService categoryService = new CategoryService(categoryRepository);
+
+        Category category = categoryService.getCategoryById(categoryDetailDto.getId()).get();
+        int count = Math.toIntExact(categoryDetailDto.getLimit() > category.getItems().size() ? category.getItems().size() : categoryDetailDto.getLimit());
+        List<Item> items = category.getItems().subList(0, count);
+
+        List<AdminPageResponse.categoryDetail> categoryDetails = new ArrayList<>();
+        for(int i = 0; i < items.size(); i++){
+            Item item = items.get(i);
+            categoryDetails.add(new AdminPageResponse.categoryDetail(item.getId(),item.getItemCode(),item.getTitle(),item.getCreatedDate() ,item.getCreated_by(),item.getModifiedDate(),item.getUpdated_ad()));
+        }
+
+
+        return new ResponseTemplate<>(new AdminPageResponse.categoryDetailList(category.getCategoryName(),categoryDetails));
+    }
+
+    @GetMapping("/category")
+    public ResponseTemplate<List<AdminPageResponse.category>> category(){
+        CategoryService categoryService = new CategoryService(categoryRepository);
+        List<Category> categories = categoryService.getAllCategories();
+
+        List<AdminPageResponse.category> categoryList = new ArrayList<>();
+
+        for(int i = 0; i < categories.size(); i++){
+            Category category = categories.get(i);
+            System.out.println(category);
+            categoryList.add(new AdminPageResponse.category(category.getId(),category.getCategoryName(),category.getCreatedAdDate(),category.getAdmin().getEmail(), (long) category.getItems().size()));
+        }
+
+        return new ResponseTemplate<>(categoryList);
+    }
+
 }
