@@ -32,7 +32,7 @@ public class Item extends BaseEntity {
 
     // item와 category는 N:1 관계 ManyToOne
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category")
     private Category category;
 
     // item와 ItemImg 1:N 관계

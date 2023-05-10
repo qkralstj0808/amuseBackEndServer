@@ -56,6 +56,7 @@ public class MainPageService {
 
     public ResponseTemplate<?> getCategoryBestItem(Long category_id) {
         List<Item> categoryBestItems = itemRepository.find10CategoryBestItem(category_id);
+        System.out.println(categoryBestItems.size());
         return returnItem("best",categoryBestItems);
     }
 
