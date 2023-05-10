@@ -14,5 +14,12 @@ public class AdminPageRequest {
         private String createdAd;
     }
 
-
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class categoryDetail {
+        private Long id;
+        private Long offset;
+        private Long limit;
+    }
 }
