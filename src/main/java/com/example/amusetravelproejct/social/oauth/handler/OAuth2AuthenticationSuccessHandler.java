@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.ServletException;
@@ -80,10 +81,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 //        }
     }
 
+    @Transactional
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         System.out.println("\n\nOAuth2AuthenticationSuccessHandler 에서 determineTargetUrl");
-        System.out.println("request : " + request);
-        System.out.println("response : " + response);
         System.out.println("authentication : " + authentication);
 
         Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
@@ -96,26 +96,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-        System.out.println("targetUri : " + targetUrl);
 
         OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
-        System.out.println("authToken" + authToken);
 
         ProviderType providerType = ProviderType.valueOf(authToken.getAuthorizedClientRegistrationId().toUpperCase());
-        System.out.println("providerType : " + providerType);
 
         OidcUser user = ((OidcUser) authentication.getPrincipal());
-        System.out.println("user : " + user);
 
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        System.out.println("userInfo : " + userInfo);
 
         Collection<? extends GrantedAuthority> authorities = ((OidcUser) authentication.getPrincipal()).getAuthorities();
-        System.out.println("authorities"  + authorities);
 
         RoleType roleType = hasAuthority(authorities, RoleType.ADMIN.getCode()) ? RoleType.ADMIN : RoleType.USER;
-        System.out.println("hasAuthority(authorities, RoleType.ADMIN.getCode()) : " +hasAuthority(authorities, RoleType.ADMIN.getCode()) );
-        System.out.println("roleType : " + roleType);
 
         Date now = new Date();
         AuthToken accessToken = tokenProvider.createAuthToken(
@@ -123,7 +115,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 roleType.getCode(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
-        System.out.println("accessToken : " + accessToken.getToken());
 
         // refresh 토큰 설정
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
@@ -138,10 +129,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userInfo.getId());
         if (userRefreshToken != null) {
             userRefreshToken.setRefreshToken(refreshToken.getToken());
+
         } else {
             userRefreshToken = new UserRefreshToken(userInfo.getId(), refreshToken.getToken());
-            userRefreshTokenRepository.saveAndFlush(userRefreshToken);
         }
+        userRefreshTokenRepository.saveAndFlush(userRefreshToken);
 
         int cookieMaxAge = (int) refreshTokenExpiry / 60;
 
@@ -161,8 +153,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private boolean hasAuthority(Collection<? extends GrantedAuthority> authorities, String authority) {
         System.out.println("\n\nOAuth2AuthenticationSuccessHandler 에서 hasAuthority");
-        System.out.println("authorities : " + authorities);
-        System.out.println("authority : " + authority);
         if (authorities == null) {
             return false;
         }
