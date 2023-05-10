@@ -12,6 +12,7 @@ import com.example.amusetravelproejct.social.oauth.token.AuthToken;
 import com.example.amusetravelproejct.social.oauth.token.AuthTokenProvider;
 import com.example.amusetravelproejct.social.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.amusetravelproejct.social.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
@@ -53,7 +55,29 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         clearAuthenticationAttributes(request, response);
+//
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//
+//// Create JSON object with access token
+//        JSONObject tokenJson = new JSONObject();
+//        tokenJson.put("token", accessToken.getToken());
+//
+//// Write JSON object to response
+//        response.getWriter().write(tokenJson.toString());
+
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+//
+//        Cookie[] cookies1 = request.getCookies();
+//        System.out.println("\n\n지금부터 cookie가 있는지 알아보자");
+//        for(Cookie cookie : cookies1){
+//            System.out.println("getName : " + cookie.getName());
+//            System.out.println("getComment : " + cookie.getComment());
+//            System.out.println("getValue : " + cookie.getValue());
+//            System.out.println("getMaxAge : " + cookie.getMaxAge());
+//            System.out.println("getDomain : " + cookie.getDomain());
+//            System.out.println("\n");
+//        }
     }
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

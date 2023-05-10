@@ -41,7 +41,7 @@ public class AuthTokenProvider {
     }
 
     public Authentication getAuthentication(AuthToken authToken) {
-
+        System.out.println("AuthTokenProvider 에서 getAuthentication");
         if(authToken.validate()) {
 
             Claims claims = authToken.getTokenClaims();
