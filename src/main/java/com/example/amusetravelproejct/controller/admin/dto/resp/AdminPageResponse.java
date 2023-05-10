@@ -6,9 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.List;
 
-public class AdvertisementPageResponse {
+public class AdminPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -54,6 +53,16 @@ public class AdvertisementPageResponse {
         private String createdAd;
         private LocalDateTime updatedAdDate;
         private String updatedAd;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class categoryRegister {
+        private Long id;
+        private String categoryName;
+        private LocalDateTime createAt;
+        private String createdBy;
     }
 
 

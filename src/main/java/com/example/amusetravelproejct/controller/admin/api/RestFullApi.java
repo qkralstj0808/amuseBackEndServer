@@ -5,7 +5,8 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDto;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDbDto;
 import com.example.amusetravelproejct.controller.admin.dto.ProductRegisterDto;
-import com.example.amusetravelproejct.controller.admin.dto.resp.AdvertisementPageResponse;
+import com.example.amusetravelproejct.controller.admin.dto.req.AdminPageRequest;
+import com.example.amusetravelproejct.controller.admin.dto.resp.AdminPageResponse;
 import com.example.amusetravelproejct.controller.admin.service.*;
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.domain.person_enum.Adver;
@@ -13,7 +14,6 @@ import com.example.amusetravelproejct.repository.*;
 import com.example.amusetravelproejct.repository.ItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class RestFullApi {
 
 
     @PostMapping("/ad/register")
-    public ResponseTemplate<AdvertisementPageResponse.advertisementRegister> reqAdvertisementRegister(@RequestBody AdminAdvertisementRegisterDto adminAdvertisementRegisterDto){
+    public ResponseTemplate<AdminPageResponse.advertisementRegister> reqAdvertisementRegister(@RequestBody AdminAdvertisementRegisterDto adminAdvertisementRegisterDto){
 
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
         CategoryService categoryService = new CategoryService(categoryRepository);
@@ -79,14 +79,14 @@ public class RestFullApi {
 
 
         AdminAdvertisement advertisementTemp = adminAdvertisementService.createAdvertisement(advertisement);
-        return new ResponseTemplate<>(new AdvertisementPageResponse.advertisementRegister(advertisementTemp.getId(),
+        return new ResponseTemplate<>(new AdminPageResponse.advertisementRegister(advertisementTemp.getId(),
                 advertisementTemp.getAdvertisementTitle(), advertisementTemp.getAdvertisementStartDate(),
                 advertisementTemp.getAdvertisementEndDate(), advertisementTemp.getAdvertisementType().name(), advertisementTemp.getCategory().getCategoryName(),
                 advertisementTemp.getAdvertisementContent(), advertisementTemp.getCreatedAdDate(), advertisementTemp.getAdmin().getEmail()));
     }
 
     @PostMapping("/ad/edit")
-    public ResponseTemplate<AdvertisementPageResponse.advertisementEdit> reqAdvertisementEdit(@RequestBody AdminAdvertisementRegisterDbDto adminAdvertisementRegisterDbDto) {
+    public ResponseTemplate<AdminPageResponse.advertisementEdit> reqAdvertisementEdit(@RequestBody AdminAdvertisementRegisterDbDto adminAdvertisementRegisterDbDto) {
 
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
         CategoryService categoryService = new CategoryService(categoryRepository);
@@ -117,21 +117,21 @@ public class RestFullApi {
         advertisement.setCategory(categoryService.getCategoryByName(adminAdvertisementRegisterDbDto.getAdCategory()).get());
 
         AdminAdvertisement advertisementTemp = adminAdvertisementService.updateAdvertisement(advertisement);
-        return new ResponseTemplate<>(new AdvertisementPageResponse.advertisementEdit(advertisementTemp.getId(),
+        return new ResponseTemplate<>(new AdminPageResponse.advertisementEdit(advertisementTemp.getId(),
                 advertisementTemp.getAdvertisementTitle(), advertisementTemp.getAdvertisementStartDate(),
                 advertisementTemp.getAdvertisementEndDate(), advertisementTemp.getAdvertisementType().name(), advertisementTemp.getCategory().getCategoryName(),
                 advertisementTemp.getAdvertisementContent(), advertisementTemp.getModifiedDate(), advertisementTemp.getUpdateAdmin().getEmail()));
     }
 
     @GetMapping("/ad/getList")
-    public ResponseTemplate<List<AdvertisementPageResponse.advertisementList>> reqAdvertisementList(){
+    public ResponseTemplate<List<AdminPageResponse.advertisementList>> reqAdvertisementList(){
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
 
         List<AdminAdvertisement> advertisementList = adminAdvertisementService.getAllAdvertisements();
-        List<AdvertisementPageResponse.advertisementList> advertisementListResponse = new ArrayList<>();
+        List<AdminPageResponse.advertisementList> advertisementListResponse = new ArrayList<>();
 
         for (int i = 0; i < advertisementList.size(); i++){
-            advertisementListResponse.add(new AdvertisementPageResponse.advertisementList(advertisementList.get(i).getId(),
+            advertisementListResponse.add(new AdminPageResponse.advertisementList(advertisementList.get(i).getId(),
                     advertisementList.get(i).getAdvertisementTitle(), advertisementList.get(i).getAdvertisementStartDate(),
                     advertisementList.get(i).getAdvertisementEndDate(), advertisementList.get(i).getAdvertisementType().name(), advertisementList.get(i).getCategory().getCategoryName(),
                     advertisementList.get(i).getAdvertisementContent(), advertisementList.get(i).getCreatedAdDate(), advertisementList.get(i).getAdmin().getEmail(),advertisementList.get(i).getModifiedDate(),
@@ -195,4 +195,20 @@ public class RestFullApi {
 
         return new ResponseTemplate<>(imgUrl);
     }
+
+    @PostMapping("/category/register")
+    public ResponseTemplate<AdminPageResponse.categoryRegister> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
+        CategoryService categoryService = new CategoryService(categoryRepository);
+        AdminService adminService = new AdminService(adminRepository);
+
+        System.out.println(categoryRegisterDto.toString());
+
+        Category category = new Category();
+        category.setCategoryName(categoryRegisterDto.getCategoryName());
+        category.setAdmin(adminService.getAdminByEmail(categoryRegisterDto.getCreatedAd()).get());
+        Category categoryTemp = categoryService.createCategory(category);
+
+        return new ResponseTemplate<>(new AdminPageResponse.categoryRegister(categoryTemp.getId(), categoryTemp.getCategoryName(), categoryTemp.getCreatedAdDate() , categoryTemp.getAdmin().getEmail()));
+    }
+
 }
