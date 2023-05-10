@@ -1,10 +1,12 @@
 package com.example.amusetravelproejct.controller.admin.api;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDto;
 import com.example.amusetravelproejct.controller.admin.dto.AdminAdvertisementRegisterDbDto;
 import com.example.amusetravelproejct.controller.admin.dto.ProductRegisterDto;
-import com.example.amusetravelproejct.controller.admin.dto.resp.AdvertisementPageResponse;
+import com.example.amusetravelproejct.controller.admin.dto.req.AdminPageRequest;
+import com.example.amusetravelproejct.controller.admin.dto.resp.AdminPageResponse;
 import com.example.amusetravelproejct.controller.admin.service.*;
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.domain.person_enum.Adver;
@@ -22,7 +24,7 @@ import java.util.Optional;
 @RequestMapping("/test/api")
 @Slf4j
 public class RestFullApi {
-    private final ItemRepository itemInforRepository;
+    private final ItemRepository itemRepository;
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
     private final ItemCourseRepository itemCourseRepository;
@@ -35,9 +37,15 @@ public class RestFullApi {
     private final AdminAdvertisementRepository adminAdvertisementRepository;
     private final ItemCourseRepository courseRepository;
     private final ItemOtherContentRepository itemOtherContentRepository;
+    private final AmazonS3 amazonS3Client;
+
+
+
+
+
 
     @PostMapping("/ad/register")
-    public ResponseTemplate<AdvertisementPageResponse.advertisementRegister> reqAdvertisementRegister(@RequestBody AdminAdvertisementRegisterDto adminAdvertisementRegisterDto){
+    public ResponseTemplate<AdminPageResponse.advertisementRegister> reqAdvertisementRegister(@RequestBody AdminAdvertisementRegisterDto adminAdvertisementRegisterDto){
 
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
         CategoryService categoryService = new CategoryService(categoryRepository);
@@ -67,29 +75,18 @@ public class RestFullApi {
             default:
                 break;
         }
+        advertisement.setCategory(categoryService.getCategoryByName(adminAdvertisementRegisterDto.getAdCategory()).get());
 
-        switch (adminAdvertisementRegisterDto.getAdCategory()){
-            case "컨시어지 여행":
-                advertisement.setCategory(categoryService.getCategoryById(1L).get());
-                break;
-            case "아이돌봄 여행":
-                advertisement.setCategory(categoryService.getCategoryById(2L).get());
-                break;
-            case "어르신돌봄 여행":
-                advertisement.setCategory(categoryService.getCategoryById(3L).get());
-                break;
-            default:
-                break;
-        }
+
         AdminAdvertisement advertisementTemp = adminAdvertisementService.createAdvertisement(advertisement);
-        return new ResponseTemplate<>(new AdvertisementPageResponse.advertisementRegister(advertisementTemp.getId(),
+        return new ResponseTemplate<>(new AdminPageResponse.advertisementRegister(advertisementTemp.getId(),
                 advertisementTemp.getAdvertisementTitle(), advertisementTemp.getAdvertisementStartDate(),
                 advertisementTemp.getAdvertisementEndDate(), advertisementTemp.getAdvertisementType().name(), advertisementTemp.getCategory().getCategoryName(),
                 advertisementTemp.getAdvertisementContent(), advertisementTemp.getCreatedAdDate(), advertisementTemp.getAdmin().getEmail()));
     }
 
     @PostMapping("/ad/edit")
-    public ResponseTemplate<AdvertisementPageResponse.advertisementEdit> reqAdvertisementEdit(@RequestBody AdminAdvertisementRegisterDbDto adminAdvertisementRegisterDbDto) {
+    public ResponseTemplate<AdminPageResponse.advertisementEdit> reqAdvertisementEdit(@RequestBody AdminAdvertisementRegisterDbDto adminAdvertisementRegisterDbDto) {
 
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
         CategoryService categoryService = new CategoryService(categoryRepository);
@@ -117,37 +114,24 @@ public class RestFullApi {
             default:
                 break;
         }
-
-        switch (adminAdvertisementRegisterDbDto.getAdCategory()){
-            case "컨시어지 여행":
-                advertisement.setCategory(categoryService.getCategoryById(1L).get());
-                break;
-            case "아이돌봄 여행":
-                advertisement.setCategory(categoryService.getCategoryById(2L).get());
-                break;
-            case "어르신돌봄 여행":
-                advertisement.setCategory(categoryService.getCategoryById(3L).get());
-                break;
-            default:
-                break;
-        }
+        advertisement.setCategory(categoryService.getCategoryByName(adminAdvertisementRegisterDbDto.getAdCategory()).get());
 
         AdminAdvertisement advertisementTemp = adminAdvertisementService.updateAdvertisement(advertisement);
-        return new ResponseTemplate<>(new AdvertisementPageResponse.advertisementEdit(advertisementTemp.getId(),
+        return new ResponseTemplate<>(new AdminPageResponse.advertisementEdit(advertisementTemp.getId(),
                 advertisementTemp.getAdvertisementTitle(), advertisementTemp.getAdvertisementStartDate(),
                 advertisementTemp.getAdvertisementEndDate(), advertisementTemp.getAdvertisementType().name(), advertisementTemp.getCategory().getCategoryName(),
                 advertisementTemp.getAdvertisementContent(), advertisementTemp.getModifiedDate(), advertisementTemp.getUpdateAdmin().getEmail()));
     }
 
     @GetMapping("/ad/getList")
-    public ResponseTemplate<List<AdvertisementPageResponse.advertisementList>> reqAdvertisementList(){
+    public ResponseTemplate<List<AdminPageResponse.advertisementList>> reqAdvertisementList(){
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
 
         List<AdminAdvertisement> advertisementList = adminAdvertisementService.getAllAdvertisements();
-        List<AdvertisementPageResponse.advertisementList> advertisementListResponse = new ArrayList<>();
+        List<AdminPageResponse.advertisementList> advertisementListResponse = new ArrayList<>();
 
         for (int i = 0; i < advertisementList.size(); i++){
-            advertisementListResponse.add(new AdvertisementPageResponse.advertisementList(advertisementList.get(i).getId(),
+            advertisementListResponse.add(new AdminPageResponse.advertisementList(advertisementList.get(i).getId(),
                     advertisementList.get(i).getAdvertisementTitle(), advertisementList.get(i).getAdvertisementStartDate(),
                     advertisementList.get(i).getAdvertisementEndDate(), advertisementList.get(i).getAdvertisementType().name(), advertisementList.get(i).getCategory().getCategoryName(),
                     advertisementList.get(i).getAdvertisementContent(), advertisementList.get(i).getCreatedAdDate(), advertisementList.get(i).getAdmin().getEmail(),advertisementList.get(i).getModifiedDate(),
@@ -158,10 +142,10 @@ public class RestFullApi {
     }
 
     @PostMapping("/product/create")
-    public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto){
+    public ResponseTemplate<List<String>> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto){
         CategoryService categoryService = new CategoryService(categoryRepository);
-        ProductService productService = new ProductService(itemInforRepository);
-        ItemImgService itemImgService = new ItemImgService(imgRepository);
+        ProductService productService = new ProductService(itemRepository);
+        ItemImgService itemImgService = new ItemImgService(imgRepository,amazonS3Client);
         PaymentTicketService paymentTicketService = new PaymentTicketService(paymentTicketRepository);
         ItemTicketService itemTicketService = new ItemTicketService(itemTicketRepository);
         ItemCourseService itemCourseService = new ItemCourseService(itemCourseRepository);
@@ -171,9 +155,10 @@ public class RestFullApi {
 
         Item item = new Item();
         item = productService.saveItem(item);
+        List<String> imgUrl = new ArrayList<>();
 
         item.setItemCode(productRegisterDto.getProductId());
-        item.setCategory(categoryRepository.findByCategoryName(productRegisterDto.getCategory()).get());
+        item.setCategory(categoryService.getCategoryByName(productRegisterDto.getCategory()).get());
 
         item.setCountry(productRegisterDto.getLocation().getCountry());
         item.setCity(productRegisterDto.getLocation().getCity());
@@ -183,57 +168,14 @@ public class RestFullApi {
 
 
         List<String> imgUrls = new ArrayList<>();
+        List<String> keys = new ArrayList<>();
         for (int i = 0; i < productRegisterDto.getMainImg().size(); i++){
-            imgUrls.add(productRegisterDto.getMainImg().get(i).getImageURL());
+            imgUrls.add(productRegisterDto.getMainImg().get(i).getBase64Data());
+            keys.add(productRegisterDto.getMainImg().get(i).getFileName());
         }
-        itemImgService.saveItemImgs(imgUrls, item);
-//
-//
-//        for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
-//            ItemTicket itemTicket = new ItemTicket();
-//            itemTicket.setItem(item);
-//            for (int j = 0; j < productRegisterDto.getTicket().get(i).getPriceList().size(); j++) {
-//               PaymentTicket paymentTicket = new PaymentTicket();
-//               paymentTicket.setItemTicket(itemTicket);
-//               paymentTicket.setPrice(Long.getLong(productRegisterDto.getTicket().get(i).getPriceList().get(j).getPrice()));
-//               paymentTicket.setStartDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getStartDate());
-//               paymentTicket.setEndDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getEndDate());
-//               paymentTicketService.savePaymentTicket(paymentTicket);
-//            }
-//        }
 
-
-
-
-//        List<ItemTicket> itemTickets = new ArrayList<>();
-//
-//        for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
-//
-//            ItemTicket itemTicket = new ItemTicket();
-//            List<PaymentTicket> paymentTickets = new ArrayList<>();
-//
-//            itemTicket.setItem(item);
-//            itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
-//            itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
-//
-//            for (int j = 0; j < productRegisterDto.getTicket().get(i).getPriceList().size(); j++) {
-//               PaymentTicket paymentTicket = new PaymentTicket();
-//                paymentTicket.setItemTicket(itemTicket);
-//                paymentTicket.setPrice(Long.getLong(productRegisterDto.getTicket().get(i).getPriceList().get(j).getPrice()));
-//                paymentTicket.setStartDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getStartDate());
-//                paymentTicket.setEndDate(productRegisterDto.getTicket().get(i).getPriceList().get(j).getEndDate());
-//                paymentTickets.add(paymentTicketService.savePaymentTicket(paymentTicket));
-//            }
-//
-//            itemTicket.setPaymentTickets(paymentTickets);
-//            itemTickets.add(itemTicketService.saveItemTicket(itemTicket));
-//        }
-//
-//
-//        item.setItemTickets(itemTickets);
+        imgUrl = itemImgService.saveItemImgs(imgUrls, keys,item);
         productService.saveItem(item);
-
-
 
         List<ItemCourse> itemCourses = new ArrayList<>();
         for(int i = 0; i < productRegisterDto.getCourse().size(); i++){
@@ -251,6 +193,22 @@ public class RestFullApi {
 
         item.setItemCourses(itemCourses);
 
-        return new ResponseTemplate<>("상품 등록 완료");
+        return new ResponseTemplate<>(imgUrl);
     }
+
+    @PostMapping("/category/register")
+    public ResponseTemplate<AdminPageResponse.categoryRegister> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
+        CategoryService categoryService = new CategoryService(categoryRepository);
+        AdminService adminService = new AdminService(adminRepository);
+
+        System.out.println(categoryRegisterDto.toString());
+
+        Category category = new Category();
+        category.setCategoryName(categoryRegisterDto.getCategoryName());
+        category.setAdmin(adminService.getAdminByEmail(categoryRegisterDto.getCreatedAd()).get());
+        Category categoryTemp = categoryService.createCategory(category);
+
+        return new ResponseTemplate<>(new AdminPageResponse.categoryRegister(categoryTemp.getId(), categoryTemp.getCategoryName(), categoryTemp.getCreatedAdDate() , categoryTemp.getAdmin().getEmail()));
+    }
+
 }

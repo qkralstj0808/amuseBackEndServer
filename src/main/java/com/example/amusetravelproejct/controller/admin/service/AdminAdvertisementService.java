@@ -1,16 +1,10 @@
 package com.example.amusetravelproejct.controller.admin.service;
 
-import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
-import com.example.amusetravelproejct.controller.admin.dto.resp.AdvertisementPageResponse;
 import com.example.amusetravelproejct.domain.AdminAdvertisement;
 import com.example.amusetravelproejct.exception.ResourceNotFoundException;
 import com.example.amusetravelproejct.repository.AdminAdvertisementRepository;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

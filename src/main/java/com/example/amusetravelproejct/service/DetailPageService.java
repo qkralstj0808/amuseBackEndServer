@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DetailPageService {
 
+
     private final ItemRepository itemRepository;
     private final ItemCourseRepository itemCourseRepository;
 
@@ -32,6 +33,7 @@ public class DetailPageService {
                 findItem.getCity(), findItem.getTitle(), findItem.getRated()));
     }
 
+
     public ResponseTemplate<DetailPageResponse.getIcon> getIcon(Long item_id) {
         Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
@@ -42,6 +44,7 @@ public class DetailPageService {
         ).collect(Collectors.toList())));
     }
 
+
     public ResponseTemplate<DetailPageResponse.getPicture> getPicture(Long item_id) {
         Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
@@ -50,6 +53,7 @@ public class DetailPageService {
         return new ResponseTemplate<>(new DetailPageResponse.getPicture(findItem.getItemImg_list().stream().map(itemImg ->
         itemImg.getImgUrl()).collect(Collectors.toList())));
     }
+
 
     public ResponseTemplate<DetailPageResponse.getTicket> getTicket(Long item_id) {
         Item findItem = itemRepository.findById(item_id).orElseThrow(
@@ -66,6 +70,7 @@ public class DetailPageService {
                         ).collect(Collectors.toList()))).collect(Collectors.toList()) ));
     }
 
+
     public ResponseTemplate<DetailPageResponse.getContent> getContent(Long item_id) {
         Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
@@ -73,6 +78,7 @@ public class DetailPageService {
 
         return new ResponseTemplate<>(new DetailPageResponse.getContent(findItem.getContent_1()));
     }
+
 
     public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(Long item_id) {
         Long findItem_id = itemRepository.findItem(item_id);
@@ -91,6 +97,7 @@ public class DetailPageService {
                         itemCourse.getLongitude())
         ).collect(Collectors.toList())));
     }
+
 
     public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(Long item_id) {
         Item findItem = itemRepository.findById(item_id).orElseThrow(

@@ -8,12 +8,11 @@ import org.springframework.data.web.config.PageableHandlerMethodArgumentResolver
 
 @EnableJpaAuditing
 @SpringBootApplication
-
 public class Main {
+
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
-
     @Bean
     public PageableHandlerMethodArgumentResolverCustomizer customize() {
         return p -> {

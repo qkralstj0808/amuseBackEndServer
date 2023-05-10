@@ -43,31 +43,13 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemIcon> itemIcon_list = new ArrayList<>();
 
-
-//    // item과 Category는 N:1 관계
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "ITEM_CATEGORY_ID")
-//    private Category itemCategory;
-
-
     // item에는 여러개 티켓이 있다.
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemTicket> itemTickets = new ArrayList<>();
 
-    // item에는 여러개 itemprice가 있다.
-//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ItemPrice> itemPrices = new ArrayList<>();
-
-//    // 상품 상세 정보에서 상품 상세 내용에 여러가지 내용들이 들어갈 수 있다.
-//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ItemContent> itemContents = new ArrayList<>();
-
     // item와 item_course는 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemCourse> itemCourses = new ArrayList<>();
-
-//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ItemOtherContent> itemOtherContents = new ArrayList<>();
 
 
             // 위에는 상품 상페 페이지 api짜면서 새로 짠 코드입니다.

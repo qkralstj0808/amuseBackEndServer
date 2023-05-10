@@ -2,6 +2,7 @@ package com.example.amusetravelproejct.controller.admin.dto;
 
 import lombok.*;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 @Getter
@@ -32,8 +33,8 @@ public class ProductRegisterDto {
     @Setter
     @NoArgsConstructor
     static public class Image {
-        private String imageURL;
-
+        private String fileName;
+        private String base64Data;
         //생성자, Getter, Setter 생략
     }
     @Getter

@@ -26,7 +26,7 @@ out/
 !**/src/test/**/out/
 /src/main/resources/application.yml
 /src/main/resources/application.aws.yml
-/src/test
+/src/test/
 
 
 ### Eclipse ###
