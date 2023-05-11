@@ -39,6 +39,7 @@ public class RestFullApi {
     private final AdminAdvertisementRepository adminAdvertisementRepository;
     private final ItemCourseRepository courseRepository;
     private final ItemOtherContentRepository itemOtherContentRepository;
+    private final AlarmRepository alarmRepository;
     private final AmazonS3 amazonS3Client;
 
 
@@ -171,6 +172,19 @@ public class RestFullApi {
 
         //ticket
 
+        for (int i = 0; i < productRegisterDto.getTicket().size(); i++){
+            ItemTicket itemTicket = new ItemTicket();
+            itemTicket.setItem(item);
+            itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
+            itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
+
+            itemTicketService.saveItemTicket(itemTicket);
+        }
+
+
+
+
+
 
 
 
@@ -235,7 +249,7 @@ public class RestFullApi {
         List<AdminPageResponse.categoryDetail> categoryDetails = new ArrayList<>();
         for(int i = 0; i < items.size(); i++){
             Item item = items.get(i);
-            categoryDetails.add(new AdminPageResponse.categoryDetail(item.getId(),item.getItemCode(),item.getTitle(),item.getCreatedDate() ,item.getCreated_by(),item.getModifiedDate(),item.getUpdated_ad()));
+            categoryDetails.add(new AdminPageResponse.categoryDetail(item.getId(),item.getItemCode(),item.getTitle(),item.getCreatedDate() ,item.getAdmin().getEmail(),item.getModifiedDate(),item.getUpdateAdmin().getEmail()));
         }
 
 
@@ -256,6 +270,42 @@ public class RestFullApi {
         }
 
         return new ResponseTemplate<>(categoryList);
+    }
+
+    @PostMapping("/notice/register")
+    public ResponseTemplate<AdminPageResponse.noticeRegister> noticeRegister(@RequestBody AdminPageRequest.noticeRegister noticeRegisterDto){
+        AdminService adminService = new AdminService(adminRepository);
+        AlarmService alarmService = new AlarmService(alarmRepository);
+
+        Alarm alarm = new Alarm();
+
+        alarm.setTitle(noticeRegisterDto.getTitle());
+        alarm.setContent(noticeRegisterDto.getContent());
+        alarm.setAdmin(adminService.getAdminByEmail(noticeRegisterDto.getCreatedBy()).get());
+        alarm.setContent(noticeRegisterDto.getContent());
+
+        alarm = alarmService.saveAlarm(alarm).get();
+
+        return new ResponseTemplate<>(new AdminPageResponse.noticeRegister(alarm.getId(),alarm.getTitle(),alarm.getContent(),alarm.getCreatedAdDate(),alarm.getAdmin().getEmail()));
+    }
+
+    @PostMapping("/notice/edit")
+    public ResponseTemplate<AdminPageResponse.noticeEdit> noteiceEdit(@RequestBody AdminPageRequest.noticeEdit noticeEditDto){
+        AdminService adminService = new AdminService(adminRepository);
+        AlarmService alarmService = new AlarmService(alarmRepository);
+
+        log.info(noticeEditDto.toString());
+
+        Alarm alarm = alarmService.findAlarmById(noticeEditDto.getId()).get();
+
+        alarm.setTitle(noticeEditDto.getTitle());
+        alarm.setContent(noticeEditDto.getContent());
+        alarm.setUpdateAdmin(adminService.getAdminByEmail(noticeEditDto.getUpdatedBy()).get());
+        alarm.setContent(noticeEditDto.getContent());
+
+        alarm = alarmService.saveAlarm(alarm).get();
+
+        return new ResponseTemplate<>(new AdminPageResponse.noticeEdit(alarm.getId(),alarm.getTitle(),alarm.getContent(),alarm.getCreatedAdDate(),alarm.getAdmin().getEmail(),alarm.getModifiedDate(),alarm.getUpdateAdmin().getEmail()));
     }
 
 }

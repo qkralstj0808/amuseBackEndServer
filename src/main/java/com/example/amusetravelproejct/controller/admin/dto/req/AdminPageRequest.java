@@ -22,4 +22,26 @@ public class AdminPageRequest {
         private Long offset;
         private Long limit;
     }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class noticeRegister {
+        private String title;
+        private String content;
+        private String createdBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class noticeEdit{
+        private Long id;
+        private String title;
+        private String content;
+        private String updatedBy;
+    }
 }
+
+

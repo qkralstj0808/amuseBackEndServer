@@ -98,6 +98,34 @@ public class AdminPageResponse {
     }
 
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class noticeRegister {
+        private Long id;
+        private String title;
+        private String content;
+        private LocalDateTime createdAt;
+        private String createdBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class noticeEdit {
+        private Long id;
+        private String title;
+        private String content;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+    }
+
+
+
+
+
 
 
 

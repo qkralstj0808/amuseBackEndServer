@@ -29,13 +29,19 @@ public class Item extends BaseEntity {
     private String title;           // 상품 제목
     private String content_1;       // html을 String으로 바꾼 내용 1번째
     private String content_2;       // html을 String으로 바꾼 내용 2번째
-    private String created_by;
-    private String updated_ad;
+
     private Double rated;            // 모든 리뷰들 평점의 평균
     private Long startPrice;     // 많은 상품 가격 중 가장 싼 것
     private Integer duration;          // 기간 (2박 3일 에서 3)
     private Integer like_num;          // 좋아요 수
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin")
+    private Admin admin;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "update_admin")
+    private Admin updateAdmin;
 
     // item와 category는 N:1 관계 ManyToOne
     @ManyToOne(fetch = FetchType.LAZY)
