@@ -12,12 +12,8 @@ import javax.persistence.Id;
 @Getter
 @Setter
 public class Icon {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String icon;
-    private String text;
-
+    private String iconImgUrl;
 }

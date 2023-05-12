@@ -29,7 +29,7 @@ public class Item extends BaseEntity {
     private String city;            // 시 (강원도 까지만 하기로 했습니다!)
     private String title;           // 상품 제목
     private String content_1;       // html을 String으로 바꾼 내용 1번째
-    private String content_2;       // html을 String으로 바꾼 내용 2번째
+    private String content_2;       // html을 String으로 바꾼 내용 2번째 취소 내용
 
     private Double rated;            // 모든 리뷰들 평점의 평균
     private Long startPrice;     // 많은 상품 가격 중 가장 싼 것
@@ -48,9 +48,9 @@ public class Item extends BaseEntity {
     private Admin updateAdmin;
 
     // item와 category는 N:1 관계 ManyToOne
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category")
-    private Category category;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Category> category_list = new ArrayList<>();
 
     // item와 ItemImg 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)

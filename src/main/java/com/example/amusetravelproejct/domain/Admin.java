@@ -31,10 +31,10 @@ public class Admin {
     // admin과 admin_advertisement는 1:N 관계
 
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AdminAdvertisement> adminAdvertisements = new ArrayList<>();
+    private List<Advertisement> Advertisements = new ArrayList<>();
 
     @OneToMany(mappedBy = "updateAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AdminAdvertisement> adminAdvertisementUpdates = new ArrayList<>();
+    private List<Advertisement> AdvertisementUpdates = new ArrayList<>();
 
     // admin과 category는 1:N 관계
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)

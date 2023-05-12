@@ -15,7 +15,6 @@ public class SupervisorInfo {
 
     private String introduction;
 
-
     // supervisor_info와 iteminfo는 N:1 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
