@@ -1,7 +1,8 @@
-package com.example.amusetravelproejct.controller.admin.dto;
+package com.example.amusetravelproejct.controller.admin.dto.req;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,11 @@ public class ProductRegisterDto {
     private String mainInfo;
     private List<CourseDto> course;
     private String extraInfo;
+    private String admin;
+    private Long startPrice;
+    private Long duration;
+    private String startDate;
+    private String endDate;
 
     // Getter, Setter, Constructor 생략
     @Getter
@@ -66,11 +72,13 @@ public class ProductRegisterDto {
             @NoArgsConstructor
             @ToString
             public static class WeekdayPrices{
-                private String Monday;
-                private String Tuesday;
-                private String Wednesday;
-                private String Thursday;
-                private String Friday;
+                private String mon;
+                private String tue;
+                private String wed;
+                private String thu;
+                private String fri;
+                private String sat;
+                private String sun;
             }
 
             // Getter, Setter, Constructor 생략

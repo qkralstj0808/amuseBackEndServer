@@ -82,8 +82,8 @@ public class AdminPageResponse {
         private String title;
         private LocalDateTime createdAt;
         private String createdBy;
-        private LocalDateTime updatedAdDate;
-        private String updatedAd;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
     }
 
     @Data
@@ -123,10 +123,13 @@ public class AdminPageResponse {
     }
 
 
-
-
-
-
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class noticeList{
+        private Long noticeCount;
+        private List<noticeEdit> data;
+    }
 
 
 }

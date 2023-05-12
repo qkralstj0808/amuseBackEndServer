@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity(name = "item")
@@ -34,6 +35,9 @@ public class Item extends BaseEntity {
     private Long startPrice;     // 많은 상품 가격 중 가장 싼 것
     private Integer duration;          // 기간 (2박 3일 에서 3)
     private Integer like_num;          // 좋아요 수
+
+    private Date startDate;
+    private Date endDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin")
@@ -63,66 +67,5 @@ public class Item extends BaseEntity {
     // item와 item_course는 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemCourse> itemCourses = new ArrayList<>();
-
-
-            // 위에는 상품 상페 페이지 api짜면서 새로 짠 코드입니다.
-//------------------------------------------------------------------------------------------------------------------------------------------------------
-            // 밑에는 기존의 코드입니다. 기존의 코드도 나중에 쓸 수 있으니 그대로 놔 두시고 만약 밑에 있는 내용을 api 만들 때 쓰셨다면
-                    // 밑에 있는 거 지우시고 위에 작성해 주세여
-                    // 나중에 밑에 있는 코드는 다 지울 생각입니다.!
-
-    private Double Latitude;
-    private Double Longitude;
-    private Double mapTopLeftLatitude;          // 지도 왼쪽 위 - 위도
-    private Double mapTopLeftLongitude;         // 지도 왼쪽 위 - 경도
-    private Double mapBottomRightLatitude;      // 지도 오른쪽 아래 - 위도
-    private Double mapBottomRightLongitude;     // 지도 오른쪽 아래 - 경도
-
-
-//
-//    // item와 item_option은 1:N 관계
-//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ItemOption> itemOptions = new ArrayList<>();
-
-
-
-    // item와 item_ticket과 는 1:N 관계
-
-
-    // item와 estimate_contact는 1:N 관계
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EstimateContact> estimateContacts = new ArrayList<>();
-
-    // item와 item_price는 N:1 관계(수정)
-
-
-//    // item와 item_add_option는 1:N 관계
-//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ItemAddOption> itemAddOptions = new ArrayList<>();
-
-    // item와 item_estimation는 1:N 관계
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemReview> itemReviews = new ArrayList<>();
-
-    // item와 order_item는 1:N 관계
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems = new ArrayList<>();
-
-    // item와 like_item는 1:N 관계
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LikeItem> likeItems = new ArrayList<>();
-
-    // item와 paymentInfo는 1:N 관계
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PaymentInfo> paymentInfos = new ArrayList<>();
-
-    // item와 supervisor_info는 1:N 관계
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SupervisorInfo> supervisorInfos = new ArrayList<>();
-//
-//    // item와 item_introduction_image는 1:N 관계
-//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ItemIntroductionImage> itemIntroductionImages = new ArrayList<>();
-
 
 }

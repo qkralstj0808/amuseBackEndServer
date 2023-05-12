@@ -6,11 +6,15 @@ import lombok.AllArgsConstructor;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 @AllArgsConstructor
 public class UtilMethod {
     private AmazonS3 amazonS3Client;
     static String bucketName = "amuse-img";
+
+    public static SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
+
     public String getCourseImgUrl(String base64Img, String fileName) {
         // TODO
         // 멀티파트, base64로 받은 이미지 S3로 보내어 이미지 저장
@@ -29,4 +33,6 @@ public class UtilMethod {
 
         return s3Url;
     }
+
+
 }
