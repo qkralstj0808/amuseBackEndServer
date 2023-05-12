@@ -20,9 +20,9 @@ public class CategoryService {
     private final AdminRepository adminRepository;
 
 
-    public Optional<Category> getCategoryByName(String name) {
-        return categoryRepository.findByCategoryName(name);
-    }
+//    public Optional<Category> getCategoryByName(String name) {
+//        return categoryRepository.findByCategoryName(name);
+//    }
 
     public Category processCategoryRegister(AdminPageRequest.categoryRegister  categoryRegisterDto) {
         Category category = new Category();

@@ -11,7 +11,7 @@ import java.sql.Date;
 @Setter
 @NoArgsConstructor
 @ToString
-public class AdvertisementRegisterDto {
+public class AdminAdvertisementRegisterDto {
     private String title;
     private Date startDate;
     private Date endDate;

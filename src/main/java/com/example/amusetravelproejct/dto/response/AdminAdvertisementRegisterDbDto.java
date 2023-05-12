@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AdvertisementRegisterDbDto {
+public class AdminAdvertisementRegisterDbDto {
     private Long id;
     private String title;
     private Date startDate;

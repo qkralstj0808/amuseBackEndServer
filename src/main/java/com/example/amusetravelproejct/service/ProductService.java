@@ -35,9 +35,9 @@ public class ProductService {
     }
 
     //Category
-    public Optional<Category> getCategoryByName(String name) {
-        return Optional.ofNullable(categoryRepository.findByCategoryName(name).orElseThrow(() -> new EntityNotFoundException("Category not found")));
-    }
+//    public Optional<Category> getCategoryByName(String name) {
+//        return Optional.ofNullable(categoryRepository.findByCategoryName(name).orElseThrow(() -> new EntityNotFoundException("Category not found")));
+//    }
 
 
 

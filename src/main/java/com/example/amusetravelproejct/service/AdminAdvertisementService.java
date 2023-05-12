@@ -30,7 +30,7 @@ public class AdminAdvertisementService {
         advertisement.setStartDate(Date.valueOf(adminAdvertisementRegisterDto.getStartDate()));
         advertisement.setEndDate(Date.valueOf(adminAdvertisementRegisterDto.getEndDate()));
         advertisement.setAdmin(adminService.getAdminByEmail(adminAdvertisementRegisterDto.getCreatedBy()).get());
-        advertisement.setCategory(categoryService.getCategoryByName(adminAdvertisementRegisterDto.getAdCategory()).get());
+//        advertisement.setCategory(categoryService.getCategoryByName(adminAdvertisementRegisterDto.getAdCategory()).get());
         advertisement.setPcBannerUrl(utilMethod.getImgUrl(adminAdvertisementRegisterDto.getPcBannerBase64(), adminAdvertisementRegisterDto.getPcBannerFileName()));
         advertisement.setMobileBannerUrl(utilMethod.getImgUrl(adminAdvertisementRegisterDto.getMobileBannerBase64(), adminAdvertisementRegisterDto.getMobileBannerFileName()));
         advertisement.setPcBannerLink(adminAdvertisementRegisterDto.getPcBannerLink());
@@ -64,7 +64,7 @@ public class AdminAdvertisementService {
         advertisement.setStartDate(Date.valueOf(advertisementEditDto.getStartDate()));
         advertisement.setEndDate(Date.valueOf(advertisementEditDto.getEndDate()));
         advertisement.setAdmin(adminService.getAdminByEmail(advertisementEditDto.getCreatedBy()).get());
-        advertisement.setCategory(categoryService.getCategoryByName(advertisementEditDto.getAdCategory()).get());
+//        advertisement.setCategory(categoryService.getCategoryByName(advertisementEditDto.getAdCategory()).get());
         advertisement.setPcBannerUrl(utilMethod.getImgUrl(advertisementEditDto.getPcBannerBase64(), advertisementEditDto.getPcBannerFileName()));
         advertisement.setMobileBannerUrl(utilMethod.getImgUrl(advertisementEditDto.getMobileBannerBase64(), advertisementEditDto.getMobileBannerFileName()));
         advertisement.setPcBannerLink(advertisementEditDto.getPcBannerLink());
