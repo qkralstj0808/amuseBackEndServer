@@ -65,7 +65,7 @@ public class DetailPageService {
                         new DetailPageResponse.TicketInfo(itemTicket.getTitle()
                         ,itemTicket.getContent(),itemTicket.getItemTicketPrices().stream().map(
                                 itemTicketPrice -> new DetailPageResponse.TicketPrice(
-                                        itemTicketPrice.getStartDate(),itemTicketPrice.getPrice()
+                                        itemTicketPrice.getStartDate().toString(),itemTicketPrice.getPrice().toString()
                                 )
                         ).collect(Collectors.toList()))).collect(Collectors.toList()) ));
     }
