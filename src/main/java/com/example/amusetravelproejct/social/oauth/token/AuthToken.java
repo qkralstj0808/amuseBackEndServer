@@ -1,15 +1,10 @@
 package com.example.amusetravelproejct.social.oauth.token;
 
-import com.example.amusetravelproejct.domain.UserRefreshToken;
-import com.example.amusetravelproejct.social.common.ApiResponse;
-import com.example.amusetravelproejct.social.oauth.entity.RoleType;
-import com.example.amusetravelproejct.social.utils.CookieUtil;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.Cookie;
 import java.security.Key;
 import java.util.Date;
 
@@ -51,9 +46,7 @@ public class AuthToken {
     }
 
     public boolean validate() {
-        System.out.println("AuthToken 에서 validate() 실행");
-        Claims claims = this.getTokenClaims();
-        return claims != null;
+        return this.getTokenClaims() != null;
     }
 
     public Claims getTokenClaims() {

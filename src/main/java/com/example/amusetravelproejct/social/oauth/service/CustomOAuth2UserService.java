@@ -9,6 +9,7 @@ import com.example.amusetravelproejct.social.oauth.exception.OAuthProviderMissMa
 import com.example.amusetravelproejct.social.oauth.info.OAuth2UserInfo;
 import com.example.amusetravelproejct.social.oauth.info.OAuth2UserInfoFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
@@ -31,10 +33,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User user = super.loadUser(userRequest);
 
         try {
-            System.out.println("\n\nCustomOauth2UserService에서 loadUser 함수가 실행이 되었다.");
-            System.out.println(userRequest.getClientRegistration());
-            System.out.println(userRequest.getAccessToken());
-            System.out.println(userRequest.getAdditionalParameters());
+            log.info("\n\nCustomOauth2UserService에서 loadUser 함수가 실행이 되었다.");
+            log.info(String.valueOf(userRequest.getClientRegistration()));
+            log.info(String.valueOf(userRequest.getAccessToken()));
+            log.info(userRequest.getAdditionalParameters().toString());
 
             return this.process(userRequest, user);
         } catch (AuthenticationException ex) {
@@ -46,22 +48,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
-        System.out.println("\n\nCustomOAuth2UserService에서 process 메서드에 진입했습니다.");
+        log.info("\n\nCustomOAuth2UserService에서 process 메서드에 진입했습니다.");
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        System.out.println("userInfo.getId() : " + userInfo.getId());
+        log.info("userInfo.getId() : " + userInfo.getId());
 
         User savedUser = userRepository.findByUserId(userInfo.getId());
 
         // 데이터베이스에 저장되어 있는 user라면?
         if (savedUser != null) {
 
-            System.out.println("데이터베이스에 있는 유저입니다.");
+            log.info("데이터베이스에 있는 유저입니다.");
             // 카카오로 회원가입 먼저 했는데 구글로 로그인할려고 한다면?
             if (providerType != savedUser.getProviderType()) {
-                System.out.println("다른 계정으로 먼저 로그인이 되었습니다.");
-                System.out.println( "Looks like you're signed up with " + providerType +
+                log.info("다른 계정으로 먼저 로그인이 되었습니다.");
+                log.info( "Looks like you're signed up with " + providerType +
                         " account. Please use your " + savedUser.getProviderType() + " account to login.");
 
                 throw new OAuthProviderMissMatchException(
@@ -72,8 +74,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             updateUser(savedUser, userInfo);
         } else {
-            System.out.println("CustomOAuth2UserService에 process 메서드 안에 있다.");
-            System.out.println("데이터베이스에 없는 유저라서 create한다.");
+            log.info("CustomOAuth2UserService에 process 메서드 안에 있다.");
+            log.info("데이터베이스에 없는 유저라서 create한다.");
             savedUser = createUser(userInfo, providerType);
         }
 

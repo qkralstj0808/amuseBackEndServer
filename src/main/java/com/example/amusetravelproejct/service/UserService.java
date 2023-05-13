@@ -1,4 +1,4 @@
-package com.example.amusetravelproejct.social.api.service;
+package com.example.amusetravelproejct.service;
 
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.repository.UserRepository;

@@ -1,7 +1,7 @@
 package com.example.amusetravelproejct.social.oauth.handler;
 
 import com.example.amusetravelproejct.domain.UserRefreshToken;
-import com.example.amusetravelproejct.social.api.repository.user.UserRefreshTokenRepository;
+import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
 import com.example.amusetravelproejct.social.oauth.entity.ProviderType;
 import com.example.amusetravelproejct.social.oauth.entity.RoleType;
@@ -10,9 +10,9 @@ import com.example.amusetravelproejct.social.oauth.info.OAuth2UserInfoFactory;
 import com.example.amusetravelproejct.social.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.example.amusetravelproejct.social.oauth.token.AuthToken;
 import com.example.amusetravelproejct.social.oauth.token.AuthTokenProvider;
-import com.example.amusetravelproejct.social.utils.CookieUtil;
+import com.example.amusetravelproejct.config.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import static com.example.amusetravelproejct.social.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
@@ -38,6 +37,7 @@ import static com.example.amusetravelproejct.social.oauth.repository.OAuth2Autho
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final AuthTokenProvider tokenProvider;
@@ -47,49 +47,27 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        System.out.println("\n\nOAuth2AuthenticationSuccessHandler 에서 onAuthenticationSuccess");
+        log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 onAuthenticationSuccess");
         String targetUrl = determineTargetUrl(request, response, authentication);
 
         if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+            log.debug("response가 committed 되어서 해당 redirect로 못감 : " + targetUrl);
             return;
         }
 
         clearAuthenticationAttributes(request, response);
-//
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//
-//// Create JSON object with access token
-//        JSONObject tokenJson = new JSONObject();
-//        tokenJson.put("token", accessToken.getToken());
-//
-//// Write JSON object to response
-//        response.getWriter().write(tokenJson.toString());
-
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
-//
-//        Cookie[] cookies1 = request.getCookies();
-//        System.out.println("\n\n지금부터 cookie가 있는지 알아보자");
-//        for(Cookie cookie : cookies1){
-//            System.out.println("getName : " + cookie.getName());
-//            System.out.println("getComment : " + cookie.getComment());
-//            System.out.println("getValue : " + cookie.getValue());
-//            System.out.println("getMaxAge : " + cookie.getMaxAge());
-//            System.out.println("getDomain : " + cookie.getDomain());
-//            System.out.println("\n");
-//        }
     }
 
     @Transactional
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        System.out.println("\n\nOAuth2AuthenticationSuccessHandler 에서 determineTargetUrl");
-        System.out.println("authentication : " + authentication);
+        log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 determineTargetUrl");
+        log.info("authentication : " + authentication);
 
         Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
-        System.out.println("redirectUri : " + redirectUri);
+        log.info("redirectUri : " + redirectUri);
 
         if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
             throw new IllegalArgumentException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
@@ -123,16 +101,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 appProperties.getAuth().getTokenSecret(),
                 new Date(now.getTime() + refreshTokenExpiry)
         );
-        System.out.println("refreshToken : " + refreshToken.getToken());
+        log.info("refreshToken : " + refreshToken.getToken());
 
         // refresh token db에 저장.
         UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userInfo.getId());
+
         if (userRefreshToken != null) {
             userRefreshToken.setRefreshToken(refreshToken.getToken());
-
         } else {
             userRefreshToken = new UserRefreshToken(userInfo.getId(), refreshToken.getToken());
         }
+
         userRefreshTokenRepository.saveAndFlush(userRefreshToken);
 
         int cookieMaxAge = (int) refreshTokenExpiry / 60;
@@ -147,12 +126,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
         super.clearAuthenticationAttributes(request);
-        System.out.println("\n\nOAuth2AuthenticationSuccessHandler 에서 clearAuthenticationAttributes");
+        log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 clearAuthenticationAttributes");
         authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
     }
 
     private boolean hasAuthority(Collection<? extends GrantedAuthority> authorities, String authority) {
-        System.out.println("\n\nOAuth2AuthenticationSuccessHandler 에서 hasAuthority");
+        log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 hasAuthority");
         if (authorities == null) {
             return false;
         }
@@ -166,7 +145,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     private boolean isAuthorizedRedirectUri(String uri) {
-        System.out.println("\n\nOAuth2AuthenticationSuccessHandler 에서 isAuthorizedRedirectUri 진입");
+        log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 isAuthorizedRedirectUri 진입");
         URI clientRedirectUri = URI.create(uri);
 
         return appProperties.getOauth2().getAuthorizedRedirectUris()

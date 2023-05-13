@@ -1,4 +1,4 @@
-package com.example.amusetravelproejct.social.api.entity.auth;
+package com.example.amusetravelproejct.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthReqModel {
+public class AuthRequest {
     private String id;
     private String password;
 }

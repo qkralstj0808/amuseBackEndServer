@@ -1,4 +1,4 @@
-package com.example.amusetravelproejct.social.api.repository.user;
+package com.example.amusetravelproejct.repository;
 
 import com.example.amusetravelproejct.domain.UserRefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
