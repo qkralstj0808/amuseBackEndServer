@@ -13,7 +13,6 @@ public class LikeItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     // iteminfo와 like_item는 1:N 관계
     @ManyToOne
     @JoinColumn(name = "tiem_id")

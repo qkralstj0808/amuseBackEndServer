@@ -19,23 +19,11 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String categoryName;
-
-    @CreatedDate
-    private LocalDateTime createdAdDate;
-
-    @LastModifiedDate
-    private LocalDateTime modifiedDate;
-
-    // category와 iteminfo는 1:N 관계
-     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-     private List<Item> items = new ArrayList<>();
-
-     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-     private List<AdminAdvertisement> adminAdvertisements = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin")
-    private Admin admin;
+    @JoinColumn(name = "item")
+    private Item item;
+
+    private String hash_tag;
 
 }

@@ -1,10 +1,10 @@
-package com.example.amusetravelproejct.controller.admin.dto.req;
+package com.example.amusetravelproejct.dto.request;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 @Getter
 @Setter

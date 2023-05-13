@@ -38,10 +38,11 @@ public class DetailPageService {
         Item findItem = itemRepository.findById(item_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
-
-        return new ResponseTemplate<>(new DetailPageResponse.getIcon(findItem.getItemIcon_list().stream().map(
-                itemIcon -> new DetailPageResponse.IconInfo(itemIcon.getIcon(),itemIcon.getText())
-        ).collect(Collectors.toList())));
+        return null;
+//
+//        return new ResponseTemplate<>(new DetailPageResponse.getIcon(findItem.getItemIcon_list().stream().map(
+//                itemIcon -> new DetailPageResponse.IconInfo(itemIcon.getIcon(),itemIcon.getText())
+//        ).collect(Collectors.toList())));
     }
 
 

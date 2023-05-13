@@ -15,9 +15,7 @@ public class ItemImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String imgUrl;
-
 
   // img와 iteminfo는 N:1 관계
     @ManyToOne(fetch = LAZY)

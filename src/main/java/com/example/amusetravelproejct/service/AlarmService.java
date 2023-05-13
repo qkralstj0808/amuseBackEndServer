@@ -1,4 +1,4 @@
-package com.example.amusetravelproejct.controller.admin.service;
+package com.example.amusetravelproejct.service;
 
 import com.example.amusetravelproejct.domain.Alarm;
 import com.example.amusetravelproejct.repository.AlarmRepository;

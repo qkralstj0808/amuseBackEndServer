@@ -18,25 +18,30 @@ import java.time.LocalDateTime;
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
 @Setter
-public class AdminAdvertisement {
+public class Advertisement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String advertisementTitle;
-    private Adver advertisementType;
+    private String Title;
 
     @Column(columnDefinition = "TEXT")
-    private String advertisementContent;
+    private String Content;
 
-    private Date advertisementStartDate;
-    private Date advertisementEndDate;
+    private Date StartDate;
+    private Date EndDate;
+
+    private String PcBannerUrl;
+    private String PcBannerLink;
+
+    private String MobileBannerUrl;
+    private String MobileBannerLink;
 
     @CreatedDate
-    private LocalDateTime createdAdDate;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime modifiedDate;
+    private LocalDateTime modifiedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin")

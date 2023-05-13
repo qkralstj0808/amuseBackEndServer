@@ -13,7 +13,6 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     // order와 order_item은 N:1 관계
     @ManyToOne
     @JoinColumn(name = "item_id")

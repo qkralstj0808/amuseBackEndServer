@@ -39,11 +39,7 @@ public class Alarm {
     @JoinColumn(name = "updateAdmin")
     private Admin updateAdmin;
 
-
-
     // alarm과 user_alarm는 1:N 관계
     @OneToMany(mappedBy = "alarm", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAlarm> userAlarms = new ArrayList<>();
-
-
 }

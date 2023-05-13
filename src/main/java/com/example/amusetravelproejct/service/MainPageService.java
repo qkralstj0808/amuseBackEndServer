@@ -35,10 +35,10 @@ public class MainPageService {
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
         List<Category> categories = categoryRepository.findAll();
-
-        return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(
-                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getCategoryName())
-        ).collect(Collectors.toList())));
+        return null;
+//        return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(
+//                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getCategoryName())
+//        ).collect(Collectors.toList())));
     }
 
     public ResponseTemplate<?> getBestItem() {
@@ -99,10 +99,10 @@ public class MainPageService {
                 String categoryName = null;
                 String itemImg = null;
 
-                // category가 있다면
-                if(item.getCategory() != null){
-                    categoryName = item.getCategory().getCategoryName();
-                }
+//                // category가 있다면
+//                if(item.getCategory() != null){
+//                    categoryName = item.getCategory().getCategoryName();
+//                }
 
                 // img가 하나라도 있다면
                 if(item.getItemImg_list().size() != 0){
@@ -134,10 +134,10 @@ public class MainPageService {
                 String categoryName = null;
                 String itemImg = null;
 
-                // category가 있다면
-                if(item.getCategory() != null){
-                    categoryName = item.getCategory().getCategoryName();
-                }
+//                // category가 있다면
+//                if(item.getCategory() != null){
+//                    categoryName = item.getCategory().getCategoryName();
+//                }
 
                 // img가 하나라도 있다면
                 if(item.getItemImg_list().size() != 0){
