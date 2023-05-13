@@ -1,9 +1,8 @@
 package com.example.amusetravelproejct.config.security;
 
 import com.example.amusetravelproejct.config.properties.CorsProperties;
-import com.example.amusetravelproejct.social.api.repository.user.UserRefreshTokenRepository;
+import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
-import com.example.amusetravelproejct.social.oauth.entity.RoleType;
 import com.example.amusetravelproejct.social.oauth.exception.RestAuthenticationEntryPoint;
 import com.example.amusetravelproejct.social.oauth.filter.TokenAuthenticationFilter;
 import com.example.amusetravelproejct.social.oauth.handler.OAuth2AuthenticationFailureHandler;
@@ -20,7 +19,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,9 +27,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Base64;
 
 @Configuration
 @RequiredArgsConstructor

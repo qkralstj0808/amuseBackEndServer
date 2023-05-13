@@ -1,16 +1,16 @@
 package com.example.amusetravelproejct.controller;
 
-import com.example.amusetravelproejct.social.api.entity.auth.AuthReqModel;
+import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
-import com.example.amusetravelproejct.social.api.repository.user.UserRefreshTokenRepository;
+import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.social.common.ApiResponse;
 import com.example.amusetravelproejct.config.properties.AppProperties;
 import com.example.amusetravelproejct.social.oauth.entity.RoleType;
 import com.example.amusetravelproejct.social.oauth.entity.UserPrincipal;
 import com.example.amusetravelproejct.social.oauth.token.AuthToken;
 import com.example.amusetravelproejct.social.oauth.token.AuthTokenProvider;
-import com.example.amusetravelproejct.social.utils.CookieUtil;
-import com.example.amusetravelproejct.social.utils.HeaderUtil;
+import com.example.amusetravelproejct.config.util.CookieUtil;
+import com.example.amusetravelproejct.config.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,7 +41,7 @@ public class AuthController {
     public ApiResponse login(
             HttpServletRequest request,
             HttpServletResponse response,
-            @RequestBody AuthReqModel authReqModel
+            @RequestBody AuthRequest authRequest
     ) {
         System.out.println("\n\nAuthController에서 /login api 진입");
         /*
@@ -52,8 +52,8 @@ public class AuthController {
          */
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authReqModel.getId(),
-                        authReqModel.getPassword()
+                        authRequest.getId(),
+                        authRequest.getPassword()
                 )
         );
 
@@ -63,7 +63,7 @@ public class AuthController {
             이렇게 함으로써 애플리케이션 내에서 로그인한 사용자의 정보를 언제든지 접근하고 활용할 수 있게 됩니다.
             또한, 이 정보는 필요한 경우 Spring Security에서 제공하는 SecurityExpression 등을 이용하여 인가 처리에 활용될 수도 있습니다.
          */
-        String userId = authReqModel.getId();
+        String userId = authRequest.getId();
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
 

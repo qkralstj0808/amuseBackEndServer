@@ -61,62 +61,66 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
     @Override
     public List<Item> find10CategoryBestItem(Long category_id) {
-        return jpaQueryFactory.select(item)
-                .from(item)
-                .where(item.category.id.eq(category_id))
-                .orderBy(item.like_num.desc())
-                .offset(0)
-                .limit(10)
-                .fetch();
+//        return jpaQueryFactory.select(item)
+//                .from(item)
+//                .where(item.category.id.eq(category_id))
+//                .orderBy(item.like_num.desc())
+//                .offset(0)
+//                .limit(10)
+//                .fetch();
+        return null;
     }
 
     @Override
     public List<Item> find10CategoryCurrentItem(Long category_id) {
-        return jpaQueryFactory.selectFrom(item)
-                .where(item.category.id.eq(category_id))
-                .orderBy(item.createdDate.desc())
-                .offset(0)
-                .limit(10)
-                .fetch();
+//        return jpaQueryFactory.selectFrom(item)
+//                .where(item.category.id.eq(category_id))
+//                .orderBy(item.createdDate.desc())
+//                .offset(0)
+//                .limit(10)
+//                .fetch();
+        return null;
     }
 
     @Override
     public Page<Item> findCategoryBestItemPage(Long category_id, Pageable pageable) {
-        List<Item> content = jpaQueryFactory.selectFrom(item)
-                .orderBy(item.like_num.desc(), item.createdDate.desc())
-                .where(item.category.id.eq(category_id))
-                .orderBy(item.like_num.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+//        List<Item> content = jpaQueryFactory.selectFrom(item)
+//                .orderBy(item.like_num.desc(), item.createdDate.desc())
+//                .where(item.category.id.eq(category_id))
+//                .orderBy(item.like_num.desc())
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .fetch();
+//
+//        Long total = jpaQueryFactory
+//                .select(item.count())
+//                .from(item)
+//                .where(item.category.id.eq(category_id))
+//                .fetchOne();
 
-        Long total = jpaQueryFactory
-                .select(item.count())
-                .from(item)
-                .where(item.category.id.eq(category_id))
-                .fetchOne();
+//        return new PageImpl<>(content,pageable, total);
 
-        return new PageImpl<>(content,pageable, total);
-
+        return null;
     }
 
     @Override
     public Page<Item> findCategoryCurrentItemPage(Long category_id, Pageable pageable) {
-        List<Item> content = jpaQueryFactory.selectFrom(item)
-                .orderBy(item.like_num.desc(), item.createdDate.desc())
-                .where(item.category.id.eq(category_id))
-                .orderBy(item.createdDate.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        Long total = jpaQueryFactory
-                .select(item.count())
-                .from(item)
-                .where(item.category.id.eq(category_id))
-                .fetchOne();
-
-        return new PageImpl<>(content,pageable, total);
+//        List<Item> content = jpaQueryFactory.selectFrom(item)
+//                .orderBy(item.like_num.desc(), item.createdDate.desc())
+//                .where(item.category.id.eq(category_id))
+//                .orderBy(item.createdDate.desc())
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .fetch();
+//
+//        Long total = jpaQueryFactory
+//                .select(item.count())
+//                .from(item)
+//                .where(item.category.id.eq(category_id))
+//                .fetchOne();
+//
+//        return new PageImpl<>(content,pageable, total);
+        return null;
 
     }
 }

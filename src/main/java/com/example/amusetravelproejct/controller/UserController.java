@@ -1,7 +1,7 @@
 package com.example.amusetravelproejct.controller;
 
 import com.example.amusetravelproejct.domain.User;
-import com.example.amusetravelproejct.social.api.service.UserService;
+import com.example.amusetravelproejct.service.UserService;
 import com.example.amusetravelproejct.social.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;

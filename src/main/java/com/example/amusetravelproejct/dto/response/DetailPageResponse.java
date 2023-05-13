@@ -12,10 +12,12 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getTitle {
+        private String itemCode;
         private String country;
         private String city;
         private String title;
         private Double rated;
+        private Integer duration;
     }
 
     @Data
@@ -61,7 +63,7 @@ public class DetailPageResponse {
     @NoArgsConstructor
     public static class TicketPrice {
         private String startDate;
-        private String price;
+        private Long price;
     }
 
     @Data

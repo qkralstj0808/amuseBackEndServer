@@ -19,44 +19,37 @@ public class DetailPageController {
 
     @GetMapping("/title")
     public ResponseTemplate<DetailPageResponse.getTitle> getTitle(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
-//        Long user_id = jwtService.getmemberId();
         return detailPageService.getTitle(item_id);
 
     }
 
     @GetMapping("/icon-info")
     public ResponseTemplate<DetailPageResponse.getIcon> getIcon(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
-//        Long user_id = jwtService.getmemberId();
         return detailPageService.getIcon(item_id);
     }
 
     @GetMapping("/picture")
     public ResponseTemplate<DetailPageResponse.getPicture> getPicture(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
-//        Long user_id = jwtService.getmemberId();
         return detailPageService.getPicture(item_id);
     }
 
     @GetMapping("/ticket-select")
     public ResponseTemplate<DetailPageResponse.getTicket> getTicket(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
-//        Long user_id = jwtService.getmemberId();
         return detailPageService.getTicket(item_id);
     }
 
     @GetMapping("/product-intro")
     public ResponseTemplate<DetailPageResponse.getContent> getContent(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
-//        Long user_id = jwtService.getmemberId();
         return detailPageService.getContent(item_id);
     }
 
     @GetMapping("/course-intro")
     public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
-//        Long user_id = jwtService.getmemberId();
         return detailPageService.getCourseContent(item_id);
     }
 
     @GetMapping("/other-info")
     public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
-//        Long user_id = jwtService.getmemberId();
         return detailPageService.getOtherContent(item_id);
     }
 }

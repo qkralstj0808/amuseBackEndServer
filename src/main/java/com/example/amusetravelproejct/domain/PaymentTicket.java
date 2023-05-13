@@ -13,7 +13,6 @@ public class PaymentTicket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Date startDate;
     private Long price;
 

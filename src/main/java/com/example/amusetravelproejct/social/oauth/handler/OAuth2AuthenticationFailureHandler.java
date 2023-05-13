@@ -1,7 +1,7 @@
 package com.example.amusetravelproejct.social.oauth.handler;
 
 import com.example.amusetravelproejct.social.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.example.amusetravelproejct.social.utils.CookieUtil;
+import com.example.amusetravelproejct.config.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
