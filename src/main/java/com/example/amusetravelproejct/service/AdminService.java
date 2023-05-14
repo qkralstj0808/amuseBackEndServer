@@ -14,9 +14,6 @@ import java.util.Optional;
 public class AdminService {
 
     private final AdminRepository adminRepository;
-
-
-
     public Optional<Admin> getAdminByEmail(String email) {
         return adminRepository.findByEmail(email);
     }

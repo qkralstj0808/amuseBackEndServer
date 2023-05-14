@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 
-@Entity(name = "admin_advertisement")
+@Entity(name = "advertisement")
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
 @Setter
@@ -51,7 +51,5 @@ public class Advertisement {
     @JoinColumn(name = "update_admin")
     private Admin updateAdmin;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    private String category;
 }

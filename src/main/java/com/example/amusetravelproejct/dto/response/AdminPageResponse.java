@@ -21,7 +21,7 @@ public class AdminPageResponse {
         private String pcBannerLink;
         private String mobileBannerUrl;
         private String mobileBannerLink;
-        private String adCategory;
+        private String[] adCategory;
         private String adContent;
         private String createdBy;
     }
@@ -38,7 +38,7 @@ public class AdminPageResponse {
         private String pcBannerLink;
         private String mobileBannerUrl;
         private String mobileBannerLink;
-        private String adCategory;
+        private String[] adCategory;
         private String adContent;
         private String createdBy;
         private String createdAt;
@@ -50,19 +50,28 @@ public class AdminPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class advertisementResult{
+        private int pageCount;
+        private int page;
+        private List<advertisementList> data;
+    }
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class advertisementList{
         private Long id;
         private String title;
         private Date startDate;
         private Date endDate;
-        private String adType;
-        private String adCategory;
+        private String[] adCategory;
         private String adContent;
-        private LocalDateTime createdAdDate;
-        private String createdAd;
-        private LocalDateTime updatedAdDate;
-        private String updatedAd;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
     }
+
+
 
     @Data
     @AllArgsConstructor
