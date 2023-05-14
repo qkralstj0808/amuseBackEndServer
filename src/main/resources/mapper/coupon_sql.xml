@@ -9,4 +9,11 @@
         values (#{couponName}, #{couponCode}, #{discountType}, #{discountAmount}, #{createdDate}, #{modifiedDate})
     </insert>
 
+    <select id="getCoupon" resultType="com.example.amusetravelproejct.dto.response.GetCouponRes">
+        select coupon_name as couponName,
+               id as couponId from coupon
+        where coupon_code  = #{couponCode}
+    </select>
+
+
 </mapper>
