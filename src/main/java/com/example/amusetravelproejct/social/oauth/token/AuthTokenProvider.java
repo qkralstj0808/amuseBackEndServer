@@ -1,29 +1,30 @@
 package com.example.amusetravelproejct.social.oauth.token;
 
 import com.example.amusetravelproejct.social.oauth.exception.TokenValidFailedException;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Slf4j
+@RequiredArgsConstructor
 public class AuthTokenProvider {
 
     private final Key key;
     private static final String AUTHORITIES_KEY = "role";
 
-    public AuthTokenProvider(String secret) {
+
+    private final UserDetailsService userDetailService;
+
+    public AuthTokenProvider(String secret, UserDetailsService userDetailService) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.userDetailService = userDetailService;
     }
 
     public AuthToken createAuthToken(String id, Date expiry) {
@@ -44,16 +45,17 @@ public class AuthTokenProvider {
         System.out.println("AuthTokenProvider 에서 getAuthentication");
         if(authToken.validate()) {
 
-            Claims claims = authToken.getTokenClaims();
-            Collection<? extends GrantedAuthority> authorities =
-                    Arrays.stream(new String[]{claims.get(AUTHORITIES_KEY).toString()})
-                            .map(SimpleGrantedAuthority::new)
-                            .collect(Collectors.toList());
+//            Claims claims = authToken.getTokenClaims();
+//            Collection<? extends GrantedAuthority> authorities =
+//                    Arrays.stream(new String[]{claims.get(AUTHORITIES_KEY).toString()})
+//                            .map(SimpleGrantedAuthority::new)
+//                            .collect(Collectors.toList());
+//
+//            log.debug("claims subject := [{}]", claims.getSubject());
+//            User principal = new User(claims.getSubject(), "", authorities);
 
-            log.debug("claims subject := [{}]", claims.getSubject());
-            User principal = new User(claims.getSubject(), "", authorities);
-
-            return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
+            UserDetails userDetails = userDetailService.loadUserByUsername(authToken.getTokenClaims().getSubject());
+            return new UsernamePasswordAuthenticationToken(userDetails, authToken, userDetails.getAuthorities());
         } else {
             throw new TokenValidFailedException();
         }

@@ -1,10 +1,12 @@
 package com.example.amusetravelproejct.config.security;
 
 import com.example.amusetravelproejct.config.properties.CorsProperties;
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
 import com.example.amusetravelproejct.social.oauth.exception.RestAuthenticationEntryPoint;
 import com.example.amusetravelproejct.social.oauth.filter.TokenAuthenticationFilter;
+import com.example.amusetravelproejct.social.oauth.filter.TokenExceptionFilter;
 import com.example.amusetravelproejct.social.oauth.handler.OAuth2AuthenticationFailureHandler;
 import com.example.amusetravelproejct.social.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import com.example.amusetravelproejct.social.oauth.handler.TokenAccessDeniedHandler;
@@ -40,6 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomOAuth2UserService oAuth2UserService;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final TokenExceptionFilter tokenExceptionFilter;
+
 
     /*
     * UserDetailsService 설정
@@ -90,6 +94,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .failureHandler(oAuth2AuthenticationFailureHandler());
 
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(tokenExceptionFilter, TokenAuthenticationFilter.class);
     }
 
     /*
@@ -114,7 +119,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     * */
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        System.out.println("\n\nSecurityConfig에서 tokenAuthenticationFilter() 실행");
         return new TokenAuthenticationFilter(appProperties,
                 tokenProvider,
                 userRefreshTokenRepository);

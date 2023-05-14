@@ -1,10 +1,17 @@
 package com.example.amusetravelproejct.controller;
 
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseException;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
+import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.dto.response.DetailPageResponse;
 import com.example.amusetravelproejct.service.DetailPageService;
+import com.example.amusetravelproejct.social.oauth.entity.UserPrincipal;
+import com.nimbusds.oauth2.sdk.http.HTTPRequest;
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -52,4 +59,27 @@ public class DetailPageController {
     public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
         return detailPageService.getOtherContent(item_id);
     }
+
+    @PostMapping("/like-plus")
+    public ResponseTemplate<DetailPageResponse.setLike> setLikePlus(@PathVariable("id") Long item_id,
+                                                                @AuthenticationPrincipal UserPrincipal userPrincipal){
+        if(userPrincipal == null){
+            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+        }
+
+        String user_id = userPrincipal.getUserId();
+        return detailPageService.setLikePlus(item_id,user_id);
+    }
+
+    @PostMapping("/like-minus")
+    public ResponseTemplate<DetailPageResponse.setLike> setLikeMinus(@PathVariable("id") Long item_id,
+                                                                @AuthenticationPrincipal UserPrincipal userPrincipal){
+        if(userPrincipal == null){
+            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+        }
+
+        String user_id = userPrincipal.getUserId();
+        return detailPageService.setLikeMinus(item_id,user_id);
+    }
+
 }
