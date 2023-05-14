@@ -64,55 +64,12 @@ public class AdminPageResponse {
         private Date startDate;
         private Date endDate;
         private String[] adCategory;
-        private String adContent;
         private LocalDateTime createdAt;
         private String createdBy;
         private LocalDateTime updatedAt;
         private String updatedBy;
     }
 
-
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class categoryRegister {
-        private Long id;
-        private String categoryName;
-        private LocalDateTime createAt;
-        private String createdBy;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class categoryDetailList{
-        private String category;
-        private List<categoryDetail> data;
-    }
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class categoryDetail{
-        private Long id;
-        private String code;
-        private String title;
-        private LocalDateTime createdAt;
-        private String createdBy;
-        private LocalDateTime updatedAt;
-        private String updatedBy;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class category{
-        private Long id;
-        private String categoryName;
-        private LocalDateTime createdAt;
-        private String createdBy;
-        private Long item;
-    }
 
 
     @Data
@@ -143,10 +100,47 @@ public class AdminPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class noticeList{
-        private Long noticeCount;
-        private List<noticeEdit> data;
+    public static class noticeResult{
+        private int pageCount;
+        private int page;
+        private List<noticeList> data;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class noticeList{
+        private Long id;
+        private String title;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class categoryRegister {
+        private List<categoryDetail> displayHashTags;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class categoryDetail{
+        private Long id;
+        private String displayHashTag;
+        private Long sequence;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+    }
+
+
+
 
 
 }

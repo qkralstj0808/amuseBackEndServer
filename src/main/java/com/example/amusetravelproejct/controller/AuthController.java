@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
 import java.util.Date;
 
 import static com.example.amusetravelproejct.social.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
@@ -42,6 +43,19 @@ public class AuthController {
 
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
+
+    @GetMapping("/token/success")
+    public ResponseTemplate<AuthResponse.getAccessToken> getTokenSuccess(HttpServletRequest request,
+                                HttpServletResponse response, @RequestParam("token") String accessToken){
+        return new ResponseTemplate(new AuthResponse.getAccessToken(accessToken));
+    }
+
+    @GetMapping("/token/fail")
+    public ResponseTemplate<AuthResponse.getError> getTokeFailed(HttpServletRequest request,
+                                                                  HttpServletResponse response, @RequestParam("error") String errorMessage){
+        return new ResponseTemplate(new AuthResponse.getError(errorMessage));
+    }
+
 
     @PostMapping("/login")
     public ApiResponse login(

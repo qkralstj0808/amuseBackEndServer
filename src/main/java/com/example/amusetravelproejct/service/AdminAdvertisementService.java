@@ -126,7 +126,6 @@ public class AdminAdvertisementService {
             advertisementList.setStartDate(advertisement.getStartDate());
             advertisementList.setEndDate(advertisement.getEndDate());
             advertisementList.setAdCategory(advertisement.getCategory().split(","));
-            advertisementList.setAdContent(advertisement.getContent());
             advertisementList.setCreatedAt(advertisement.getCreatedAt());
             advertisementList.setCreatedBy(advertisement.getAdmin().getEmail());
             advertisementList.setUpdatedAt(advertisement.getUpdateAdmin() == null ? null : advertisement.getModifiedAt());

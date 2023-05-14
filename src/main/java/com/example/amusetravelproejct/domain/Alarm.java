@@ -26,17 +26,17 @@ public class Alarm {
     private String content;
 
     @CreatedDate
-    private LocalDateTime createdAdDate;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime modifiedDate;
+    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin")
     private Admin admin;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "updateAdmin")
+    @JoinColumn(name = "update_admin")
     private Admin updateAdmin;
 
     // alarm과 user_alarm는 1:N 관계

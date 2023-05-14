@@ -37,8 +37,6 @@ public class DetailPageService {
         return itemRepository.findById(item_id).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
     }
 
-
-
     public ResponseTemplate<DetailPageResponse.getTitle> getTitle(Long item_id) {
         Item findItem = findItemById(item_id);
 
@@ -142,23 +140,17 @@ public class DetailPageService {
         User findUser = findUserById(user_id);
         Item findItem = findItemById(item_id);
 
-        LikeItem userLikeItem = getUserLikeItem(findItem, findUser);
+        LikeItem likeItem = getUserLikeItem(findItem, findUser);
 
         // 이미 좋아요를 누른 상품인지 아닌지 확인
-        if(userLikeItem == null){
+        if(likeItem == null){
             throw new CustomException(ErrorCode.NOT_EXIT_LIKE_ITEM);
         }
 
         findItem.minus_like();
-        deleteLikeItemToUser(userLikeItem);
+        findUser.deleteLikeItem(likeItem);
         return new ResponseTemplate(new DetailPageResponse.setLike(findItem.getLike_num()));
     }
-
-    @Transactional
-    public void deleteLikeItemToUser(LikeItem likeItem){
-        likeItemRepository.delete(likeItem);
-    }
-
 
     private LikeItem getUserLikeItem(Item findItem, User findUser){
 
