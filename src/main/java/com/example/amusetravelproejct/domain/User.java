@@ -87,23 +87,23 @@ public class User {
     private LocalDateTime modifiedAt;
 
     // user와 like_item는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade =CascadeType.ALL,orphanRemoval = true)
     private List<LikeItem> likeItems = new ArrayList<>();
 
     // user와 order_item는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     // user와 item_estimation는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemReview> itemReviews = new ArrayList<>();
 
     // user와 payment_info는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaymentInfo> paymentInfos = new ArrayList<>();
 
     // user와 user_alarm는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAlarm> userAlarms = new ArrayList<>();
 
     public User(
@@ -131,7 +131,10 @@ public class User {
 
     public void addLikeItem(LikeItem likeItem){
         this.likeItems.add(likeItem);
+    }
 
+    public void deleteLikeItem(LikeItem likeItem){
+        this.likeItems.remove(likeItem);
     }
 
 }

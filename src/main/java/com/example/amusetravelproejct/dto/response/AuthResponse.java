@@ -13,4 +13,18 @@ public class AuthResponse {
     public static class getNewAccessToken {
         private AuthToken newAccessToken;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getAccessToken {
+        private String accessToken;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getError {
+        private String accessToken;
+    }
 }

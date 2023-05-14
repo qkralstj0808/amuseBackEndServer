@@ -23,17 +23,21 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        String targetUrl = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
-                .map(Cookie::getValue)
-                .orElse(("/"));
+//        String targetUrl = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
+//                .map(Cookie::getValue)
+//                .orElse(("/"));
 
         exception.printStackTrace();
 
-        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("error", exception.getLocalizedMessage())
-                .build().toUriString();
+//        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
+//                .queryParam("error", exception.getLocalizedMessage())
+//                .build().toUriString();
 
         authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
+
+        String targetUrl =  UriComponentsBuilder.fromUriString("/api/v1/auth/token/fail")
+                .queryParam("error", exception.getLocalizedMessage())
+                .build().toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
