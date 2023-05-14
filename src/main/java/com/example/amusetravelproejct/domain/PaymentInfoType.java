@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "payment_info_type")
+@Entity(name = "payment_info_type") //결제방법 종류 테이블
 @Getter
 @Setter
 @NoArgsConstructor

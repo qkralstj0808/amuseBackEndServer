@@ -7,7 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "phone_country_code")
+@Entity(name = "phone_country_code") //휴대전화 국가코드 테이블
 @Getter
 @Setter
 @NoArgsConstructor

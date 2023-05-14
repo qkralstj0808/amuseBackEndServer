@@ -9,7 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.EnumMap;
 
-@Entity(name = "coupon_code")      //티켓거래정보 테이블
+@Entity(name = "coupon_code")      //할인쿠폰 종류 테이블
 @Getter
 @Setter
 @NoArgsConstructor

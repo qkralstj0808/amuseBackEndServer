@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Entity(name = "pay_info")
+@Entity(name = "pay_info")  //구매정보
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,7 +51,7 @@ public class PayInfo extends BaseEntity {
     @Column(name = "used_points", nullable = false)
     private Long usedPoints;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_code_id", referencedColumnName = "id")
     private CouponCode couponCode;
 
