@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 public class AdminPageRequest {
 
 
@@ -20,7 +22,7 @@ public class AdminPageRequest {
         private String mobileBannerFileName;
         private String mobileBannerBase64;
         private String mobileBannerLink;
-        private String adCategory;
+        private String[] adCategory;
         private String adContent;
         private String createdBy;
     }
@@ -39,9 +41,9 @@ public class AdminPageRequest {
         private String mobileBannerFileName;
         private String mobileBannerBase64;
         private String mobileBannerLink;
-        private String adCategory;
+        private String[] adCategory;
         private String adContent;
-        private String createdBy;        private String updatedBy;
+        private String updatedBy;
         private String pcBannerUrl;
         private String mobileBannerUrl;
     }

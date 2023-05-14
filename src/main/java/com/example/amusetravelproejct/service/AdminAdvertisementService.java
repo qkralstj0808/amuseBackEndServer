@@ -10,6 +10,9 @@ import com.example.amusetravelproejct.repository.AdvertisementRepository;
 import com.example.amusetravelproejct.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -21,7 +24,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class AdminAdvertisementService {
-    private final AdvertisementRepository adminAdvertisementRepository;
+    private final AdvertisementRepository AdvertisementRepository;
 
     public AdminPageResponse.advertisementRegister  processAdvertisementRegister(AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto , CategoryService categoryService, AdminService adminService, UtilMethod utilMethod) {
 
@@ -32,23 +35,24 @@ public class AdminAdvertisementService {
         advertisement.setEndDate(Date.valueOf(adminAdvertisementRegisterDto.getEndDate()));
         advertisement.setAdmin(adminService.getAdminByEmail(adminAdvertisementRegisterDto.getCreatedBy()).get());
 
+        String category = "";
+        for (String s : adminAdvertisementRegisterDto.getAdCategory()) {
+            category += s + ",";
+        }
 
-
-
-//        advertisement.setCategory(categoryService.getCategoryByName(adminAdvertisementRegisterDto.getAdCategory()).get());
+        advertisement.setCategory(category);
         advertisement.setPcBannerUrl(utilMethod.getImgUrl(adminAdvertisementRegisterDto.getPcBannerBase64(), adminAdvertisementRegisterDto.getPcBannerFileName()));
         advertisement.setMobileBannerUrl(utilMethod.getImgUrl(adminAdvertisementRegisterDto.getMobileBannerBase64(), adminAdvertisementRegisterDto.getMobileBannerFileName()));
         advertisement.setPcBannerLink(adminAdvertisementRegisterDto.getPcBannerLink());
         advertisement.setMobileBannerLink(adminAdvertisementRegisterDto.getMobileBannerLink());
-        adminAdvertisementRepository.save(advertisement);
+        AdvertisementRepository.save(advertisement);
 
         AdminPageResponse.advertisementRegister advertisementRegister = new AdminPageResponse.advertisementRegister();
-
         advertisementRegister.setId(advertisement.getId());
         advertisementRegister.setTitle(advertisement.getTitle());
         advertisementRegister.setStartDate(advertisement.getStartDate().toString());
         advertisementRegister.setEndDate(advertisement.getEndDate().toString());
-//        advertisementRegister.setAdCategory(advertisement.getCategory().getCategoryName());
+        advertisementRegister.setAdCategory(advertisement.getCategory().split(","));
         advertisementRegister.setAdContent(advertisement.getContent());
         advertisementRegister.setCreatedBy(advertisement.getAdmin().getEmail());
         advertisementRegister.setPcBannerUrl(advertisement.getPcBannerUrl());
@@ -56,61 +60,121 @@ public class AdminAdvertisementService {
         advertisementRegister.setPcBannerLink(advertisement.getPcBannerLink());
         advertisementRegister.setMobileBannerLink(advertisement.getMobileBannerLink());
 
-
         return advertisementRegister;
     }
 
 
     public AdminPageResponse.advertisementEdit processAdvertisementEdit(AdminPageRequest.advertisementEdit advertisementEditDto, CategoryService categoryService, AdminService adminService, UtilMethod utilMethod) {
-        Advertisement advertisement = adminAdvertisementRepository.findById(advertisementEditDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Advertisement not Found"));
+        Advertisement advertisement = AdvertisementRepository.findById(advertisementEditDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Advertisement not Found"));
 
         advertisement.setTitle(advertisementEditDto.getTitle());
-        advertisement.setContent(advertisementEditDto.getAdContent());
         advertisement.setStartDate(Date.valueOf(advertisementEditDto.getStartDate()));
         advertisement.setEndDate(Date.valueOf(advertisementEditDto.getEndDate()));
-        advertisement.setAdmin(adminService.getAdminByEmail(advertisementEditDto.getCreatedBy()).get());
-//        advertisement.setCategory(categoryService.getCategoryByName(advertisementEditDto.getAdCategory()).get());
+        advertisement.setContent(advertisementEditDto.getAdContent());
+
+        String category = "";
+
+        for (String s : advertisementEditDto.getAdCategory()) {
+            category += s + ",";
+        }
+
+        advertisement.setCategory(category);
+
+
+        //TODO
+        // S3에 저장된 기존 배너 이미지 삭제
         advertisement.setPcBannerUrl(utilMethod.getImgUrl(advertisementEditDto.getPcBannerBase64(), advertisementEditDto.getPcBannerFileName()));
         advertisement.setMobileBannerUrl(utilMethod.getImgUrl(advertisementEditDto.getMobileBannerBase64(), advertisementEditDto.getMobileBannerFileName()));
+
         advertisement.setPcBannerLink(advertisementEditDto.getPcBannerLink());
         advertisement.setMobileBannerLink(advertisementEditDto.getMobileBannerLink());
-        adminAdvertisementRepository.save(advertisement);
+        advertisement.setUpdateAdmin(adminService.getAdminByEmail(advertisementEditDto.getUpdatedBy()).get());
+        AdvertisementRepository.save(advertisement);
 
         AdminPageResponse.advertisementEdit advertisementEdit = new AdminPageResponse.advertisementEdit();
-
         advertisementEdit.setId(advertisement.getId());
         advertisementEdit.setTitle(advertisement.getTitle());
         advertisementEdit.setStartDate(advertisement.getStartDate().toString());
         advertisementEdit.setEndDate(advertisement.getEndDate().toString());
-//        advertisementEdit.setAdCategory(advertisement.getCategory().getCategoryName());
+        advertisementEdit.setAdCategory(advertisement.getCategory().split(","));
         advertisementEdit.setAdContent(advertisement.getContent());
+        advertisementEdit.setCreatedAt(advertisement.getCreatedAt().toString());
         advertisementEdit.setCreatedBy(advertisement.getAdmin().getEmail());
-        advertisementEdit.setPcBannerUrl(advertisement.getPcBannerUrl());
-        advertisementEdit.setMobileBannerUrl(advertisement.getMobileBannerUrl());
-        advertisementEdit.setPcBannerLink(advertisement.getPcBannerLink());
-        advertisementEdit.setMobileBannerLink(advertisement.getMobileBannerLink());
+        advertisementEdit.setUpdatedAt(advertisement.getUpdateAdmin() != null ? advertisement.getModifiedAt().toString() : "");
+        advertisementEdit.setUpdatedBy(advertisement.getUpdateAdmin() != null ? advertisement.getUpdateAdmin().getEmail() : "");
+        advertisementEdit.setPcBannerUrl(advertisement.getPcBannerUrl() != null ? advertisement.getPcBannerUrl() : "");
+        advertisementEdit.setMobileBannerUrl(advertisement.getMobileBannerUrl() != null ? advertisement.getMobileBannerUrl() : "");
+        advertisementEdit.setPcBannerLink(advertisement.getPcBannerLink() != null ? advertisement.getPcBannerLink() : "");
+        advertisementEdit.setMobileBannerLink(advertisement.getMobileBannerLink() != null ? advertisement.getMobileBannerLink() : "");
 
         return advertisementEdit;
     }
 
-    public List<Advertisement> getAllAdvertisements() {
-        List<Advertisement> advertisements = adminAdvertisementRepository.findAll();
+    public List<AdminPageResponse.advertisementList> processGetAllAdvertisements(Long offset, int limit, int page) {
 
+        int pageSize = limit;
+        Long offsetCount = offset;
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id").ascending());
+        List<Advertisement> advertisements = AdvertisementRepository.findAdsByOffsetAndLimitCount(offsetCount, pageable);
 
-        return adminAdvertisementRepository.findAll();
+        List<AdminPageResponse.advertisementList> advertisementLists = new ArrayList<>();
+
+        for (Advertisement advertisement : advertisements) {
+            AdminPageResponse.advertisementList advertisementList = new AdminPageResponse.advertisementList();
+            advertisementList.setId(advertisement.getId());
+            advertisementList.setTitle(advertisement.getTitle());
+            advertisementList.setStartDate(advertisement.getStartDate());
+            advertisementList.setEndDate(advertisement.getEndDate());
+            advertisementList.setAdCategory(advertisement.getCategory().split(","));
+            advertisementList.setAdContent(advertisement.getContent());
+            advertisementList.setCreatedAt(advertisement.getCreatedAt());
+            advertisementList.setCreatedBy(advertisement.getAdmin().getEmail());
+            advertisementList.setUpdatedAt(advertisement.getUpdateAdmin() == null ? null : advertisement.getModifiedAt());
+            advertisementList.setUpdatedBy(advertisement.getUpdateAdmin() == null ? "" : advertisement.getUpdateAdmin().getEmail());
+//            advertisementList.setPcBannerUrl (advertisement.getPcBannerUrl());
+//            advertisementList.setMobileBannerUrl(advertisement.getMobileBannerUrl());
+//            advertisementList.setPcBannerLink(advertisement.getPcBannerLink());
+//            advertisementList.setMobileBannerLink(advertisement.getMobileBannerLink());
+            advertisementLists.add(advertisementList);
+        }
+
+        return advertisementLists;
+    }
+    public int getPageCount(int limit) {
+        int pageSize = limit;
+        int totalPage = (int) Math.ceil(AdvertisementRepository.count() / (double) pageSize);
+        return totalPage;
     }
 
-    public Optional<Advertisement> getAdvertisementById(Long id) {
-        return adminAdvertisementRepository.findById(id);
+    public AdminPageResponse.advertisementEdit processGetAdvertisementDetail(Long id) {
+        Advertisement advertisement = AdvertisementRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Advertisement not Found"));
+
+        AdminPageResponse.advertisementEdit advertisementEdit = new AdminPageResponse.advertisementEdit();
+        advertisementEdit.setId(advertisement.getId());
+        advertisementEdit.setTitle(advertisement.getTitle());
+        advertisementEdit.setStartDate(advertisement.getStartDate().toString());
+        advertisementEdit.setEndDate(advertisement.getEndDate().toString());
+        advertisementEdit.setAdCategory(advertisement.getCategory().split(","));
+        advertisementEdit.setAdContent(advertisement.getContent());
+        advertisementEdit.setCreatedAt(advertisement.getCreatedAt().toString());
+        advertisementEdit.setCreatedBy(advertisement.getAdmin().getEmail());
+        advertisementEdit.setUpdatedAt(advertisement.getUpdateAdmin() != null ? advertisement.getModifiedAt().toString() : "");
+        advertisementEdit.setUpdatedBy(advertisement.getUpdateAdmin() != null ? advertisement.getUpdateAdmin().getEmail() : "");
+        advertisementEdit.setPcBannerUrl(advertisement.getPcBannerUrl() != null ? advertisement.getPcBannerUrl() : "");
+        advertisementEdit.setMobileBannerUrl(advertisement.getMobileBannerUrl() != null ? advertisement.getMobileBannerUrl() : "");
+        advertisementEdit.setPcBannerLink(advertisement.getPcBannerLink() != null ? advertisement.getPcBannerLink() : "");
+        advertisementEdit.setMobileBannerLink(advertisement.getMobileBannerLink() != null ? advertisement.getMobileBannerLink() : "");
+
+        return advertisementEdit;
     }
 
     public Advertisement createAdvertisement(Advertisement advertisement) {
 
-        return adminAdvertisementRepository.save(advertisement);
+        return AdvertisementRepository.save(advertisement);
     }
 
     public Advertisement updateAdvertisement(Advertisement advertisement) {
-        return adminAdvertisementRepository.save(advertisement);
+        return AdvertisementRepository.save(advertisement);
     }
 
 

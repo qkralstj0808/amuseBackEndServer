@@ -39,10 +39,6 @@ public class AdminPageController {
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
 
-
-
-
-
     @PostMapping("/ad/register")
     public ResponseTemplate<AdminPageResponse.advertisementRegister> reqAdvertisementRegister(@RequestBody AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto){
 
@@ -74,73 +70,47 @@ public class AdminPageController {
 
         AdminPageResponse.advertisementEdit advertisement = adminAdvertisementService.processAdvertisementEdit(adminAdvertisementRegisterDbDto,categoryService,adminService,utilMethod);
 
-
-
-//        Optional<AdminAdvertisement> optionalAdvertisement = adminAdvertisementService.getAdvertisementById(adminAdvertisementRegisterDbDto.getId());
-//        AdminAdvertisement advertisement = optionalAdvertisement.get();
-//
-//        advertisement.setAdvertisementTitle(adminAdvertisementRegisterDbDto.getTitle());
-//        advertisement.setAdvertisementContent(adminAdvertisementRegisterDbDto.getAdContent());
-//        advertisement.setAdvertisementStartDate(adminAdvertisementRegisterDbDto.getStartDate());
-//        advertisement.setAdvertisementEndDate(adminAdvertisementRegisterDbDto.getEndDate());
-//        advertisement.setUpdateAdmin(adminService.getAdminByEmail(adminAdvertisementRegisterDbDto.getUpdatedAd()).get());
-//
-//        switch (adminAdvertisementRegisterDbDto.getAdType()){
-//            case "ad1":
-//                advertisement.setAdvertisementType(Adver.ad1);
-//                break;
-//            case "ab2":
-//                advertisement.setAdvertisementType(Adver.ad2);
-//                break;
-//            case "ab3":
-//                advertisement.setAdvertisementType(Adver.ad3);
-//                break;
-//            default:
-//                break;
-//        }
-//        advertisement.setCategory(categoryService.getCategoryByName(adminAdvertisementRegisterDbDto.getAdCategory()).get());
-//
-//        AdminAdvertisement advertisementTemp = adminAdvertisementService.updateAdvertisement(advertisement);
-//        return new ResponseTemplate<>(new AdminPageResponse.advertisementEdit(advertisementTemp.getId(),
-//                advertisementTemp.getAdvertisementTitle(), advertisementTemp.getAdvertisementStartDate(),
-//                advertisementTemp.getAdvertisementEndDate(), advertisementTemp.getAdvertisementType().name(), advertisementTemp.getCategory().getCategoryName(),
-//                advertisementTemp.getAdvertisementContent(), advertisementTemp.getModifiedDate(), advertisementTemp.getUpdateAdmin().getEmail()));
-        return null;
+        return new ResponseTemplate<>(advertisement);
     }
 
     @GetMapping("/ad/getList")
-    public ResponseTemplate<List<AdminPageResponse.advertisementList>> reqAdvertisementList(){
-//        AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
-//
-//        List<AdminAdvertisement> advertisementList = adminAdvertisementService.getAllAdvertisements();
-//        List<AdminPageResponse.advertisementList> advertisementListResponse = new ArrayList<>();
-//
-//        for (int i = 0; i < advertisementList.size(); i++){
-//            advertisementListResponse.add(new AdminPageResponse.advertisementList(advertisementList.get(i).getId(),
-//                    advertisementList.get(i).getAdvertisementTitle(), advertisementList.get(i).getAdvertisementStartDate(),
-//                    advertisementList.get(i).getAdvertisementEndDate(), advertisementList.get(i).getAdvertisementType().name(), advertisementList.get(i).getCategory().getCategoryName(),
-//                    advertisementList.get(i).getAdvertisementContent(), advertisementList.get(i).getCreatedAdDate(), advertisementList.get(i).getAdmin().getEmail(),advertisementList.get(i).getModifiedDate(),
-//                    advertisementList.get(i).getUpdateAdmin() == null ? "NULL" : advertisementList.get(i).getUpdateAdmin().getEmail()));
-//        }
-//
-//        return new ResponseTemplate<>(advertisementListResponse);
-        return null;
+    public ResponseTemplate<AdminPageResponse.advertisementResult> reqAdvertisementList(@RequestParam("offset") Long offset , @RequestParam("limit") int limit, @RequestParam("page") int page){
+        AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
+
+        //TODO
+        // 유저 데이터 선 처리
+        int sqlPage = page -1;
+
+        AdminPageResponse.advertisementResult advertisementResult = new AdminPageResponse.advertisementResult(adminAdvertisementService.getPageCount(limit),page,adminAdvertisementService.processGetAllAdvertisements(offset,limit,sqlPage));
+
+        return new ResponseTemplate<>(advertisementResult);
+    }
+
+    @GetMapping("/ad/{id}")
+    public ResponseTemplate<AdminPageResponse.advertisementEdit> reqAdvertisementDetail(@PathVariable("id") Long id){
+        AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
+
+        //TODO
+        // 유저 데이터 선 처리
+
+
+        AdminPageResponse.advertisementEdit advertisement = adminAdvertisementService.processGetAdvertisementDetail(id);
+        return new ResponseTemplate<>(advertisement);
     }
 
     @Transactional
     @PostMapping("/product/create")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
-        ProductService productService = new ProductService(itemRepository,adminRepository,categoryRepository,imgRepository,itemTicketRepository,itemTicketPriceRepository,itemCourseRepository,objectMapper);
+        ItemService itemService = new ItemService(itemRepository,adminRepository,categoryRepository,imgRepository,itemTicketRepository,itemTicketPriceRepository,itemCourseRepository,objectMapper);
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         //TODO
         // productRegisterDto 데이터 선 처리
 
-        log.info(productRegisterDto.toString());
-        Item item = productService.processItem(productRegisterDto);
-        productService.processItemTicket(productRegisterDto,item);
-        productService.processItemImg(productRegisterDto,utilMethod,item);
-        productService.processItemCourse(productRegisterDto,utilMethod,item);
+        Item item = itemService.processItem(productRegisterDto);
+        itemService.processItemTicket(productRegisterDto,item);
+        itemService.processItemImg(productRegisterDto,utilMethod,item);
+        itemService.processItemCourse(productRegisterDto,utilMethod,item);
         return new ResponseTemplate<>("상품 생성 완료");
     }
 
@@ -177,6 +147,10 @@ public class AdminPageController {
 //        return new ResponseTemplate<>(categoryList);
          return null;
     }
+
+
+
+
 
     @PostMapping("/notice/register")
     public ResponseTemplate<AdminPageResponse.noticeRegister> noticeRegister(@RequestBody AdminPageRequest.noticeRegister noticeRegisterDto){
