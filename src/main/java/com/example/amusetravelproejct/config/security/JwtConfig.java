@@ -1,6 +1,6 @@
 package com.example.amusetravelproejct.config.security;
 
-import com.example.amusetravelproejct.social.oauth.token.AuthTokenProvider;
+import com.example.amusetravelproejct.oauth.token.AuthTokenProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

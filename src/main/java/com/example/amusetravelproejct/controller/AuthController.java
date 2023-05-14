@@ -7,12 +7,11 @@ import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
 import com.example.amusetravelproejct.dto.response.AuthResponse;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
-import com.example.amusetravelproejct.social.common.ApiResponse;
 import com.example.amusetravelproejct.config.properties.AppProperties;
-import com.example.amusetravelproejct.social.oauth.entity.RoleType;
-import com.example.amusetravelproejct.social.oauth.entity.UserPrincipal;
-import com.example.amusetravelproejct.social.oauth.token.AuthToken;
-import com.example.amusetravelproejct.social.oauth.token.AuthTokenProvider;
+import com.example.amusetravelproejct.oauth.entity.RoleType;
+import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
+import com.example.amusetravelproejct.oauth.token.AuthToken;
+import com.example.amusetravelproejct.oauth.token.AuthTokenProvider;
 import com.example.amusetravelproejct.config.util.CookieUtil;
 import com.example.amusetravelproejct.config.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
@@ -23,13 +22,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
 import java.util.Date;
-
-import static com.example.amusetravelproejct.social.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
 
 
 @RestController
@@ -58,7 +53,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ApiResponse login(
+    public ResponseTemplate<AuthResponse.getAccessToken> login(
             HttpServletRequest request,
             HttpServletResponse response,
             @RequestBody AuthRequest authRequest
@@ -130,7 +125,7 @@ public class AuthController {
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
-        return ApiResponse.success("token", accessToken.getToken());
+        return new ResponseTemplate(new AuthResponse.getAccessToken(accessToken.getToken()));
     }
 
     @GetMapping("/refresh")
@@ -156,6 +151,10 @@ public class AuthController {
 
         // userId refresh token 으로 DB 확인
         UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
+
+        if(userRefreshToken == null){
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+        }
         String db_refreshToken = userRefreshToken.getRefreshToken();
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(db_refreshToken);
 
