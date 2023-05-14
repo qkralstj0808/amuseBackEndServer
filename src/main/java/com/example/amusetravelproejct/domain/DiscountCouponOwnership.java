@@ -22,7 +22,7 @@ public class DiscountCouponOwnership extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="coupon_code")
-    private CouponCode couponCode;
+    private Coupon couponCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
