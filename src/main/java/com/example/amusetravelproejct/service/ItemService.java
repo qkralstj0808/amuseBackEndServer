@@ -17,7 +17,7 @@ import java.util.*;
 @AllArgsConstructor
 @Service
 @Slf4j
-public class ProductService {
+public class ItemService {
 
     private final ItemRepository itemRepository;
     private final AdminRepository adminRepository;
