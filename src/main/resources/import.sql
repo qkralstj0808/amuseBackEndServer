@@ -1,6 +1,6 @@
--- INSERT INTO admin (id, email, name, password) VALUES (1,'daw916@naver.com','관리자','1234');
--- INSERT INTO admin (id, email, name, password) VALUES (2,'daw564@naver.com','관리자','1234');
---
+INSERT INTO admin (id, email, name, password) VALUES (1,'daw916@naver.com','관리자','1234');
+INSERT INTO admin (id, email, name, password) VALUES (2,'daw564@naver.com','관리자','1234');
+
 
 -- INSERT INTO category (category_name,created_ad_date,admin) VALUES ('컨시어지',NOW(),1);
 -- INSERT INTO category (category_name,created_ad_date,admin) VALUES ('아이돌봄',NOW(),1);

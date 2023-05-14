@@ -47,26 +47,6 @@ public class AdminPageRequest {
         private String pcBannerUrl;
         private String mobileBannerUrl;
     }
-
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class categoryRegister {
-        private String categoryName;
-        private String createdBy;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class categoryDetail {
-        private Long id;
-        private Long offset;
-        private Long limit;
-    }
-
-
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -85,6 +65,24 @@ public class AdminPageRequest {
         private String content;
         private String updatedBy;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class categoryRegister {
+        private List<categoryDetail> hashTags;
+        private String manageBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class categoryDetail {
+        private String hashTag;
+        private Long sequence;
+    }
+
+
 }
 
 
