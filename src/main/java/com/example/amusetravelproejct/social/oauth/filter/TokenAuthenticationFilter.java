@@ -1,6 +1,8 @@
 package com.example.amusetravelproejct.social.oauth.filter;
 
 import com.example.amusetravelproejct.config.properties.AppProperties;
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.social.oauth.entity.RoleType;
@@ -9,8 +11,10 @@ import com.example.amusetravelproejct.social.oauth.token.AuthTokenProvider;
 import com.example.amusetravelproejct.config.util.CookieUtil;
 import com.example.amusetravelproejct.config.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -45,12 +49,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
 
         if (token.validate()) {
-            if(token.getExpiredTokenClaims() != null){
-                token = reGetAccessToken(request, response, token);
+            if(token.getExpiredTokenClaims() == null){
+                Authentication authentication = tokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-
-            Authentication authentication = tokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
     }

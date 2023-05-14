@@ -109,6 +109,13 @@ public class DetailPageResponse {
         private String content;
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class setLike {
+        private Integer like_num;
+    }
+
 
 //    리뷰, 담당자는 나중에
 
