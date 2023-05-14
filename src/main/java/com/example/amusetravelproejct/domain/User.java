@@ -70,6 +70,9 @@ public class User {
     @NotNull
     private RoleType roleType;
 
+    @Column(name = "POINT")     //유저가 지닌 포인트
+    private Long point = 0L;
+
     @Column(name = "CREATED_AT")
     @NotNull
     private LocalDateTime createdAt;
