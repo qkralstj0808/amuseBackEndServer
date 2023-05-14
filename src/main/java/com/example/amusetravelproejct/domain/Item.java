@@ -35,7 +35,6 @@ public class Item extends BaseEntity {
     private Long startPrice;     // 많은 상품 가격 중 가장 싼 것
     private Integer duration;          // 기간 (2박 3일 에서 3)
     private Integer like_num;          // 좋아요 수
-
     private Date startDate;
     private Date endDate;
 

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.text.ParseException;
@@ -42,11 +43,22 @@ public class ProductService {
 
 
     //Item
+    @Transactional
     public Item processItem(ProductRegisterDto productRegisterDto) throws ParseException {
         Item item = new Item();
+        itemRepository.save(item);
         item.setItemCode(productRegisterDto.getProductId());
         item.setTitle(productRegisterDto.getTitle());
-//        item.setCategory(getCategoryByName(productRegisterDto.getCategory()).get());
+        List<String> hashTags = productRegisterDto.getCategory();
+
+
+        hashTags.forEach(data ->{
+            Category category = new Category();
+            category.setItem(item);
+            category.setHashTag(data);
+            categoryRepository.save(category);
+        });
+
         item.setCountry(productRegisterDto.getLocation().getCountry());
         item.setCity(productRegisterDto.getLocation().getCity());
         item.setContent_1(productRegisterDto.getMainInfo());
@@ -54,9 +66,9 @@ public class ProductService {
         item.setAdmin(getAdminByEmail(productRegisterDto.getAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
         item.setDuration(productRegisterDto.getDuration().intValue());
-//        item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
-//        item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-        return itemRepository.save(item);
+        item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
+        item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        return item;
     }
 
     //ItemImg

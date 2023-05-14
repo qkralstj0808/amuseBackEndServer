@@ -131,16 +131,16 @@ public class AdminPageController {
     @PostMapping("/product/create")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
         ProductService productService = new ProductService(itemRepository,adminRepository,categoryRepository,imgRepository,itemTicketRepository,itemTicketPriceRepository,itemCourseRepository,objectMapper);
-        AdminService adminService = new AdminService(adminRepository);
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         //TODO
         // productRegisterDto 데이터 선 처리
 
-//        Item item = productService.processItem(productRegisterDto);
-//        productService.processItemTicket(productRegisterDto,item);
-//        productService.processItemImg(productRegisterDto,utilMethod,item);
-//        productService.processItemCourse(productRegisterDto,utilMethod,item);
+        log.info(productRegisterDto.toString());
+        Item item = productService.processItem(productRegisterDto);
+        productService.processItemTicket(productRegisterDto,item);
+        productService.processItemImg(productRegisterDto,utilMethod,item);
+        productService.processItemCourse(productRegisterDto,utilMethod,item);
         return new ResponseTemplate<>("상품 생성 완료");
     }
 
