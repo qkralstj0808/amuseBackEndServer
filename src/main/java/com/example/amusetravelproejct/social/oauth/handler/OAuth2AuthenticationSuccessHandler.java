@@ -48,14 +48,21 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 onAuthenticationSuccess");
-        String targetUrl = determineTargetUrl(request, response, authentication);
+//        String targetUrl = determineTargetUrl(request, response, authentication);
+        String accessToken = determineTargetUrl(request,response,authentication);
 
         if (response.isCommitted()) {
-            log.debug("response가 committed 되어서 해당 redirect로 못감 : " + targetUrl);
+            log.debug("response가 committed 되어서 해당 redirect로 못감 : " + accessToken);
             return;
         }
 
+        String targetUrl =  UriComponentsBuilder.fromUriString("/api/v1/auth/token/success")
+                .queryParam("token", accessToken)
+                .build().toUriString();
+
         clearAuthenticationAttributes(request, response);
+
+//        System.out.println(request.get);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
@@ -119,9 +126,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
-        return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", accessToken.getToken())
-                .build().toUriString();
+//        return UriComponentsBuilder.fromUriString(targetUrl)
+//                .queryParam("token", accessToken.getToken())
+//                .build().toUriString();
+        return accessToken.getToken();
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
