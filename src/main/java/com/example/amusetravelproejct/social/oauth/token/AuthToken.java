@@ -1,5 +1,7 @@
 package com.example.amusetravelproejct.social.oauth.token;
 
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -46,22 +48,27 @@ public class AuthToken {
     }
 
     public boolean validate() {
-        return this.getTokenClaims() != null;
+        Claims tokenClaims = this.getTokenClaims();
+        log.info("tokenClams : " + tokenClaims);
+        return tokenClaims != null;
     }
 
     public Claims getTokenClaims() {
         try {
-            return Jwts.parserBuilder()
+            Claims body = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+            log.info("body : " + body);
+            return body;
         } catch (SecurityException e) {
             log.info("Invalid JWT signature.");
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token.");
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT token.");
+            return e.getClaims();
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token.");
         } catch (IllegalArgumentException e) {
@@ -71,6 +78,7 @@ public class AuthToken {
     }
 
     public Claims getExpiredTokenClaims() {
+        System.out.println("AuthToken 에서 getExpiredTokenClaims 실행");
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)

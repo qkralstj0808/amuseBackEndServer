@@ -13,6 +13,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.bytebuddy.asm.Advice;
 import org.hibernate.criterion.Projection;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -27,6 +28,15 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
     public ItemRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
         this.jpaQueryFactory = jpaQueryFactory;
+    }
+
+    @Override
+    public Long findItem(Long item_id) {
+        return jpaQueryFactory
+                .select(item.id)
+                .from(item)
+                .where(item.id.eq(item_id))
+                .fetchOne();
     }
 
     @Override
@@ -51,33 +61,66 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
     @Override
     public List<Item> find10CategoryBestItem(Long category_id) {
-        return jpaQueryFactory.select(item)
-                .from(item)
-                .where(item.category.id.eq(category_id))
-                .orderBy(item.like_num.desc())
-                .offset(0)
-                .limit(10)
-                .fetch();
+//        return jpaQueryFactory.select(item)
+//                .from(item)
+//                .where(item.category.id.eq(category_id))
+//                .orderBy(item.like_num.desc())
+//                .offset(0)
+//                .limit(10)
+//                .fetch();
+        return null;
     }
 
     @Override
     public List<Item> find10CategoryCurrentItem(Long category_id) {
-        return jpaQueryFactory.selectFrom(item)
-                .orderBy(item.createdDate.desc())
-                .where(item.category.id.eq(category_id))
-                .offset(0)
-                .limit(10)
-                .fetch();
+//        return jpaQueryFactory.selectFrom(item)
+//                .where(item.category.id.eq(category_id))
+//                .orderBy(item.createdDate.desc())
+//                .offset(0)
+//                .limit(10)
+//                .fetch();
+        return null;
     }
 
     @Override
-    public Page<Item> findCategoryAllItemPage(Long category_id, Pageable pageable) {
-        QueryResults<Item> itemQueryResults = jpaQueryFactory.selectFrom(item)
-                .orderBy(item.like_num.desc(), item.createdDate.desc())
-                .where(item.category.id.eq(category_id))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
+    public Page<Item> findCategoryBestItemPage(Long category_id, Pageable pageable) {
+//        List<Item> content = jpaQueryFactory.selectFrom(item)
+//                .orderBy(item.like_num.desc(), item.createdDate.desc())
+//                .where(item.category.id.eq(category_id))
+//                .orderBy(item.like_num.desc())
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .fetch();
+//
+//        Long total = jpaQueryFactory
+//                .select(item.count())
+//                .from(item)
+//                .where(item.category.id.eq(category_id))
+//                .fetchOne();
+
+//        return new PageImpl<>(content,pageable, total);
+
         return null;
+    }
+
+    @Override
+    public Page<Item> findCategoryCurrentItemPage(Long category_id, Pageable pageable) {
+//        List<Item> content = jpaQueryFactory.selectFrom(item)
+//                .orderBy(item.like_num.desc(), item.createdDate.desc())
+//                .where(item.category.id.eq(category_id))
+//                .orderBy(item.createdDate.desc())
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .fetch();
+//
+//        Long total = jpaQueryFactory
+//                .select(item.count())
+//                .from(item)
+//                .where(item.category.id.eq(category_id))
+//                .fetchOne();
+//
+//        return new PageImpl<>(content,pageable, total);
+        return null;
+
     }
 }

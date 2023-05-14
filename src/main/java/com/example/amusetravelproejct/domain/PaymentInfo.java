@@ -37,8 +37,8 @@ public class PaymentInfo {
     // payment_info와 payment_ticket은 1:N 관계
     @OneToMany(mappedBy = "paymentInfo")
     private List<PaymentTicket> paymentTickets = new ArrayList<>();
-
-    // payment_info와 tourist은 1:N 관계
-    @OneToMany(mappedBy = "paymentInfo")
-    private List<Tourist> tourists = new ArrayList<>();
+//
+//    // payment_info와 tourist은 1:N 관계
+//    @OneToMany(mappedBy = "paymentInfo")
+//    private List<Tourist> tourists = new ArrayList<>();
 }

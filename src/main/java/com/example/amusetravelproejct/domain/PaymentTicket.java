@@ -13,17 +13,13 @@ public class PaymentTicket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Date startDate;
-    private Date endDate;
     private Long price;
 
     // payment_ticket과 item_ticket은 N:1 관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "itemTicket")
     private ItemTicket itemTicket;
-
-
 
     private Long count;
     // payment_ticket과 payment_info는 N:1 관계

@@ -1,16 +1,20 @@
 package com.example.amusetravelproejct.controller;
 
-import com.example.amusetravelproejct.social.api.entity.auth.AuthReqModel;
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
+import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
+import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
-import com.example.amusetravelproejct.social.api.repository.user.UserRefreshTokenRepository;
+import com.example.amusetravelproejct.dto.response.AuthResponse;
+import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.social.common.ApiResponse;
 import com.example.amusetravelproejct.config.properties.AppProperties;
 import com.example.amusetravelproejct.social.oauth.entity.RoleType;
 import com.example.amusetravelproejct.social.oauth.entity.UserPrincipal;
 import com.example.amusetravelproejct.social.oauth.token.AuthToken;
 import com.example.amusetravelproejct.social.oauth.token.AuthTokenProvider;
-import com.example.amusetravelproejct.social.utils.CookieUtil;
-import com.example.amusetravelproejct.social.utils.HeaderUtil;
+import com.example.amusetravelproejct.config.util.CookieUtil;
+import com.example.amusetravelproejct.config.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +26,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
 import java.util.Date;
+
+import static com.example.amusetravelproejct.social.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
 
 
 @RestController
@@ -37,11 +44,24 @@ public class AuthController {
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
 
+    @GetMapping("/token/success")
+    public ResponseTemplate<AuthResponse.getAccessToken> getTokenSuccess(HttpServletRequest request,
+                                HttpServletResponse response, @RequestParam("token") String accessToken){
+        return new ResponseTemplate(new AuthResponse.getAccessToken(accessToken));
+    }
+
+    @GetMapping("/token/fail")
+    public ResponseTemplate<AuthResponse.getError> getTokeFailed(HttpServletRequest request,
+                                                                  HttpServletResponse response, @RequestParam("error") String errorMessage){
+        return new ResponseTemplate(new AuthResponse.getError(errorMessage));
+    }
+
+
     @PostMapping("/login")
     public ApiResponse login(
             HttpServletRequest request,
             HttpServletResponse response,
-            @RequestBody AuthReqModel authReqModel
+            @RequestBody AuthRequest authRequest
     ) {
         System.out.println("\n\nAuthController에서 /login api 진입");
         /*
@@ -52,8 +72,8 @@ public class AuthController {
          */
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authReqModel.getId(),
-                        authReqModel.getPassword()
+                        authRequest.getId(),
+                        authRequest.getPassword()
                 )
         );
 
@@ -63,7 +83,7 @@ public class AuthController {
             이렇게 함으로써 애플리케이션 내에서 로그인한 사용자의 정보를 언제든지 접근하고 활용할 수 있게 됩니다.
             또한, 이 정보는 필요한 경우 Spring Security에서 제공하는 SecurityExpression 등을 이용하여 인가 처리에 활용될 수도 있습니다.
          */
-        String userId = authReqModel.getId();
+        String userId = authRequest.getId();
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
 
@@ -114,42 +134,35 @@ public class AuthController {
     }
 
     @GetMapping("/refresh")
-    public ApiResponse refreshToken (HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("\n\nAuthController에서 refreshToken 메서드 진입");
-        // access token 확인
+    public ResponseTemplate<AuthResponse.getNewAccessToken> refreshToken (HttpServletRequest request, HttpServletResponse response){
 
-        /*
-            request header 중 AUTHENTICATION 키에 대한 값을 가지고 온다. 해당 값이 access token이다.
-         */
-        String accessToken = HeaderUtil.getAccessToken(request);
-        AuthToken authToken = tokenProvider.convertAuthToken(accessToken);
-        if (!authToken.validate()) {
-            return ApiResponse.invalidAccessToken();
+        String tokenStr = HeaderUtil.getAccessToken(request);
+        AuthToken token = tokenProvider.convertAuthToken(tokenStr);
+
+        // token이 유효한지 확인
+        if (!token.validate()) {
+            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
 
         // expired access token 인지 확인
-        Claims claims = authToken.getExpiredTokenClaims();
-        if (claims == null) {
-            return ApiResponse.notExpiredTokenYet();
+        if(token.getExpiredTokenClaims() == null){
+            throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN);
         }
+
+        Claims claims = token.getExpiredTokenClaims();
 
         String userId = claims.getSubject();
         RoleType roleType = RoleType.of(claims.get("role", String.class));
 
-        // refresh token
-        String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN)
-                .map(Cookie::getValue)
-                .orElse((null));
-        AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
-
-        if (authRefreshToken.validate()) {
-            return ApiResponse.invalidRefreshToken();
-        }
-
         // userId refresh token 으로 DB 확인
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserIdAndRefreshToken(userId, refreshToken);
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
+        String db_refreshToken = userRefreshToken.getRefreshToken();
+        AuthToken authRefreshToken = tokenProvider.convertAuthToken(db_refreshToken);
+
+//        log.info("userRefreshToken : " + userRefreshToken);
+
         if (userRefreshToken == null) {
-            return ApiResponse.invalidRefreshToken();
+            return null;
         }
 
         Date now = new Date();
@@ -179,6 +192,85 @@ public class AuthController {
             CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
         }
 
-        return ApiResponse.success("token", newAccessToken.getToken());
+        return new ResponseTemplate(new AuthResponse.getNewAccessToken(newAccessToken));
     }
+
+
+//    @GetMapping("/refresh")
+//    public ApiResponse refreshToken (HttpServletRequest request, HttpServletResponse response) {
+//        System.out.println("\n\nAuthController에서 refreshToken 메서드 진입");
+//        // access token 확인
+//
+//        /*
+//            request header 중 AUTHENTICATION 키에 대한 값을 가지고 온다. 해당 값이 access token이다.
+//         */
+//
+//        String tokenStr = HeaderUtil.getAccessToken(request);
+//        AuthToken token = tokenProvider.convertAuthToken(tokenStr);
+//
+//        System.out.println(token);
+//
+//        if (!token.validate()) {
+//            return ApiResponse.invalidAccessToken();
+//        }
+//
+////         expired access token 인지 확인
+//        Claims claims = token.getExpiredTokenClaims();
+//        if (claims == null) {
+//
+//            return ApiResponse.notExpiredTokenYet();
+//        }
+//
+//        System.out.println("이제 UserId 찾기 시작");
+////
+//        String userId = claims.getSubject();
+//        RoleType roleType = RoleType.of(claims.get("role", String.class));
+//
+////         refresh token
+//        String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN)
+//                .map(Cookie::getValue)
+//                .orElse((null));
+//        AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
+//
+//        if (!authRefreshToken.validate()) {
+//            return ApiResponse.invalidRefreshToken();
+//        }
+//
+////         userId refresh token 으로 DB 확인
+//        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
+//
+//        if (userRefreshToken == null) {
+//            return ApiResponse.invalidRefreshToken();
+//        }
+//
+//        Date now = new Date();
+//        AuthToken newAccessToken = tokenProvider.createAuthToken(
+//                userId,
+//                roleType.getCode(),
+//                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+//        );
+//
+//        long validTime = authRefreshToken.getTokenClaims().getExpiration().getTime() - now.getTime();
+//
+//        // refresh 토큰 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
+//        if (validTime <= THREE_DAYS_MSEC) {
+//            // refresh 토큰 설정
+//            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+//
+//            authRefreshToken = tokenProvider.createAuthToken(
+//                    appProperties.getAuth().getTokenSecret(),
+//                    new Date(now.getTime() + refreshTokenExpiry)
+//            );
+//
+//            // DB에 refresh 토큰 업데이트
+//            userRefreshToken.setRefreshToken(authRefreshToken.getToken());
+//
+//            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+//            CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+//            CookieUtil.addCookie(response, REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
+//        }
+//
+//        return ApiResponse.success("token", newAccessToken.getToken());
+//    }
+
 }

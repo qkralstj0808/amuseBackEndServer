@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ItemRepositoryCustom {
+    Long findItem(Long item_id);
 
     List<Item> find10BestItem();
     List<Item> find10CurrentItem();
@@ -16,5 +17,6 @@ public interface ItemRepositoryCustom {
 
     List<Item> find10CategoryCurrentItem(Long category_id);
 
-    Page<Item> findCategoryAllItemPage(Long category_id, Pageable pageable);
+    Page<Item> findCategoryBestItemPage(Long category_id, Pageable pageable);
+    Page<Item> findCategoryCurrentItemPage(Long category_id, Pageable pageable);
 }

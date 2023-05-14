@@ -12,11 +12,12 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getTitle {
+        private String itemCode;
         private String country;
-        private String province;
         private String city;
         private String title;
         private Double rated;
+        private Integer duration;
     }
 
     @Data
@@ -45,8 +46,7 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getTicket {
-        private List<TicketInfo> ticketList;
-        private List<ProductPrice> priceList;
+        private List<TicketInfo> ticket;
     }
 
     @Data
@@ -55,7 +55,15 @@ public class DetailPageResponse {
     public static class TicketInfo {
         private String title;
         private String content;
-        private String price;
+        private List<TicketPrice> priceList;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TicketPrice {
+        private String startDate;
+        private Long price;
     }
 
     @Data
@@ -71,7 +79,7 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getContent {
-        private List<String> content;
+        private String content;
     }
 
     @Data
@@ -98,7 +106,14 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getOtherContent {
-        private List<String> content;
+        private String content;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class setLike {
+        private Integer like_num;
     }
 
 

@@ -24,7 +24,6 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -71,6 +70,9 @@ public class User {
     @NotNull
     private RoleType roleType;
 
+    @Column(name = "POINT")     //유저가 지닌 포인트
+    private Long point = 0L;
+
     @Column(name = "CREATED_AT")
     @NotNull
     private LocalDateTime createdAt;
@@ -84,32 +86,24 @@ public class User {
     @NotNull
     private LocalDateTime modifiedAt;
 
-    // user와 customer_question는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<CustomerQuestion> customerQuestions = new ArrayList<>();
-
     // user와 like_item는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade =CascadeType.ALL,orphanRemoval = true)
     private List<LikeItem> likeItems = new ArrayList<>();
 
-    // user와 estimate_contact는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<EstimateContact> estimateContacts = new ArrayList<>();
-
     // user와 order_item는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     // user와 item_estimation는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemReview> itemReviews = new ArrayList<>();
 
     // user와 payment_info는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaymentInfo> paymentInfos = new ArrayList<>();
 
     // user와 user_alarm는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAlarm> userAlarms = new ArrayList<>();
 
     public User(
@@ -134,4 +128,13 @@ public class User {
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
+
+    public void addLikeItem(LikeItem likeItem){
+        this.likeItems.add(likeItem);
+    }
+
+    public void deleteLikeItem(LikeItem likeItem){
+        this.likeItems.remove(likeItem);
+    }
+
 }

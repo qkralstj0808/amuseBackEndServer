@@ -1,7 +1,7 @@
 package com.example.amusetravelproejct.social.oauth.handler;
 
 import com.example.amusetravelproejct.social.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.example.amusetravelproejct.social.utils.CookieUtil;
+import com.example.amusetravelproejct.config.util.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -23,17 +23,21 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        String targetUrl = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
-                .map(Cookie::getValue)
-                .orElse(("/"));
+//        String targetUrl = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
+//                .map(Cookie::getValue)
+//                .orElse(("/"));
 
         exception.printStackTrace();
 
-        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("error", exception.getLocalizedMessage())
-                .build().toUriString();
+//        targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
+//                .queryParam("error", exception.getLocalizedMessage())
+//                .build().toUriString();
 
         authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
+
+        String targetUrl =  UriComponentsBuilder.fromUriString("/api/v1/auth/token/fail")
+                .queryParam("error", exception.getLocalizedMessage())
+                .build().toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }

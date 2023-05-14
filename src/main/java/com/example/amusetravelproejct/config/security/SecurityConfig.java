@@ -1,11 +1,12 @@
 package com.example.amusetravelproejct.config.security;
 
 import com.example.amusetravelproejct.config.properties.CorsProperties;
-import com.example.amusetravelproejct.social.api.repository.user.UserRefreshTokenRepository;
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
-import com.example.amusetravelproejct.social.oauth.entity.RoleType;
 import com.example.amusetravelproejct.social.oauth.exception.RestAuthenticationEntryPoint;
 import com.example.amusetravelproejct.social.oauth.filter.TokenAuthenticationFilter;
+import com.example.amusetravelproejct.social.oauth.filter.TokenExceptionFilter;
 import com.example.amusetravelproejct.social.oauth.handler.OAuth2AuthenticationFailureHandler;
 import com.example.amusetravelproejct.social.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import com.example.amusetravelproejct.social.oauth.handler.TokenAccessDeniedHandler;
@@ -20,7 +21,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,9 +29,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Base64;
 
 @Configuration
 @RequiredArgsConstructor
@@ -44,6 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomOAuth2UserService oAuth2UserService;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final TokenExceptionFilter tokenExceptionFilter;
+
 
     /*
     * UserDetailsService 설정
@@ -74,8 +74,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     // 권한을 줄 수 있다.
                     .authorizeRequests()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                    .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
-                    .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
+//                    .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
+//                    .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                     .anyRequest().permitAll()   // 위에 언급한 url 말고 나머지는 authenticated 된 사용자만 이용할 수 있도록 한다.
 
                 .and()
@@ -94,6 +94,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .failureHandler(oAuth2AuthenticationFailureHandler());
 
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(tokenExceptionFilter, TokenAuthenticationFilter.class);
     }
 
     /*
@@ -118,8 +119,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     * */
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        System.out.println("\n\nSecurityConfig에서 tokenAuthenticationFilter() 실행");
-        return new TokenAuthenticationFilter(tokenProvider);
+        return new TokenAuthenticationFilter(appProperties,
+                tokenProvider,
+                userRefreshTokenRepository);
     }
 
     /*
@@ -163,8 +165,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.setAllowedHeaders(Arrays.asList(corsProperties.getAllowedHeaders().split(",")));
         corsConfig.setAllowedMethods(Arrays.asList(corsProperties.getAllowedMethods().split(",")));
-        corsConfig.setAllowedOrigins(Arrays.asList(corsProperties.getAllowedOrigins().split(",")));
-        corsConfig.setAllowCredentials(true);
+        corsConfig.setAllowedOriginPatterns(Arrays.asList(corsProperties.getAllowedOrigins().split(",")));
         corsConfig.setMaxAge(corsConfig.getMaxAge());
 
         corsConfigSource.registerCorsConfiguration("/**", corsConfig);
