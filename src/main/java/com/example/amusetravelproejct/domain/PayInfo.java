@@ -53,6 +53,6 @@ public class PayInfo extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_code_id", referencedColumnName = "id")
-    private CouponCode couponCode;
+    private Coupon couponCode;
 
 }

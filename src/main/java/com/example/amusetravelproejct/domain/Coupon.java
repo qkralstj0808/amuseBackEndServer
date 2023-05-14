@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.EnumMap;
 
-@Entity(name = "coupon_code")      //할인쿠폰 종류 테이블
+@Entity(name = "coupon")      //할인쿠폰 종류 테이블
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CouponCode extends BaseEntity{
+public class Coupon extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +26,7 @@ public class CouponCode extends BaseEntity{
     private String couponCode;
 
     @Column(name = "discount_type", nullable = false)
-    private DiscountType discountType;
+    private Long discountType;
 
     @Column(name = "discount_amount", nullable = false)
     private Long discountAmount;
