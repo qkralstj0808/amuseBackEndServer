@@ -28,14 +28,12 @@ public class AdminPageController {
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
     private final ItemCourseRepository itemCourseRepository;
-    private final ItemIconRepository itemIconRepository;
-    private final PaymentTicketRepository paymentTicketRepository;
     private final CategoryRepository categoryRepository;
     private final AdminRepository adminRepository;
     private final AdvertisementRepository adminAdvertisementRepository;
-    private final ItemCourseRepository courseRepository;
     private final AlarmRepository alarmRepository;
     private final ItemTicketPriceRepository itemTicketPriceRepository;
+    private final DisplayCategoryRepository displayCategoryRepository;
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -114,59 +112,15 @@ public class AdminPageController {
         return new ResponseTemplate<>("상품 생성 완료");
     }
 
-    @PostMapping("/category/register")
-    public ResponseTemplate<AdminPageResponse.categoryRegister> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
-        CategoryService categoryService = new CategoryService(categoryRepository,adminRepository);
-
-        //TODO
-        // categoryRegisterDto 데이터 선 처리
-//        Category category = categoryService.processCategoryRegister(categoryRegisterDto);
-//        return new ResponseTemplate<>(new AdminPageResponse.categoryRegister(category.getId(), category.getCategoryName(), category.getCreatedAdDate() , category.getAdmin().getEmail()));
-        return null;
-    }
-
-    @GetMapping("/category/detail")
-    public ResponseTemplate<AdminPageResponse.categoryDetailList> categoryDetail(@RequestParam("id") Long id, @RequestParam("offset") Long offset , @RequestParam("limit") Long limit){
-        CategoryService categoryService = new CategoryService(categoryRepository,adminRepository);
-
-        //TODO
-        // categoryDetailDto 데이터 선 처리
-
-
-//        Category category = categoryService.findCategoryById(id);
-//        List<AdminPageResponse.categoryDetail> categoryDetails = categoryService.processCategoryItemList(category, offset, limit);
-//
-//        return new ResponseTemplate<>(new AdminPageResponse.categoryDetailList(category.getCategoryName(),categoryDetails));
-        return null;
-    }
-
-    @GetMapping("/category/getAll")
-    public ResponseTemplate<List<AdminPageResponse.category>> category(){
-//        CategoryService categoryService = new CategoryService(categoryRepository,adminRepository);
-//        List<AdminPageResponse.category> categoryList = categoryService.processFindAllCategory();
-//        return new ResponseTemplate<>(categoryList);
-         return null;
-    }
-
-
-
-
-
     @PostMapping("/notice/register")
     public ResponseTemplate<AdminPageResponse.noticeRegister> noticeRegister(@RequestBody AdminPageRequest.noticeRegister noticeRegisterDto){
         AdminService adminService = new AdminService(adminRepository);
         AlarmService alarmService = new AlarmService(alarmRepository);
 
-        Alarm alarm = new Alarm();
+        //TODO
+        // 유저 데이터 선 처리
 
-        alarm.setTitle(noticeRegisterDto.getTitle());
-        alarm.setContent(noticeRegisterDto.getContent());
-        alarm.setAdmin(adminService.getAdminByEmail(noticeRegisterDto.getCreatedBy()).get());
-        alarm.setContent(noticeRegisterDto.getContent());
-
-        alarm = alarmService.saveAlarm(alarm).get();
-
-        return new ResponseTemplate<>(new AdminPageResponse.noticeRegister(alarm.getId(),alarm.getTitle(),alarm.getContent(),alarm.getCreatedAdDate(),alarm.getAdmin().getEmail()));
+        return new ResponseTemplate<>(alarmService.processRegisterNotice(noticeRegisterDto,adminService,alarmService));
     }
 
     @PostMapping("/notice/edit")
@@ -174,18 +128,51 @@ public class AdminPageController {
         AdminService adminService = new AdminService(adminRepository);
         AlarmService alarmService = new AlarmService(alarmRepository);
 
-        log.info(noticeEditDto.toString());
 
-        Alarm alarm = alarmService.findAlarmById(noticeEditDto.getId()).get();
+        //TODO
+        // 유저 데이터 선 처리
 
-        alarm.setTitle(noticeEditDto.getTitle());
-        alarm.setContent(noticeEditDto.getContent());
-        alarm.setUpdateAdmin(adminService.getAdminByEmail(noticeEditDto.getUpdatedBy()).get());
-        alarm.setContent(noticeEditDto.getContent());
-
-        alarm = alarmService.saveAlarm(alarm).get();
-
-        return new ResponseTemplate<>(new AdminPageResponse.noticeEdit(alarm.getId(),alarm.getTitle(),alarm.getContent(),alarm.getCreatedAdDate(),alarm.getAdmin().getEmail(),alarm.getModifiedDate(),alarm.getUpdateAdmin().getEmail()));
+        return new ResponseTemplate<>(alarmService.processEditNotice(noticeEditDto,adminService));
     }
+
+
+
+    @GetMapping("/notice/getList")
+    public ResponseTemplate<AdminPageResponse.noticeResult> reqNoticeList(@RequestParam("offset") Long offset , @RequestParam("limit") int limit, @RequestParam("page") int page){
+        AlarmService alarmService = new AlarmService(alarmRepository);
+
+        //TODO
+        // 유저 데이터 선 처리
+        int sqlPage = page -1;
+
+        AdminPageResponse.noticeResult noticeResult = new AdminPageResponse.noticeResult(alarmService.getPageCount(limit),page,alarmService.processGetAllNotices(offset,limit,sqlPage));
+
+        return new ResponseTemplate<>(noticeResult);
+    }
+    @GetMapping("/notice/{id}")
+    public ResponseTemplate<AdminPageResponse.noticeEdit> reqNoticeDetail(@PathVariable("id") Long id){
+        AlarmService alarmService = new AlarmService(alarmRepository);
+
+        //TODO
+        // 유저 데이터 선 처리
+
+
+        return new ResponseTemplate<>(alarmService.processGetNoticeDetail(id));
+    }
+
+    @PostMapping("/hashTag/display/register")
+    public ResponseTemplate<List<AdminPageResponse.categoryDetail>> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
+        DisplayCategoryService displayCategoryService = new DisplayCategoryService(displayCategoryRepository);
+        AdminService adminService = new AdminService(adminRepository);
+
+        //TODO
+        // categoryRegisterDto 데이터 선 처리
+
+        return new ResponseTemplate<>(displayCategoryService.processRegisterCategory(categoryRegisterDto,adminService));
+    }
+
+
+
+
 
 }

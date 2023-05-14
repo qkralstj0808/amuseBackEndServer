@@ -51,5 +51,6 @@ public class Advertisement {
     @JoinColumn(name = "update_admin")
     private Admin updateAdmin;
 
+
     private String category;
 }

@@ -26,7 +26,4 @@ public class Category {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item")
     private Item item;
-
-
-
 }
