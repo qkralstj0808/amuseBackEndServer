@@ -7,11 +7,13 @@ import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
 import com.example.amusetravelproejct.exception.ResourceNotFoundException;
 import com.example.amusetravelproejct.repository.AdvertisementRepository;
+import com.example.amusetravelproejct.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +23,6 @@ import java.util.Optional;
 public class AdminAdvertisementService {
     private final AdvertisementRepository adminAdvertisementRepository;
 
-
     public AdminPageResponse.advertisementRegister  processAdvertisementRegister(AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto , CategoryService categoryService, AdminService adminService, UtilMethod utilMethod) {
 
         Advertisement advertisement = new Advertisement();
@@ -30,6 +31,10 @@ public class AdminAdvertisementService {
         advertisement.setStartDate(Date.valueOf(adminAdvertisementRegisterDto.getStartDate()));
         advertisement.setEndDate(Date.valueOf(adminAdvertisementRegisterDto.getEndDate()));
         advertisement.setAdmin(adminService.getAdminByEmail(adminAdvertisementRegisterDto.getCreatedBy()).get());
+
+
+
+
 //        advertisement.setCategory(categoryService.getCategoryByName(adminAdvertisementRegisterDto.getAdCategory()).get());
         advertisement.setPcBannerUrl(utilMethod.getImgUrl(adminAdvertisementRegisterDto.getPcBannerBase64(), adminAdvertisementRegisterDto.getPcBannerFileName()));
         advertisement.setMobileBannerUrl(utilMethod.getImgUrl(adminAdvertisementRegisterDto.getMobileBannerBase64(), adminAdvertisementRegisterDto.getMobileBannerFileName()));

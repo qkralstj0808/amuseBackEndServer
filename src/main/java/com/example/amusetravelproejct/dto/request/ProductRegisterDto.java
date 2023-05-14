@@ -12,7 +12,7 @@ import java.util.List;
 @ToString
 public class ProductRegisterDto {
     private String productId;
-    private String category;
+    private List<String> category;
     private String title;
     private Location location;
     private List<MainImageDto> mainImg;
