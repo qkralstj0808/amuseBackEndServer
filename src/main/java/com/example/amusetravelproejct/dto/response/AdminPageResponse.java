@@ -153,7 +153,7 @@ public class AdminPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class categoryDetail{
+    public static class categorySequence{
         private Long id;
         private String displayHashTag;
         private Long sequence;
@@ -183,5 +183,7 @@ public class AdminPageResponse {
         private String updatedBy;
         private LocalDateTime updatedAt;
     }
+
+
 
 }

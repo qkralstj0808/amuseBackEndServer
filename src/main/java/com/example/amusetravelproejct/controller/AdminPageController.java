@@ -24,6 +24,8 @@ import java.util.*;
 @RequestMapping("/test/api")
 @Slf4j
 public class AdminPageController {
+
+    private final CategoryService categoryService;
     private final ItemRepository itemRepository;
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
@@ -157,9 +159,8 @@ public class AdminPageController {
     }
 
 
-    @PostMapping("/hashTag/register")
+    @PostMapping("/category/register")
     public ResponseTemplate<AdminPageResponse.categoryRegister> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
-        CategoryService categoryService = new CategoryService(categoryRepository);
         AdminService adminService = new AdminService(adminRepository);
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
@@ -170,14 +171,27 @@ public class AdminPageController {
         return new ResponseTemplate<>(categoryService.processRegisterCategory(categoryRegisterDto,adminService,utilMethod));
     }
 
-    @PostMapping("/hashTag/edit")
+    @PostMapping("/category/edit")
     public ResponseTemplate<AdminPageResponse.categoryEdit> reqCategoryEdit(@RequestBody AdminPageRequest.categoryEdit categoryEditDto){
-        CategoryService categoryService = new CategoryService(categoryRepository);
         AdminService adminService = new AdminService(adminRepository);
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         return new ResponseTemplate<>(categoryService.processEditCategory(categoryEditDto,adminService,utilMethod));
     }
+
+    @GetMapping("/category/sequence")
+    public ResponseTemplate<List<AdminPageResponse.categorySequence>> reqCategorySequence(){
+
+        return new ResponseTemplate<>(categoryService.processGetCategorySequence());
+    }
+    @GetMapping("/category/{id}")
+    public ResponseTemplate<AdminPageResponse.categoryEdit> reqCategoryDetail(@PathVariable("id") Long id){
+
+
+        return new ResponseTemplate<>(categoryService.processGetCategoryDetail(id));
+    }
+
+
 
 ////    @PostMapping("/hashTag/find/item")
 ////    public ResponseTemplate<List<AdminPageResponse.findItemByCategory>> reqFindItemByCategory(  )
