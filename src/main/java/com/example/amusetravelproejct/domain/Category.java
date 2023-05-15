@@ -12,7 +12,7 @@ import javax.persistence.*;
 
  */
 
-@Entity(name = "display_category")
+@Entity(name = "category")
 @Getter
 @Setter
 @AllArgsConstructor
