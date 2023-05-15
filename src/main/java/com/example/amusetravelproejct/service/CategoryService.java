@@ -6,6 +6,7 @@ import com.example.amusetravelproejct.domain.Admin;
 import com.example.amusetravelproejct.domain.Category;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
+import com.example.amusetravelproejct.repository.AdminRepository;
 import com.example.amusetravelproejct.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import java.util.List;
 @Slf4j
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final AdminRepository adminRepository;
     public AdminPageResponse.categoryRegister processRegisterCategory(AdminPageRequest.categoryRegister categoryRegisterDto, AdminService adminService, UtilMethod utilMethod) {
 
 
@@ -56,6 +58,22 @@ public class CategoryService {
         category.setUpdateAdmin(admin);
         categoryRepository.save(category);
         return new AdminPageResponse.categoryEdit(category.getId(),category.getCategory_name(),category.getImgUrl(),category.getSequence(),category.getMainDescription(),category.getSubDescription(),category.getCreatedDate(),category.getAdmin().getEmail(),category.getModifiedDate(),category.getUpdateAdmin().getEmail());
+    }
+
+    public List<AdminPageResponse.categorySequence> processGetCategorySequence() {
+        List<AdminPageResponse.categorySequence> categorySequenceList = new ArrayList<>();
+
+        List<Category> categoryList = categoryRepository.findAll();
+
+        for (Category category : categoryList) {
+            categorySequenceList.add(new AdminPageResponse.categorySequence(category.getId(),category.getCategory_name(),category.getSequence(),category.getCreatedDate(),category.getAdmin().getEmail(), category.getUpdateAdmin() == null ? null : category.getModifiedDate(), category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getEmail()));
+        }
+        return categorySequenceList;
+    }
+
+    public AdminPageResponse.categoryEdit processGetCategoryDetail(Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+        return new AdminPageResponse.categoryEdit(category.getId(),category.getCategory_name(),category.getImgUrl(),category.getSequence(),category.getMainDescription(),category.getSubDescription(),category.getCreatedDate(),category.getAdmin().getEmail(),category.getUpdateAdmin() == null ? null : category.getModifiedDate(),category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getEmail());
     }
 }
 
