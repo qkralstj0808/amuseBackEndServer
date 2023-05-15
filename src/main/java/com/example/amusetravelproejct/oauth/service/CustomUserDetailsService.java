@@ -20,18 +20,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, RuntimeException {
+    public UserDetails loadUserByUsername(String username) throws CustomException {
         System.out.println("CustomUserDetailsService에서 loadUserByUsername 진입");
         User user = userRepository.findByUserId(username);
-//        try{
-//
-//        }
-        try{
-            if (user == null) {
-                throw new UsernameNotFoundException("Can not find username.");
-            }
-        }catch (UsernameNotFoundException ex){
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+
+        if(user == null){
+            throw new UsernameNotFoundException("User not found with username: " + username);
+
         }
 
         return UserPrincipal.create(user);

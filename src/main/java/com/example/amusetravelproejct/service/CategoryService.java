@@ -1,22 +1,15 @@
 package com.example.amusetravelproejct.service;
 
-import com.example.amusetravelproejct.domain.Category;
-import com.example.amusetravelproejct.domain.Item;
-import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.exception.ResourceNotFoundException;
 import com.example.amusetravelproejct.repository.AdminRepository;
-import com.example.amusetravelproejct.repository.CategoryRepository;
+import com.example.amusetravelproejct.repository.ItemHashTagRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
 public class CategoryService {
-    private final CategoryRepository categoryRepository;
+    private final ItemHashTagRepository itemHashTagRepository;
     private final AdminRepository adminRepository;
 
 
@@ -83,11 +76,11 @@ public class CategoryService {
 //        return categoryDetails;
 //    }
 
-    public Category findCategoryById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("해당 카테고리가 없습니다.")
-        );
-    }
+//    public Category findCategoryById(Long id) {
+//        return itemHashTagRepository.findById(id).orElseThrow(
+//                () -> new ResourceNotFoundException("해당 카테고리가 없습니다.")
+//        );
+//    }
 
 
 
