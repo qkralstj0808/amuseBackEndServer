@@ -1,6 +1,7 @@
 package com.example.amusetravelproejct.config.security;
 
-import com.example.amusetravelproejct.social.oauth.token.AuthTokenProvider;
+import com.example.amusetravelproejct.oauth.token.AuthTokenProvider;
+import com.example.amusetravelproejct.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,12 +14,15 @@ public class JwtConfig {
 
     private final UserDetailsService userDetailService;
 
-    public JwtConfig(UserDetailsService userDetailService) {
+    private final UserRepository userRepository;
+
+    public JwtConfig(UserDetailsService userDetailService, UserRepository userRepository) {
         this.userDetailService = userDetailService;
+        this.userRepository = userRepository;
     }
 
     @Bean
     public AuthTokenProvider jwtProvider() {
-        return new AuthTokenProvider(secret, userDetailService);
+        return new AuthTokenProvider(secret, userDetailService, userRepository);
     }
 }

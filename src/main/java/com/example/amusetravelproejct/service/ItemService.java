@@ -21,7 +21,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final AdminRepository adminRepository;
-    private final CategoryRepository categoryRepository;
+    private final ItemHashTagRepository itemHashTagRepository;
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
     private final ItemTicketPriceRepository itemTicketPriceRepository;
@@ -35,11 +35,6 @@ public class ItemService {
         return Optional.ofNullable(adminRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Admin not found")));
     }
 
-    //Category
-//    public Optional<Category> getCategoryByName(String name) {
-//        return Optional.ofNullable(categoryRepository.findByCategoryName(name).orElseThrow(() -> new EntityNotFoundException("Category not found")));
-//    }
-
 
 
     //Item
@@ -52,12 +47,19 @@ public class ItemService {
         List<String> hashTags = productRegisterDto.getCategory();
 
 
-        hashTags.forEach(data ->{
-            Category category = new Category();
-            category.setItem(item);
-            category.setHashTag(data);
-            categoryRepository.save(category);
-        });
+//        hashTags.forEach(data ->{
+//            Category category = new Category();
+//            category.setItem(item);
+//            HashTag hashTag = hashTagRepository.findByHashTag(data).isEmpty() ? null : hashTagRepository.findByHashTag(data).get();
+//
+//            if (hashTag ==null){
+//                hashTag = new HashTag();
+//                hashTag.setHashTag(data);
+//                hashTagRepository.save(hashTag);
+//            }
+//            category.setHash_tag(hashTag);
+//            itemHashTagRepository.save(category);
+//        });
 
         item.setCountry(productRegisterDto.getLocation().getCountry());
         item.setCity(productRegisterDto.getLocation().getCity());

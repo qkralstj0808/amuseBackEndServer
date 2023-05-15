@@ -1,8 +1,8 @@
 package com.example.amusetravelproejct.domain;
 
 import com.example.amusetravelproejct.domain.person_enum.Gender;
-import com.example.amusetravelproejct.social.oauth.entity.ProviderType;
-import com.example.amusetravelproejct.social.oauth.entity.RoleType;
+import com.example.amusetravelproejct.oauth.entity.ProviderType;
+import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
