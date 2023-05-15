@@ -59,7 +59,9 @@ public class ItemService {
         item.setContent_2(productRegisterDto.getExtraInfo());
         item.setAdmin(getAdminByEmail(productRegisterDto.getAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
-        item.setDuration(productRegisterDto.getDuration().intValue());
+
+        Long duration = Long.parseLong(productRegisterDto.getDuration().split("박")[1].split("일")[0]);
+        item.setDuration(Math.toIntExact(duration));
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         return item;
