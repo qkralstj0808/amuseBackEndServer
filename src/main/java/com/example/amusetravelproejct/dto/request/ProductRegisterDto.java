@@ -22,7 +22,7 @@ public class ProductRegisterDto {
     private String extraInfo;
     private String admin;
     private Long startPrice;
-    private Long duration;
+    private String duration;
     private String startDate;
     private String endDate;
 
