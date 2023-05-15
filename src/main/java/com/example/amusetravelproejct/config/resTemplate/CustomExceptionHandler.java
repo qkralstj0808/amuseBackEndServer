@@ -14,16 +14,4 @@ public class CustomExceptionHandler {
     protected ResponseEntity<ErrorResponseEntity> handleCustomException(CustomException e) {
         return ErrorResponseEntity.toResponseEntity(e.getErrorCode());
     }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    protected ResponseEntity<ErrorResponseEntity> handleUsernameNotFoundException(UsernameNotFoundException e) {
-        return ErrorResponseEntity.toResponseEntity(ErrorCode.USER_NOT_FOUND);
-    }
-
-    @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponseEntity> handleException(Exception e) {
-        return ErrorResponseEntity.toResponseEntity(ErrorCode.INTERNAL_SERVER_ERROR);
-    }
-
-
 }

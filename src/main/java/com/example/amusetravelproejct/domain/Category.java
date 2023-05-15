@@ -11,6 +11,7 @@ import javax.persistence.*;
     메인 페이지에 보여줄 카테고리
 
  */
+
 @Entity(name = "category")
 @Getter
 @Setter

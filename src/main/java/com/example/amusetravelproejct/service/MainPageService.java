@@ -2,6 +2,7 @@ package com.example.amusetravelproejct.service;
 
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
+import com.example.amusetravelproejct.domain.Category;
 import com.example.amusetravelproejct.domain.ItemHashTag;
 import com.example.amusetravelproejct.domain.Item;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,14 +29,16 @@ public class MainPageService {
     public final ItemHashTagRepository ItemhashTagRepository;
 
     public final ItemRepository itemRepository;
+    public final CategoryRepository categoryRepository;
 
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
-        List<ItemHashTag> categories = ItemhashTagRepository.findAll();
-        return null;
-//        return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(
-//                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getCategoryName())
-//        ).collect(Collectors.toList())));
+
+        List<Category> categories = categoryRepository.findAll();
+
+        return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(
+                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getCategory_name())
+        ).collect(Collectors.toList())));
     }
 
     public ResponseTemplate<?> getBestItem() {

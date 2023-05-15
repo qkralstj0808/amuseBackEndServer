@@ -12,7 +12,8 @@ import javax.persistence.*;
     카테고리별 페이지에 보여줄 예정
 
  */
-@Entity(name = "ItemHashTag")
+
+@Entity(name = "item_hash_tag")
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
 @Setter
