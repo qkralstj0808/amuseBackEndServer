@@ -124,8 +124,6 @@ public class AdminPageResponse {
     public static class categoryRegister {
         private List<categoryDetail> displayHashTags;
     }
-
-
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -138,6 +136,13 @@ public class AdminPageResponse {
         private LocalDateTime updatedAt;
         private String updatedBy;
     }
+
+//    @Data
+//    @AllArgsConstructor
+//    @NoArgsConstructor
+//    public static class findItemByCategoryResult{
+//        private List<findItemByCategory> Items;
+//    }
 
     @Data
     @AllArgsConstructor

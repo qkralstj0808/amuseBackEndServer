@@ -1,10 +1,8 @@
 package com.example.amusetravelproejct.repository;
 
-import com.example.amusetravelproejct.domain.Category;
+import com.example.amusetravelproejct.domain.ItemHashTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface CategoryRepository extends JpaRepository<ItemHashTag, Long> {
 
 }

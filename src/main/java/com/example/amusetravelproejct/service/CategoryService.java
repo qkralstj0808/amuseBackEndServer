@@ -1,17 +1,11 @@
 package com.example.amusetravelproejct.service;
 
-import com.example.amusetravelproejct.domain.Category;
-import com.example.amusetravelproejct.domain.Item;
-import com.example.amusetravelproejct.dto.request.AdminPageRequest;
+import com.example.amusetravelproejct.domain.ItemHashTag;
 import com.example.amusetravelproejct.exception.ResourceNotFoundException;
 import com.example.amusetravelproejct.repository.AdminRepository;
 import com.example.amusetravelproejct.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -20,12 +14,12 @@ public class CategoryService {
     private final AdminRepository adminRepository;
 
 
-//    public Optional<Category> getCategoryByName(String name) {
+//    public Optional<ItemHashTag> getCategoryByName(String name) {
 //        return categoryRepository.findByCategoryName(name);
 //    }
 
-//    public Category processCategoryRegister(String hashTag, Item item) {
-//        Category category = new Category();
+//    public ItemHashTag processCategoryRegister(String hashTag, Item item) {
+//        ItemHashTag category = new ItemHashTag();
 //
 //        category.setItem(item);
 //        category.setHashTag(hashTag);
@@ -36,18 +30,18 @@ public class CategoryService {
 //    public List<AdminPageResponse.category> processFindAllCategory() {
 //
 //
-//        List<Category> categories = categoryRepository.findAll();
+//        List<ItemHashTag> categories = categoryRepository.findAll();
 //
 //        List<AdminPageResponse.category> categoryList = new ArrayList<>();
 //        for(int i = 0; i < categories.size(); i++){
-//            Category category = categories.get(i);
+//            ItemHashTag category = categories.get(i);
 //            System.out.println(category);
 //            categoryList.add(new AdminPageResponse.category(category.getId(),category.getCategoryName(),category.getCreatedAdDate(),category.getAdmin().getEmail(), (long) category.getItems().size()));
 //        }
 //        return categoryList;
 //    }
 //
-//    public List<AdminPageResponse.categoryDetail> processCategoryItemList(Category category, Long offset, Long limit) {
+//    public List<AdminPageResponse.categoryDetail> processCategoryItemList(ItemHashTag category, Long offset, Long limit) {
 //
 //        int count = Math.toIntExact(limit > category.getItems().size() ? category.getItems().size() : limit);
 //
@@ -83,7 +77,7 @@ public class CategoryService {
 //        return categoryDetails;
 //    }
 
-    public Category findCategoryById(Long id) {
+    public ItemHashTag findCategoryById(Long id) {
         return categoryRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("해당 카테고리가 없습니다.")
         );

@@ -1,12 +1,9 @@
 package com.example.amusetravelproejct.repository;
 
-import com.example.amusetravelproejct.domain.DisplayCategory;
-import com.example.amusetravelproejct.domain.HashTag;
+import com.example.amusetravelproejct.domain.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+public interface DisplayCategoryRepository extends JpaRepository<Category, Long> {
 
-public interface DisplayCategoryRepository extends JpaRepository<DisplayCategory, Long> {
-
-    Optional<DisplayCategory> findByHashTag(HashTag hashTag);
+//    Optional<Category> findByHashTag(HashTag hashTag);
 }

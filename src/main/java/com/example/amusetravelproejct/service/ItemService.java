@@ -26,7 +26,7 @@ public class ItemService {
     private final ItemTicketRepository itemTicketRepository;
     private final ItemTicketPriceRepository itemTicketPriceRepository;
     private final ItemCourseRepository itemCourseRepository;
-    private final HashTagRepository hashTagRepository;
+//    private final HashTagRepository hashTagRepository;
     ObjectMapper objectMapper = new ObjectMapper();
 
     static String bucketName = "amuse-img";
@@ -49,17 +49,10 @@ public class ItemService {
 
 
         hashTags.forEach(data ->{
-            Category category = new Category();
-            category.setItem(item);
-            HashTag hashTag = hashTagRepository.findByHashTag(data).isEmpty() ? null : hashTagRepository.findByHashTag(data).get();
-
-            if (hashTag ==null){
-                hashTag = new HashTag();
-                hashTag.setHashTag(data);
-                hashTagRepository.save(hashTag);
-            }
-            category.setHash_tag(hashTag);
-            categoryRepository.save(category);
+            ItemHashTag itemHashTag = new ItemHashTag();
+            itemHashTag.setItem(item);
+            itemHashTag.setHash_tag(data);
+            categoryRepository.save(itemHashTag);
         });
 
         item.setCountry(productRegisterDto.getLocation().getCountry());
