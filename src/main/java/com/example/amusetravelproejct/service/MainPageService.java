@@ -3,6 +3,7 @@ package com.example.amusetravelproejct.service;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
 import com.example.amusetravelproejct.domain.Category;
+import com.example.amusetravelproejct.domain.ItemHashTag;
 import com.example.amusetravelproejct.domain.Item;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.repository.CategoryRepository;
@@ -25,12 +26,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MainPageService {
 
-    public final CategoryRepository categoryRepository;
+    public final ItemHashTagRepository ItemhashTagRepository;
 
     public final ItemRepository itemRepository;
+    public final CategoryRepository categoryRepository;
 
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
+
         List<Category> categories = categoryRepository.findAll();
 
         return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(

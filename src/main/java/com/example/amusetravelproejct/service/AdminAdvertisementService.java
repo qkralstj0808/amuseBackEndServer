@@ -24,7 +24,7 @@ import java.util.List;
 public class AdminAdvertisementService {
     private final AdvertisementRepository AdvertisementRepository;
 
-    public AdminPageResponse.advertisementRegister  processAdvertisementRegister(AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto , CategoryService categoryService, AdminService adminService, UtilMethod utilMethod) {
+    public AdminPageResponse.advertisementRegister  processAdvertisementRegister(AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto , AdminService adminService, UtilMethod utilMethod) {
 
         Advertisement advertisement = new Advertisement();
         advertisement.setTitle(adminAdvertisementRegisterDto.getTitle());
@@ -62,7 +62,7 @@ public class AdminAdvertisementService {
     }
 
 
-    public AdminPageResponse.advertisementEdit processAdvertisementEdit(AdminPageRequest.advertisementEdit advertisementEditDto, CategoryService categoryService, AdminService adminService, UtilMethod utilMethod) {
+    public AdminPageResponse.advertisementEdit processAdvertisementEdit(AdminPageRequest.advertisementEdit advertisementEditDto, AdminService adminService, UtilMethod utilMethod) {
         Advertisement advertisement = AdvertisementRepository.findById(advertisementEditDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Advertisement not Found"));
 
         advertisement.setTitle(advertisementEditDto.getTitle());

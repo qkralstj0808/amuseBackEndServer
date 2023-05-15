@@ -1,16 +1,12 @@
 package com.example.amusetravelproejct.domain;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +45,8 @@ public class Item extends BaseEntity {
     // item와 category는 N:1 관계 ManyToOne
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemHashTag> category_list = new ArrayList<>();
+    private List<ItemHashTag> itemHashTag_list = new ArrayList<>();
+
 
     // item와 ItemImg 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)

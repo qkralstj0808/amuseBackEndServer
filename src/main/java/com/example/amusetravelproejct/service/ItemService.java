@@ -47,20 +47,12 @@ public class ItemService {
         List<String> hashTags = productRegisterDto.getCategory();
 
 
-//        hashTags.forEach(data ->{
-//            Category category = new Category();
-//            category.setItem(item);
-//            HashTag hashTag = hashTagRepository.findByHashTag(data).isEmpty() ? null : hashTagRepository.findByHashTag(data).get();
-//
-//            if (hashTag ==null){
-//                hashTag = new HashTag();
-//                hashTag.setHashTag(data);
-//                hashTagRepository.save(hashTag);
-//            }
-//            category.setHash_tag(hashTag);
-//            itemHashTagRepository.save(category);
-//        });
-
+        hashTags.forEach(data ->{
+            ItemHashTag itemHashTag = new ItemHashTag();
+            itemHashTag.setItem(item);
+            itemHashTag.setHash_tag(data);
+            itemHashTagRepository.save(itemHashTag);
+        });
         item.setCountry(productRegisterDto.getLocation().getCountry());
         item.setCity(productRegisterDto.getLocation().getCity());
         item.setContent_1(productRegisterDto.getMainInfo());
@@ -72,6 +64,7 @@ public class ItemService {
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         return item;
     }
+
 
     //ItemImg
     public void processItemImg(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item){

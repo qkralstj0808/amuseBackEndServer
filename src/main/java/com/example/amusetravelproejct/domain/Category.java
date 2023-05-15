@@ -19,13 +19,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Category extends BaseEntity{
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String category_name;
-
     private Long sequence;
+    private String imgUrl;
+    private String mainDescription;
+    private String subDescription;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin")

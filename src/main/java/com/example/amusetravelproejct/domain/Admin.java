@@ -35,8 +35,6 @@ public class Admin {
     @OneToMany(mappedBy = "updateAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Advertisement> AdvertisementUpdates = new ArrayList<>();
 
-
-
     // admin과 alarm은 1:N 관계
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Alarm> alarms = new ArrayList<>();

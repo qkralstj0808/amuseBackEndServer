@@ -1,6 +1,5 @@
 package com.example.amusetravelproejct.domain;
 
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,6 +12,7 @@ import javax.persistence.*;
     카테고리별 페이지에 보여줄 예정
 
  */
+
 @Entity(name = "item_hash_tag")
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
@@ -25,6 +25,7 @@ public class ItemHashTag {
     private String hash_tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
+
     @JoinColumn(name = "item_id")
     private Item item;
 }
