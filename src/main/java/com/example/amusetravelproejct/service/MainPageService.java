@@ -1,16 +1,13 @@
 package com.example.amusetravelproejct.service;
 
-import com.example.amusetravelproejct.config.resTemplate.CustomException;
-import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
 import com.example.amusetravelproejct.domain.Category;
 import com.example.amusetravelproejct.domain.Item;
-import com.example.amusetravelproejct.domain.ItemImg;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.repository.CategoryRepository;
+import com.example.amusetravelproejct.repository.ItemHashTagRepository;
 import com.example.amusetravelproejct.repository.ItemRepository;
-import com.example.amusetravelproejct.repository.custom.ItemRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

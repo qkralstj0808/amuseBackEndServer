@@ -21,12 +21,11 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final AdminRepository adminRepository;
-    private final CategoryRepository categoryRepository;
+    private final ItemHashTagRepository itemHashTagRepository;
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
     private final ItemTicketPriceRepository itemTicketPriceRepository;
     private final ItemCourseRepository itemCourseRepository;
-    private final HashTagRepository hashTagRepository;
     ObjectMapper objectMapper = new ObjectMapper();
 
     static String bucketName = "amuse-img";
@@ -48,19 +47,19 @@ public class ItemService {
         List<String> hashTags = productRegisterDto.getCategory();
 
 
-        hashTags.forEach(data ->{
-            Category category = new Category();
-            category.setItem(item);
-            HashTag hashTag = hashTagRepository.findByHashTag(data).isEmpty() ? null : hashTagRepository.findByHashTag(data).get();
-
-            if (hashTag ==null){
-                hashTag = new HashTag();
-                hashTag.setHashTag(data);
-                hashTagRepository.save(hashTag);
-            }
-            category.setHash_tag(hashTag);
-            categoryRepository.save(category);
-        });
+//        hashTags.forEach(data ->{
+//            Category category = new Category();
+//            category.setItem(item);
+//            HashTag hashTag = hashTagRepository.findByHashTag(data).isEmpty() ? null : hashTagRepository.findByHashTag(data).get();
+//
+//            if (hashTag ==null){
+//                hashTag = new HashTag();
+//                hashTag.setHashTag(data);
+//                hashTagRepository.save(hashTag);
+//            }
+//            category.setHash_tag(hashTag);
+//            itemHashTagRepository.save(category);
+//        });
 
         item.setCountry(productRegisterDto.getLocation().getCountry());
         item.setCity(productRegisterDto.getLocation().getCity());
