@@ -122,8 +122,34 @@ public class AdminPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class categoryRegister {
-        private List<categoryDetail> displayHashTags;
+        private Long   id;
+        private String hashTag;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class categoryEdit {
+        private Long   id;
+        private String hashTag;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+    }
+
+
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

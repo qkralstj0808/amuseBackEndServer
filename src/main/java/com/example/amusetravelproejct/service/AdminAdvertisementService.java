@@ -7,7 +7,6 @@ import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
 import com.example.amusetravelproejct.exception.ResourceNotFoundException;
 import com.example.amusetravelproejct.repository.AdvertisementRepository;
-import com.example.amusetravelproejct.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -26,7 +24,7 @@ import java.util.Optional;
 public class AdminAdvertisementService {
     private final AdvertisementRepository AdvertisementRepository;
 
-    public AdminPageResponse.advertisementRegister  processAdvertisementRegister(AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto , CategoryService categoryService, AdminService adminService, UtilMethod utilMethod) {
+    public AdminPageResponse.advertisementRegister  processAdvertisementRegister(AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto , AdminService adminService, UtilMethod utilMethod) {
 
         Advertisement advertisement = new Advertisement();
         advertisement.setTitle(adminAdvertisementRegisterDto.getTitle());
@@ -64,7 +62,7 @@ public class AdminAdvertisementService {
     }
 
 
-    public AdminPageResponse.advertisementEdit processAdvertisementEdit(AdminPageRequest.advertisementEdit advertisementEditDto, CategoryService categoryService, AdminService adminService, UtilMethod utilMethod) {
+    public AdminPageResponse.advertisementEdit processAdvertisementEdit(AdminPageRequest.advertisementEdit advertisementEditDto, AdminService adminService, UtilMethod utilMethod) {
         Advertisement advertisement = AdvertisementRepository.findById(advertisementEditDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Advertisement not Found"));
 
         advertisement.setTitle(advertisementEditDto.getTitle());

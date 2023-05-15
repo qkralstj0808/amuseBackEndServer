@@ -37,7 +37,7 @@ public class PayInfo extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_ticket_deal")
-    private ItemTicketDeal productTicketDeal;
+    private ItemTicketDeal itemTicketDeal;
 
     @Column(name = "additional_requests", nullable = false)
     private String additionalRequests;

@@ -21,12 +21,11 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final AdminRepository adminRepository;
-    private final CategoryRepository categoryRepository;
+    private final ItemHashTagRepository itemHashTagRepository;
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
     private final ItemTicketPriceRepository itemTicketPriceRepository;
     private final ItemCourseRepository itemCourseRepository;
-//    private final HashTagRepository hashTagRepository;
     ObjectMapper objectMapper = new ObjectMapper();
 
     static String bucketName = "amuse-img";
@@ -52,9 +51,8 @@ public class ItemService {
             ItemHashTag itemHashTag = new ItemHashTag();
             itemHashTag.setItem(item);
             itemHashTag.setHash_tag(data);
-            categoryRepository.save(itemHashTag);
+            itemHashTagRepository.save(itemHashTag);
         });
-
         item.setCountry(productRegisterDto.getLocation().getCountry());
         item.setCity(productRegisterDto.getLocation().getCity());
         item.setContent_1(productRegisterDto.getMainInfo());
@@ -66,6 +64,7 @@ public class ItemService {
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         return item;
     }
+
 
     //ItemImg
     public void processItemImg(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item){

@@ -47,6 +47,7 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemHashTag> itemHashTag_list = new ArrayList<>();
 
+
     // item와 ItemImg 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemImg> itemImg_list = new ArrayList<>();

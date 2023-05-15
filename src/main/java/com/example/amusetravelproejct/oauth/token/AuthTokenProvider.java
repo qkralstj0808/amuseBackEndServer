@@ -1,6 +1,10 @@
 package com.example.amusetravelproejct.oauth.token;
 
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
+import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.oauth.exception.TokenValidFailedException;
+import com.example.amusetravelproejct.repository.UserRepository;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +26,16 @@ public class AuthTokenProvider {
 
     private final UserDetailsService userDetailService;
 
-    public AuthTokenProvider(String secret, UserDetailsService userDetailService) {
+    private final UserRepository userRepository;
+
+    public AuthTokenProvider(String secret, UserDetailsService userDetailService, UserRepository userRepository) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.userDetailService = userDetailService;
+        this.userRepository = userRepository;
     }
 
     public AuthToken createAuthToken(String id, Date expiry) {
         System.out.println("\n\nAuthTokenProvider 에서 createAuthToken");
-        System.out.println("key : " + key);
         return new AuthToken(id, expiry, key);
     }
 
@@ -44,15 +50,6 @@ public class AuthTokenProvider {
     public Authentication getAuthentication(AuthToken authToken) {
         System.out.println("AuthTokenProvider 에서 getAuthentication");
         if(authToken.validate()) {
-
-//            Claims claims = authToken.getTokenClaims();
-//            Collection<? extends GrantedAuthority> authorities =
-//                    Arrays.stream(new String[]{claims.get(AUTHORITIES_KEY).toString()})
-//                            .map(SimpleGrantedAuthority::new)
-//                            .collect(Collectors.toList());
-//
-//            log.debug("claims subject := [{}]", claims.getSubject());
-//            User principal = new User(claims.getSubject(), "", authorities);
 
             UserDetails userDetails = userDetailService.loadUserByUsername(authToken.getTokenClaims().getSubject());
             return new UsernamePasswordAuthenticationToken(userDetails, authToken, userDetails.getAuthorities());

@@ -28,12 +28,13 @@ public class AdminPageController {
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
     private final ItemCourseRepository itemCourseRepository;
-    private final CategoryRepository categoryRepository;
+    private final ItemHashTagRepository itemHashTagRepository;
     private final AdminRepository adminRepository;
     private final AdvertisementRepository adminAdvertisementRepository;
     private final AlarmRepository alarmRepository;
     private final ItemTicketPriceRepository itemTicketPriceRepository;
-    private final DisplayCategoryRepository displayCategoryRepository;
+    private final CategoryRepository categoryRepository;
+
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -41,7 +42,6 @@ public class AdminPageController {
     public ResponseTemplate<AdminPageResponse.advertisementRegister> reqAdvertisementRegister(@RequestBody AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto){
 
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
-        CategoryService categoryService = new CategoryService(categoryRepository,adminRepository);
         AdminService adminService = new AdminService(adminRepository);
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
@@ -49,7 +49,7 @@ public class AdminPageController {
         // 유저 데이터 선 처리
 
 
-        AdminPageResponse.advertisementRegister  advertisement = adminAdvertisementService.processAdvertisementRegister(adminAdvertisementRegisterDto,categoryService,adminService,utilMethod);
+        AdminPageResponse.advertisementRegister  advertisement = adminAdvertisementService.processAdvertisementRegister(adminAdvertisementRegisterDto,adminService,utilMethod);
         return new ResponseTemplate<>(advertisement);
     }
 
@@ -57,7 +57,6 @@ public class AdminPageController {
     public ResponseTemplate<AdminPageResponse.advertisementEdit> reqAdvertisementEdit(@RequestBody AdminPageRequest.advertisementEdit adminAdvertisementRegisterDbDto) {
 
         AdminAdvertisementService adminAdvertisementService = new AdminAdvertisementService(adminAdvertisementRepository);
-        CategoryService categoryService = new CategoryService(categoryRepository,adminRepository);
         AdminService adminService = new AdminService(adminRepository);
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
@@ -66,7 +65,7 @@ public class AdminPageController {
         // 유저 데이터 선 처리
 
 
-        AdminPageResponse.advertisementEdit advertisement = adminAdvertisementService.processAdvertisementEdit(adminAdvertisementRegisterDbDto,categoryService,adminService,utilMethod);
+        AdminPageResponse.advertisementEdit advertisement = adminAdvertisementService.processAdvertisementEdit(adminAdvertisementRegisterDbDto,adminService,utilMethod);
 
         return new ResponseTemplate<>(advertisement);
     }
@@ -99,7 +98,7 @@ public class AdminPageController {
     @Transactional
     @PostMapping("/product/create")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
-        ItemService itemService = new ItemService(itemRepository,adminRepository,categoryRepository,imgRepository,itemTicketRepository,itemTicketPriceRepository,itemCourseRepository,objectMapper);
+        ItemService itemService = new ItemService(itemRepository,adminRepository,itemHashTagRepository,imgRepository,itemTicketRepository,itemTicketPriceRepository,itemCourseRepository,objectMapper);
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         //TODO
@@ -157,21 +156,41 @@ public class AdminPageController {
         return new ResponseTemplate<>(alarmService.processGetNoticeDetail(id));
     }
 
-    @PostMapping("/hashTag/display/register")
-    public ResponseTemplate<List<AdminPageResponse.categoryDetail>> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
-        DisplayCategoryService displayCategoryService = new DisplayCategoryService(displayCategoryRepository);
+
+    @PostMapping("/hashTag/register")
+    public ResponseTemplate<AdminPageResponse.categoryRegister> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
+        CategoryService categoryService = new CategoryService(categoryRepository);
         AdminService adminService = new AdminService(adminRepository);
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         //TODO
         // categoryRegisterDto 데이터 선 처리
 
-        return new ResponseTemplate<>(displayCategoryService.processRegisterCategory(categoryRegisterDto,adminService));
+
+        return new ResponseTemplate<>(categoryService.processRegisterCategory(categoryRegisterDto,adminService,utilMethod));
     }
-//    @PostMapping("/hashTag/find/item")
-//    public ResponseTemplate<List<AdminPageResponse.findItemByCategory>> reqFindItemByCategory(  )
 
+    @PostMapping("/hashTag/edit")
+    public ResponseTemplate<AdminPageResponse.categoryEdit> reqCategoryEdit(@RequestBody AdminPageRequest.categoryEdit categoryEditDto){
+        CategoryService categoryService = new CategoryService(categoryRepository);
+        AdminService adminService = new AdminService(adminRepository);
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
+        return new ResponseTemplate<>(categoryService.processEditCategory(categoryEditDto,adminService,utilMethod));
+    }
 
+////    @PostMapping("/hashTag/find/item")
+////    public ResponseTemplate<List<AdminPageResponse.findItemByCategory>> reqFindItemByCategory(  )
+////    @PostMapping("/hashTag/display/register")
+////    public ResponseTemplate<List<AdminPageResponse.categoryDetail>> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
+////        DisplayCategoryService displayCategoryService = new DisplayCategoryService(categoryRepository,hashTagRepository);
+////        AdminService adminService = new AdminService(adminRepository);
+////
+////        //TODO
+////        // categoryRegisterDto 데이터 선 처리
+////
+////        return new ResponseTemplate<>(displayCategoryService.processRegisterCategory(categoryRegisterDto,adminService));
+////    }
 
 
 

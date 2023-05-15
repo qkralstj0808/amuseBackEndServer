@@ -70,8 +70,25 @@ public class AdminPageRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class categoryRegister {
-        private List<categoryDetail> hashTags;
-        private String manageBy;
+        private String hashTag;
+        private String fileName;
+        private String base64Date;
+        private String mainDescription;
+        private String subDescription;
+        private String createdBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class categoryEdit {
+        private Long id;
+        private String hashTag;
+        private String fileName;
+        private String base64Date;
+        private String mainDescription;
+        private String subDescription;
+        private String updatedBy;
     }
 
     @Data
@@ -82,7 +99,6 @@ public class AdminPageRequest {
         private Long sequence;
     }
 
-
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -91,10 +107,6 @@ public class AdminPageRequest {
         private Long offset;
         private Long limit;
     }
-
-
-
-
 
 }
 

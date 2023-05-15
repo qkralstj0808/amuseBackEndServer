@@ -6,6 +6,7 @@ import com.example.amusetravelproejct.domain.ItemHashTag;
 import com.example.amusetravelproejct.domain.Item;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.repository.CategoryRepository;
+import com.example.amusetravelproejct.repository.ItemHashTagRepository;
 import com.example.amusetravelproejct.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +24,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MainPageService {
 
-    public final CategoryRepository categoryRepository;
+    public final ItemHashTagRepository ItemhashTagRepository;
 
     public final ItemRepository itemRepository;
 
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
-        List<ItemHashTag> categories = categoryRepository.findAll();
+        List<ItemHashTag> categories = ItemhashTagRepository.findAll();
         return null;
 //        return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(
 //                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getCategoryName())
