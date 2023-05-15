@@ -25,7 +25,6 @@ public class ItemHashTag {
     private String hash_tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
-
     @JoinColumn(name = "item_id")
     private Item item;
 }
