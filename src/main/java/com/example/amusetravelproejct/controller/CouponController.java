@@ -3,17 +3,15 @@ package com.example.amusetravelproejct.controller;
 
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.dto.request.InsertCouponTypeReq;
+import com.example.amusetravelproejct.dto.response.GetCouponRes;
 import com.example.amusetravelproejct.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/coupon")
+@RequestMapping("/coupon")
 @RequiredArgsConstructor
 public class CouponController {
 
@@ -30,5 +28,17 @@ public class CouponController {
         }
 
 
+    }
+
+
+    @GetMapping("/getCoupon/{couponCode}")
+    public ResponseTemplate<GetCouponRes> getCoupon(@PathVariable String couponCode){
+        try{
+            GetCouponRes result = couponService.getCoupon(couponCode);
+            return new ResponseTemplate<>(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseTemplate<>(new GetCouponRes());
+        }
     }
 }
