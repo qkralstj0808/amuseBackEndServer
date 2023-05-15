@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,10 +32,10 @@ public class MainPageService {
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
         List<Category> categories = categoryRepository.findAll();
-        return null;
-//        return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(
-//                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getCategoryName())
-//        ).collect(Collectors.toList())));
+
+        return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(
+                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getCategory_name())
+        ).collect(Collectors.toList())));
     }
 
     public ResponseTemplate<?> getBestItem() {
