@@ -83,6 +83,19 @@ public class AdminPageRequest {
     }
 
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class findItemByCategory {
+        private List<String> categoryNames;
+        private Long offset;
+        private Long limit;
+    }
+
+
+
+
+
 }
 
 
