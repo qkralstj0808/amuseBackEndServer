@@ -1,5 +1,7 @@
 package com.example.amusetravelproejct.controller;
 
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
@@ -53,10 +55,10 @@ public class MainPageController {
                                                                              @PathVariable("i") int i){
         int current_page = i-1;
         if(current_page < 0){
-            return new ResponseTemplate(ResponseTemplateStatus.OUT_BOUND_PAGE);
+            throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
         }
         PageRequest pageRequest = PageRequest.of(current_page, 2);
-        return mainPageService.getCategoryBestItemAllPage(category_id,current_page,pageRequest);
+        return mainPageService.getCategoryBestItemAllPage(category_id,current_page+1,pageRequest);
     }
 
     // 카테고리별 좋아요 순으로 모두 보기
@@ -65,10 +67,10 @@ public class MainPageController {
                                                                              @PathVariable("i") int i){
         int current_page = i-1;
         if(current_page < 0){
-            return new ResponseTemplate(ResponseTemplateStatus.OUT_BOUND_PAGE);
+            throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
         }
         PageRequest pageRequest = PageRequest.of(current_page, 2);
-        return mainPageService.getCategoryCurrentItemAllPage(category_id,current_page,pageRequest);
+        return mainPageService.getCategoryCurrentItemAllPage(category_id,current_page+1,pageRequest);
     }
 
 }
