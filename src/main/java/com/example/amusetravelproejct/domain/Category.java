@@ -20,7 +20,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String hashTag;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hash_tag")
+    private HashTag hash_tag;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

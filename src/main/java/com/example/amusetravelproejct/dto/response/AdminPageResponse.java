@@ -139,8 +139,18 @@ public class AdminPageResponse {
         private String updatedBy;
     }
 
-
-
-
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class findItemByCategory{
+        private Long id;
+        private String title;
+        private String content;
+        private String[] hashTags;
+        private String createdBy;
+        private LocalDateTime createdAt;
+        private String updatedBy;
+        private LocalDateTime updatedAt;
+    }
 
 }

@@ -24,15 +24,15 @@ public class CategoryService {
 //        return categoryRepository.findByCategoryName(name);
 //    }
 
-    public Category processCategoryRegister(String hashTag, Item item) {
-        Category category = new Category();
-
-        category.setItem(item);
-        category.setHashTag(hashTag);
-        return Optional.of(categoryRepository.save(category)).orElseThrow(
-                () -> new ResourceNotFoundException("해당 카테고리가 없습니다.")
-        );
-    }
+//    public Category processCategoryRegister(String hashTag, Item item) {
+//        Category category = new Category();
+//
+//        category.setItem(item);
+//        category.setHashTag(hashTag);
+//        return Optional.of(categoryRepository.save(category)).orElseThrow(
+//                () -> new ResourceNotFoundException("해당 카테고리가 없습니다.")
+//        );
+//    }
 //    public List<AdminPageResponse.category> processFindAllCategory() {
 //
 //

@@ -18,7 +18,11 @@ public class DisplayCategory extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String hashTag;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hash_tag")
+    private HashTag hashTag;
+
     private Long sequence;
 
     @ManyToOne(fetch = FetchType.LAZY)

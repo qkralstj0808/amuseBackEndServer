@@ -34,6 +34,7 @@ public class AdminPageController {
     private final AlarmRepository alarmRepository;
     private final ItemTicketPriceRepository itemTicketPriceRepository;
     private final DisplayCategoryRepository displayCategoryRepository;
+    private final HashTagRepository hashTagRepository;
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -99,7 +100,7 @@ public class AdminPageController {
     @Transactional
     @PostMapping("/product/create")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
-        ItemService itemService = new ItemService(itemRepository,adminRepository,categoryRepository,imgRepository,itemTicketRepository,itemTicketPriceRepository,itemCourseRepository,objectMapper);
+        ItemService itemService = new ItemService(itemRepository,adminRepository,categoryRepository,imgRepository,itemTicketRepository,itemTicketPriceRepository,itemCourseRepository,hashTagRepository,objectMapper);
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         //TODO
@@ -162,7 +163,7 @@ public class AdminPageController {
 
     @PostMapping("/hashTag/display/register")
     public ResponseTemplate<List<AdminPageResponse.categoryDetail>> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
-        DisplayCategoryService displayCategoryService = new DisplayCategoryService(displayCategoryRepository);
+        DisplayCategoryService displayCategoryService = new DisplayCategoryService(displayCategoryRepository,hashTagRepository);
         AdminService adminService = new AdminService(adminRepository);
 
         //TODO
@@ -170,6 +171,8 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(displayCategoryService.processRegisterCategory(categoryRegisterDto,adminService));
     }
+
+
 
 
 

@@ -26,6 +26,7 @@ public class ItemService {
     private final ItemTicketRepository itemTicketRepository;
     private final ItemTicketPriceRepository itemTicketPriceRepository;
     private final ItemCourseRepository itemCourseRepository;
+    private final HashTagRepository hashTagRepository;
     ObjectMapper objectMapper = new ObjectMapper();
 
     static String bucketName = "amuse-img";
@@ -34,11 +35,6 @@ public class ItemService {
     public Optional<Admin> getAdminByEmail(String email) {
         return Optional.ofNullable(adminRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Admin not found")));
     }
-
-    //Category
-//    public Optional<Category> getCategoryByName(String name) {
-//        return Optional.ofNullable(categoryRepository.findByCategoryName(name).orElseThrow(() -> new EntityNotFoundException("Category not found")));
-//    }
 
 
 
@@ -55,7 +51,14 @@ public class ItemService {
         hashTags.forEach(data ->{
             Category category = new Category();
             category.setItem(item);
-            category.setHashTag(data);
+            HashTag hashTag = hashTagRepository.findByHashTag(data).isEmpty() ? null : hashTagRepository.findByHashTag(data).get();
+
+            if (hashTag ==null){
+                hashTag = new HashTag();
+                hashTag.setHashTag(data);
+                hashTagRepository.save(hashTag);
+            }
+            category.setHash_tag(hashTag);
             categoryRepository.save(category);
         });
 
