@@ -119,6 +119,14 @@ public class DetailPageResponse {
 
 //    리뷰, 담당자는 나중에
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getManager {
+        private String name;
+        private String email;
+        private String img;
 
+    }
 
 }
