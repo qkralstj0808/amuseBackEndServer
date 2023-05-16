@@ -58,7 +58,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
     public List<Item> find10CategoryBestItem(String category) {
         return jpaQueryFactory.selectFrom(item)
                 .where(item.id.in(JPAExpressions
-                        .select(item.id)
+                        .select(itemHashTag.item.id)
                         .from(itemHashTag)
                         .where(itemHashTag.hash_tag.eq(category))))
                 .orderBy(item.like_num.desc())
@@ -72,7 +72,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
     public List<Item> find10CategoryCurrentItem(String category) {
         return jpaQueryFactory.selectFrom(item)
                 .where(item.id.in(JPAExpressions
-                        .select(item.id)
+                        .select(itemHashTag.item.id)
                         .from(itemHashTag)
                         .where(itemHashTag.hash_tag.eq(category))))
                 .orderBy(item.createdDate.desc())
@@ -86,7 +86,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
     public Page<Item> findCategoryBestItemPage(String category, Pageable pageable) {
         List<Item> content = jpaQueryFactory.selectFrom(item)
                 .where(item.id.in(JPAExpressions
-                        .select(item.id)
+                        .select(itemHashTag.itemHashTag.item.id)
                         .from(itemHashTag)
                         .where(itemHashTag.hash_tag.eq(category))))
                 .orderBy(item.like_num.desc())
@@ -97,7 +97,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
         Long total = jpaQueryFactory.select(item.count())
                 .from(item)
                 .where(item.id.in(JPAExpressions
-                        .select(item.id)
+                        .select(itemHashTag.item.id)
                         .from(itemHashTag)
                         .where(itemHashTag.hash_tag.eq(category))))
                 .fetchOne();
@@ -109,7 +109,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
     public Page<Item> findCategoryCurrentItemPage(String category, Pageable pageable) {
         List<Item> content = jpaQueryFactory.selectFrom(item)
                 .where(item.id.in(JPAExpressions
-                        .select(item.id)
+                        .select(itemHashTag.item.id)
                         .from(itemHashTag)
                         .where(itemHashTag.hash_tag.eq(category))))
                 .orderBy(item.createdDate.desc())
@@ -120,7 +120,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
         Long total = jpaQueryFactory.select(item.count())
                 .from(item)
                 .where(item.id.in(JPAExpressions
-                        .select(item.id)
+                        .select(itemHashTag.item.id)
                         .from(itemHashTag)
                         .where(itemHashTag.hash_tag.eq(category))))
                 .fetchOne();
