@@ -57,6 +57,11 @@ public class DetailPageController {
         return detailPageService.getOtherContent(item_id);
     }
 
+    @GetMapping("/manager-info")
+    public ResponseTemplate<DetailPageResponse.getManager> getManager(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
+        return detailPageService.getManager(item_id);
+    }
+
     @PostMapping("/like-plus")
     public ResponseTemplate<DetailPageResponse.setLike> setLikePlus(@PathVariable("id") Long item_id,
                                                                 @AuthenticationPrincipal UserPrincipal userPrincipal){

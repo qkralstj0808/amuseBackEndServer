@@ -88,6 +88,19 @@ public class DetailPageService {
     }
 
 
+    public ResponseTemplate<DetailPageResponse.getManager> getManager(Long item_id) {
+        Item findItem = findItemById(item_id);
+        Admin findItemAdmin = findItem.getAdmin();
+
+        if(findItemAdmin == null){
+            throw new CustomException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
+
+        return new ResponseTemplate(new DetailPageResponse.getManager(findItemAdmin.getName(),findItemAdmin.getEmail(),
+                findItemAdmin.getProfileImgLink()));
+    }
+
+
     public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(Long item_id) {
         Long findItem_id = itemRepository.findItem(item_id);
 
@@ -165,4 +178,5 @@ public class DetailPageService {
 
         return null;
     }
+
 }

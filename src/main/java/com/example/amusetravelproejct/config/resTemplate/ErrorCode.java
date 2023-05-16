@@ -21,7 +21,7 @@ public enum ErrorCode {
     NOT_EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED,"access token이 만료되지 않았습니다."),
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED,"유효하지 않는 access token 입니다."),
     CLAIM_NULL(HttpStatus.NOT_EXTENDED,"user claim이 존재하지 않습니다."),
-    ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 관리자를 찾을 수 없습니다."),
+//    ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 관리자를 찾을 수 없습니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 access token에 대한 refresh token이 존재하지 않습니다."),
     HASH_TAG_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 해시태그를 찾을 수 없습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"인터넷 내부 에러입니다."),
@@ -30,6 +30,7 @@ public enum ErrorCode {
     // paging 관련 오류
     OUT_BOUND_PAGE(HttpStatus.CONFLICT, "페이지 범위를 벗어났습니다. 페이지는 1페이지부터 totalPage까지 입니다."),
     ITEM_NOT_FOUND_IN_PAGE(HttpStatus.NOT_FOUND,"조건에 맞는 상품이 없습니다."),
+    ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 상품에 매니저를 찾을 수 없습니다."),
 
     ;
 
