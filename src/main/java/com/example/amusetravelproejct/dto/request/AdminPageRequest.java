@@ -85,7 +85,7 @@ public class AdminPageRequest {
         private Long id;
         private String hashTag;
         private String fileName;
-        private String base64Date;
+        private String base64Data;
         private String mainDescription;
         private String subDescription;
         private String updatedBy;

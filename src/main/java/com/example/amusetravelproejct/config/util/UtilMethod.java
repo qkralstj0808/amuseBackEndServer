@@ -24,7 +24,9 @@ public class UtilMethod {
         // 멀티파트, base64로 받은 이미지 S3로 보내어 이미지 저장
         // S3로 보내어 저장한 이미지의 url을 받아와서 List<String>에 저장
         // 반환
-
+        if (base64Img == "") {
+            return null;
+        }
         String base64 = base64Img.split(",")[1];
         String type = base64Img.split(";")[0].split(":")[1];
         byte[] imageBytes = Base64Utils.decodeFromString(base64);

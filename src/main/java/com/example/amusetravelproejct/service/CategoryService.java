@@ -23,8 +23,6 @@ public class CategoryService {
     private final AdminRepository adminRepository;
     public AdminPageResponse.categoryRegister processRegisterCategory(AdminPageRequest.categoryRegister categoryRegisterDto, AdminService adminService, UtilMethod utilMethod) {
 
-
-
         Category category = new Category();
         Admin admin = adminService.getAdminByEmail(categoryRegisterDto.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
 
@@ -50,7 +48,7 @@ public class CategoryService {
 
 
         if (categoryEditDto.getFileName() != ""){
-            category.setImgUrl(utilMethod.getImgUrl(categoryEditDto.getBase64Date(), categoryEditDto.getFileName()));
+            category.setImgUrl(utilMethod.getImgUrl(categoryEditDto.getBase64Data(), categoryEditDto.getFileName()));
         }
 
         category.setMainDescription(categoryEditDto.getMainDescription());
