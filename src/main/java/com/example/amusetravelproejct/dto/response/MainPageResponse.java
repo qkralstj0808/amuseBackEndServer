@@ -24,6 +24,10 @@ public class MainPageResponse {
     public static class CategoryInfo {
         private Long categoryId;
         private String categoryName;
+        private String categoryImg;
+        private String mainDescription;
+        private String subDescription;
+
     }
 
     @Data
