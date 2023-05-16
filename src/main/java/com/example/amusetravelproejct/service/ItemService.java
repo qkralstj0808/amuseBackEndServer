@@ -107,7 +107,7 @@ public class ItemService {
             List<Date> startDate = new ArrayList<>();
             List<Date> endDate = new ArrayList<>();
             List<Long> datePoint = new ArrayList<>();
-            List<Long> price = new ArrayList<>();
+
             List<ProductRegisterDto.TicketDto.PriceListDto.WeekdayPrices> weekdayPrices = new ArrayList<>();
             List<ItemTicketPrice> itemTicketPrices = new ArrayList<>();
             Set<Long> dateSet = new HashSet<>();
@@ -134,7 +134,7 @@ public class ItemService {
                 startDate.add(startDateTemp);
                 endDate.add(endDateTemp);
 
-                price.add(Long.valueOf(prices.getPrice()));
+
                 datePoint.add(endDateTemp.getTime() - startDateTemp.getTime());
 
             });
@@ -142,45 +142,17 @@ public class ItemService {
             while(count-- != 0){
                 int index = datePoint.indexOf(datePoint.stream().min(Long::compareTo).get());
                 HashMap<String, String> weekDayPrices = (HashMap<String, String>) objectMapper.convertValue(weekdayPrices.get(index), Map.class);
-                if (price.get(index) == 0) {
-                    Date startDateTemp = new Date(startDate.get(index).getTime());
-                    while (startDateTemp.getTime() <= endDate.get(index).getTime()) {
-                        if (dateSet.add(startDateTemp.getTime())) {
+                Date startDateTemp = new Date(startDate.get(index).getTime());
+                while (startDateTemp.getTime() <= endDate.get(index).getTime()) {
+                    if (dateSet.add(startDateTemp.getTime())) {
                             ItemTicketPrice itemTicketPrice = new ItemTicketPrice();
                             itemTicketPrice.setPrice(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])));
                             itemTicketPrice.setStartDate(startDateTemp.toString());
                             itemTicketPrice.setItemTicket(itemTicket);
                             itemTicketPriceRepository.save(itemTicketPrice);
                         }
-                        startDateTemp.setTime(startDateTemp.getTime() + (1000 * 60 * 60 * 24));     //하루 더하기
+                    startDateTemp.setTime(startDateTemp.getTime() + (1000 * 60 * 60 * 24));     //하루 더하기
                     }
-                }else{
-                    Date startDateTemp = new Date(startDate.get(index).getTime());
-                    while(startDateTemp.getTime() <= endDate.get(index).getTime()){
-                        if (!(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])) == 0) && dateSet.add(startDateTemp.getTime())){
-                            ItemTicketPrice itemTicketPrice = new ItemTicketPrice();
-                            itemTicketPrice.setPrice(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])));
-                            itemTicketPrice.setStartDate(startDateTemp.toString());
-                            itemTicketPrice.setItemTicket(itemTicket);
-                            itemTicketPrices.add(itemTicketPrice);
-                            itemTicketPriceRepository.save(itemTicketPrice);
-                        }
-                        startDateTemp.setTime(startDateTemp.getTime() + (1000 * 60 * 60 * 24));     //하루 더하기
-                    }
-
-                    startDateTemp = startDate.get(index);
-                    while(startDateTemp.getTime() <= endDate.get(index).getTime()){
-                        if (dateSet.add(startDateTemp.getTime())) {
-                            ItemTicketPrice itemTicketPrice = new ItemTicketPrice();
-                            itemTicketPrice.setStartDate(startDateTemp.toString());
-                            itemTicketPrice.setPrice(price.get(index));
-                            itemTicketPrice.setItemTicket(itemTicket);
-                            itemTicketPrices.add(itemTicketPrice);
-                            itemTicketPriceRepository.save(itemTicketPrice);
-                        }
-                        startDateTemp.setTime(startDateTemp.getTime() + (1000 * 60 * 60 * 24));     //하루 더하기
-                    }
-                }
                 datePoint.set(index,Long.MAX_VALUE);
             }
             itemTicketRepository.save(itemTicket);
