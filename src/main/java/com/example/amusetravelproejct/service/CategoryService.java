@@ -27,7 +27,7 @@ public class CategoryService {
         Admin admin = adminService.getAdminByEmail(categoryRegisterDto.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
 
 
-        category.setCategory_name(categoryRegisterDto.getHashTag());
+        category.setCategory_name(categoryRegisterDto.getCategory());
         category.setSequence(categoryRepository.count());
         category.setAdmin(admin);
         category.setMainDescription(categoryRegisterDto.getMainDescription());
@@ -43,7 +43,7 @@ public class CategoryService {
     public AdminPageResponse.categoryEdit processEditCategory(AdminPageRequest.categoryEdit categoryEditDto,AdminService adminService, UtilMethod utilMethod){
 
         Category category = categoryRepository.findById(categoryEditDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
-        category.setCategory_name(categoryEditDto.getHashTag());
+        category.setCategory_name(categoryEditDto.getCategory());
         Admin admin = adminService.getAdminByEmail(categoryEditDto.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
 
 

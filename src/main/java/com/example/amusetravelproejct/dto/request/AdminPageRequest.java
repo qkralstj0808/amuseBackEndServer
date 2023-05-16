@@ -70,7 +70,7 @@ public class AdminPageRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class categoryRegister {
-        private String hashTag;
+        private String category;
         private String fileName;
         private String base64Data;
         private String mainDescription;
@@ -83,7 +83,7 @@ public class AdminPageRequest {
     @NoArgsConstructor
     public static class categoryEdit {
         private Long id;
-        private String hashTag;
+        private String category;
         private String fileName;
         private String base64Data;
         private String mainDescription;
@@ -95,7 +95,7 @@ public class AdminPageRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class categoryDetail {
-        private String hashTag;
+        private String category;
         private Long sequence;
     }
 
