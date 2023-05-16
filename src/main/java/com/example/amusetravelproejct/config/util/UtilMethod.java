@@ -3,6 +3,8 @@ package com.example.amusetravelproejct.config.util;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.util.Base64Util;
+import org.springframework.util.Base64Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -23,11 +25,13 @@ public class UtilMethod {
         // S3로 보내어 저장한 이미지의 url을 받아와서 List<String>에 저장
         // 반환
 
-        byte[] imageBytes = Base64.getDecoder().decode(base64Img);
+        String base64 = base64Img.split(",")[1];
+        String type = base64Img.split(";")[0].split(":")[1];
+        byte[] imageBytes = Base64Utils.decodeFromString(base64);
         InputStream inputStream = new ByteArrayInputStream(imageBytes);
 
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType("image/jpeg");
+        metadata.setContentType(type);
         metadata.setContentLength(imageBytes.length);
         String key = "images/" + fileName;
         amazonS3Client.putObject(bucketName, key, inputStream, metadata);

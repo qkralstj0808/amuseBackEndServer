@@ -34,7 +34,7 @@ public class CategoryService {
         category.setAdmin(admin);
         category.setMainDescription(categoryRegisterDto.getMainDescription());
         category.setSubDescription(categoryRegisterDto.getSubDescription());
-        category.setImgUrl(utilMethod.getImgUrl(categoryRegisterDto.getBase64Date(), categoryRegisterDto.getFileName()));
+        category.setImgUrl(utilMethod.getImgUrl(categoryRegisterDto.getBase64Data(), categoryRegisterDto.getFileName()));
         category = categoryRepository.save(category);
 
 
