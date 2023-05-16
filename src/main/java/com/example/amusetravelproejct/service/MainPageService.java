@@ -86,7 +86,7 @@ public class MainPageService {
             throw new CustomException(ErrorCode.ITEM_NOT_FOUND_IN_PAGE);
         }
 
-        if(current_page > total_page-1){
+        if(current_page-1 > total_page-1){
             throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
         }
 
@@ -105,7 +105,7 @@ public class MainPageService {
             throw new CustomException(ErrorCode.ITEM_NOT_FOUND_IN_PAGE);
         }
 
-        if(current_page > total_page-1){
+        if(current_page-1 > total_page-1){
             throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
         }
 
