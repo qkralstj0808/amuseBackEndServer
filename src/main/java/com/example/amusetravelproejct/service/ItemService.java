@@ -1,5 +1,7 @@
 package com.example.amusetravelproejct.service;
 
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
@@ -32,7 +34,7 @@ public class ItemService {
 
     //Admin
     public Optional<Admin> getAdminByEmail(String email) {
-        return Optional.ofNullable(adminRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Admin not found")));
+        return Optional.ofNullable(adminRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
     }
 
 

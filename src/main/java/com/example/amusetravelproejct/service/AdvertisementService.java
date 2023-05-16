@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 @Slf4j
-public class AdminAdvertisementService {
+public class AdvertisementService {
     private final AdvertisementRepository AdvertisementRepository;
 
     public AdminPageResponse.advertisementRegister  processAdvertisementRegister(AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto , AdminService adminService, UtilMethod utilMethod) {
