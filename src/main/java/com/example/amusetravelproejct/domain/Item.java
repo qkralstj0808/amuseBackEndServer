@@ -37,6 +37,7 @@ public class Item extends BaseEntity {
     private Integer like_num;           // 좋아요 수
     private Date startDate;             // 상품 게시 날짜 (없어도 됨)
     private Date endDate;               // 상품 내리는 날짜 (없어도 됨)
+    private String adminContent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin")

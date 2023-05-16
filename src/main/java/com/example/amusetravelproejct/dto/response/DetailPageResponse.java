@@ -126,6 +126,7 @@ public class DetailPageResponse {
         private String name;
         private String email;
         private String img;
+        private String manager_content;
 
     }
 

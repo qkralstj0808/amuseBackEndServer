@@ -97,7 +97,7 @@ public class DetailPageService {
         }
 
         return new ResponseTemplate(new DetailPageResponse.getManager(findItemAdmin.getName(),findItemAdmin.getEmail(),
-                findItemAdmin.getProfileImgLink()));
+                findItemAdmin.getProfileImgLink(),findItem.getAdminContent()));
     }
 
 
