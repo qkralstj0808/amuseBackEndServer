@@ -72,6 +72,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         log.info("redirectUri : " + redirectUri);
 
+        log.info("redirect uri : " + redirectUri);
+        log.info("redirectUri.isPresent() : " + redirectUri.isPresent());
+        log.info("!isAuthorizedRedirectUri(redirectUri.get() : " + !isAuthorizedRedirectUri(redirectUri.get()));
+
         if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
             throw new IllegalArgumentException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
         }
