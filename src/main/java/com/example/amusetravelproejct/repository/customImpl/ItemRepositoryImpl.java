@@ -79,7 +79,6 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .offset(0)
                 .limit(10)
                 .fetch();
-
     }
 
     @Override

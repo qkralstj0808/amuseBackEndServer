@@ -40,7 +40,8 @@ public class MainPageService {
         List<Category> categories = categoryRepository.findAll();
 
         return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(
-                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getCategory_name())
+                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getCategory_name(),category.getImgUrl(),
+                        category.getMainDescription(),category.getSubDescription())
         ).collect(Collectors.toList())));
     }
 
