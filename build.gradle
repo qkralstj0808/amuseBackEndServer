@@ -55,6 +55,7 @@ dependencies {
     //mybatis추가
     implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '2.1.2'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+
 }
 
 test {
