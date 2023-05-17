@@ -53,6 +53,7 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TicketInfo {
+        private Long id;
         private String title;
         private String content;
         private List<TicketPrice> priceList;
