@@ -64,8 +64,6 @@ public class ProductRegisterDto {
         public static class PriceListDto {
             private String startDate;
             private String endDate;
-            private String price;
-
             private WeekdayPrices weekdayPrices;
             @Getter
             @Setter

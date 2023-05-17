@@ -2,12 +2,15 @@ package com.example.amusetravelproejct.repository.customImpl;
 
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.repository.custom.ItemRepositoryCustom;
+import com.nimbusds.oauth2.sdk.util.StringUtils;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 
 import static com.example.amusetravelproejct.domain.QItem.item;
@@ -125,7 +128,50 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .fetchOne();
 
         return new PageImpl<>(content,pageable, total);
-
-
     }
+//
+//    @Override
+//    public List<Item> findItemByCondition(String country, String city, String title, String content_1, String content_2, Double rated, Long startPrice, Integer duration, Integer like_num, Date startDate, Date endDate) {
+//        return jpaQueryFactory.selectFrom(item)
+//                .where(eqTitle(title),
+//                        eqBigCity(bigCity),
+//                        eqSmallCity(smallCity),
+//                        eqDeleted(false))
+//                .fetch();
+//    }
+
+    private BooleanExpression eqCountry(String country) {
+        if (StringUtils.isBlank(country)) {
+            return null;
+        }
+        return item.title.containsIgnoreCase(country);
+    }
+//
+//    private BooleanExpression eqCity(String city) {
+//        if (StringUtils.isBlank(city)) {
+//            return null;
+//        }
+//        return item.title.containsIgnoreCase(city);
+//    }
+//    private BooleanExpression exitTitle(String title) {
+//        if (StringUtils.isBlank(title)) {
+//            return null;
+//        }
+//        return item.title.con(city);
+//    }
+//
+//    private BooleanExpression eqCity(String city) {
+//        if (StringUtils.isBlank(city)) {
+//            return null;
+//        }
+//        return item.title.containsIgnoreCase(city);
+//    }
+//
+//    private BooleanExpression eqCity(String city) {
+//        if (StringUtils.isBlank(city)) {
+//            return null;
+//        }
+//        return item.title.containsIgnoreCase(city);
+//    }
+
 }
