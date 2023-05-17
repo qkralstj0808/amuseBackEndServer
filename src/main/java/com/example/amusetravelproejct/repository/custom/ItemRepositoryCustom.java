@@ -5,6 +5,7 @@ import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ItemRepositoryCustom {
@@ -23,4 +24,9 @@ public interface ItemRepositoryCustom {
 
     Page<Item> findCategoryBestItemPage(String category, Pageable pageable);
     Page<Item> findCategoryCurrentItemPage(String category, Pageable pageable);
+
+//    List<Item> findItemByCondition(String country, String city, String title, String content_1, String content_2,
+//                                   Double rated, Long startPrice, Integer duration,
+//                                   Integer like_num, Date startDate, Date endDate,
+//                                   );
 }
