@@ -4,6 +4,7 @@ package com.example.amusetravelproejct.controller;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.dto.request.PushPayInfoReq;
 import com.example.amusetravelproejct.dto.response.GetUserCouponRes;
+import com.example.amusetravelproejct.service.EmailService;
 import com.example.amusetravelproejct.service.TradeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,6 +26,8 @@ import java.util.List;
 public class TradeController {
 
     private final TradeService tradeService;
+
+    private final EmailService emailService;
 
 
     @Operation(summary = "유저 쿠폰 조회", description = "유저 쿠폰 조회하는 API입니다..")
@@ -91,5 +94,13 @@ public class TradeController {
             e.printStackTrace();
             return new ResponseTemplate<>("");
         }
+    }
+
+    @PostMapping("login/mailConfirm")
+    @ResponseBody
+    public ResponseTemplate<String> mailConfirm(@RequestParam String email) throws Exception {
+        String code = emailService.sendSimpleMessage(email);
+        log.info("인증코드 : " + code);
+        return new ResponseTemplate<>(code);
     }
 }
