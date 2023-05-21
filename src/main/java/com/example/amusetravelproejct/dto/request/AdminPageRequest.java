@@ -108,6 +108,16 @@ public class AdminPageRequest {
         private Long limit;
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getItemByCategory{
+        private Long option;
+        private Long page;
+        private List<String> categoryNames;
+    }
+
+
 }
 
 

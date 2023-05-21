@@ -63,7 +63,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .where(item.id.in(JPAExpressions
                         .select(itemHashTag.item.id)
                         .from(itemHashTag)
-                        .where(itemHashTag.hash_tag.eq(category))))
+                        .where(itemHashTag.hashTag.eq(category))))
                 .orderBy(item.like_num.desc())
                 .offset(0)
                 .limit(10)
@@ -77,7 +77,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .where(item.id.in(JPAExpressions
                         .select(itemHashTag.item.id)
                         .from(itemHashTag)
-                        .where(itemHashTag.hash_tag.eq(category))))
+                        .where(itemHashTag.hashTag.eq(category))))
                 .orderBy(item.createdDate.desc())
                 .offset(0)
                 .limit(10)
@@ -90,7 +90,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .where(item.id.in(JPAExpressions
                         .select(itemHashTag.itemHashTag.item.id)
                         .from(itemHashTag)
-                        .where(itemHashTag.hash_tag.eq(category))))
+                        .where(itemHashTag.hashTag.eq(category))))
                 .orderBy(item.like_num.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -101,7 +101,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .where(item.id.in(JPAExpressions
                         .select(itemHashTag.item.id)
                         .from(itemHashTag)
-                        .where(itemHashTag.hash_tag.eq(category))))
+                        .where(itemHashTag.hashTag.eq(category))))
                 .fetchOne();
 
         return new PageImpl<>(content,pageable, total);
@@ -113,7 +113,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .where(item.id.in(JPAExpressions
                         .select(itemHashTag.item.id)
                         .from(itemHashTag)
-                        .where(itemHashTag.hash_tag.eq(category))))
+                        .where(itemHashTag.hashTag.eq(category))))
                 .orderBy(item.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -124,7 +124,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .where(item.id.in(JPAExpressions
                         .select(itemHashTag.item.id)
                         .from(itemHashTag)
-                        .where(itemHashTag.hash_tag.eq(category))))
+                        .where(itemHashTag.hashTag.eq(category))))
                 .fetchOne();
 
         return new PageImpl<>(content,pageable, total);

@@ -15,9 +15,9 @@ public class ItemTicket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-
+    private Long count;
     @Lob
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
     // item_ticket과 iteminfo는 N:1 관계 ManyToOne
@@ -26,6 +26,9 @@ public class ItemTicket {
     private Item item;
 
     // item_ticket과 payment_ticket은 1:N 관계
-    @OneToMany(mappedBy = "itemTicket",orphanRemoval=true)
+    @OneToMany(mappedBy = "itemTicket",orphanRemoval=true , cascade = CascadeType.ALL)
     private List<ItemTicketPrice> itemTicketPrices = new ArrayList<>();
+
+    @OneToMany(mappedBy = "itemTicket",orphanRemoval=true , cascade = CascadeType.ALL)
+    private List<ItemTicketPriceRecode> itemTicketPriceRecodes = new ArrayList<>();
 }

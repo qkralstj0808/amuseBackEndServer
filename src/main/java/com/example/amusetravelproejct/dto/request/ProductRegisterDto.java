@@ -1,5 +1,7 @@
 package com.example.amusetravelproejct.dto.request;
 
+import com.example.amusetravelproejct.domain.person_enum.Grade;
+import com.example.amusetravelproejct.domain.person_enum.Option;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class ProductRegisterDto {
-    private String productId;
+    private Long id;
+    private Option option;
+    private String itemCode;
     private List<String> category;
     private String title;
     private Location location;
@@ -21,10 +25,12 @@ public class ProductRegisterDto {
     private List<CourseDto> course;
     private String extraInfo;
     private String admin;
+    private String updateAdmin;
     private Long startPrice;
     private String duration;
     private String startDate;
     private String endDate;
+    private Grade grade;
 
     // Getter, Setter, Constructor 생략
     @Getter
@@ -42,9 +48,10 @@ public class ProductRegisterDto {
     @NoArgsConstructor
     @ToString
     public static class MainImageDto {
+        private Long id;
         private String fileName;
         private String base64Data;
-
+        private String imgUrl;
         // Getter, Setter, Constructor 생략
     }
     @Getter
@@ -52,6 +59,7 @@ public class ProductRegisterDto {
     @NoArgsConstructor
     @ToString
     public static class TicketDto {
+        private Long id;
         private String title;
         private String content;
         private List<PriceListDto> priceList;
@@ -62,6 +70,7 @@ public class ProductRegisterDto {
         @NoArgsConstructor
         @ToString
         public static class PriceListDto {
+            private Long id;
             private String startDate;
             private String endDate;
             private WeekdayPrices weekdayPrices;
@@ -87,6 +96,8 @@ public class ProductRegisterDto {
     @NoArgsConstructor
     @ToString
     public static class CourseDto {
+        private Long id;
+        private Long sequenceId;
         private String title;
         private String timeCost;
         private String content;
@@ -100,6 +111,8 @@ public class ProductRegisterDto {
         public static class CourseImageDto {
             private String fileName;
             private String base64Data;
+            private String imgUrl;
+
 
             // Getter, Setter, Constructor 생략
         }

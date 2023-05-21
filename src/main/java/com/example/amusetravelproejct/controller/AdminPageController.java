@@ -30,18 +30,6 @@ public class AdminPageController {
     private final AdminService adminService;
     private final AlarmService alarmService;
     private final AdvertisementService advertisementService;
-    private final ItemRepository itemRepository;
-
-    private final ImgRepository imgRepository;
-    private final ItemTicketRepository itemTicketRepository;
-    private final ItemCourseRepository itemCourseRepository;
-    private final ItemHashTagRepository itemHashTagRepository;
-    private final AdminRepository adminRepository;
-    private final AdvertisementRepository adminAdvertisementRepository;
-    private final AlarmRepository alarmRepository;
-    private final ItemTicketPriceRepository itemTicketPriceRepository;
-    private final CategoryRepository categoryRepository;
-
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -53,7 +41,7 @@ public class AdminPageController {
         // 유저 데이터 선 처리
 
 
-        AdminPageResponse.advertisementRegister  advertisement = advertisementService.processAdvertisementRegister(adminAdvertisementRegisterDto,adminService,utilMethod);
+        AdminPageResponse.advertisementRegister  advertisement = advertisementService.processAdvertisementRegister(adminAdvertisementRegisterDto,utilMethod);
         return new ResponseTemplate<>(advertisement);
     }
 
@@ -66,8 +54,7 @@ public class AdminPageController {
         // 유저 데이터 선 처리
 
 
-        AdminPageResponse.advertisementEdit advertisement = advertisementService.processAdvertisementEdit(adminAdvertisementRegisterDbDto,adminService,utilMethod);
-
+        AdminPageResponse.advertisementEdit advertisement = advertisementService.processAdvertisementEdit(adminAdvertisementRegisterDbDto,utilMethod);
         return new ResponseTemplate<>(advertisement);
     }
 
@@ -75,6 +62,7 @@ public class AdminPageController {
     public ResponseTemplate<AdminPageResponse.advertisementResult> reqAdvertisementList(@RequestParam("offset") Long offset , @RequestParam("limit") int limit, @RequestParam("page") int page){
         //TODO
         // 유저 데이터 선 처리
+
         int sqlPage = page -1;
 
         AdminPageResponse.advertisementResult advertisementResult = new AdminPageResponse.advertisementResult(advertisementService.getPageCount(limit),page, advertisementService.processGetAllAdvertisements(offset,limit,sqlPage));
@@ -92,6 +80,10 @@ public class AdminPageController {
         return new ResponseTemplate<>(advertisement);
     }
 
+
+
+
+
     @Transactional
     @PostMapping("/product/create")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
@@ -100,11 +92,54 @@ public class AdminPageController {
         //TODO
         // productRegisterDto 데이터 선 처리
 
-        Item item = itemService.processItem(productRegisterDto);
+        Item item = itemService.processCreateOrUpdate(productRegisterDto);
         itemService.processItemTicket(productRegisterDto,item);
         itemService.processItemImg(productRegisterDto,utilMethod,item);
         itemService.processItemCourse(productRegisterDto,utilMethod,item);
         return new ResponseTemplate<>("상품 생성 완료");
+    }
+    @Transactional
+    @PostMapping("/product/update")
+    public ResponseTemplate<String> reqProductEdit(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+        //TODO
+        // productRegisterDto 데이터 선 처리
+
+        Item item = itemService.processCreateOrUpdate(productRegisterDto);
+
+        itemService.processItemTicket(productRegisterDto,item);
+        itemService.processItemImg(productRegisterDto,utilMethod,item);
+        itemService.processItemCourse(productRegisterDto,utilMethod,item);
+
+        return new ResponseTemplate<>("상품 수정 완료");
+    }
+
+    @GetMapping("/product/{itemCode}")
+    public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("itemCode") String itemCode){
+        //TODO
+        // productRegisterDto 데이터 선 처리
+
+        ProductRegisterDto productRegisterDto = itemService.processGetItemDetail(itemCode);
+
+        return new ResponseTemplate<>(productRegisterDto);
+    }
+
+    @GetMapping("/product/delete")
+    public ResponseTemplate<String> reqProductDelete(@RequestParam("itemCode") String itemCode){
+        //TODO
+        // productRegisterDto 데이터 선 처리
+
+        itemService.processDeleteItem(itemCode);
+        return new ResponseTemplate<>("상품 삭제 완료");
+    }
+
+
+
+
+    @PostMapping("/product/search")
+    public ResponseTemplate<AdminPageResponse.getItemByCategory> reqProductOrphanage(@RequestBody AdminPageRequest.getItemByCategory orphanageDto){
+
+        return new ResponseTemplate<>(itemService.processSearchItem(orphanageDto));
     }
 
     @PostMapping("/notice/register")
@@ -112,7 +147,6 @@ public class AdminPageController {
 
         //TODO
         // 유저 데이터 선 처리
-
         return new ResponseTemplate<>(alarmService.processRegisterNotice(noticeRegisterDto,adminService,alarmService));
     }
 
@@ -146,6 +180,8 @@ public class AdminPageController {
     }
 
 
+
+
     @PostMapping("/category/register")
     public ResponseTemplate<AdminPageResponse.categoryRegister> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
@@ -164,6 +200,10 @@ public class AdminPageController {
         return new ResponseTemplate<>(categoryService.processEditCategory(categoryEditDto,adminService,utilMethod));
     }
 
+    @GetMapping("/category/list")
+    public ResponseTemplate<List<String>> reqCategoryList(){
+        return new ResponseTemplate<>(categoryService.processGetCategoryList());
+    }
     @GetMapping("/category/sequence")
     public ResponseTemplate<List<AdminPageResponse.categorySequence>> reqCategorySequence(){
 
@@ -175,26 +215,5 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(categoryService.processGetCategoryDetail(id));
     }
-
-
-
-////    @PostMapping("/hashTag/find/item")
-////    public ResponseTemplate<List<AdminPageResponse.findItemByCategory>> reqFindItemByCategory(  )
-////    @PostMapping("/hashTag/display/register")
-////    public ResponseTemplate<List<AdminPageResponse.categoryDetail>> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
-////        DisplayCategoryService displayCategoryService = new DisplayCategoryService(categoryRepository,hashTagRepository);
-////        AdminService adminService = new AdminService(adminRepository);
-////
-////        //TODO
-////        // categoryRegisterDto 데이터 선 처리
-////
-////        return new ResponseTemplate<>(displayCategoryService.processRegisterCategory(categoryRegisterDto,adminService));
-////    }
-
-
-
-
-
-
 
 }
