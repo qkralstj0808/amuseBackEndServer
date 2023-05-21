@@ -1,11 +1,15 @@
 package com.example.amusetravelproejct.service;
 
 
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.util.UtilMethod;
+import com.example.amusetravelproejct.domain.Admin;
 import com.example.amusetravelproejct.domain.Advertisement;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
 import com.example.amusetravelproejct.exception.ResourceNotFoundException;
+import com.example.amusetravelproejct.repository.AdminRepository;
 import com.example.amusetravelproejct.repository.AdvertisementRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,15 +27,18 @@ import java.util.List;
 @Slf4j
 public class AdvertisementService {
     private final AdvertisementRepository AdvertisementRepository;
+    private final AdminRepository adminRepository;
+    private final AdminService adminService;
 
-    public AdminPageResponse.advertisementRegister  processAdvertisementRegister(AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto , AdminService adminService, UtilMethod utilMethod) {
+    public AdminPageResponse.advertisementRegister processAdvertisementRegister(AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto, UtilMethod utilMethod) {
 
         Advertisement advertisement = new Advertisement();
         advertisement.setTitle(adminAdvertisementRegisterDto.getTitle());
         advertisement.setContent(adminAdvertisementRegisterDto.getAdContent());
         advertisement.setStartDate(Date.valueOf(adminAdvertisementRegisterDto.getStartDate()));
         advertisement.setEndDate(Date.valueOf(adminAdvertisementRegisterDto.getEndDate()));
-        advertisement.setAdmin(adminService.getAdminByEmail(adminAdvertisementRegisterDto.getCreatedBy()).get());
+        Admin admin = adminRepository.findByEmail(adminAdvertisementRegisterDto.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
+        advertisement.setAdmin(admin);
 
         String category = "";
         for (String s : adminAdvertisementRegisterDto.getAdCategory()) {
@@ -62,9 +69,8 @@ public class AdvertisementService {
     }
 
 
-    public AdminPageResponse.advertisementEdit processAdvertisementEdit(AdminPageRequest.advertisementEdit advertisementEditDto, AdminService adminService, UtilMethod utilMethod) {
-        Advertisement advertisement = AdvertisementRepository.findById(advertisementEditDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Advertisement not Found"));
-
+    public AdminPageResponse.advertisementEdit processAdvertisementEdit(AdminPageRequest.advertisementEdit advertisementEditDto, UtilMethod utilMethod) {
+        Advertisement advertisement = AdvertisementRepository.findById(advertisementEditDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.ADVERTISEMENT_NOT_FOUND));
         advertisement.setTitle(advertisementEditDto.getTitle());
         advertisement.setStartDate(Date.valueOf(advertisementEditDto.getStartDate()));
         advertisement.setEndDate(Date.valueOf(advertisementEditDto.getEndDate()));
@@ -83,10 +89,9 @@ public class AdvertisementService {
         // S3에 저장된 기존 배너 이미지 삭제
         advertisement.setPcBannerUrl(utilMethod.getImgUrl(advertisementEditDto.getPcBannerBase64(), advertisementEditDto.getPcBannerFileName()));
         advertisement.setMobileBannerUrl(utilMethod.getImgUrl(advertisementEditDto.getMobileBannerBase64(), advertisementEditDto.getMobileBannerFileName()));
-
         advertisement.setPcBannerLink(advertisementEditDto.getPcBannerLink());
         advertisement.setMobileBannerLink(advertisementEditDto.getMobileBannerLink());
-        advertisement.setUpdateAdmin(adminService.getAdminByEmail(advertisementEditDto.getUpdatedBy()).get());
+        advertisement.setUpdateAdmin(adminService.getAdminByEmail(advertisementEditDto.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         AdvertisementRepository.save(advertisement);
 
         AdminPageResponse.advertisementEdit advertisementEdit = new AdminPageResponse.advertisementEdit();
@@ -98,12 +103,12 @@ public class AdvertisementService {
         advertisementEdit.setAdContent(advertisement.getContent());
         advertisementEdit.setCreatedAt(advertisement.getCreatedAt().toString());
         advertisementEdit.setCreatedBy(advertisement.getAdmin().getEmail());
-        advertisementEdit.setUpdatedAt(advertisement.getUpdateAdmin() != null ? advertisement.getModifiedAt().toString() : "");
-        advertisementEdit.setUpdatedBy(advertisement.getUpdateAdmin() != null ? advertisement.getUpdateAdmin().getEmail() : "");
-        advertisementEdit.setPcBannerUrl(advertisement.getPcBannerUrl() != null ? advertisement.getPcBannerUrl() : "");
-        advertisementEdit.setMobileBannerUrl(advertisement.getMobileBannerUrl() != null ? advertisement.getMobileBannerUrl() : "");
-        advertisementEdit.setPcBannerLink(advertisement.getPcBannerLink() != null ? advertisement.getPcBannerLink() : "");
-        advertisementEdit.setMobileBannerLink(advertisement.getMobileBannerLink() != null ? advertisement.getMobileBannerLink() : "");
+        advertisementEdit.setUpdatedAt(advertisement.getModifiedAt().toString());
+        advertisementEdit.setUpdatedBy(advertisement.getUpdateAdmin().getEmail());
+        advertisementEdit.setPcBannerUrl(advertisement.getPcBannerUrl());
+        advertisementEdit.setMobileBannerUrl(advertisement.getMobileBannerUrl());
+        advertisementEdit.setPcBannerLink(advertisement.getPcBannerLink());
+        advertisementEdit.setMobileBannerLink(advertisement.getMobileBannerLink());
 
         return advertisementEdit;
     }
@@ -137,6 +142,7 @@ public class AdvertisementService {
 
         return advertisementLists;
     }
+
     public int getPageCount(int limit) {
         int pageSize = limit;
         int totalPage = (int) Math.ceil(AdvertisementRepository.count() / (double) pageSize);

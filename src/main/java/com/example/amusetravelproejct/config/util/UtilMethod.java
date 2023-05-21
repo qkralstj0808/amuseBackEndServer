@@ -3,6 +3,7 @@ package com.example.amusetravelproejct.config.util;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Base64Util;
 import org.springframework.util.Base64Utils;
 
@@ -12,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 
 @AllArgsConstructor
+@Slf4j
 public class UtilMethod {
     private  AmazonS3 amazonS3Client;
     static String bucketName = "amuse-img";
@@ -27,6 +29,7 @@ public class UtilMethod {
         if (base64Img == "") {
             return null;
         }
+
         String base64 = base64Img.split(",")[1];
         String type = base64Img.split(";")[0].split(":")[1];
         byte[] imageBytes = Base64Utils.decodeFromString(base64);

@@ -131,7 +131,7 @@ public class MainPageService {
                 }
 
                 itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),item.getItemHashTag_list().stream().map(
-                        itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHash_tag())
+                        itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
                 ).collect(Collectors.toList()),
                         itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
                         item.getLike_num(),item.getStartPrice()));
@@ -156,7 +156,7 @@ public class MainPageService {
                 }
 
                 itemInfo.add(new MainPageResponse.ItemInfo(item.getId(), item.getItemCode(), item.getItemHashTag_list().stream().map(
-                        itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHash_tag())
+                        itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
                 ).collect(Collectors.toList()),
                         itemImg, item.getTitle(), item.getCountry(), item.getCity(), item.getDuration(),
                         item.getLike_num(), item.getStartPrice()));

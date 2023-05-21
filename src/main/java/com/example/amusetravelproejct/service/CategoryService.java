@@ -73,5 +73,15 @@ public class CategoryService {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
         return new AdminPageResponse.categoryEdit(category.getId(),category.getCategory_name(),category.getImgUrl(),category.getSequence(),category.getMainDescription(),category.getSubDescription(),category.getCreatedDate(),category.getAdmin().getEmail(),category.getUpdateAdmin() == null ? null : category.getModifiedDate(),category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getEmail());
     }
+
+    public List<String> processGetCategoryList(){
+        List<Category> categoryList = categoryRepository.findAll();
+        List<String> categoryListName = new ArrayList<>();
+
+        categoryList.forEach(data ->{
+            categoryListName.add(data.getCategory_name());
+        });
+        return categoryListName;
+    }
 }
 

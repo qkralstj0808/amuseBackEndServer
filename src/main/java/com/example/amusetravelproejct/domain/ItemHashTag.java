@@ -21,11 +21,15 @@ public class ItemHashTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String hashTag;
 
-    private String hash_tag;
+    @OneToOne(fetch = FetchType.LAZY)
+    private TempHashTag tempHashTag;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
+
+
 }
 

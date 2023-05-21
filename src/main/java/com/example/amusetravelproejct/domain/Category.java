@@ -26,7 +26,9 @@ public class Category extends BaseEntity{
     private String category_name;
     private Long sequence;
     private String imgUrl;
+    @Column(columnDefinition = "LONGTEXT")
     private String mainDescription;
+    @Column(columnDefinition = "LONGTEXT")
     private String subDescription;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -174,14 +174,22 @@ public class AdminPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class findItemByCategory{
-        private Long id;
+        private String id;
         private String title;
-        private String content;
-        private String[] hashTags;
+//        private String content;
+        private List<String> categoryNames;
         private String createdBy;
         private LocalDateTime createdAt;
         private String updatedBy;
         private LocalDateTime updatedAt;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getItemByCategory{
+        private Long pageCount;
+        private List<findItemByCategory> data;
     }
 
 
