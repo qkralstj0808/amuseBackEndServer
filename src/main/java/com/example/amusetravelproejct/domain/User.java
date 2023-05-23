@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,7 +25,8 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class User {
+@EntityListeners(value = {AuditingEntityListener.class})
+public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -74,20 +76,17 @@ public class User {
     @Column(name = "POINT")     //유저가 지닌 포인트
     private Long point = 0L;
 
-    @Column(name = "CREATED_AT")
-    @NotNull
-    private LocalDateTime createdAt;
-
     private LocalDate birthday;
+
+    @Enumerated(EnumType.STRING)
     private Gender gender;
+
     private Boolean emailReceptionTrue;
     private Boolean messageReceptionTrue;
-    private Grade grade;
-    private String auth;
+    @Enumerated(EnumType.STRING)
+    private Grade grade;                    // user 등급 (브론즈,실버)...
 
-    @Column(name = "MODIFIED_AT")
-    @NotNull
-    private LocalDateTime modifiedAt;
+    private String auth;
 
     // user와 like_item는 1:N 관계
     @OneToMany(mappedBy = "user", cascade =CascadeType.ALL,orphanRemoval = true)
@@ -116,9 +115,7 @@ public class User {
             @NotNull @Size(max = 1) String emailVerifiedYn,
             @NotNull @Size(max = 512) String profileImageUrl,
             @NotNull ProviderType providerType,
-            @NotNull RoleType roleType,
-            @NotNull LocalDateTime createdAt,
-            @NotNull LocalDateTime modifiedAt
+            @NotNull RoleType roleType
     ) {
         this.userId = userId;
         this.username = username;
@@ -128,8 +125,7 @@ public class User {
         this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "";
         this.providerType = providerType;
         this.roleType = roleType;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
+        this.grade = Grade.BRONZE;
     }
 
     public void addLikeItem(LikeItem likeItem){

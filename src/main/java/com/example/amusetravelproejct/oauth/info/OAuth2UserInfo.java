@@ -1,5 +1,7 @@
 package com.example.amusetravelproejct.oauth.info;
 
+import com.example.amusetravelproejct.domain.person_enum.Grade;
+
 import java.util.Map;
 
 public abstract class OAuth2UserInfo {

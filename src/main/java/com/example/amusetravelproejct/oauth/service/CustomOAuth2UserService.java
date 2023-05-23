@@ -35,7 +35,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         try {
             log.info("\n\nCustomOauth2UserService에서 loadUser 함수가 실행이 되었다.");
             log.info(String.valueOf(userRequest.getClientRegistration()));
-            log.info(String.valueOf(userRequest.getAccessToken()));
+            log.info(String.valueOf(userRequest.getAccessToken().getTokenValue()));
             log.info(userRequest.getAdditionalParameters().toString());
 
             return this.process(userRequest, user);
@@ -53,6 +53,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
         log.info("userInfo.getId() : " + userInfo.getId());
+
 
         User savedUser = userRepository.findByUserId(userInfo.getId());
 
@@ -83,7 +84,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User createUser(OAuth2UserInfo userInfo, ProviderType providerType) {
-        LocalDateTime now = LocalDateTime.now();
         User user = new User(
                 userInfo.getId(),
                 userInfo.getName(),
@@ -91,9 +91,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 "Y",
                 userInfo.getImageUrl(),
                 providerType,
-                RoleType.USER,
-                now,
-                now
+                RoleType.USER
         );
 
         return userRepository.saveAndFlush(user);
@@ -108,6 +106,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (userInfo.getImageUrl() != null && !user.getProfileImageUrl().equals(userInfo.getImageUrl())) {
             user.setProfileImageUrl(userInfo.getImageUrl());
         }
+
+//        if (userInfo. != null && !user.getProfileImageUrl().equals(userInfo.getImageUrl())) {
+//            user.setProfileImageUrl(userInfo.getImageUrl());
+//        }
+
 
         return user;
     }

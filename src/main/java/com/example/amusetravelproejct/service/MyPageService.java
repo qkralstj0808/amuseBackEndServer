@@ -25,8 +25,7 @@ public class MyPageService {
 
     private final UserService userService;
 
-    public ResponseTemplate<MyPageResponse.getLikeItems> getLikeItems(String user_id) {
-        User findUser = userRepository.findByUserId(user_id);
+    public ResponseTemplate<MyPageResponse.getLikeItems> getLikeItems(User findUser) {
 
         List<Item> findLikeItems = findUser.getLikeItems().stream().map(LikeItem::getItem).collect(Collectors.toList());
 
