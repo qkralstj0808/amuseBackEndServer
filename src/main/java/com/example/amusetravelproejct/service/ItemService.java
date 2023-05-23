@@ -540,7 +540,6 @@ public class ItemService {
                 ).collect(Collectors.toList()),
                         itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
                         item.getLike_num(),item.getStartPrice()));
-
             }
         }
         return new ResponseTemplate<>(new MainPageResponse.getItemPage(itemInfo,total_page,current_page));
