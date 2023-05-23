@@ -113,7 +113,7 @@ public class DetailPageService {
 
         return new ResponseTemplate<>(new DetailPageResponse.getCourseContent(itemCourseBySequence.stream().map(
                 itemCourse -> new DetailPageResponse.CourseInfo(
-                        itemCourse.getTitle(),itemCourse.getContent(),itemCourse.getSequenceId(),
+                        itemCourse.getTitle(),itemCourse.getContent(),itemCourse.getDay(),itemCourse.getSequenceId(),
                         itemCourse.getTimeCost(),itemCourse.getImageUrl(),itemCourse.getLatitude(),
                         itemCourse.getLongitude())
         ).collect(Collectors.toList())));
