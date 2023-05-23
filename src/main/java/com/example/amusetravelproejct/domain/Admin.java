@@ -3,7 +3,6 @@ package com.example.amusetravelproejct.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -36,8 +35,6 @@ public class Admin {
     @OneToMany(mappedBy = "updateAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Advertisement> AdvertisementUpdates = new ArrayList<>();
 
-
-
     // admin과 alarm은 1:N 관계
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Alarm> alarms = new ArrayList<>();
@@ -50,10 +47,10 @@ public class Admin {
 
 
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DisplayCategory> displayCategories = new ArrayList<>();
+    private List<Category> displayCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "updateAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DisplayCategory> displayCategoriesUpdates = new ArrayList<>();
+    private List<Category> displayCategoriesUpdates = new ArrayList<>();
 
 
 

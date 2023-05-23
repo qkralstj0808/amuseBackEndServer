@@ -1,29 +1,41 @@
 package com.example.amusetravelproejct.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
+/*
+    메인 페이지에 보여줄 카테고리
+
+ */
 
 @Entity(name = "category")
-@EntityListeners(value = {AuditingEntityListener.class})
 @Getter
 @Setter
-public class Category {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Category extends BaseEntity{
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String hashTag;
-
+    private String category_name;
+    private Long sequence;
+    private String imgUrl;
+    @Column(columnDefinition = "LONGTEXT")
+    private String mainDescription;
+    @Column(columnDefinition = "LONGTEXT")
+    private String subDescription;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item")
-    private Item item;
+    @JoinColumn(name = "admin")
+    private Admin admin;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "update_admin")
+    private Admin updateAdmin;
 }

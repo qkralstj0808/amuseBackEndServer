@@ -122,14 +122,38 @@ public class AdminPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class categoryRegister {
-        private List<categoryDetail> displayHashTags;
+        private Long   id;
+        private String hashTag;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class categoryEdit {
+        private Long   id;
+        private String hashTag;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+    }
+
 
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class categoryDetail{
+    public static class categorySequence{
         private Long id;
         private String displayHashTag;
         private Long sequence;
@@ -139,7 +163,34 @@ public class AdminPageResponse {
         private String updatedBy;
     }
 
+//    @Data
+//    @AllArgsConstructor
+//    @NoArgsConstructor
+//    public static class findItemByCategoryResult{
+//        private List<findItemByCategory> Items;
+//    }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class findItemByCategory{
+        private String id;
+        private String title;
+//        private String content;
+        private List<String> categoryNames;
+        private String createdBy;
+        private LocalDateTime createdAt;
+        private String updatedBy;
+        private LocalDateTime updatedAt;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getItemByCategory{
+        private Long pageCount;
+        private List<findItemByCategory> data;
+    }
 
 
 

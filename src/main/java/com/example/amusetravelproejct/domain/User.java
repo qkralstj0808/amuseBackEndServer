@@ -1,8 +1,9 @@
 package com.example.amusetravelproejct.domain;
 
 import com.example.amusetravelproejct.domain.person_enum.Gender;
-import com.example.amusetravelproejct.social.oauth.entity.ProviderType;
-import com.example.amusetravelproejct.social.oauth.entity.RoleType;
+import com.example.amusetravelproejct.domain.person_enum.Grade;
+import com.example.amusetravelproejct.oauth.entity.ProviderType;
+import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -81,6 +82,8 @@ public class User {
     private Gender gender;
     private Boolean emailReceptionTrue;
     private Boolean messageReceptionTrue;
+    private Grade grade;
+    private String auth;
 
     @Column(name = "MODIFIED_AT")
     @NotNull

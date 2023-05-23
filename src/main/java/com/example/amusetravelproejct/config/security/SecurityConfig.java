@@ -1,19 +1,18 @@
 package com.example.amusetravelproejct.config.security;
 
 import com.example.amusetravelproejct.config.properties.CorsProperties;
-import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
-import com.example.amusetravelproejct.social.oauth.exception.RestAuthenticationEntryPoint;
-import com.example.amusetravelproejct.social.oauth.filter.TokenAuthenticationFilter;
-import com.example.amusetravelproejct.social.oauth.filter.TokenExceptionFilter;
-import com.example.amusetravelproejct.social.oauth.handler.OAuth2AuthenticationFailureHandler;
-import com.example.amusetravelproejct.social.oauth.handler.OAuth2AuthenticationSuccessHandler;
-import com.example.amusetravelproejct.social.oauth.handler.TokenAccessDeniedHandler;
-import com.example.amusetravelproejct.social.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.example.amusetravelproejct.social.oauth.service.CustomOAuth2UserService;
-import com.example.amusetravelproejct.social.oauth.service.CustomUserDetailsService;
-import com.example.amusetravelproejct.social.oauth.token.AuthTokenProvider;
+import com.example.amusetravelproejct.oauth.exception.RestAuthenticationEntryPoint;
+import com.example.amusetravelproejct.oauth.filter.TokenAuthenticationFilter;
+import com.example.amusetravelproejct.oauth.filter.TokenExceptionFilter;
+import com.example.amusetravelproejct.oauth.handler.OAuth2AuthenticationFailureHandler;
+import com.example.amusetravelproejct.oauth.handler.OAuth2AuthenticationSuccessHandler;
+import com.example.amusetravelproejct.oauth.handler.TokenAccessDeniedHandler;
+import com.example.amusetravelproejct.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.example.amusetravelproejct.oauth.service.CustomOAuth2UserService;
+import com.example.amusetravelproejct.oauth.service.CustomUserDetailsService;
+import com.example.amusetravelproejct.oauth.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -163,10 +162,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource corsConfigSource = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedHeaders(Arrays.asList(corsProperties.getAllowedHeaders().split(",")));
-        corsConfig.setAllowedMethods(Arrays.asList(corsProperties.getAllowedMethods().split(",")));
-        corsConfig.setAllowedOriginPatterns(Arrays.asList(corsProperties.getAllowedOrigins().split(",")));
-        corsConfig.setMaxAge(corsConfig.getMaxAge());
+
+        corsConfig.addAllowedOriginPattern("*");
+        corsConfig.addAllowedHeader("*");
+        corsConfig.addAllowedMethod("*");
+        corsConfig.setAllowCredentials(true);
+//        corsConfig.setMaxAge(corsConfig.getMaxAge());
 
         corsConfigSource.registerCorsConfiguration("/**", corsConfig);
         return corsConfigSource;

@@ -4,12 +4,9 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseException;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
-import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.dto.response.DetailPageResponse;
 import com.example.amusetravelproejct.service.DetailPageService;
-import com.example.amusetravelproejct.social.oauth.entity.UserPrincipal;
-import com.nimbusds.oauth2.sdk.http.HTTPRequest;
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
+import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +55,11 @@ public class DetailPageController {
     @GetMapping("/other-info")
     public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
         return detailPageService.getOtherContent(item_id);
+    }
+
+    @GetMapping("/manager-info")
+    public ResponseTemplate<DetailPageResponse.getManager> getManager(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
+        return detailPageService.getManager(item_id);
     }
 
     @PostMapping("/like-plus")

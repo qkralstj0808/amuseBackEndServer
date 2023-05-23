@@ -24,6 +24,10 @@ public class MainPageResponse {
     public static class CategoryInfo {
         private Long categoryId;
         private String categoryName;
+        private String categoryImg;
+        private String mainDescription;
+        private String subDescription;
+
     }
 
     @Data
@@ -36,34 +40,10 @@ public class MainPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class getBestItemPage {
-        private List<ItemInfo> bestItems;
+    public static class getItemPage {
+        private List<ItemInfo> Items;
         private Integer totalPage;
         private Integer currentPage;
-    }
-
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class getCurrentItemPage {
-        private List<ItemInfo> currentItems;
-        private Integer totalPage;
-        private Integer currentPage;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class getBestItem {
-        private List<ItemInfo> bestItems;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class getCurrentItem {
-        private List<ItemInfo> currentItems;
     }
 
     @Data
@@ -72,7 +52,7 @@ public class MainPageResponse {
     public static class ItemInfo {
         private Long item_db_id;
         private String product_code;
-        private String category;
+        private List<HashTag> hashTags;
         private String imageUrl;
         private String title;
         private String country;
@@ -80,6 +60,13 @@ public class MainPageResponse {
         private Integer duration;
         private Integer likeNum;
         private Long startPrice;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class HashTag {
+        private String hashtag;
     }
 
 }

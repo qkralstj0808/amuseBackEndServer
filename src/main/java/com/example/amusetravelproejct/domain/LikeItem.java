@@ -1,6 +1,8 @@
 package com.example.amusetravelproejct.domain;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -10,7 +12,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LikeItem {
+@EntityListeners(value = {AuditingEntityListener.class})
+public class LikeItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

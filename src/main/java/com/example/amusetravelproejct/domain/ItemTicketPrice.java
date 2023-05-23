@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.domain;
 
+import com.example.amusetravelproejct.domain.person_enum.WEEKDAY;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -3,6 +3,7 @@ package com.example.amusetravelproejct.service.impl;
 
 import com.example.amusetravelproejct.dao.CouponDao;
 import com.example.amusetravelproejct.dto.request.InsertCouponTypeReq;
+import com.example.amusetravelproejct.dto.response.GetCouponRes;
 import com.example.amusetravelproejct.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,12 @@ public class CouponServiceImpl implements CouponService {
             throw new RuntimeException("쿠폰 삽입에 실패하였습니다.");
         }
 
+    }
+
+    @Override
+    public GetCouponRes getCoupon(String couponCode) throws Exception {
+        GetCouponRes result = couponDao.getCoupon(couponCode);
+        return result;
     }
 
 }

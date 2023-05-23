@@ -70,7 +70,7 @@ public class DetailPageService {
         List<ItemTicket> itemTickets = findItem.getItemTickets();
 
         List<DetailPageResponse.TicketInfo> ticketInfos = itemTickets.stream().map(itemTicket ->
-                new DetailPageResponse.TicketInfo(itemTicket.getContent(), itemTicket.getContent(),
+                new DetailPageResponse.TicketInfo(itemTicket.getId(),itemTicket.getContent(), itemTicket.getContent(),
                         itemTicket.getItemTicketPrices().stream().map(
                                 itemTicketPrice -> new DetailPageResponse.TicketPrice(
                                         itemTicketPrice.getStartDate(), itemTicketPrice.getPrice()
@@ -85,6 +85,19 @@ public class DetailPageService {
         Item findItem = findItemById(item_id);
 
         return new ResponseTemplate<>(new DetailPageResponse.getContent(findItem.getContent_1()));
+    }
+
+
+    public ResponseTemplate<DetailPageResponse.getManager> getManager(Long item_id) {
+        Item findItem = findItemById(item_id);
+        Admin findItemAdmin = findItem.getAdmin();
+
+        if(findItemAdmin == null){
+            throw new CustomException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
+
+        return new ResponseTemplate(new DetailPageResponse.getManager(findItemAdmin.getName(),findItemAdmin.getEmail(),
+                findItemAdmin.getProfileImgLink(),findItem.getAdminContent()));
     }
 
 
@@ -165,4 +178,5 @@ public class DetailPageService {
 
         return null;
     }
+
 }

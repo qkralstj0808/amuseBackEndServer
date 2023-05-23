@@ -53,6 +53,7 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TicketInfo {
+        private Long id;
         private String title;
         private String content;
         private List<TicketPrice> priceList;
@@ -119,6 +120,15 @@ public class DetailPageResponse {
 
 //    리뷰, 담당자는 나중에
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getManager {
+        private String name;
+        private String email;
+        private String img;
+        private String manager_content;
 
+    }
 
 }
