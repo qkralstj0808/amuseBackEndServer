@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,14 +25,14 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/search/title/page={i}")
-    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndLike_numSortInTitle(@RequestBody ItemSearchRequest.ItemSearchKeywordDto request,
+    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndLike_numSortInTitle(@RequestParam("keyword") String keyword,
                                                                                            @PathVariable("i") int i){
         int current_page = i-1;
         if(current_page < 0){
             throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
         }
 
-        String[] contain_words = StringUtils.split(request.getContain_word());
+        String[] contain_words = StringUtils.split(keyword);
 
         for(String contain_word:contain_words){
             log.info(contain_word);
@@ -46,14 +47,14 @@ public class ItemController {
     }
 
     @GetMapping("/search/content/page={i}")
-    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndLike_numSortInContent(@RequestBody ItemSearchRequest.ItemSearchKeywordDto request,
+    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndLike_numSortInContent(@RequestParam("keyword") String keyword,
                                                                                           @PathVariable("i") int i){
         int current_page = i-1;
         if(current_page < 0){
             throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
         }
 
-        String[] contain_words = StringUtils.split(request.getContain_word());
+        String[] contain_words = StringUtils.split(keyword);
 
         PageRequest pageRequest = null;
 
