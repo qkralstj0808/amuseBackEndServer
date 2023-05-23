@@ -222,7 +222,6 @@ public class AdminPageController {
 
         //TODO
         // 유저 데이터 선 처리
-
         mainPageComponentService.createMainPageComponent(createMainPageDto);
 
         return new ResponseTemplate<>("컴포넌트가 추가되었습니다.");

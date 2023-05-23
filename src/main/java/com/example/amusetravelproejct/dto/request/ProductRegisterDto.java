@@ -99,6 +99,7 @@ public class ProductRegisterDto {
     public static class CourseDto {
         private Long id;
         private Long sequenceId;
+        private Integer day;
         private String title;
         private String timeCost;
         private String content;
