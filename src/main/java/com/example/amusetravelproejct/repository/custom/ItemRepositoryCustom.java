@@ -1,7 +1,7 @@
 package com.example.amusetravelproejct.repository.custom;
 
 import com.example.amusetravelproejct.domain.Item;
-import com.example.amusetravelproejct.dto.response.MainPageResponse;
+import com.example.amusetravelproejct.dto.request.ItemSearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,4 +23,11 @@ public interface ItemRepositoryCustom {
 
     Page<Item> findCategoryBestItemPage(String category, Pageable pageable);
     Page<Item> findCategoryCurrentItemPage(String category, Pageable pageable);
+
+    Page<Item> findItemByCondition(ItemSearchRequest.ItemConditionDto itemConditionDto, Pageable pageable);
+
+    Page<Item> searchItemByWordInTitle(String[] contain_words, Pageable pageable);
+    Page<Item> searchItemByWordInContent(String[] contain_words,Pageable pageable);
+    Page<Item> searchItemByWordInTitleAfterContent(String[] contain_words,Pageable pageable);
+//    Page<Item> searchItemItemCourse(ItemSearchConditionDto itemSearchConditionDto,Pageable pageable);
 }

@@ -70,7 +70,7 @@ public class DetailPageService {
         List<ItemTicket> itemTickets = findItem.getItemTickets();
 
         List<DetailPageResponse.TicketInfo> ticketInfos = itemTickets.stream().map(itemTicket ->
-                new DetailPageResponse.TicketInfo(itemTicket.getContent(), itemTicket.getContent(),
+                new DetailPageResponse.TicketInfo(itemTicket.getId(),itemTicket.getContent(), itemTicket.getContent(),
                         itemTicket.getItemTicketPrices().stream().map(
                                 itemTicketPrice -> new DetailPageResponse.TicketPrice(
                                         itemTicketPrice.getStartDate(), itemTicketPrice.getPrice()
@@ -113,7 +113,7 @@ public class DetailPageService {
 
         return new ResponseTemplate<>(new DetailPageResponse.getCourseContent(itemCourseBySequence.stream().map(
                 itemCourse -> new DetailPageResponse.CourseInfo(
-                        itemCourse.getTitle(),itemCourse.getContent(),itemCourse.getSequenceId(),
+                        itemCourse.getTitle(),itemCourse.getContent(),itemCourse.getDay(),itemCourse.getSequenceId(),
                         itemCourse.getTimeCost(),itemCourse.getImageUrl(),itemCourse.getLatitude(),
                         itemCourse.getLongitude())
         ).collect(Collectors.toList())));

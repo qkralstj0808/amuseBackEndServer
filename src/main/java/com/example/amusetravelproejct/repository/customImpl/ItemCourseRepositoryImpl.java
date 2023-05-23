@@ -26,7 +26,7 @@ public class ItemCourseRepositoryImpl implements ItemCourseRepositoryCustom {
                 .from(itemCourse)
                 .join(itemCourse.item,item).fetchJoin()
                 .where(item.id.eq(item_id))
-                .orderBy(itemCourse.sequenceId.asc())
+                .orderBy(itemCourse.day.asc(),itemCourse.sequenceId.asc())
                 .fetch();
     }
 }

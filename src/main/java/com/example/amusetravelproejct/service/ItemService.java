@@ -2,21 +2,29 @@ package com.example.amusetravelproejct.service;
 
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
+import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
+
 import com.example.amusetravelproejct.domain.person_enum.Option;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
+
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.tomcat.jni.Time;
 import org.springframework.data.domain.*;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +34,6 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.hibernate.sql.ast.Clause.LIMIT;
 
 @AllArgsConstructor
 @Service
@@ -329,6 +335,7 @@ public class ItemService {
         }
     }
 
+
     public AdminPageResponse.getItemByCategory processSearchItem(AdminPageRequest.getItemByCategory findOrphanageDto) {
         BooleanBuilder predicateFirstQ = new BooleanBuilder();
         List<String> categoryData = findOrphanageDto.getCategoryNames();
@@ -478,6 +485,70 @@ public class ItemService {
         productRegisterDto.setOption(Option.READ);
         return productRegisterDto;
     }
+
+    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndConditionSortInTitle(int current_page, PageRequest pageRequest,
+                                                                                           String[] contain_words) {
+        Page<Item> searchItemByWordInTitle = itemRepository.searchItemByWordInTitle(contain_words,pageRequest);
+
+        int total_page = searchItemByWordInTitle.getTotalPages();
+
+        if(current_page == 1 && searchItemByWordInTitle.getContent().size() < 1){
+            throw new CustomException(ErrorCode.ITEM_NOT_FOUND_IN_PAGE);
+        }
+
+        if(current_page-1 > total_page-1){
+            throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
+        }
+
+        return returnItemPage(searchItemByWordInTitle,total_page,current_page);
+
+    }
+
+    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndConditionSortInContent(int current_page, PageRequest pageRequest,
+                                                                                                  String[] contain_words) {
+        Page<Item> searchItemByWordInTitle = itemRepository.searchItemByWordInContent(contain_words,pageRequest);
+
+        int total_page = searchItemByWordInTitle.getTotalPages();
+
+        if(current_page == 1 && searchItemByWordInTitle.getContent().size() < 1){
+            throw new CustomException(ErrorCode.ITEM_NOT_FOUND_IN_PAGE);
+        }
+
+        if(current_page-1 > total_page-1){
+            throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
+        }
+
+        return returnItemPage(searchItemByWordInTitle,total_page,current_page);
+
+    }
+
+    private ResponseTemplate<MainPageResponse.getItemPage> returnItemPage(Page<Item> categoryAllItemPage, int total_page, int current_page) {
+        List<MainPageResponse.ItemInfo> itemInfo = new ArrayList<>();
+
+        System.out.println("categoryAllItemPage.getContent().size() = " + categoryAllItemPage.getContent().size());
+        System.out.println();
+        if(categoryAllItemPage.getContent().size() != 0){
+            for(int i = 0 ; i < categoryAllItemPage.getContent().size() ; i++){
+                Item item = categoryAllItemPage.getContent().get(i);
+                String categoryName = null;
+                String itemImg = null;
+
+                // img가 하나라도 있다면
+                if(item.getItemImg_list().size() != 0){
+                    itemImg = item.getItemImg_list().get(0).getImgUrl();
+                }
+
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),item.getItemHashTag_list().stream().map(
+                        itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
+                ).collect(Collectors.toList()),
+                        itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
+                        item.getLike_num(),item.getStartPrice()));
+            }
+        }
+        return new ResponseTemplate<>(new MainPageResponse.getItemPage(itemInfo,total_page,current_page));
+    }
+
+
 }
 
 

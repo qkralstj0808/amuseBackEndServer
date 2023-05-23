@@ -8,6 +8,8 @@ import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Set;
+
 // SwaggerConfig.java
 @OpenAPIDefinition(
         info = @Info(title = "어뮤즈트레블 API 명세서",
@@ -16,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 @Configuration
 public class Swagger3Config {
+
+
 
     @Bean
     public GroupedOpenApi chatOpenApi() {
@@ -26,4 +30,8 @@ public class Swagger3Config {
                 .pathsToMatch(paths)
                 .build();
     }
+
+
+
+
 }
