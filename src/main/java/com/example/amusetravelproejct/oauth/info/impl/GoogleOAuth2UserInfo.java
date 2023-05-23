@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.oauth.info.impl;
 
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.oauth.info.OAuth2UserInfo;
 
 import java.util.Map;
@@ -29,4 +30,6 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
     public String getImageUrl() {
         return (String) attributes.get("picture");
     }
+
+
 }

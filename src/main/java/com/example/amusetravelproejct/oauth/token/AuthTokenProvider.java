@@ -3,6 +3,7 @@ package com.example.amusetravelproejct.oauth.token;
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.domain.User;
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.oauth.exception.TokenValidFailedException;
 import com.example.amusetravelproejct.repository.UserRepository;
 import io.jsonwebtoken.security.Keys;
@@ -39,8 +40,8 @@ public class AuthTokenProvider {
         return new AuthToken(id, expiry, key);
     }
 
-    public AuthToken createAuthToken(String id, String role, Date expiry) {
-        return new AuthToken(id, role, expiry, key);
+    public AuthToken createAuthToken(String id, String role, Grade grade, Date expiry) {
+        return new AuthToken(id, role, grade,expiry, key);
     }
 
     public AuthToken convertAuthToken(String token) {

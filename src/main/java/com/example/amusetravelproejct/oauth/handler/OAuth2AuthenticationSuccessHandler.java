@@ -1,6 +1,8 @@
 package com.example.amusetravelproejct.oauth.handler;
 
+import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
@@ -11,6 +13,7 @@ import com.example.amusetravelproejct.oauth.info.OAuth2UserInfoFactory;
 import com.example.amusetravelproejct.oauth.token.AuthToken;
 import com.example.amusetravelproejct.oauth.token.AuthTokenProvider;
 import com.example.amusetravelproejct.config.util.CookieUtil;
+import com.example.amusetravelproejct.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -30,6 +33,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -41,6 +45,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final AppProperties appProperties;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
+
+    private final UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -83,7 +89,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
         OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
-
+        Map<String, Object> attributes = authToken.getPrincipal().getAttributes();
         ProviderType providerType = ProviderType.valueOf(authToken.getAuthorizedClientRegistrationId().toUpperCase());
 
         OidcUser user = ((OidcUser) authentication.getPrincipal());
@@ -95,11 +101,29 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         RoleType roleType = hasAuthority(authorities, RoleType.ADMIN.getCode()) ? RoleType.ADMIN : RoleType.USER;
 
         Date now = new Date();
-        AuthToken accessToken = tokenProvider.createAuthToken(
-                userInfo.getId(),
-                roleType.getCode(),
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
-        );
+
+        User findUser = userRepository.findByUserId(authToken.getPrincipal().getAttributes().get("id").toString());
+
+        AuthToken accessToken = null;
+
+        if(findUser == null){
+            accessToken = tokenProvider.createAuthToken(
+                    userInfo.getId(),
+                    roleType.getCode(),
+                    Grade.BRONZE,
+                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+
+        }else{
+            accessToken = tokenProvider.createAuthToken(
+                    userInfo.getId(),
+                    roleType.getCode(),
+                    findUser.getGrade(),
+                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+        }
+
+
+        log.info("accesstoken : " + accessToken.getToken());
+        log.info("accesstoken : " + accessToken.getTokenClaims().get("grade"));
 
         // refresh 토큰 설정
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();

@@ -3,6 +3,7 @@ package com.example.amusetravelproejct.controller;
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
+import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
 import com.example.amusetravelproejct.dto.response.AuthResponse;
@@ -14,6 +15,7 @@ import com.example.amusetravelproejct.oauth.token.AuthToken;
 import com.example.amusetravelproejct.oauth.token.AuthTokenProvider;
 import com.example.amusetravelproejct.config.util.CookieUtil;
 import com.example.amusetravelproejct.config.util.HeaderUtil;
+import com.example.amusetravelproejct.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +37,8 @@ public class AuthController {
     private final AuthTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+
+    private final UserRepository userRepository;
 
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
@@ -81,10 +85,9 @@ public class AuthController {
         String userId = authRequest.getId();
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-
         Date now = new Date();
 
-
+        User user = userRepository.findByUserId(userId);
         /*
             jwt 기반의 access token을 생성한다.
 
@@ -94,6 +97,7 @@ public class AuthController {
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userId,
                 ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
+                user.getGrade(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
 
@@ -147,6 +151,7 @@ public class AuthController {
         Claims claims = token.getExpiredTokenClaims();
 
         String userId = claims.getSubject();
+        User user = userRepository.findByUserId(userId);
         RoleType roleType = RoleType.of(claims.get("role", String.class));
 
         // userId refresh token 으로 DB 확인
@@ -168,6 +173,7 @@ public class AuthController {
         AuthToken newAccessToken = tokenProvider.createAuthToken(
                 userId,
                 roleType.getCode(),
+                user.getGrade(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
 
