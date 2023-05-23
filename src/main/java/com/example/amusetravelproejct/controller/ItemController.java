@@ -41,7 +41,7 @@ public class ItemController {
         PageRequest pageRequest = null;
 
         Sort sort = Sort.by("like_num").descending();
-        pageRequest = PageRequest.of(current_page, 30,sort);
+        pageRequest = PageRequest.of(current_page, 60,sort);
 
         return itemService.searchItemByWordAndConditionSortInTitle(current_page+1,pageRequest,contain_words);
     }

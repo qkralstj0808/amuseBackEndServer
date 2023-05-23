@@ -13,6 +13,7 @@ import com.example.amusetravelproejct.oauth.repository.OAuth2AuthorizationReques
 import com.example.amusetravelproejct.oauth.service.CustomOAuth2UserService;
 import com.example.amusetravelproejct.oauth.service.CustomUserDetailsService;
 import com.example.amusetravelproejct.oauth.token.AuthTokenProvider;
+import com.example.amusetravelproejct.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final TokenExceptionFilter tokenExceptionFilter;
+
+    private final UserRepository userRepository;
 
 
     /*
@@ -141,7 +144,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 tokenProvider,
                 appProperties,
                 userRefreshTokenRepository,
-                oAuth2AuthorizationRequestBasedOnCookieRepository()
+                oAuth2AuthorizationRequestBasedOnCookieRepository(),
+                userRepository
         );
     }
 

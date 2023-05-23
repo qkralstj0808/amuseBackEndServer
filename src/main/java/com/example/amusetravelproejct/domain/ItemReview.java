@@ -29,7 +29,7 @@ public class ItemReview {
     private User user;
 
     // item_estimation과 estimation_img은 1:N 관계
-    @OneToMany(mappedBy = "itemReview")
+    @OneToMany(mappedBy = "itemReview",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<ItemReviewImg> itemReviewImgs = new ArrayList<>();
 
 
