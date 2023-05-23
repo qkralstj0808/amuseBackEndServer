@@ -94,8 +94,10 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CourseInfo {
+
         private String title;
         private String content;
+        private Integer day;
         private Long sequenceId;
         private String timeCost;
         private String imageUrl;
