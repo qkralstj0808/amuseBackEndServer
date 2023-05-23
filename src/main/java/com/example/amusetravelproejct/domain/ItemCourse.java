@@ -14,8 +14,10 @@ public class ItemCourse {
     private Long id;
 
     private String title;           // 코스 이름
+
     @Column(columnDefinition = "LONGTEXT")
     private String content;         // 코스 내용
+
     private Long sequenceId;        // 코스 순서
     private String timeCost;        // 해당 코스가 걸리는 시간
     private String imageUrl;        // 코스 사진
