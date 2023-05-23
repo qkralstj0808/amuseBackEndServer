@@ -117,6 +117,27 @@ public class AdminPageRequest {
         private List<String> categoryNames;
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class createMainPage{
+        private String title;
+        private String type;
+        private String createAt;
+        private Long sequence;
+        private List<String> itemCode;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getMainItem{
+        private String itemCode;
+        private String title;
+        private String createAt;
+        private String createBy;
+    }
+
 
 }
 

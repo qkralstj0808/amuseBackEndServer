@@ -26,6 +26,7 @@ public class ProductRegisterDto {
     private String extraInfo;
     private String admin;
     private String updateAdmin;
+    private String targetUser;
     private Long startPrice;
     private String duration;
     private String startDate;

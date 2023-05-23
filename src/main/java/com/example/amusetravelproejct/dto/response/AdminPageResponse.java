@@ -193,5 +193,14 @@ public class AdminPageResponse {
     }
 
 
-
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getMainComponent{
+        private Long id;
+        private String title;
+        private String type;
+        private LocalDateTime createAt;
+        private String createBy;
+    }
 }

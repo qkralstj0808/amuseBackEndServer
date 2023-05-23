@@ -52,6 +52,9 @@ public class Admin {
     @OneToMany(mappedBy = "updateAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> displayCategoriesUpdates = new ArrayList<>();
 
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MainPageComponent> mainPageComponents = new ArrayList<>();
+
 
 
 }

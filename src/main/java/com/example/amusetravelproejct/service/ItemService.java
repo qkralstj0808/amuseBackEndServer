@@ -43,6 +43,7 @@ public class ItemService {
     private final ItemCourseRepository itemCourseRepository;
     private final TempHashTagRepository tempHashTagRepository;
     private final ItemTicketPriceRecodeRepository itemTicketPriceRecodeRepository;
+    private final UserRepository userRepository;
 
 
     private final CategoryRepository categoryRepository;
@@ -55,13 +56,16 @@ public class ItemService {
         return Optional.ofNullable(adminRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
     }
 
-
     //Item
     @Transactional
     public Item processCreateOrUpdate(ProductRegisterDto productRegisterDto) throws ParseException {
         Item item = itemRepository.findById(productRegisterDto.getId()).isEmpty() ? new Item() : itemRepository.findById(productRegisterDto.getId()).get();
         itemRepository.save(item);
 
+        if (productRegisterDto.getTargetUser() != null){
+            User user = userRepository.findByEmail(productRegisterDto.getTargetUser()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+            item.setTargetUser(user);
+        }
         item.setItemCode(productRegisterDto.getItemCode());
         item.setTitle(productRegisterDto.getTitle());
         List<String> hashTags = productRegisterDto.getCategory();
@@ -473,7 +477,6 @@ public class ItemService {
         productRegisterDto.setStartPrice(item.getStartPrice());
         productRegisterDto.setOption(Option.READ);
         return productRegisterDto;
-
     }
 }
 

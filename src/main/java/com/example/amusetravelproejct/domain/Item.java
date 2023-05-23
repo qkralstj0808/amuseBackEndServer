@@ -94,6 +94,9 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemHashTag> itemHashTags = new ArrayList<>();
 
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MainPage> mainPages = new ArrayList<>();
+
     // 로직
     public void plus_like(){
         this.like_num++;
