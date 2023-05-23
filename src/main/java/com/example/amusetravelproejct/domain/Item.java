@@ -30,6 +30,7 @@ public class Item extends BaseEntity {
     private String itemCode;            // 상품 코드
     private String country;             // 나라
     private String city;                // 시 (강원도 까지만 하기로 했습니다!)
+
     private String title;
 
     @Column(columnDefinition = "LONGTEXT")
