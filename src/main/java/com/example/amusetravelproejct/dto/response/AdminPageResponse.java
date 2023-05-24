@@ -203,4 +203,16 @@ public class AdminPageResponse {
         private LocalDateTime createAt;
         private String createBy;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getMainPageItem{
+        private Long id;
+        private String title;
+        private Long sequence;
+        private String type;
+        private String createAt;
+        private String createBy;
+    }
 }
