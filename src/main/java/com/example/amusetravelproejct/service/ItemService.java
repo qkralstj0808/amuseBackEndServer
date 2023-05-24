@@ -351,7 +351,17 @@ public class ItemService {
                 });
 
             });
-        } else {
+        }else if(findOrphanageDto.getOption() == 2){
+            List<TempHashTag> tempHashTags = tempHashTagRepository.findAll();
+
+            tempHashTags.forEach(data ->{
+                List<ItemHashTag> itemHashTag = itemHashTagRepository.findByHashTag(data.getHashTag());
+                itemHashTag.forEach(itemHashTag1 -> {
+                    predicateFirstQ.or(QItemHashTag.itemHashTag.item.id.eq(itemHashTag1.getItem().getId()));
+                });
+            });
+
+        } else{
             categoryData.forEach(data -> {
                 TempHashTag tempHashTag = tempHashTagRepository.findByHashTag(data).orElseThrow(() -> new CustomException(ErrorCode.HASH_TAG_NOT_FOUND));
 
