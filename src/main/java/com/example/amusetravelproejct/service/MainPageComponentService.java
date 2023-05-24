@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -102,20 +104,31 @@ public class MainPageComponentService {
 
             createMainPage.setContent(mainPageComponent.getContent());
         }
-//        else if (mainPageComponent.getType().equals("타일")){
-//            List<AdminPageRequest.createMainPage.tile> tileList = new ArrayList<>();
-//            mainPageRepository.findByMainPageComponent(mainPageComponent).forEach(mainPage -> {
-//                AdminPageRequest.createMainPage.tile tile = new AdminPageRequest.createMainPage.tile();
-//                tile.setTileName(mainPage.getTile().getTileName());
-//                tile.setTileUrl(mainPage.getTile().getImgUrl());
-//                tileList.add(tile);
-//            });
+        else if (mainPageComponent.getType().equals("타일")){
+            Set<Tile> tileList = new HashSet<>();
+
+            mainPageRepository.findByMainPageComponent(mainPageComponent).forEach(mainPage -> {
+                tileList.add(mainPage.getTile());
+            });
 
 
+            List<AdminPageRequest.getMainItem> getMainItems = new ArrayList<>();
 
+            tileList.forEach(data ->{
+                AdminPageRequest.getMainItem getMainItem = new AdminPageRequest.getMainItem();
+                getMainItem.setTileName(data.getTileName());
+                getMainItem.setTileImgUrl(data.getImgUrl());
+                getMainItem.setTileImgUrl(data.getImgUrl());
+                List<String> itemCodeList = new ArrayList<>();
+                mainPageRepository.findByTile(data).forEach(mainPage -> {
+                    itemCodeList.add(mainPage.getItem().getItemCode());
+                });
+                getMainItem.setItemCode(itemCodeList);
+                getMainItems.add(getMainItem);
+            });
 
-
-
+            createMainPage.setTile(getMainItems);
+        }
 
 
         return new ResponseTemplate<>(createMainPage);
