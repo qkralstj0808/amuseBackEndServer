@@ -79,21 +79,25 @@ public class MainPageComponentService {
         return new ResponseTemplate<>("");
     }
 
-    public ResponseTemplate<?> processGetMainPageComponent(Long id) {
+    public ResponseTemplate<AdminPageRequest.createMainPage> processGetMainPageComponent(Long id) {
         MainPageComponent mainPageComponent = mainPageComponentRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.MAIN_PAGE_COMPONENT_NOT_FOUND));
-            AdminPageRequest.createMainPage createMainPage = new AdminPageRequest.createMainPage();
-            createMainPage.setTitle(mainPageComponent.getTitle());
-            createMainPage.setType(mainPageComponent.getType());
-            createMainPage.setSequence(mainPageComponent.getSequence());
-//
-//        if (mainPageComponent.getType().equals("리스트")){
-//            createMainPage.setItemCode(mainPageRepository.findByMainPageComponent(mainPageComponent));
-//        } else if (mainPageComponent.getType().equals("타일")) {
-//            mainPageComponent.setMainPage(mainPageRepository.findByMainPageComponent(mainPageComponent));
-//            mainPageComponent.setTile(tileRepository.findByMainPageComponent(mainPageComponent));
-//        }
+        AdminPageRequest.createMainPage createMainPage = new AdminPageRequest.createMainPage();
+        createMainPage.setTitle(mainPageComponent.getTitle());
+        createMainPage.setType(mainPageComponent.getType());
+        createMainPage.setSequence(mainPageComponent.getSequence());
 
-        return new ResponseTemplate<>(mainPageComponent);
+        if (mainPageComponent.getType().equals("리스트")){
+            List<String> itemCodeList = new ArrayList<>();
+            mainPageRepository.findByMainPageComponent(mainPageComponent).forEach(mainPage -> {
+                itemCodeList.add(mainPage.getItem().getItemCode());
+            });
+
+//            createMainPage.setItemCode();
+        }
+
+
+
+        return new ResponseTemplate<>(createMainPage);
     }
 
     public List<AdminPageResponse.getMainPageItem> processGetMainPageList() {

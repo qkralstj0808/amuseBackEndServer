@@ -228,12 +228,12 @@ public class AdminPageController {
     }
 
     @GetMapping("/mainPage/{id}")
-    public ResponseTemplate<AdminPageRequest.createMainPage> reqMainPageGet(@PathVariable("id") Long id){
+    public ResponseTemplate<?> reqMainPageGet(@PathVariable("id") Long id){
 
         //TODO
         // 유저 데이터 선 처리
 
-        return  null;
-//        return new ResponseTemplate<>(mainPageComponentService.processGetMainPageComponent(id));
+//        return  null;
+        return mainPageComponentService.processGetMainPageComponent(id);
     }
 }
