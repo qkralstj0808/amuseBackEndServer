@@ -7,6 +7,7 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
 import com.example.amusetravelproejct.domain.Category;
 import com.example.amusetravelproejct.domain.ItemHashTag;
 import com.example.amusetravelproejct.domain.Item;
+import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.repository.CategoryRepository;
 import com.example.amusetravelproejct.repository.ItemHashTagRepository;
@@ -165,6 +166,7 @@ public class MainPageService {
 
         return new ResponseTemplate<>(new MainPageResponse.getItem(itemInfo));
     }
+
 
 
 

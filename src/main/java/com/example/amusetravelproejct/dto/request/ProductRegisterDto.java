@@ -26,6 +26,7 @@ public class ProductRegisterDto {
     private String extraInfo;
     private String admin;
     private String updateAdmin;
+    private String targetUser;
     private Long startPrice;
     private String duration;
     private String startDate;
@@ -98,6 +99,7 @@ public class ProductRegisterDto {
     public static class CourseDto {
         private Long id;
         private Long sequenceId;
+        private Integer day;
         private String title;
         private String timeCost;
         private String content;

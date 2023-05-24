@@ -114,7 +114,38 @@ public class AdminPageRequest {
     public static class getItemByCategory{
         private Long option;
         private Long page;
+        private Long offset;
         private List<String> categoryNames;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class createMainPage{
+        private String title;
+        private String type;
+        private String createAt;
+        private Long sequence;
+        private List<String> itemCode;
+        private List<getMainItem> tile;
+        private String pcBannerFileName;
+        private String pcBannerBase64;
+        private String pcBannerLink;
+        private String mobileBannerFileName;
+        private String mobileBannerBase64;
+        private String mobileBannerLink;
+        private String content;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getMainItem{
+        private String tileName;
+        private List<String> itemCode;
+        private String tileFileName;
+        private String tileBase64;
+
     }
 
 
