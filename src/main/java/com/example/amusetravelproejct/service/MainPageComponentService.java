@@ -8,10 +8,14 @@ import com.example.amusetravelproejct.domain.MainPage;
 import com.example.amusetravelproejct.domain.MainPageComponent;
 import com.example.amusetravelproejct.domain.Tile;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
+import com.example.amusetravelproejct.dto.response.AdminPageResponse;
 import com.example.amusetravelproejct.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -26,7 +30,7 @@ public class MainPageComponentService {
     public ResponseTemplate<?> createMainPageComponent(AdminPageRequest.createMainPage createMainPageDto , UtilMethod utilMethod) {
 
         MainPageComponent mainPageComponent = new MainPageComponent();
-        mainPageComponent.setAdmin(adminRepository.findByEmail(createMainPageDto.getCreateAt()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+        mainPageComponent.setAdmin(adminRepository.findByEmail(createMainPageDto.getCreateBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         mainPageComponent.setTitle(createMainPageDto.getTitle());
         mainPageComponent.setType(createMainPageDto.getType());
         mainPageComponent.setSequence(createMainPageDto.getSequence());
@@ -77,8 +81,37 @@ public class MainPageComponentService {
 
     public ResponseTemplate<?> processGetMainPageComponent(Long id) {
         MainPageComponent mainPageComponent = mainPageComponentRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.MAIN_PAGE_COMPONENT_NOT_FOUND));
-
+            AdminPageRequest.createMainPage createMainPage = new AdminPageRequest.createMainPage();
+            createMainPage.setTitle(mainPageComponent.getTitle());
+            createMainPage.setType(mainPageComponent.getType());
+            createMainPage.setSequence(mainPageComponent.getSequence());
+//
+//        if (mainPageComponent.getType().equals("리스트")){
+//            createMainPage.setItemCode(mainPageRepository.findByMainPageComponent(mainPageComponent));
+//        } else if (mainPageComponent.getType().equals("타일")) {
+//            mainPageComponent.setMainPage(mainPageRepository.findByMainPageComponent(mainPageComponent));
+//            mainPageComponent.setTile(tileRepository.findByMainPageComponent(mainPageComponent));
+//        }
 
         return new ResponseTemplate<>(mainPageComponent);
+    }
+
+    public List<AdminPageResponse.getMainPageItem> processGetMainPageList() {
+        List<MainPageComponent>  mainPageComponents = mainPageComponentRepository.findAll();
+        List<AdminPageResponse.getMainPageItem> getMainPageLists = new ArrayList<>();
+
+        mainPageComponents.forEach(mainPageComponent -> {
+            AdminPageResponse.getMainPageItem getMainPageList = new AdminPageResponse.getMainPageItem();
+            getMainPageList.setId(mainPageComponent.getId());
+            getMainPageList.setTitle(mainPageComponent.getTitle());
+            getMainPageList.setType(mainPageComponent.getType());
+            getMainPageList.setSequence(mainPageComponent.getSequence());
+            getMainPageList.setCreateAt(String.valueOf(mainPageComponent.getCreatedDate()));
+            getMainPageList.setCreateBy(mainPageComponent.getAdmin().getEmail());
+            getMainPageLists.add(getMainPageList);
+        });
+
+        return getMainPageLists;
+
     }
 }

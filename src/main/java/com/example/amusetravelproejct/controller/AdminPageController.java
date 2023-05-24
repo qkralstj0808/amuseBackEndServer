@@ -80,11 +80,6 @@ public class AdminPageController {
         AdminPageResponse.advertisementEdit advertisement = advertisementService.processGetAdvertisementDetail(id);
         return new ResponseTemplate<>(advertisement);
     }
-
-
-
-
-
     @Transactional
     @PostMapping("/product/create")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
@@ -99,6 +94,7 @@ public class AdminPageController {
         itemService.processItemCourse(productRegisterDto,utilMethod,item);
         return new ResponseTemplate<>("상품 생성 완료");
     }
+
     @Transactional
     @PostMapping("/product/update")
     public ResponseTemplate<String> reqProductEdit(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
@@ -226,10 +222,18 @@ public class AdminPageController {
         return new ResponseTemplate<>("컴포넌트가 추가되었습니다.");
     }
 
+    @GetMapping("/mainPage/list")
+    public ResponseTemplate<List<AdminPageResponse.getMainPageItem>> reqMainPageList(){
+        return new ResponseTemplate<>(mainPageComponentService.processGetMainPageList());
+    }
+
     @GetMapping("/mainPage/{id}")
     public ResponseTemplate<AdminPageRequest.createMainPage> reqMainPageGet(@PathVariable("id") Long id){
 
-          return null;
+        //TODO
+        // 유저 데이터 선 처리
+
+        return  null;
 //        return new ResponseTemplate<>(mainPageComponentService.processGetMainPageComponent(id));
     }
 }
