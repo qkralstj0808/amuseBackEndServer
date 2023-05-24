@@ -4,7 +4,9 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseException;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
+import com.example.amusetravelproejct.domain.Item;
 import com.example.amusetravelproejct.dto.response.DetailPageResponse;
+import com.example.amusetravelproejct.repository.ItemRepository;
 import com.example.amusetravelproejct.service.DetailPageService;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.io.IOException;
 public class DetailPageController {
 
     private final DetailPageService detailPageService;
+    private final ItemRepository itemRepository;
 
     @GetMapping("/title")
     public ResponseTemplate<DetailPageResponse.getTitle> getTitle(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
@@ -86,7 +89,12 @@ public class DetailPageController {
 
     @GetMapping("/review")
     public ResponseTemplate<DetailPageResponse.getReview> getReview(@PathVariable("id") Long item_id){
-        return detailPageService.getReview(item_id);
+        Item item = itemRepository.findById(item_id).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+
+        ResponseTemplate<DetailPageResponse.getReview> review = detailPageService.getReview(item);
+        detailPageService.updateRatingReviewCount(review.getData().getRated(),review.getData().getReview_count(),item);
+
+        return review;
     }
 
 }

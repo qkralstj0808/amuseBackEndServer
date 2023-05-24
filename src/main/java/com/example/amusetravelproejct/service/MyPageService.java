@@ -1,15 +1,17 @@
 package com.example.amusetravelproejct.service;
 
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
-import com.example.amusetravelproejct.domain.Item;
-import com.example.amusetravelproejct.domain.ItemImg;
-import com.example.amusetravelproejct.domain.LikeItem;
-import com.example.amusetravelproejct.domain.User;
+import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.dto.request.MyPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.DetailPageResponse;
 import com.example.amusetravelproejct.dto.response.MyPageResponse;
+import com.example.amusetravelproejct.repository.ItemRepository;
+import com.example.amusetravelproejct.repository.ItemReviewImgRepository;
+import com.example.amusetravelproejct.repository.ItemReviewRepository;
 import com.example.amusetravelproejct.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +29,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MyPageService {
 
-    private final UserRepository userRepository;
-
-    private final UserService userService;
+    private final ItemReviewImgRepository itemReviewImgRepository;
+    private final ItemReviewRepository itemReviewRepository;
+    private final ItemRepository itemRepository;
 
     public ResponseTemplate<MyPageResponse.getLikeItems> getLikeItems(User findUser) {
 
@@ -50,33 +52,57 @@ public class MyPageService {
         return new ResponseTemplate(new MyPageResponse.getLikeItems(itemInfoList));
     }
 
-    public ResponseTemplate<MyPageResponse.setReview> setReview(User findUser, MyPageRequest.setReview request) {
-        return null;
+    @Transactional
+    public ResponseTemplate<MyPageResponse.setReview> setReview(User findUser, Long item_id,MyPageRequest.setReview request,
+                                                                UtilMethod utilMethod) {
+        Item findItem = itemRepository.findById(item_id).orElseThrow(
+                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+        );
 
+        ItemReview itemReview = new ItemReview();
+        itemReview.setItem(findItem);
+        itemReview.setUser(findUser);
+        itemReview.setContent(request.getReview_content());
+        itemReview.setRating(request.getRate());
+        List<ItemReviewImg> itemReviewImgList = processItemImg(request, utilMethod, itemReview);
+        itemReview.setItemReviewImgs(itemReviewImgList);
+        itemReviewRepository.save(itemReview);
+
+        return new ResponseTemplate(new MyPageResponse.setReview(findUser.getUsername(),request.getRate(),
+                request.getReview_content(),itemReviewImgList.stream().map(
+                        itemReviewImg -> new MyPageResponse.ImageInfo(itemReviewImg.getImgUrl())).collect(Collectors.toList())
+        ));
     }
 
-//    public void processItemImg(MyPageRequest.Ima productRegisterDto, UtilMethod utilMethod, Item item) {
-//
-//        for (int i = 0; i < productRegisterDto.getMainImg().size(); i++) {
-//            if(productRegisterDto.getMainImg().get(i).getId() == null){
-//                ItemImg itemImg = new ItemImg();
-//                String url = utilMethod.getImgUrl(productRegisterDto.getMainImg().get(i).getBase64Data(),
-//                        productRegisterDto.getMainImg().get(i).getFileName());
-//
-//                itemImg.setImgUrl(url);
-//                itemImg.setItem(item);
-//                imgRepository.save(itemImg);
-//            }else{
-//                if (productRegisterDto.getMainImg().get(i).getBase64Data() !=null){
-//                    ItemImg itemImg = imgRepository.findById(productRegisterDto.getMainImg().get(i).getId()).get();
-//                    String url = utilMethod.getImgUrl(productRegisterDto.getMainImg().get(i).getBase64Data(),
-//                            productRegisterDto.getMainImg().get(i).getFileName());
-//
-//                    itemImg.setImgUrl(url);
-//                    itemImg.setItem(item);
-//                    imgRepository.save(itemImg);
-//                }
-//            }
-//        }
-//    }
+    @Transactional
+    public List<ItemReviewImg> processItemImg(MyPageRequest.setReview request, UtilMethod utilMethod, ItemReview itemReview) {
+        List<ItemReviewImg> itemReviewImgList = new ArrayList<>();
+
+        for (int i = 0; i < request.getReview_imgs().size(); i++) {
+            if(request.getReview_imgs().get(i).getId() == null){
+                String url = utilMethod.getImgUrl(request.getReview_imgs().get(i).getBase64Data(),
+                        request.getReview_imgs().get(i).getFileName());
+
+                ItemReviewImg itemReviewImg = new ItemReviewImg();
+                itemReviewImg.setImgUrl(url);
+                itemReviewImg.setItemReview(itemReview);
+                itemReviewImgList.add(itemReviewImg);
+                itemReviewImgRepository.save(itemReviewImg);
+            }else{
+                if (request.getReview_imgs().get(i).getBase64Data() !=null){
+                    ItemReviewImg itemReviewImg = itemReviewImgRepository.findById(request.getReview_imgs().get(i).getId()).get();
+                    String url = utilMethod.getImgUrl(request.getReview_imgs().get(i).getBase64Data(),
+                            request.getReview_imgs().get(i).getFileName());
+
+                    itemReviewImg.setImgUrl(url);
+                    itemReviewImg.setItemReview(itemReview);
+                    itemReviewImgList.add(itemReviewImg);
+                    itemReviewImgRepository.save(itemReviewImg);
+                }
+            }
+        }
+
+        return itemReviewImgList;
+    }
+
 }

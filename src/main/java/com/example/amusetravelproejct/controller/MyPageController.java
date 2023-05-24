@@ -1,8 +1,10 @@
 package com.example.amusetravelproejct.controller;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
+import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.dto.request.MyPageRequest;
 import com.example.amusetravelproejct.dto.response.MyPageResponse;
@@ -23,6 +25,9 @@ public class MyPageController {
 
     private final UserService userService;
 
+    private final AmazonS3 amazonS3Client;
+
+
     @GetMapping("/like")
     public ResponseTemplate<MyPageResponse.getLikeItems> getLikeItems(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
         User findUser = userService.getUserByPrincipal(userPrincipal);
@@ -30,11 +35,13 @@ public class MyPageController {
         return myPageService.getLikeItems(findUser);
     }
 
-    @PostMapping("/review")
-    public ResponseTemplate<MyPageResponse.setReview> setReview(@AuthenticationPrincipal UserPrincipal userPrincipal,
+    @PostMapping("/item/{item-id}/review")
+    public ResponseTemplate<MyPageResponse.setReview> setReview(@PathVariable("item-id") Long item_id,
+                                                                @AuthenticationPrincipal UserPrincipal userPrincipal,
                                                                 @RequestBody MyPageRequest.setReview request) throws Exception{
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         User findUser = userService.getUserByPrincipal(userPrincipal);
 
-        return myPageService.setReview(findUser,request);
+        return myPageService.setReview(findUser,item_id,request,utilMethod);
     }
 }
