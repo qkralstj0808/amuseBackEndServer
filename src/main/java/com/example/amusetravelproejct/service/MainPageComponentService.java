@@ -92,8 +92,29 @@ public class MainPageComponentService {
                 itemCodeList.add(mainPage.getItem().getItemCode());
             });
 
-//            createMainPage.setItemCode();
+            createMainPage.setItemCode(itemCodeList);
+        } else if (mainPageComponent.getType().equals("배너")){
+            createMainPage.setPcBannerImgUrl(mainPageComponent.getPcBannerUrl());
+            createMainPage.setPcBannerLink(mainPageComponent.getPcBannerLink());
+
+            createMainPage.setMobileBannerImgUrl(mainPageComponent.getMobileBannerUrl());
+            createMainPage.setMobileBannerLink(mainPageComponent.getMobileBannerLink());
+
+            createMainPage.setContent(mainPageComponent.getContent());
         }
+//        else if (mainPageComponent.getType().equals("타일")){
+//            List<AdminPageRequest.createMainPage.tile> tileList = new ArrayList<>();
+//            mainPageRepository.findByMainPageComponent(mainPageComponent).forEach(mainPage -> {
+//                AdminPageRequest.createMainPage.tile tile = new AdminPageRequest.createMainPage.tile();
+//                tile.setTileName(mainPage.getTile().getTileName());
+//                tile.setTileUrl(mainPage.getTile().getImgUrl());
+//                tileList.add(tile);
+//            });
+
+
+
+
+
 
 
 
