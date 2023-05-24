@@ -29,6 +29,8 @@ public enum ErrorCode {
     ITEM_HASH_TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 해시태그를 찾을 수 없습니다"),
     ADVERTISEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 광고를 찾을 수 없습니다."),
     ITEM_CODE_DUPLICATION(HttpStatus.BAD_REQUEST,"상품 코드가 중복됩니다."),
+    MAIN_PAGE_COMPONENT_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 컴포넌트가 없습니다."),
+
 
     // paging 관련 오류
     OUT_BOUND_PAGE(HttpStatus.CONFLICT, "페이지 범위를 벗어났습니다. 페이지는 1페이지부터 totalPage까지 입니다."),
@@ -36,8 +38,7 @@ public enum ErrorCode {
     ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 상품에 매니저를 찾을 수 없습니다."),
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST,"잘못된 요청입니다."),
     ASC_DESC_WORD_ERROR(HttpStatus.BAD_REQUEST,"asc_desc 칸에는 '오른차순' 또는 '내림차순' 둘 중 하나로 적어주세요"),
-    SORT_FUNCTION_ERROR(HttpStatus.BAD_REQUEST,"sort 함수를 만드는 과정에서 Null이 발생했습니다."),
-    ;
+    SORT_FUNCTION_ERROR(HttpStatus.BAD_REQUEST,"sort 함수를 만드는 과정에서 Null이 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -179,9 +179,6 @@ public class AdminPageController {
         return new ResponseTemplate<>(alarmService.processGetNoticeDetail(id));
     }
 
-
-
-
     @PostMapping("/category/register")
     public ResponseTemplate<AdminPageResponse.categoryRegister> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
@@ -227,5 +224,12 @@ public class AdminPageController {
         mainPageComponentService.createMainPageComponent(createMainPageDto, utilMethod);
 
         return new ResponseTemplate<>("컴포넌트가 추가되었습니다.");
+    }
+
+    @GetMapping("/mainPage/{id}")
+    public ResponseTemplate<AdminPageRequest.createMainPage> reqMainPageGet(@PathVariable("id") Long id){
+
+          return null;
+//        return new ResponseTemplate<>(mainPageComponentService.processGetMainPageComponent(id));
     }
 }
