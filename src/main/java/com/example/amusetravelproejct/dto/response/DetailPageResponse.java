@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class DetailPageResponse {
@@ -152,6 +154,8 @@ public class DetailPageResponse {
     public static class ReviewInfo{
         private String user_name;
         private String review_content;
+        private Float user_rate;
+        private LocalDateTime create_date;
         private List<ReviewImage> images;
     }
 

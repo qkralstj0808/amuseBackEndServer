@@ -79,7 +79,7 @@ public class MyPageService {
         List<ItemReviewImg> itemReviewImgList = new ArrayList<>();
 
         for (int i = 0; i < request.getReview_imgs().size(); i++) {
-            if(request.getReview_imgs().get(i).getId() == null){
+            if (request.getReview_imgs().get(i).getBase64Data() !=null){
                 String url = utilMethod.getImgUrl(request.getReview_imgs().get(i).getBase64Data(),
                         request.getReview_imgs().get(i).getFileName());
 
@@ -88,17 +88,6 @@ public class MyPageService {
                 itemReviewImg.setItemReview(itemReview);
                 itemReviewImgList.add(itemReviewImg);
                 itemReviewImgRepository.save(itemReviewImg);
-            }else{
-                if (request.getReview_imgs().get(i).getBase64Data() !=null){
-                    ItemReviewImg itemReviewImg = itemReviewImgRepository.findById(request.getReview_imgs().get(i).getId()).get();
-                    String url = utilMethod.getImgUrl(request.getReview_imgs().get(i).getBase64Data(),
-                            request.getReview_imgs().get(i).getFileName());
-
-                    itemReviewImg.setImgUrl(url);
-                    itemReviewImg.setItemReview(itemReview);
-                    itemReviewImgList.add(itemReviewImg);
-                    itemReviewImgRepository.save(itemReviewImg);
-                }
             }
         }
 

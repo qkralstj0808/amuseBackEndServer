@@ -74,4 +74,11 @@ public class MainPageComponentService {
 
         return new ResponseTemplate<>("");
     }
+
+    public ResponseTemplate<?> processGetMainPageComponent(Long id) {
+        MainPageComponent mainPageComponent = mainPageComponentRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.MAIN_PAGE_COMPONENT_NOT_FOUND));
+
+
+        return new ResponseTemplate<>(mainPageComponent);
+    }
 }

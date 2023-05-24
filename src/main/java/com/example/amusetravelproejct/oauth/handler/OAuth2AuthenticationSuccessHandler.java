@@ -102,7 +102,20 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         Date now = new Date();
 
-        User findUser = userRepository.findByUserId(authToken.getPrincipal().getAttributes().get("id").toString());
+        log.info("현재 authToken은" + String.valueOf(authToken));
+        log.info("proverType : " + providerType);
+        String user_id = null;
+
+        if(providerType.toString().equals("KAKAO")){
+            user_id = attributes.get("id").toString();
+        }else if(providerType.toString().equals("GOOGLE")){
+            user_id = attributes.get("sub").toString();
+        }else if(providerType.toString().equals("NAVER")){
+            Map<String, Object> naver_attributes = (Map<String, Object>)attributes.get("response");
+            user_id = naver_attributes.get("id").toString();
+        }
+
+        User findUser = userRepository.findByUserId(user_id);
 
         AuthToken accessToken = null;
 
