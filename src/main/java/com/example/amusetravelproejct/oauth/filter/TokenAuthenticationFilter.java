@@ -52,54 +52,54 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private AuthToken reGetAccessToken(HttpServletRequest request, HttpServletResponse response, AuthToken expired_access_token){
-
-        // expired access token 인지 확인
-        Claims claims = expired_access_token.getExpiredTokenClaims();
-
-        String userId = claims.getSubject();
-        RoleType roleType = RoleType.of(claims.get("role", String.class));
-
-        // userId refresh token 으로 DB 확인
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
-        String db_refreshToken = userRefreshToken.getRefreshToken();
-        AuthToken authRefreshToken = tokenProvider.convertAuthToken(db_refreshToken);
-
-//        log.info("userRefreshToken : " + userRefreshToken);
-
-        if (userRefreshToken == null) {
-            return null;
-        }
-
-        Date now = new Date();
-        AuthToken newAccessToken = tokenProvider.createAuthToken(
-                userId,
-                roleType.getCode(),
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
-        );
-
-        long validTime = authRefreshToken.getTokenClaims().getExpiration().getTime() - now.getTime();
-
-        // refresh 토큰 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
-        if (validTime <= THREE_DAYS_MSEC) {
-            // refresh 토큰 설정
-            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-
-            authRefreshToken = tokenProvider.createAuthToken(
-                    appProperties.getAuth().getTokenSecret(),
-                    new Date(now.getTime() + refreshTokenExpiry)
-            );
-
-            // DB에 refresh 토큰 업데이트
-            userRefreshToken.setRefreshToken(authRefreshToken.getToken());
-
-            int cookieMaxAge = (int) refreshTokenExpiry / 60;
-            CookieUtil.deleteCookie(request, response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN);
-            CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
-        }
-
-        return newAccessToken;
-    }
+//    private AuthToken reGetAccessToken(HttpServletRequest request, HttpServletResponse response, AuthToken expired_access_token){
+//
+//        // expired access token 인지 확인
+//        Claims claims = expired_access_token.getExpiredTokenClaims();
+//
+//        String userId = claims.getSubject();
+//        RoleType roleType = RoleType.of(claims.get("role", String.class));
+//
+//        // userId refresh token 으로 DB 확인
+//        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
+//        String db_refreshToken = userRefreshToken.getRefreshToken();
+//        AuthToken authRefreshToken = tokenProvider.convertAuthToken(db_refreshToken);
+//
+////        log.info("userRefreshToken : " + userRefreshToken);
+//
+//        if (userRefreshToken == null) {
+//            return null;
+//        }
+//
+//        Date now = new Date();
+//        AuthToken newAccessToken = tokenProvider.createAuthToken(
+//                userId,
+//                roleType.getCode(),
+//                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+//        );
+//
+//        long validTime = authRefreshToken.getTokenClaims().getExpiration().getTime() - now.getTime();
+//
+//        // refresh 토큰 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
+//        if (validTime <= THREE_DAYS_MSEC) {
+//            // refresh 토큰 설정
+//            long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+//
+//            authRefreshToken = tokenProvider.createAuthToken(
+//                    appProperties.getAuth().getTokenSecret(),
+//                    new Date(now.getTime() + refreshTokenExpiry)
+//            );
+//
+//            // DB에 refresh 토큰 업데이트
+//            userRefreshToken.setRefreshToken(authRefreshToken.getToken());
+//
+//            int cookieMaxAge = (int) refreshTokenExpiry / 60;
+//            CookieUtil.deleteCookie(request, response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN);
+//            CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN, authRefreshToken.getToken(), cookieMaxAge);
+//        }
+//
+//        return newAccessToken;
+//    }
 
 
 }

@@ -30,6 +30,7 @@ public class AdminPageController {
     private final AdminService adminService;
     private final AlarmService alarmService;
     private final AdvertisementService advertisementService;
+    private final MainPageComponentService mainPageComponentService;
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -134,8 +135,6 @@ public class AdminPageController {
     }
 
 
-
-
     @PostMapping("/product/search")
     public ResponseTemplate<AdminPageResponse.getItemByCategory> reqProductOrphanage(@RequestBody AdminPageRequest.getItemByCategory orphanageDto){
 
@@ -170,6 +169,7 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(noticeResult);
     }
+
     @GetMapping("/notice/{id}")
     public ResponseTemplate<AdminPageResponse.noticeEdit> reqNoticeDetail(@PathVariable("id") Long id){
 
@@ -211,9 +211,21 @@ public class AdminPageController {
     }
     @GetMapping("/category/{id}")
     public ResponseTemplate<AdminPageResponse.categoryEdit> reqCategoryDetail(@PathVariable("id") Long id){
-
-
         return new ResponseTemplate<>(categoryService.processGetCategoryDetail(id));
     }
 
+
+    @Transactional
+    @PostMapping("/mainPage/create")
+    public ResponseTemplate<String> reqMainPageCreate(@RequestBody AdminPageRequest.createMainPage createMainPageDto ){
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+
+        //TODO
+        // 유저 데이터 선 처리
+        log.info(createMainPageDto.toString());
+
+        mainPageComponentService.createMainPageComponent(createMainPageDto, utilMethod);
+
+        return new ResponseTemplate<>("컴포넌트가 추가되었습니다.");
+    }
 }

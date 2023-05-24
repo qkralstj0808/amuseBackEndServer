@@ -39,6 +39,7 @@ public class Item extends BaseEntity {
     private String content_2;           // html을 String으로 바꾼 내용 2번째 취소 내용
 
     private Double rated;               // 모든 리뷰들 평점의 평균
+    private Integer review_count;
     private Long startPrice;            // 관리자가 정하는 시작 가격
     private Integer duration;           // 기간 (2박 3일 에서 3)
 
@@ -53,6 +54,8 @@ public class Item extends BaseEntity {
     private Grade grade;                // 등급 (일반, 프리미엄, VIP)
     private Integer viewCount;          // 조회수
     private DisplayStatus displayStatus; // 상품 노출 여부
+
+
 
 
     @OneToOne
@@ -94,6 +97,9 @@ public class Item extends BaseEntity {
     // item와 item_hash_tag는 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemHashTag> itemHashTags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MainPage> mainPages = new ArrayList<>();
 
     // 로직
     public void plus_like(){

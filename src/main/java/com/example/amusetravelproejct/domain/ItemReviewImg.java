@@ -1,13 +1,14 @@
 package com.example.amusetravelproejct.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity(name = "item_review_img")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemReviewImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

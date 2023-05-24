@@ -2,6 +2,7 @@ package com.example.amusetravelproejct.oauth.token;
 
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ public class AuthToken {
         this.token = createAuthToken(id, expiry);
     }
 
-    AuthToken(String id, String role, Date expiry, Key key) {
+    AuthToken(String id, String role, Grade grade,Date expiry, Key key) {
         this.key = key;
-        this.token = createAuthToken(id, role, expiry);
+        this.token = createAuthToken(id, role, grade,expiry);
     }
 
     private String createAuthToken(String id, Date expiry) {
@@ -38,10 +39,11 @@ public class AuthToken {
                 .compact();
     }
 
-    private String createAuthToken(String id, String role, Date expiry) {
+    private String createAuthToken(String id, String role, Grade grade, Date expiry) {
         return Jwts.builder()
                 .setSubject(id)
-                .claim(AUTHORITIES_KEY, role)
+                .claim("role", role)
+                .claim("grade",grade)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
                 .compact();
