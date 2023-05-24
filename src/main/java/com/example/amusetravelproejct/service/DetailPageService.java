@@ -210,6 +210,7 @@ public class DetailPageService {
                 return  new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,null,null));
             }
 
+
         }
 
         return new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,
