@@ -1,8 +1,6 @@
 package com.example.amusetravelproejct.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -30,6 +28,25 @@ public class MyPageResponse {
         private Long startPrice;
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class setReview {
+        private String user_name;
+        private Double rating;
+        private String review_content;
+        private List<ImageInfo> images;
+    }
 
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    public static class ImageInfo {
+        private Long id;
+        private String fileName;
+        private String base64Data;
+        private String imgUrl;
+    }
 }

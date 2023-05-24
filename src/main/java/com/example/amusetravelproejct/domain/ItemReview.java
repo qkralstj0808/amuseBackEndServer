@@ -1,8 +1,10 @@
 package com.example.amusetravelproejct.domain;
 
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,7 +13,8 @@ import java.util.List;
 @Entity(name = "item_review")
 @Getter
 @Setter
-public class ItemReview {
+@EntityListeners(value = {AuditingEntityListener.class})
+public class ItemReview extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
