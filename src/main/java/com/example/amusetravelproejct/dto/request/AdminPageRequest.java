@@ -3,6 +3,7 @@ package com.example.amusetravelproejct.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.List;
 
@@ -124,7 +125,7 @@ public class AdminPageRequest {
     public static class createMainPage{
         private String title;
         private String type;
-        private String createAt;
+        private String createBy;
         private Long sequence;
         private List<String> itemCode;
         private List<getMainItem> tile;
@@ -136,6 +137,9 @@ public class AdminPageRequest {
         private String mobileBannerLink;
         private String content;
     }
+
+
+
 
     @Data
     @AllArgsConstructor

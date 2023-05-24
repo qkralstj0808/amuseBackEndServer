@@ -364,9 +364,9 @@ public class ItemService {
         }
 
         Pageable pageable = PageRequest.of(Math.toIntExact(findOrphanageDto.getPage()), Math.toIntExact(findOrphanageDto.getLimit()), Sort.by("id").ascending());
-        Page<ItemHashTag> itemHashTagPage = (Page<ItemHashTag>) itemHashTagRepository.findAll(predicateFirstQ,pageable);
+        Page<ItemHashTag> itemHashTags = (Page<ItemHashTag>) itemHashTagRepository.findAll(predicateFirstQ,pageable);
 
-        List<ItemHashTag> itemHashTags = itemHashTagPage.getContent();
+
         Set<Item> items = new HashSet<>();
 
 
