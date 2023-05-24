@@ -33,20 +33,18 @@ public class MyPageResponse {
     @NoArgsConstructor
     public static class setReview {
         private String user_name;
-        private Double rating;
+        private Float rating;
         private String review_content;
         private List<ImageInfo> images;
     }
 
 
+    @Data
     @Getter
     @Setter
     @NoArgsConstructor
-    @ToString
+    @AllArgsConstructor
     public static class ImageInfo {
-        private Long id;
-        private String fileName;
-        private String base64Data;
         private String imgUrl;
     }
 }

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,7 +40,7 @@ public class DetailPageService {
         Item findItem = findItemById(item_id);
 
         return new ResponseTemplate<>(new DetailPageResponse.getTitle(findItem.getItemCode(),findItem.getCountry(),
-                findItem.getCity(), findItem.getTitle(), findItem.getRated(),findItem.getDuration()));
+                findItem.getCity(), findItem.getTitle(), findItem.getRated(),findItem.getReview_count(),findItem.getDuration()));
     }
 
 
@@ -94,7 +95,7 @@ public class DetailPageService {
             throw new CustomException(ErrorCode.CATEGORY_NOT_FOUND);
         }
 
-        return new ResponseTemplate(new DetailPageResponse.getManager(findItemAdmin.getName(),findItemAdmin.getEmail(),
+        return new ResponseTemplate(new DetailPageResponse.getManager(findItem.getTitle(),findItemAdmin.getName(),findItemAdmin.getEmail(),
                 findItemAdmin.getProfileImgLink(),findItem.getAdminContent()));
     }
 
@@ -177,31 +178,50 @@ public class DetailPageService {
         return null;
     }
 
-    public ResponseTemplate<DetailPageResponse.getReview> getReview(Long item_id) {
-        Item itemById = findItemById(item_id);
+    public ResponseTemplate<DetailPageResponse.getReview> getReview(Item findItem) {
 
-        List<ItemReview> findItemReviews = itemReviewRepository.findByItemId(item_id);
+        List<ItemReview> findItemReviews = itemReviewRepository.findByItemId(findItem.getId());
 
         Integer reviewCount = findItemReviews.size();
 
         Double sum_rating = 0.;
         Double rate = 0.;
+
+        List<String> itemReviewImgList = new ArrayList<>();
+
         if(reviewCount != 0){
             for(int i = 0 ; i < reviewCount ; i++){
                 sum_rating += (double)findItemReviews.get(i).getRating();
+                if(findItemReviews.get(i).getItemReviewImgs().size() != 0){
+                    for(int j = 0 ; j < findItemReviews.get(i).getItemReviewImgs().size();j++){
+                        itemReviewImgList.add(findItemReviews.get(i).getItemReviewImgs().get(j).getImgUrl());
+                    }
+                }
             }
             rate = sum_rating/reviewCount;
         }else{
             rate = 0.;
+            itemReviewImgList = null;
         }
 
         return new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,
+                itemReviewImgList.stream().map(
+                        imgString -> new DetailPageResponse.ReviewImage(imgString)
+                ).collect(Collectors.toList()),
                 findItemReviews.stream().map(
                         itemReview -> new DetailPageResponse.ReviewInfo(itemReview.getUser().getUsername(),
                                 itemReview.getContent(),itemReview.getItemReviewImgs().stream().map(
                                         itemReviewImg -> new DetailPageResponse.ReviewImage(itemReviewImg.getImgUrl())
                         ).collect(Collectors.toList()))
                 ).collect(Collectors.toList())));
+    }
+
+    @Transactional
+    public void updateRatingReviewCount(Double rated,Integer review_count,Item findItem){
+        findItem.setRated(rated);
+        findItem.setReview_count(review_count);
+        itemRepository.saveAndFlush(findItem);
 
     }
+
 }

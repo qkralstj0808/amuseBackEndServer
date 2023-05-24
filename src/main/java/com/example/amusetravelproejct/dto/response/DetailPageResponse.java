@@ -18,6 +18,7 @@ public class DetailPageResponse {
         private String city;
         private String title;
         private Double rated;
+        private Integer review_count;
         private Integer duration;
     }
 
@@ -127,6 +128,7 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getManager {
+        private String title;
         private String name;
         private String email;
         private String img;
@@ -140,6 +142,7 @@ public class DetailPageResponse {
     public static class getReview {
         private Double rated;
         private Integer review_count;
+        private List<ReviewImage> review_all_imgs;
         private List<ReviewInfo> reviews;
     }
 

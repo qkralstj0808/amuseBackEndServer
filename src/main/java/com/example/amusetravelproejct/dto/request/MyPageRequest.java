@@ -7,12 +7,7 @@ import java.util.List;
 public class MyPageRequest {
     @Data
     public static class setReview {
-        private String review_content;
-        private List<ReviewImg> review_imgs;
-    }
-
-    @Data
-    public static class ReviewImg {
+        private Float rate;
         private String review_content;
         private List<ImageInfo> review_imgs;
     }
