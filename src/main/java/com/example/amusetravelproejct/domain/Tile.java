@@ -6,21 +6,22 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
 @Setter
 @NoArgsConstructor
-public class MainPage {
+public class Tile {
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private Long id;
+    private String tileName;
+    private String imgUrl;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private MainPageComponent mainPageComponent;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Item item;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Tile tile;
+    @OneToMany(mappedBy = "tile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MainPage> mainPages;
+
+
 }

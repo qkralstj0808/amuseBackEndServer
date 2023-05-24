@@ -24,6 +24,15 @@ public class MainPageComponent extends BaseEntity{
     private String title;
     private Long sequence;
 
+    private String PcBannerUrl;
+    private String PcBannerLink;
+
+    private String MobileBannerUrl;
+    private String MobileBannerLink;
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
     @ManyToOne
     private Admin admin;
 

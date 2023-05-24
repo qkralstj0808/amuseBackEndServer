@@ -20,7 +20,6 @@ public class ItemCourse {
     private Long sequenceId;        // 코스 순서
     private Integer day;         // 1일차, 2일차 (1일차에 course 3~4개 그 이상도 들어갈 수 있음)
     private String timeCost;        // 해당 코스가 걸리는 시간
-    private Integer day;            //1일차, 2일차 (1일차에 course 3~4개 그 이상도 들어갈 수 있음)
     private String imageUrl;        // 코스 사진
     private Double latitude;        // 코스 위치 위도
     private Double longitude;       // 코스 위치 경도
