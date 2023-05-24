@@ -3,10 +3,7 @@ package com.example.amusetravelproejct.service;
 import com.example.amusetravelproejct.config.resTemplate.*;
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.dto.response.DetailPageResponse;
-import com.example.amusetravelproejct.repository.ItemCourseRepository;
-import com.example.amusetravelproejct.repository.ItemRepository;
-import com.example.amusetravelproejct.repository.LikeItemRepository;
-import com.example.amusetravelproejct.repository.UserRepository;
+import com.example.amusetravelproejct.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +25,7 @@ public class DetailPageService {
 
     private final UserRepository userRepository;
     private final LikeItemRepository likeItemRepository;
+    private final ItemReviewRepository itemReviewRepository;
 
     private User findUserById(String user_id){
         return userRepository.findByUserId(user_id);
@@ -179,4 +177,31 @@ public class DetailPageService {
         return null;
     }
 
+    public ResponseTemplate<DetailPageResponse.getReview> getReview(Long item_id) {
+        Item itemById = findItemById(item_id);
+
+        List<ItemReview> findItemReviews = itemReviewRepository.findByItemId(item_id);
+
+        Integer reviewCount = findItemReviews.size();
+
+        Double sum_rating = 0.;
+        Double rate = 0.;
+        if(reviewCount != 0){
+            for(int i = 0 ; i < reviewCount ; i++){
+                sum_rating += (double)findItemReviews.get(i).getRating();
+            }
+            rate = sum_rating/reviewCount;
+        }else{
+            rate = 0.;
+        }
+
+        return new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,
+                findItemReviews.stream().map(
+                        itemReview -> new DetailPageResponse.ReviewInfo(itemReview.getUser().getUsername(),
+                                itemReview.getContent(),itemReview.getItemReviewImgs().stream().map(
+                                        itemReviewImg -> new DetailPageResponse.ReviewImage(itemReviewImg.getImgUrl())
+                        ).collect(Collectors.toList()))
+                ).collect(Collectors.toList())));
+
+    }
 }
