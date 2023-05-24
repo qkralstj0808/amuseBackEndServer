@@ -205,7 +205,7 @@ public class DetailPageService {
             if(findItemReviews.size() != 0){
                 return  new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,null,findItemReviews.stream().map(
                         itemReview -> new DetailPageResponse.ReviewInfo(itemReview.getUser().getUsername(),
-                                itemReview.getContent(),null)).collect(Collectors.toList())));
+                                itemReview.getContent(),itemReview.getRating(),itemReview.getCreatedDate(),null)).collect(Collectors.toList())));
             }else{
                 return  new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,null,null));
             }
@@ -218,7 +218,7 @@ public class DetailPageService {
                 ).collect(Collectors.toList()),
                 findItemReviews.stream().map(
                         itemReview -> new DetailPageResponse.ReviewInfo(itemReview.getUser().getUsername(),
-                                itemReview.getContent(),itemReview.getItemReviewImgs().stream().map(
+                                itemReview.getContent(),itemReview.getRating(),itemReview.getCreatedDate(),itemReview.getItemReviewImgs().stream().map(
                                         itemReviewImg -> new DetailPageResponse.ReviewImage(itemReviewImg.getImgUrl())
                         ).collect(Collectors.toList()))
                 ).collect(Collectors.toList())));
