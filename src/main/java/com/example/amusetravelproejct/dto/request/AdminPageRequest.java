@@ -131,9 +131,11 @@ public class AdminPageRequest {
         private List<getMainItem> tile;
         private String pcBannerFileName;
         private String pcBannerBase64;
+        private String pcBannerImgUrl;
         private String pcBannerLink;
         private String mobileBannerFileName;
         private String mobileBannerBase64;
+        private String mobileBannerImgUrl;
         private String mobileBannerLink;
         private String content;
     }
