@@ -57,7 +57,7 @@ public class MainPageController {
         if(current_page < 0){
             throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
         }
-        PageRequest pageRequest = PageRequest.of(current_page, 2);
+        PageRequest pageRequest = PageRequest.of(current_page, 40);
         return mainPageService.getCategoryBestItemAllPage(category_id,current_page+1,pageRequest);
     }
 
@@ -69,7 +69,7 @@ public class MainPageController {
         if(current_page < 0){
             throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
         }
-        PageRequest pageRequest = PageRequest.of(current_page, 2);
+        PageRequest pageRequest = PageRequest.of(current_page, 40);
         return mainPageService.getCategoryCurrentItemAllPage(category_id,current_page+1,pageRequest);
     }
 
