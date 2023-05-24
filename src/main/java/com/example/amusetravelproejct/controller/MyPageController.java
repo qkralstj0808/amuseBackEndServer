@@ -4,6 +4,7 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.User;
+import com.example.amusetravelproejct.dto.request.MyPageRequest;
 import com.example.amusetravelproejct.dto.response.MyPageResponse;
 import com.example.amusetravelproejct.repository.UserRepository;
 import com.example.amusetravelproejct.service.MyPageService;
@@ -27,5 +28,13 @@ public class MyPageController {
         User findUser = userService.getUserByPrincipal(userPrincipal);
 
         return myPageService.getLikeItems(findUser);
+    }
+
+    @PostMapping("/review")
+    public ResponseTemplate<MyPageResponse.setReview> setReview(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                                @RequestBody MyPageRequest.setReview request) throws Exception{
+        User findUser = userService.getUserByPrincipal(userPrincipal);
+
+        return myPageService.setReview(findUser,request);
     }
 }

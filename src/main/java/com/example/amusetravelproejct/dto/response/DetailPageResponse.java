@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 public class DetailPageResponse {
@@ -132,5 +133,33 @@ public class DetailPageResponse {
         private String manager_content;
 
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getReview {
+        private Double rated;
+        private Integer review_count;
+        private List<ReviewInfo> reviews;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ReviewInfo{
+        private String user_name;
+        private String review_content;
+        private List<ReviewImage> images;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ReviewImage{
+        private String review_img;
+    }
+
+
+
 
 }

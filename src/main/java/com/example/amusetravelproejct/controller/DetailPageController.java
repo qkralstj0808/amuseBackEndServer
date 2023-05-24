@@ -84,4 +84,9 @@ public class DetailPageController {
         return detailPageService.setLikeMinus(item_id,user_id);
     }
 
+    @GetMapping("/review")
+    public ResponseTemplate<DetailPageResponse.getReview> getReview(@PathVariable("id") Long item_id){
+        return detailPageService.getReview(item_id);
+    }
+
 }
