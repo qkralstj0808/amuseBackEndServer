@@ -17,9 +17,9 @@ public class MyPageRequest {
     @NoArgsConstructor
     @ToString
     public static class ImageInfo {
-        private Long id;
+//        private Long id;
         private String fileName;
         private String base64Data;
-        private String imgUrl;
+//        private String imgUrl;
     }
 }
