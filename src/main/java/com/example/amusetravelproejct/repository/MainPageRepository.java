@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MainPageRepository extends JpaRepository<MainPage, Long> {
-    List<String> findByMainPageComponent(MainPageComponent mainPageComponent);
+    List<MainPage> findByMainPageComponent(MainPageComponent mainPageComponent);
 }
