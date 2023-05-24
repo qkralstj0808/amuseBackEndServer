@@ -151,6 +151,7 @@ public class AdminPageRequest {
         private List<String> itemCode;
         private String tileFileName;
         private String tileBase64;
+        private String tileImgUrl;
 
     }
 
