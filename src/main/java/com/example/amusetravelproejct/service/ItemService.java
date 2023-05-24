@@ -363,7 +363,7 @@ public class ItemService {
             });
         }
 
-        Pageable pageable = PageRequest.of(Math.toIntExact(findOrphanageDto.getPage()), Math.toIntExact(findOrphanageDto.getOffset()), Sort.by("id").ascending());
+        Pageable pageable = PageRequest.of(Math.toIntExact(findOrphanageDto.getPage()), Math.toIntExact(findOrphanageDto.getLimit()), Sort.by("id").ascending());
         Page<ItemHashTag> itemHashTagPage = (Page<ItemHashTag>) itemHashTagRepository.findAll(predicateFirstQ,pageable);
 
         List<ItemHashTag> itemHashTags = itemHashTagPage.getContent();
@@ -374,7 +374,8 @@ public class ItemService {
             items.add(item.getItem());
         });
         AdminPageResponse.getItemByCategory getItemByCategory = new AdminPageResponse.getItemByCategory();
-        getItemByCategory.setPageCount((long) itemHashTagPage.getTotalPages());
+
+        getItemByCategory.setPageCount(items.size() / findOrphanageDto.getLimit());
         List<AdminPageResponse.findItemByCategory> findItemByCategories = new ArrayList<>();
 
         items.forEach(data ->{

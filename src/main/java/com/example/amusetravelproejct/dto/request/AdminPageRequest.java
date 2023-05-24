@@ -114,7 +114,7 @@ public class AdminPageRequest {
     public static class getItemByCategory{
         private Long option;
         private Long page;
-        private Long offset;
+        private Long limit;
         private List<String> categoryNames;
     }
 
