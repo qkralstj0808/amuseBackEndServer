@@ -180,7 +180,7 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getReview> getReview(Item findItem) {
 
-        List<ItemReview> findItemReviews = itemReviewRepository.findByItemId(findItem.getId());
+        List<ItemReview> findItemReviews = findItem.getItemReviews();
 
         Integer reviewCount = findItemReviews.size();
 
@@ -202,6 +202,14 @@ public class DetailPageService {
         }else{
             rate = 0.;
             itemReviewImgList = null;
+            if(findItemReviews.size() != 0){
+                return  new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,null,findItemReviews.stream().map(
+                        itemReview -> new DetailPageResponse.ReviewInfo(itemReview.getUser().getUsername(),
+                                itemReview.getContent(),null)).collect(Collectors.toList())));
+            }else{
+                return  new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,null,null));
+            }
+
         }
 
         return new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,

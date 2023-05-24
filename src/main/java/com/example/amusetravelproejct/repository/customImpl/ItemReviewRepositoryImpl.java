@@ -20,11 +20,6 @@ public class ItemReviewRepositoryImpl implements ItemReviewRepositoryCustom {
 
     @Override
     public List<ItemReview> findByItemId(Long item_id) {
-        return jpaQueryFactory
-                .selectFrom(itemReview)
-                .join(itemReview.item,item).fetchJoin()
-                .where(itemReview.item.id.eq(item.id))
-                .orderBy(itemReview.createdDate.desc())
-                .fetch();
+        return null;
     }
 }
