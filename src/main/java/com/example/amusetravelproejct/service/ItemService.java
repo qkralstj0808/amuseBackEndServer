@@ -11,6 +11,7 @@ import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
 
+import com.example.amusetravelproejct.dto.response.ItemResponse;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -559,6 +560,10 @@ public class ItemService {
     }
 
 
+    public ResponseTemplate<ItemResponse.getAllItemId> getAllItemId() {
+        List<Long> allItemId = itemRepository.findAllItemId();
+        return new ResponseTemplate(new ItemResponse.getAllItemId(allItemId.stream().collect(Collectors.toList())));
+    }
 }
 
 
