@@ -43,6 +43,13 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
     }
 
     @Override
+    public List<Long> findAllItemId() {
+        return jpaQueryFactory.select(item.id)
+                .from(item)
+                .fetch();
+    }
+
+    @Override
     public List<Item> find10ItemByCondition(String country, String city, String title, String content_1, String content_2) {
         return null;
     }
