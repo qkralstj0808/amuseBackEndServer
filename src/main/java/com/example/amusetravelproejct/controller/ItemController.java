@@ -4,6 +4,7 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.dto.request.ItemSearchRequest;
+import com.example.amusetravelproejct.dto.response.ItemResponse;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -179,6 +180,11 @@ public class ItemController {
             }
         }
         return null;
+    }
+
+    @GetMapping("/item/all")
+    public ResponseTemplate<ItemResponse.getAllItemId> getAllItemId(){
+        return itemService.getAllItemId();
     }
 
 }

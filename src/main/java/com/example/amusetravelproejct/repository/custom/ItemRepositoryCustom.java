@@ -14,6 +14,7 @@ public interface ItemRepositoryCustom {
                                      String title,
                                      String content_1,
                                      String content_2);
+    List<Long> findAllItemId();
     List<Item> find10BestItem();
     List<Item> find10CurrentItem();
 
