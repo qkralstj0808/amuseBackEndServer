@@ -1,3 +1,5 @@
+
+
 //querydsl 추가
 buildscript {
     ext {
@@ -13,6 +15,9 @@ plugins {
     //querydsl 추가
     id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
+
+
+
 
 group = 'org.example'
 version = '1.0-SNAPSHOT'

@@ -51,17 +51,9 @@ public class Item extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String adminContent;
 
-    private Grade grade;                // 등급 (일반, 프리미엄, VIP)
+    private Long grade;                // 등급 (일반, 프리미엄, VIP)
     private Integer viewCount;          // 조회수
     private DisplayStatus displayStatus; // 상품 노출 여부
-
-
-
-
-    @OneToOne
-    private User TargetUser;            // 컨시어지(타켓) 유저
-
-
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -76,7 +68,6 @@ public class Item extends BaseEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemHashTag> itemHashTag_list = new ArrayList<>();
-
 
     // item와 ItemImg 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -103,6 +94,9 @@ public class Item extends BaseEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemReview> itemReviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TargetUser> targetUsers = new ArrayList<>();
 
     // 로직
     public void plus_like(){

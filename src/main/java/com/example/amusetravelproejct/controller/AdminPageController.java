@@ -13,6 +13,7 @@ import com.example.amusetravelproejct.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,7 +85,6 @@ public class AdminPageController {
     @PostMapping("/product/create")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
-
         //TODO
         // productRegisterDto 데이터 선 처리
 
@@ -92,6 +92,7 @@ public class AdminPageController {
         itemService.processItemTicket(productRegisterDto,item);
         itemService.processItemImg(productRegisterDto,utilMethod,item);
         itemService.processItemCourse(productRegisterDto,utilMethod,item);
+
         return new ResponseTemplate<>("상품 생성 완료");
     }
 
@@ -120,7 +121,6 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(productRegisterDto);
     }
-
     @GetMapping("/product/delete")
     public ResponseTemplate<String> reqProductDelete(@RequestParam("itemCode") String itemCode){
         //TODO
@@ -132,10 +132,20 @@ public class AdminPageController {
 
 
     @PostMapping("/product/search")
-    public ResponseTemplate<AdminPageResponse.getItemByCategory> reqProductOrphanage(@RequestBody AdminPageRequest.getItemByCategory orphanageDto){
-
-        return new ResponseTemplate<>(itemService.processSearchItem(orphanageDto));
+    public ResponseTemplate<AdminPageResponse.getItemByCategory> reqProductSearch(@RequestBody AdminPageRequest.getItemByCategory searchDto){
+        searchDto.setPage(searchDto.getPage()-1);
+        if (searchDto.getOption() == 0){
+            return new ResponseTemplate<>(itemService.processSearchOrphanage(searchDto));
+        } else if(searchDto.getOption() ==1){
+            return new ResponseTemplate<>(itemService.processSearchItem(searchDto));
+        } else {
+            return new ResponseTemplate<>(itemService.processSearchItemAll(searchDto));
+        }
     }
+
+
+
+
 
     @PostMapping("/notice/register")
     public ResponseTemplate<AdminPageResponse.noticeRegister> noticeRegister(@RequestBody AdminPageRequest.noticeRegister noticeRegisterDto){
@@ -235,5 +245,15 @@ public class AdminPageController {
 
 //        return  null;
         return mainPageComponentService.processGetMainPageComponent(id);
+    }
+
+    @GetMapping("/mainPage/delete/{id}")
+    public ResponseTemplate<?> reqMainPageDelete(@PathVariable("id") Long id){
+
+        //TODO
+        // 유저 데이터 선 처리
+
+        mainPageComponentService.processDeleteMainPageComponent(id);
+        return new ResponseTemplate<>("삭제 완료");
     }
 }
