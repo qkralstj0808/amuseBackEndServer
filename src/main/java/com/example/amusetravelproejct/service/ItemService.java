@@ -66,7 +66,14 @@ public class ItemService {
     //Item
     @Transactional
     public Item processCreateOrUpdate(ProductRegisterDto productRegisterDto) throws ParseException {
-        Item item = itemRepository.findById(productRegisterDto.getId()).isEmpty() ? new Item() : itemRepository.findById(productRegisterDto.getId()).get();
+        Item item;
+
+        if (productRegisterDto.getOption().equals("create")){
+            item = new Item();
+        } else{
+            item = itemRepository.findById(productRegisterDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+        }
+
         itemRepository.save(item);
 
         if (productRegisterDto.getAccessAuthority().getAccessibleTier()  != null) {
@@ -82,6 +89,7 @@ public class ItemService {
                     }
             );
         }
+
         item.setItemCode(productRegisterDto.getItemCode());
         item.setTitle(productRegisterDto.getTitle());
         List<String> hashTags = productRegisterDto.getCategory();
@@ -159,8 +167,7 @@ public class ItemService {
                 1. 가격 입력
                     1. 요일별 입력 (0이면 입력 X)
          */
-
-        if (productRegisterDto.getId() == 0) {
+        if (productRegisterDto.getOption().equals("create")){
             for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
                 ItemTicket itemTicket = new ItemTicket();
                 itemTicket.setItem(item);
@@ -527,6 +534,7 @@ public class ItemService {
             courseDto.setImage(courseImageDto);
             courseDtos.add(courseDto);
         });
+
         productRegisterDto.setCourse(courseDtos);
         productRegisterDto.setExtraInfo(item.getContent_2());
         productRegisterDto.setAdmin(item.getAdmin().getEmail());
@@ -536,10 +544,21 @@ public class ItemService {
         productRegisterDto.setDuration(String.valueOf(item.getDuration()));
 
         ProductRegisterDto.accessData accessAuthority = new ProductRegisterDto.accessData();
-        accessAuthority.setAccessibleTier(UtilMethod.outGrad[Math.toIntExact(item.getGrade())]);
+        List<TargetUser> users = item.getTargetUsers();
+
+        if (!users.isEmpty()){
+            accessAuthority.setAccessibleTier(UtilMethod.outGrad[Math.toIntExact(item.getGrade())]);
+            List<String> targetUsers = new ArrayList<>();
+            users.forEach(targetUser -> {
+                targetUsers.add(targetUser.getUser().getEmail());
+            });
+
+            accessAuthority.setAccessibleUserList(targetUsers);
+
+        }
         productRegisterDto.setAccessAuthority(accessAuthority);
         productRegisterDto.setStartPrice(item.getStartPrice());
-        productRegisterDto.setOption(UtilMethod.status[0]); //create
+        productRegisterDto.setOption("update"); //create
         return productRegisterDto;
     }
 
@@ -604,5 +623,3 @@ public class ItemService {
         return new ResponseTemplate<>(new MainPageResponse.getItemPage(itemInfo,total_page,current_page));
     }
 }
-
-
