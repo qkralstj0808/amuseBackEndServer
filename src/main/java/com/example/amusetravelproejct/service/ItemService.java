@@ -50,6 +50,7 @@ public class ItemService {
     private final TempHashTagRepository tempHashTagRepository;
     private final ItemTicketPriceRecodeRepository itemTicketPriceRecodeRepository;
     private final UserRepository userRepository;
+    private final TargetUserRepository targetUserRepository;
 
 
     private final CategoryRepository categoryRepository;
@@ -68,9 +69,18 @@ public class ItemService {
         Item item = itemRepository.findById(productRegisterDto.getId()).isEmpty() ? new Item() : itemRepository.findById(productRegisterDto.getId()).get();
         itemRepository.save(item);
 
-        if (productRegisterDto.getTargetUser() != null){
-            User user = userRepository.findByEmail(productRegisterDto.getTargetUser()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-            item.setTargetUser(user);
+        if (productRegisterDto.getAccessAuthority().getAccessibleTier()  != null) {
+            item.setGrade(UtilMethod.grad.get(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+
+            productRegisterDto.getAccessAuthority().getAccessibleUserList().forEach(
+                    data -> {
+                        User user = userRepository.findByEmail(data).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                        TargetUser targetUser = new TargetUser();
+                        targetUser.setUser(user);
+                        targetUser.setItem(item);
+                        targetUserRepository.save(targetUser);
+                    }
+            );
         }
         item.setItemCode(productRegisterDto.getItemCode());
         item.setTitle(productRegisterDto.getTitle());
@@ -98,7 +108,6 @@ public class ItemService {
         item.setCity(productRegisterDto.getLocation().getCity());
         item.setContent_1(productRegisterDto.getMainInfo());
         item.setContent_2(productRegisterDto.getExtraInfo());
-        item.setGrade(productRegisterDto.getGrade());
         if (productRegisterDto.getAdmin() == null){
             item.setUpdateAdmin(getAdminByEmail(productRegisterDto.getUpdateAdmin()).get());
         }else{
@@ -332,68 +341,103 @@ public class ItemService {
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
             itemCourseRepository.save(itemCourse);
 
+
+
         }
     }
 
-
-    public AdminPageResponse.getItemByCategory processSearchItem(AdminPageRequest.getItemByCategory findOrphanageDto) {
+    public AdminPageResponse.getItemByCategory processSearchItem(AdminPageRequest.getItemByCategory findItemsDto){
         BooleanBuilder predicateFirstQ = new BooleanBuilder();
-        List<String> categoryData = findOrphanageDto.getCategoryNames();
+        BooleanBuilder predicateSendQ = new BooleanBuilder();
+        List<String> categoryData = findItemsDto.getCategoryNames();
 
-        if (findOrphanageDto.getOption() == 0) {
-            categoryData.forEach(data -> {
-                TempHashTag tempHashTag = tempHashTagRepository.findByHashTag(data).orElseThrow(() -> new CustomException(ErrorCode.HASH_TAG_NOT_FOUND));
-
-                List<ItemHashTag> itemHashTag = itemHashTagRepository.findByHashTag(tempHashTag.getHashTag());
-
-                itemHashTag.forEach(itemHashTag1 -> {
-                    predicateFirstQ.andNot(QItemHashTag.itemHashTag.item.id.eq(itemHashTag1.getItem().getId()));
-                });
-
-            });
-        }else if(findOrphanageDto.getOption() == 2){
-            List<TempHashTag> tempHashTags = tempHashTagRepository.findAll();
-
-            tempHashTags.forEach(data ->{
-                List<ItemHashTag> itemHashTag = itemHashTagRepository.findByHashTag(data.getHashTag());
-                itemHashTag.forEach(itemHashTag1 -> {
-                    predicateFirstQ.or(QItemHashTag.itemHashTag.item.id.eq(itemHashTag1.getItem().getId()));
-                });
-            });
-
-        } else{
-            categoryData.forEach(data -> {
-                TempHashTag tempHashTag = tempHashTagRepository.findByHashTag(data).orElseThrow(() -> new CustomException(ErrorCode.HASH_TAG_NOT_FOUND));
-
-                List<ItemHashTag> itemHashTag = itemHashTagRepository.findByHashTag(tempHashTag.getHashTag());
-
-                itemHashTag.forEach(itemHashTag1 -> {
-                    predicateFirstQ.or(QItemHashTag.itemHashTag.item.id.eq(itemHashTag1.getItem().getId()));
-                });
-            });
-        }
-
-//        Pageable pageable = PageRequest.of(Math.toIntExact(findOrphanageDto.getPage()), Math.toIntExact(findOrphanageDto.getLimit()), Sort.by("id").ascending());
-//        Page<ItemHashTag> itemHashTags = (Page<ItemHashTag>) itemHashTagRepository.findAll(predicateFirstQ,pageable);
-
-
-        Set<Item> items = new HashSet<>();
-        List<ItemHashTag> itemHashTags = (List<ItemHashTag>) itemHashTagRepository.findAll(predicateFirstQ);
-
-
-
-        itemHashTags.forEach(item -> {
-            items.add(item.getItem());
+        categoryData.forEach(data -> {
+            TempHashTag tempHashTag = tempHashTagRepository.findByHashTag(data).orElseThrow(() -> new CustomException(ErrorCode.HASH_TAG_NOT_FOUND));
+            predicateFirstQ.or(QItemHashTag.itemHashTag.tempHashTag.id.eq(tempHashTag.getId()));
         });
-        AdminPageResponse.getItemByCategory getItemByCategory = new AdminPageResponse.getItemByCategory();
 
-//        getItemByCategory.setPageCount(items.size() / findOrphanageDto.getLimit());
+        Pageable pageable = PageRequest.of(Math.toIntExact(findItemsDto.getPage()), Math.toIntExact(findItemsDto.getLimit()), Sort.by("id").ascending());
+        List<ItemHashTag> itemHashTag = (List<ItemHashTag>) itemHashTagRepository.findAll(predicateFirstQ);
+
+        itemHashTag.forEach(itemHashTag1 -> {
+            predicateSendQ.or(QItem.item.id.eq(itemHashTag1.getItem().getId()));
+        });
+
+        Page<Item> items = itemRepository.findAll(predicateSendQ, pageable);
+
+        AdminPageResponse.getItemByCategory getItemByCategory = new AdminPageResponse.getItemByCategory();
+        getItemByCategory.setPageCount((long) items.getTotalPages());
         List<AdminPageResponse.findItemByCategory> findItemByCategories = new ArrayList<>();
 
         items.forEach(data ->{
             List<String> categoryNames = new ArrayList<>();
-            data.getItemHashTags().forEach(itemHashTag -> {
-                categoryNames.add(itemHashTag.getHashTag());
+            data.getItemHashTags().forEach(hashTag -> {
+                categoryNames.add(hashTag.getHashTag());
+            });
+            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getEmail(),data.getCreatedDate(),
+                    data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getEmail(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
+        });
+
+        getItemByCategory.setData(findItemByCategories);
+        return getItemByCategory;
+    }
+
+    public AdminPageResponse.getItemByCategory processSearchItemAll(AdminPageRequest.getItemByCategory findItemsDto) {
+        BooleanBuilder predicateSendQ = new BooleanBuilder();
+        Pageable pageable = PageRequest.of(Math.toIntExact(findItemsDto.getPage()), Math.toIntExact(findItemsDto.getLimit()), Sort.by("id").ascending());
+        Page<Item> items = itemRepository.findAll(predicateSendQ, pageable);
+
+        AdminPageResponse.getItemByCategory getItemByCategory = new AdminPageResponse.getItemByCategory();
+        getItemByCategory.setPageCount((long) items.getTotalPages());
+        List<AdminPageResponse.findItemByCategory> findItemByCategories = new ArrayList<>();
+
+        items.forEach(data ->{
+            List<String> categoryNames = new ArrayList<>();
+            data.getItemHashTags().forEach(hashTag -> {
+                categoryNames.add(hashTag.getHashTag());
+            });
+            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getEmail(),data.getCreatedDate(),
+                    data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getEmail(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
+        });
+
+        getItemByCategory.setData(findItemByCategories);
+        return getItemByCategory;
+
+
+    }
+
+
+    public AdminPageResponse.getItemByCategory processSearchOrphanage(AdminPageRequest.getItemByCategory findOrphanageDto) {
+        BooleanBuilder predicateFirstQ = new BooleanBuilder();
+        BooleanBuilder predicateSendQ = new BooleanBuilder();
+        List<String> categoryData = findOrphanageDto.getCategoryNames();
+
+        categoryData.forEach(data -> {
+            TempHashTag tempHashTag = tempHashTagRepository.findByHashTag(data).orElseThrow(() -> new CustomException(ErrorCode.HASH_TAG_NOT_FOUND));
+            predicateFirstQ.or(QItemHashTag.itemHashTag.tempHashTag.id.eq(tempHashTag.getId()));
+
+        });
+
+        Pageable pageable = PageRequest.of(Math.toIntExact(findOrphanageDto.getPage()), Math.toIntExact(findOrphanageDto.getLimit()), Sort.by("id").ascending());
+        List<ItemHashTag> itemHashTag = (List<ItemHashTag>) itemHashTagRepository.findAll(predicateFirstQ);
+
+
+        itemHashTag.forEach(data ->{
+            predicateSendQ.andNot(QItem.item.id.eq(data.getItem().getId()));
+        });
+
+
+
+        Page<Item> items = itemRepository.findAll(predicateSendQ, pageable);
+
+        AdminPageResponse.getItemByCategory getItemByCategory = new AdminPageResponse.getItemByCategory();
+        getItemByCategory.setPageCount((long) items.getTotalPages());
+        List<AdminPageResponse.findItemByCategory> findItemByCategories = new ArrayList<>();
+
+        items.forEach(data ->{
+            List<String> categoryNames = new ArrayList<>();
+            data.getItemHashTags().forEach(hashTag -> {
+                categoryNames.add(hashTag.getHashTag());
             });
             findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getEmail(),data.getCreatedDate(),
                     data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getEmail(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
@@ -490,9 +534,12 @@ public class ItemService {
         productRegisterDto.setStartDate(String.valueOf(item.getStartDate()));
         productRegisterDto.setEndDate(String.valueOf(item.getEndDate()));
         productRegisterDto.setDuration(String.valueOf(item.getDuration()));
-        productRegisterDto.setGrade(item.getGrade());
+
+        ProductRegisterDto.accessData accessAuthority = new ProductRegisterDto.accessData();
+        accessAuthority.setAccessibleTier(UtilMethod.outGrad[Math.toIntExact(item.getGrade())]);
+        productRegisterDto.setAccessAuthority(accessAuthority);
         productRegisterDto.setStartPrice(item.getStartPrice());
-        productRegisterDto.setOption(Option.READ);
+        productRegisterDto.setOption(UtilMethod.status[0]); //create
         return productRegisterDto;
     }
 
@@ -531,7 +578,6 @@ public class ItemService {
         return returnItemPage(searchItemByWordInTitle,total_page,current_page);
 
     }
-
     private ResponseTemplate<MainPageResponse.getItemPage> returnItemPage(Page<Item> categoryAllItemPage, int total_page, int current_page) {
         List<MainPageResponse.ItemInfo> itemInfo = new ArrayList<>();
 
@@ -557,8 +603,6 @@ public class ItemService {
         }
         return new ResponseTemplate<>(new MainPageResponse.getItemPage(itemInfo,total_page,current_page));
     }
-
-
 }
 
 

@@ -87,6 +87,7 @@ public class MainPageComponentService {
         createMainPage.setTitle(mainPageComponent.getTitle());
         createMainPage.setType(mainPageComponent.getType());
         createMainPage.setSequence(mainPageComponent.getSequence());
+        createMainPage.setCreateBy(mainPageComponent.getAdmin().getEmail());
 
         if (mainPageComponent.getType().equals("리스트")){
             List<String> itemCodeList = new ArrayList<>();
@@ -151,5 +152,9 @@ public class MainPageComponentService {
 
         return getMainPageLists;
 
+    }
+
+    public void processDeleteMainPageComponent(Long id) {
+        mainPageComponentRepository.deleteById(id);
     }
 }
