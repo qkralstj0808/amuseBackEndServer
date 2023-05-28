@@ -14,7 +14,6 @@ import java.util.List;
 @ToString
 public class ProductRegisterDto {
     private Long id;
-    private Option option;
     private String itemCode;
     private List<String> category;
     private String title;
@@ -26,12 +25,21 @@ public class ProductRegisterDto {
     private String extraInfo;
     private String admin;
     private String updateAdmin;
-    private String targetUser;
     private Long startPrice;
     private String duration;
     private String startDate;
     private String endDate;
-    private Grade grade;
+    private String option;
+    private accessData accessAuthority;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    public static class accessData {
+        private List<String> accessibleUserList;
+        private String accessibleTier;
+    }
 
     // Getter, Setter, Constructor 생략
     @Getter
