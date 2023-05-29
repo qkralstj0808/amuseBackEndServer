@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -19,6 +21,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +60,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 
         User savedUser = userRepository.findByUserId(userInfo.getId());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(RoleType.USER.getCode()));
 
         // 데이터베이스에 저장되어 있는 user라면?
         if (savedUser != null) {
@@ -72,6 +78,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         " account. Please use your " + savedUser.getProviderType() + " account to login."
                 );
             }
+            if(savedUser.getRoleType().equals(RoleType.ADMIN)){
+                log.info("현재 사용자는 ADMIN입니다.");
+                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            }
 
             updateUser(savedUser, userInfo);
         } else {
@@ -79,8 +89,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             log.info("데이터베이스에 없는 유저라서 create한다.");
             savedUser = createUser(userInfo, providerType);
         }
-
-        return UserPrincipal.create(savedUser, user.getAttributes());
+        log.info("user의 roleType : "+savedUser.getRoleType().toString());
+        return UserPrincipal.create(savedUser,authorities, user.getAttributes());
     }
 
     private User createUser(OAuth2UserInfo userInfo, ProviderType providerType) {
