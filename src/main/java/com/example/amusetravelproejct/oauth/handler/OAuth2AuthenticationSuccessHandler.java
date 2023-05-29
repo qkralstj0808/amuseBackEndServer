@@ -51,6 +51,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 onAuthenticationSuccess");
+        log.info("authentication.getAuthorities().toString() : " + authentication.getAuthorities().toString());
         String targetUrl = determineTargetUrl(request, response, authentication);
 //        String accessToken = determineTargetUrl(request,response,authentication);
 
@@ -99,7 +100,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Collection<? extends GrantedAuthority> authorities = ((OidcUser) authentication.getPrincipal()).getAuthorities();
 
         RoleType roleType = hasAuthority(authorities, RoleType.ADMIN.getCode()) ? RoleType.ADMIN : RoleType.USER;
-
+        log.info("roleType : " + roleType);
         Date now = new Date();
 
         log.info("현재 authToken은" + String.valueOf(authToken));
@@ -182,6 +183,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         for (GrantedAuthority grantedAuthority : authorities) {
+            log.info("grantedAuthority : " + grantedAuthority);
             if (authority.equals(grantedAuthority.getAuthority())) {
                 return true;
             }
