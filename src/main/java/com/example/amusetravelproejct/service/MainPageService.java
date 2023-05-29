@@ -131,7 +131,7 @@ public class MainPageService {
                     itemImg = item.getItemImg_list().get(0).getImgUrl();
                 }
 
-                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),item.getItemHashTag_list().stream().map(
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),item.getItemHashTags().stream().map(
                         itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
                 ).collect(Collectors.toList()),
                         itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
@@ -149,14 +149,14 @@ public class MainPageService {
             for (Item item : items) {
                 String itemImg = null;
 
-                List<ItemHashTag> itemHashTag_list = item.getItemHashTag_list();
+                List<ItemHashTag> itemHashTag_list = item.getItemHashTags();
 
                 // img가 하나라도 있다면
                 if (item.getItemImg_list().size() != 0) {
                     itemImg = item.getItemImg_list().get(0).getImgUrl();
                 }
 
-                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(), item.getItemCode(), item.getItemHashTag_list().stream().map(
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(), item.getItemCode(), item.getItemHashTags().stream().map(
                         itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
                 ).collect(Collectors.toList()),
                         itemImg, item.getTitle(), item.getCountry(), item.getCity(), item.getDuration(),

@@ -66,8 +66,6 @@ public class Item extends BaseEntity {
 
     // item와 category는 N:1 관계 ManyToOne
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemHashTag> itemHashTag_list = new ArrayList<>();
 
     // item와 ItemImg 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)

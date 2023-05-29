@@ -563,9 +563,9 @@ public class ItemService {
         return productRegisterDto;
     }
 
-    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndConditionSortInTitle(int current_page, PageRequest pageRequest,
+    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndConditionSort(int current_page, PageRequest pageRequest,
                                                                                            String[] contain_words) {
-        Page<Item> searchItemByWordInTitle = itemRepository.searchItemByWordInTitle(contain_words,pageRequest);
+        Page<Item> searchItemByWordInTitle = itemRepository.searchItemByWordAndSort(contain_words,pageRequest);
 
         int total_page = searchItemByWordInTitle.getTotalPages();
 
@@ -581,23 +581,6 @@ public class ItemService {
 
     }
 
-    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndConditionSortInContent(int current_page, PageRequest pageRequest,
-                                                                                                  String[] contain_words) {
-        Page<Item> searchItemByWordInTitle = itemRepository.searchItemByWordInContent(contain_words,pageRequest);
-
-        int total_page = searchItemByWordInTitle.getTotalPages();
-
-        if(current_page == 1 && searchItemByWordInTitle.getContent().size() < 1){
-            throw new CustomException(ErrorCode.ITEM_NOT_FOUND_IN_PAGE);
-        }
-
-        if(current_page-1 > total_page-1){
-            throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
-        }
-
-        return returnItemPage(searchItemByWordInTitle,total_page,current_page);
-
-    }
     private ResponseTemplate<MainPageResponse.getItemPage> returnItemPage(Page<Item> categoryAllItemPage, int total_page, int current_page) {
         List<MainPageResponse.ItemInfo> itemInfo = new ArrayList<>();
 
@@ -614,7 +597,7 @@ public class ItemService {
                     itemImg = item.getItemImg_list().get(0).getImgUrl();
                 }
 
-                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),item.getItemHashTag_list().stream().map(
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),item.getItemHashTags().stream().map(
                         itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
                 ).collect(Collectors.toList()),
                         itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
