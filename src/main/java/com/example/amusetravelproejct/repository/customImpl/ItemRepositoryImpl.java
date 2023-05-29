@@ -364,24 +364,25 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
 
                 switch (order.getProperty()) {
-                    case "rated" -> {
+                    case "rated" :
                         OrderSpecifier<?> orderRated = QueryDslUtil.getSortedColumn(direction, item.rated, "rated");
                         ORDERS.add(orderRated);
-                    }
-                    case "like_num" -> {
+                        break;
+                    case "like_num" :
                         OrderSpecifier<?> orderLikeNum = QueryDslUtil.getSortedColumn(direction, item.like_num, "like_num");
                         ORDERS.add(orderLikeNum);
-                    }
-                    case "startPrice" -> {
+                        break;
+                    case "startPrice" :
                         OrderSpecifier<?> orderStartPrice = QueryDslUtil.getSortedColumn(direction, item.startPrice, "startPrice");
                         ORDERS.add(orderStartPrice);
-                    }
-                    case "date" -> {
+                        break;
+                    case "date" :
                         OrderSpecifier<?> orderDate = QueryDslUtil.getSortedColumn(direction, item.modifiedDate, "modifiedDate");
                         ORDERS.add(orderDate);
-                    }
-                    default -> {
-                    }
+                        break;
+                    default :
+                        break;
+
                 }
             }
         }
