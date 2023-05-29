@@ -26,9 +26,5 @@ public interface ItemRepositoryCustom {
     Page<Item> findCategoryCurrentItemPage(String category, Pageable pageable);
 
     Page<Item> findItemByCondition(ItemSearchRequest.ItemConditionDto itemConditionDto, Pageable pageable);
-
-    Page<Item> searchItemByWordInTitle(String[] contain_words, Pageable pageable);
-    Page<Item> searchItemByWordInContent(String[] contain_words,Pageable pageable);
-    Page<Item> searchItemByWordInTitleAfterContent(String[] contain_words,Pageable pageable);
-//    Page<Item> searchItemItemCourse(ItemSearchConditionDto itemSearchConditionDto,Pageable pageable);
+    Page<Item> searchItemByWordAndSort(String[] contain_words,Pageable pageable);
 }
