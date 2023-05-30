@@ -30,6 +30,7 @@ public enum ErrorCode {
     ADVERTISEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 광고를 찾을 수 없습니다."),
     ITEM_CODE_DUPLICATION(HttpStatus.BAD_REQUEST,"상품 코드가 중복됩니다."),
     MAIN_PAGE_COMPONENT_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 컴포넌트가 없습니다."),
+    SEQUENCE_ERROR_SET(HttpStatus.NOT_FOUND,"해당 순서는 잘못된 설정입니다." ),
 
 
     // paging 관련 오류

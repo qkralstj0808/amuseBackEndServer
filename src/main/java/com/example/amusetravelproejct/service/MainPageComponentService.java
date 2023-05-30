@@ -31,11 +31,54 @@ public class MainPageComponentService {
 
     public ResponseTemplate<?> createMainPageComponent(AdminPageRequest.createMainPage createMainPageDto , UtilMethod utilMethod) {
 
-        MainPageComponent mainPageComponent = new MainPageComponent();
+        MainPageComponent mainPageComponent = createMainPageDto.getId() == null ? new MainPageComponent() : mainPageComponentRepository.findById(createMainPageDto.getId()).get();
         mainPageComponent.setAdmin(adminRepository.findByEmail(createMainPageDto.getCreateBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         mainPageComponent.setTitle(createMainPageDto.getTitle());
         mainPageComponent.setType(createMainPageDto.getType());
-        mainPageComponent.setSequence(createMainPageDto.getSequence());
+
+        List<MainPageComponent> mainPageComponents = mainPageComponentRepository.findAll();
+        final int[] updateCheck = {0};
+        mainPageComponents.forEach(mainPageComponentData -> {
+            if (mainPageComponentData.getSequence() == createMainPageDto.getSequence()) {
+                updateCheck[0] = 1;
+                if (mainPageComponent.getId() == null){
+                    mainPageComponent.setSequence(mainPageComponentData.getSequence());
+                    mainPageComponentData.setSequence(0L);
+                    mainPageComponentRepository.save(mainPageComponentData);
+                } else{
+                    Long tempSequence = mainPageComponent.getSequence();
+                    mainPageComponent.setSequence(mainPageComponentData.getSequence());
+                    mainPageComponentData.setSequence(tempSequence);
+                    mainPageComponentRepository.save(mainPageComponentData);
+                }
+            }
+        });
+
+        List<MainPageComponent> mainPageComponentDates = mainPageComponentRepository.findBySequenceNotOrderBySequence(0L);
+
+        mainPageComponentDates.forEach(data ->{
+            log.info(String.valueOf(data.getSequence()));
+        });
+
+        if (updateCheck[0]==0) {
+            if (createMainPageDto.getSequence() <= mainPageComponentDates.size() + 1){
+                if (mainPageComponent.getId() == null){
+                    mainPageComponent.setSequence(createMainPageDto.getSequence());
+                } else{
+//                    mainPageComponentDates.remove((int) (mainPageComponent.getSequence() - 1));
+//                    mainPageComponent.setSequence(createMainPageDto.getSequence());
+//
+//                    for (int i = 0; i < mainPageComponentDates.size(); i++){
+//                        mainPageComponents.get(i).setSequence((long) (i+1));
+//                        mainPageComponentRepository.save(mainPageComponents.get(i));
+//                    }
+                    throw new CustomException(ErrorCode.SEQUENCE_ERROR_SET);
+                }
+
+            }else{
+                 throw new CustomException(ErrorCode.SEQUENCE_ERROR_SET);
+            }
+        }
 
         if (createMainPageDto.getType().equals("리스트")) {
             mainPageComponentRepository.save(mainPageComponent);
@@ -84,6 +127,7 @@ public class MainPageComponentService {
     public ResponseTemplate<AdminPageRequest.createMainPage> processGetMainPageComponent(Long id) {
         MainPageComponent mainPageComponent = mainPageComponentRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.MAIN_PAGE_COMPONENT_NOT_FOUND));
         AdminPageRequest.createMainPage createMainPage = new AdminPageRequest.createMainPage();
+        createMainPage.setId(mainPageComponent.getId());
         createMainPage.setTitle(mainPageComponent.getTitle());
         createMainPage.setType(mainPageComponent.getType());
         createMainPage.setSequence(mainPageComponent.getSequence());
