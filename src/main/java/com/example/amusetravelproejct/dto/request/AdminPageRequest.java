@@ -123,6 +123,7 @@ public class AdminPageRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class createMainPage{
+        private Long id;
         private String title;
         private String type;
         private String createBy;
