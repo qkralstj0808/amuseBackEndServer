@@ -68,7 +68,6 @@ public class ItemService {
     @Transactional
     public Item processCreateOrUpdate(ProductRegisterDto productRegisterDto) throws ParseException {
         Item item;
-
         if (productRegisterDto.getOption().equals("create")){
             item = new Item();
         } else{
@@ -94,7 +93,6 @@ public class ItemService {
         item.setItemCode(productRegisterDto.getItemCode());
         item.setTitle(productRegisterDto.getTitle());
         List<String> hashTags = productRegisterDto.getCategory();
-
         hashTags.forEach(data -> {
             TempHashTag tempHashTag = new TempHashTag();
 
@@ -124,7 +122,14 @@ public class ItemService {
         }
         item.setStartPrice(productRegisterDto.getStartPrice());
 
-        Long duration = Long.parseLong(productRegisterDto.getDuration().split("박")[1].split("일")[0]);
+        Long duration = 0L;
+
+        if (productRegisterDto.getDuration().length() < 4){
+            duration = Long.valueOf(productRegisterDto.getDuration());
+        } else{
+            duration = Long.parseLong(productRegisterDto.getDuration().split("박")[1].split("일")[0]);
+        }
+
         item.setDuration(Math.toIntExact(duration));
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
@@ -174,6 +179,7 @@ public class ItemService {
                 itemTicket.setItem(item);
                 itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
                 itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
+                itemTicket.setCount(productRegisterDto.getTicket().get(i).getCount());
 
                 List<Date> startDate = new ArrayList<>();
                 List<Date> endDate = new ArrayList<>();
@@ -347,10 +353,10 @@ public class ItemService {
             itemCourse.setContent(productRegisterDto.getCourse().get(i).getContent());
             itemCourse.setSequenceId(productRegisterDto.getCourse().get(i).getSequenceId());
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
+            itemCourse.setDay(productRegisterDto.getCourse().get(i).getDay());
+            itemCourse.setLatitude(productRegisterDto.getCourse().get(i).getIndex().getLatitude());
+            itemCourse.setLongitude(productRegisterDto.getCourse().get(i).getIndex().getLongitude());
             itemCourseRepository.save(itemCourse);
-
-
-
         }
     }
 
@@ -481,6 +487,7 @@ public class ItemService {
         productRegisterDto.setLocation(location);
 
         List<ProductRegisterDto.MainImageDto> mainImageDtos = new ArrayList<>();
+
         item.getItemImg_list().forEach(itemImg -> {
             ProductRegisterDto.MainImageDto mainImageDto = new ProductRegisterDto.MainImageDto();
             mainImageDto.setId(itemImg.getId());
@@ -489,7 +496,6 @@ public class ItemService {
         });
         productRegisterDto.setMainImg(mainImageDtos);
 
-
         List<ProductRegisterDto.TicketDto> ticketDtos = new ArrayList<>();
 
         item.getItemTickets().forEach(itemTicket -> {
@@ -497,6 +503,7 @@ public class ItemService {
             ticketDto.setId(itemTicket.getId());
             ticketDto.setTitle(itemTicket.getTitle());
             ticketDto.setContent(itemTicket.getContent());
+            ticketDto.setCount(itemTicket.getCount());
             List<ProductRegisterDto.TicketDto.PriceListDto> priceListDtos = new ArrayList<>();
             itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> {
                 ProductRegisterDto.TicketDto.PriceListDto priceList = new ProductRegisterDto.TicketDto.PriceListDto();
@@ -520,6 +527,7 @@ public class ItemService {
         productRegisterDto.setTicket(ticketDtos);
         productRegisterDto.setMainInfo(item.getContent_1());
 
+
         List<ProductRegisterDto.CourseDto> courseDtos = new ArrayList<>();
         item.getItemCourses().forEach(itemCourse -> {
             ProductRegisterDto.CourseDto courseDto = new ProductRegisterDto.CourseDto();
@@ -528,6 +536,12 @@ public class ItemService {
             courseDto.setContent(itemCourse.getContent());
             courseDto.setTimeCost(itemCourse.getTimeCost());
             courseDto.setSequenceId(itemCourse.getSequenceId());
+
+            ProductRegisterDto.Index index = new ProductRegisterDto.Index();
+            index.setLatitude(itemCourse.getLatitude());
+            index.setLongitude(itemCourse.getLongitude());
+
+            courseDto.setIndex(index);
 
             ProductRegisterDto.CourseDto.CourseImageDto courseImageDto = new ProductRegisterDto.CourseDto.CourseImageDto();
             courseImageDto.setImgUrl(itemCourse.getImageUrl());

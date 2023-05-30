@@ -52,6 +52,7 @@ public class ProductRegisterDto {
 
         // Getters and Setters
     }
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -71,6 +72,7 @@ public class ProductRegisterDto {
         private Long id;
         private String title;
         private String content;
+        private Long count;
         private List<PriceListDto> priceList;
 
         // Getter, Setter, Constructor 생략
@@ -111,6 +113,7 @@ public class ProductRegisterDto {
         private String title;
         private String timeCost;
         private String content;
+        private Index index;
         private CourseImageDto image;
 
         // Getter, Setter, Constructor 생략
@@ -126,5 +129,13 @@ public class ProductRegisterDto {
 
             // Getter, Setter, Constructor 생략
         }
+    }
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    public static class Index{
+        private Double latitude;
+        private Double longitude;
     }
 }
