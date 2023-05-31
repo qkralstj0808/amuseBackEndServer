@@ -7,11 +7,11 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
 import com.example.amusetravelproejct.domain.Category;
 import com.example.amusetravelproejct.domain.ItemHashTag;
 import com.example.amusetravelproejct.domain.Item;
+import com.example.amusetravelproejct.domain.MainPageComponent;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
+import com.example.amusetravelproejct.dto.request.MainPageRequest;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
-import com.example.amusetravelproejct.repository.CategoryRepository;
-import com.example.amusetravelproejct.repository.ItemHashTagRepository;
-import com.example.amusetravelproejct.repository.ItemRepository;
+import com.example.amusetravelproejct.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,6 +34,9 @@ public class MainPageService {
 
     public final ItemRepository itemRepository;
     public final CategoryRepository categoryRepository;
+
+    public final MainPageComponentRepository mainPageComponentRepository;
+    public final MainPageRepository mainPageRepository;
 
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
@@ -168,7 +171,34 @@ public class MainPageService {
     }
 
 
+    public ResponseTemplate<MainPageResponse.getListItem> getListItem() {
 
+        List<MainPageComponent> itemInListsByMainPageRequestListDtos = mainPageRepository.findItemInListsByMainPageRequestListDto();
 
+        MainPageResponse.getListItem getListItem = new MainPageResponse.getListItem(itemInListsByMainPageRequestListDtos.size(),itemInListsByMainPageRequestListDtos.stream().map(
+                itemInListsByMainPageRequestListDto -> new MainPageResponse.ListItem(
+                        itemInListsByMainPageRequestListDto.getTitle(),
+                        itemInListsByMainPageRequestListDto.getSequence(),
+                        itemInListsByMainPageRequestListDto.getMainPages().size(),
+                        itemInListsByMainPageRequestListDto.getMainPages().stream().map(
+                                mainPage -> new MainPageResponse.ItemInfo(
+                                        mainPage.getItem().getId(),
+                                        mainPage.getItem().getItemCode(),
+                                        mainPage.getItem().getItemHashTags().stream().map(
+                                                itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
+                                        ).collect(Collectors.toList()),
+                                        mainPage.getItem().getItemImg_list().size() == 0 ? null : mainPage.getItem().getItemImg_list().get(0).getImgUrl(),
+                                        mainPage.getItem().getTitle(),
+                                        mainPage.getItem().getCountry(),
+                                        mainPage.getItem().getCity(),
+                                        mainPage.getItem().getDuration(),
+                                        mainPage.getItem().getLike_num(),
+                                        mainPage.getItem().getStartPrice()
+                                )
+                        ).collect(Collectors.toList()))).collect(Collectors.toList()));
+
+        return new ResponseTemplate(getListItem);
+
+    }
 }
 

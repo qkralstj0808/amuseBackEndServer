@@ -1,11 +1,15 @@
 package com.example.amusetravelproejct.domain;
 
+import com.example.amusetravelproejct.oauth.entity.ProviderType;
+import com.example.amusetravelproejct.oauth.entity.RoleType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +22,27 @@ public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+//    @Column(name = "ADMIN_ID", length = 64, unique = true)
+//    @NotNull
+//    @Size(max = 64)
+//    private String userId;
+
+//    @Column(name = "PROVIDER_TYPE", length = 20)
+//    @Enumerated(EnumType.STRING)
+//    @NotNull
+//    private ProviderType providerType;
+//
+//    @Column(name = "ROLE_TYPE", length = 20)
+//    @Enumerated(EnumType.STRING)
+//    @NotNull
+//    private RoleType roleType;
+
+//    @Column(name = "EMAIL_VERIFIED_YN", length = 1)
+//    @NotNull
+//    @Size(min = 1, max = 1)
+//    private String emailVerifiedYn;
+
     private String email;
     private String password;
     private String name;

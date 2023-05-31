@@ -46,6 +46,26 @@ public class MainPageResponse {
         private Integer currentPage;
     }
 
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getListItem {
+        private Integer list_count;
+        private List<ListItem> listItems;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ListItem {
+        private String list_title;
+        private Long sequence;
+        private Integer item_count;
+        private List<ItemInfo> items;
+    }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -60,6 +80,7 @@ public class MainPageResponse {
         private Integer duration;
         private Integer likeNum;
         private Long startPrice;
+
     }
 
     @Data

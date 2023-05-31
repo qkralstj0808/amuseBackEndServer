@@ -78,6 +78,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         " account. Please use your " + savedUser.getProviderType() + " account to login."
                 );
             }
+
             if(savedUser.getRoleType().equals(RoleType.ADMIN)){
                 log.info("현재 사용자는 ADMIN입니다.");
                 authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
