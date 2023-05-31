@@ -4,6 +4,7 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
+import com.example.amusetravelproejct.dto.request.MainPageRequest;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.service.MainPageService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -72,5 +75,12 @@ public class MainPageController {
         PageRequest pageRequest = PageRequest.of(current_page, 40);
         return mainPageService.getCategoryCurrentItemAllPage(category_id,current_page+1,pageRequest);
     }
+
+    @GetMapping("/main-page/lists")
+    public ResponseTemplate<MainPageResponse.getListItem> getListItem(){
+
+        return mainPageService.getListItem();
+    }
+
 
 }

@@ -2,8 +2,8 @@ package com.example.amusetravelproejct.oauth.token;
 
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
-import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
+import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.example.amusetravelproejct.oauth.exception.TokenValidFailedException;
 import com.example.amusetravelproejct.repository.UserRepository;
 import io.jsonwebtoken.security.Keys;
@@ -26,6 +26,7 @@ public class AuthTokenProvider {
 
 
     private final UserDetailsService userDetailService;
+
 
     private final UserRepository userRepository;
 
@@ -50,9 +51,19 @@ public class AuthTokenProvider {
 
     public Authentication getAuthentication(AuthToken authToken) {
         System.out.println("AuthTokenProvider 에서 getAuthentication");
+        log.info("doFilter 내에서 getAuthentication : "+authToken.getTokenClaims().get("role"));
         if(authToken.validate()) {
+            UserDetails userDetails = null;
+//            if(authToken.getTokenClaims().get("role").equals(RoleType.USER)){
+//                userDetails = userDetailService.loadUserByUsername(authToken.getTokenClaims().getSubject());
+//            }else if(authToken.getTokenClaims().get("role").equals(RoleType.ADMIN)){
+//                userDetails =
+//            }else{
+//                throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+//            }
 
-            UserDetails userDetails = userDetailService.loadUserByUsername(authToken.getTokenClaims().getSubject());
+            userDetails = userDetailService.loadUserByUsername(authToken.getTokenClaims().getSubject());
+
             return new UsernamePasswordAuthenticationToken(userDetails, authToken, userDetails.getAuthorities());
         } else {
             throw new TokenValidFailedException();
