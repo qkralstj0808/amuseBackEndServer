@@ -113,7 +113,8 @@ public class ProductRegisterDto {
         private String title;
         private String timeCost;
         private String content;
-        private Index index;
+        private Double latitude;
+        private Double longitude;
         private CourseImageDto image;
 
         // Getter, Setter, Constructor 생략
@@ -125,17 +126,10 @@ public class ProductRegisterDto {
             private String fileName;
             private String base64Data;
             private String imgUrl;
-
-
             // Getter, Setter, Constructor 생략
         }
+
+
     }
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @ToString
-    public static class Index{
-        private Double latitude;
-        private Double longitude;
-    }
+
 }
