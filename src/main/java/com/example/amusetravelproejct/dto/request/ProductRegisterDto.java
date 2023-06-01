@@ -14,7 +14,7 @@ import java.util.List;
 @ToString
 public class ProductRegisterDto {
     private Long id;
-    private String itemCode;
+    private String productId;
     private List<String> category;
     private String title;
     private Location location;

@@ -77,7 +77,7 @@ public class ItemService {
             item = itemRepository.findById(productRegisterDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         }
 
-        item.setItemCode(productRegisterDto.getItemCode());
+        item.setItemCode(productRegisterDto.getProductId());
         item.setTitle(productRegisterDto.getTitle());
         List<String> hashTags = productRegisterDto.getCategory();
         hashTags.forEach(data -> {
@@ -488,7 +488,7 @@ public class ItemService {
 
         ProductRegisterDto productRegisterDto = new ProductRegisterDto();
         productRegisterDto.setId(item.getId());
-        productRegisterDto.setItemCode(item.getItemCode());
+        productRegisterDto.setProductId(item.getItemCode());
 
         List<String> category = new ArrayList<>();
         item.getItemHashTags().forEach(itemHashTag -> {

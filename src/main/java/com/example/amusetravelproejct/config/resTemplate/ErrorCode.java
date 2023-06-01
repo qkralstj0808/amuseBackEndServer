@@ -32,6 +32,7 @@ public enum ErrorCode {
     MAIN_PAGE_COMPONENT_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 컴포넌트가 없습니다."),
     SEQUENCE_ERROR_SET(HttpStatus.BAD_REQUEST,"해당 순서는 잘못된 설정입니다." ),
     NOT_FOUND_GUIDE(HttpStatus.NOT_FOUND,"해당 가이드는 찾을 수 없습니다."),
+    INVALID_INPUT_PRODUCTID(HttpStatus.BAD_REQUEST,"해당 상품코드는 이미존제 합니다"),
 
 
     // paging 관련 오류
