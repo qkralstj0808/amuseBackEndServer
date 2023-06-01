@@ -5,8 +5,6 @@ import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.Guide;
-import com.example.amusetravelproejct.domain.QItemHashTag;
-import com.example.amusetravelproejct.domain.TempHashTag;
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.dto.request.AdminRequest;
 import com.example.amusetravelproejct.dto.response.AdminResponse;

@@ -90,6 +90,7 @@ public class AdminPageController {
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         //TODO
         // productRegisterDto 데이터 선 처리
+        log.info(productRegisterDto.toString());
 
         Item item = itemService.processCreateOrUpdate(productRegisterDto);
         itemService.processItemTicket(productRegisterDto,item);
@@ -297,6 +298,10 @@ public class AdminPageController {
     }
 
 
+    @GetMapping("/change/displayStatus")
+    public ResponseTemplate<String> changeDisplayStatus(@RequestParam("status") String displayStatus, @RequestParam("itemCode") String itemCode){
+        itemService.changeItemStatus(displayStatus,itemCode);
 
-
+        return new ResponseTemplate<>("상품 상태가 변경되었습니다.");
+    }
 }

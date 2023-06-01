@@ -6,6 +6,7 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 
+import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
 import com.example.amusetravelproejct.domain.person_enum.Option;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
@@ -52,6 +53,7 @@ public class ItemService {
     private final ItemTicketPriceRecodeRepository itemTicketPriceRecodeRepository;
     private final UserRepository userRepository;
     private final TargetUserRepository targetUserRepository;
+
 
 
     private final CategoryRepository categoryRepository;
@@ -116,6 +118,19 @@ public class ItemService {
             duration = Long.parseLong(productRegisterDto.getDuration().split("박")[1].split("일")[0]);
         }
 
+        List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
+
+        if (!users.isEmpty()) {
+            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+            users.forEach(email -> {
+                User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                TargetUser targetUser = new TargetUser();
+
+                targetUser.setItem(item);
+                targetUser.setUser(user);
+                targetUserRepository.save(targetUser);
+            });
+        }
         item.setDuration(Math.toIntExact(duration));
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
@@ -356,8 +371,8 @@ public class ItemService {
             itemCourse.setSequenceId(productRegisterDto.getCourse().get(i).getSequenceId());
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
             itemCourse.setDay(productRegisterDto.getCourse().get(i).getDay());
-            itemCourse.setLatitude(productRegisterDto.getCourse().get(i).getIndex().getLatitude());
-            itemCourse.setLongitude(productRegisterDto.getCourse().get(i).getIndex().getLongitude());
+            itemCourse.setLatitude(productRegisterDto.getCourse().get(i).getLatitude());
+            itemCourse.setLongitude(productRegisterDto.getCourse().get(i).getLongitude());
             itemCourseRepository.save(itemCourse);
         }
     }
@@ -538,12 +553,9 @@ public class ItemService {
             courseDto.setContent(itemCourse.getContent());
             courseDto.setTimeCost(itemCourse.getTimeCost());
             courseDto.setSequenceId(itemCourse.getSequenceId());
+            courseDto.setLatitude(itemCourse.getLatitude());
+            courseDto.setLongitude(itemCourse.getLongitude());
 
-            ProductRegisterDto.Index index = new ProductRegisterDto.Index();
-            index.setLatitude(itemCourse.getLatitude());
-            index.setLongitude(itemCourse.getLongitude());
-
-            courseDto.setIndex(index);
 
             ProductRegisterDto.CourseDto.CourseImageDto courseImageDto = new ProductRegisterDto.CourseDto.CourseImageDto();
             courseImageDto.setImgUrl(itemCourse.getImageUrl());
@@ -626,4 +638,19 @@ public class ItemService {
         List<Long> allItemId = itemRepository.findAllItemId();
         return new ResponseTemplate(new ItemResponse.getAllItemId(allItemId.stream().collect(Collectors.toList())));
     }
+
+
+    public void changeItemStatus(String displayStatus,String itemCode){
+        Item item = itemRepository.findByItemCode(itemCode).orElseThrow(
+                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+        );
+        if (DisplayStatus.DISPLAY.name().equals(displayStatus)){
+            item.setDisplayStatus(DisplayStatus.DISPLAY);
+        } else{
+            item.setDisplayStatus(DisplayStatus.HIDDEN);
+        }
+    }
+
+
+
 }
