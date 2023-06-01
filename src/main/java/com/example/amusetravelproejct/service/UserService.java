@@ -3,23 +3,37 @@ package com.example.amusetravelproejct.service;
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
+import com.example.amusetravelproejct.config.util.UtilMethod;
+import com.example.amusetravelproejct.domain.Guide;
+import com.example.amusetravelproejct.domain.QItemHashTag;
+import com.example.amusetravelproejct.domain.TempHashTag;
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.dto.request.AdminRequest;
 import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
+import com.example.amusetravelproejct.repository.GuideRepository;
 import com.example.amusetravelproejct.repository.UserRepository;
+import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final GuideRepository guideRepository;
 
     public User getUser(String userId) {
         return userRepository.findByUserId(userId);
@@ -73,5 +87,62 @@ public class UserService {
                         findUser.getRoleType()
                 )
         ));
+    }
+
+    @Transactional(readOnly = false)
+    public AdminResponse.GuideInfo createGuide(AdminRequest.guide request,UtilMethod utilMethod){
+        Guide guide = new Guide();
+        guide.setCode(request.getGuideCode());
+        guide.setName(request.getName());
+        guide.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(),request.getFileName()));
+        guide.setEmile(request.getEmail());
+        guide.setIntroduce(request.getIntroduce());
+        guideRepository.save(guide);
+
+        return new AdminResponse.GuideInfo(guide.getId(), guide.getCode(), guide.getName(),guide.getEmile(), guide.getImgUrl(),guide.getIntroduce());
+    }
+    @Transactional(readOnly = false)
+    public AdminResponse.GuideInfo updateGuide(AdminRequest.guide request,String guideCode,UtilMethod utilMethod){
+        Guide guide = guideRepository.findByCode(guideCode).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+        );
+        guide.setName(request.getName());
+        if (request.getFileName() != null){
+            guide.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(),request.getFileName()));
+        }
+        guide.setEmile(request.getEmail());
+        guide.setIntroduce(request.getIntroduce());
+        guideRepository.save(guide);
+
+        return new AdminResponse.GuideInfo(guide.getId(), guide.getCode(), guide.getName(),guide.getEmile(), guide.getImgUrl(),guide.getIntroduce());
+    }
+
+    public AdminResponse.GuideInfo readGuide(String guideCode) {
+        Guide guide = guideRepository.findByCode(guideCode).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+        );
+
+        return new AdminResponse.GuideInfo(guide.getId(),guide.getCode(),guide.getName(),guide.getEmile(),guide.getImgUrl(),guide.getIntroduce());
+    }
+    @Transactional(readOnly = false)
+
+    public void deleteGuide(String guideCode){
+        Guide guide = guideRepository.findByCode(guideCode).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+        );
+        guideRepository.delete(guide);
+    }
+
+    public List<AdminResponse.GuideInfo> listGuide(Long page, Long limit){
+        Pageable pageable = PageRequest.of(Math.toIntExact(page - 1), Math.toIntExact(limit));
+        List<AdminResponse.GuideInfo> guideInfos = new ArrayList<>();
+        Page<Guide> guides = guideRepository.findAll(pageable);
+        Long pageCount = (long) guides.getTotalPages();
+        guides.forEach(data ->{
+            guideInfos.add(new AdminResponse.GuideInfo(data.getId(),data.getCode(), data.getName(),data.getEmile(),data.getImgUrl(), data.getIntroduce()));
+
+            log.info(data.getCode());
+        });
+        return guideInfos;
     }
 }

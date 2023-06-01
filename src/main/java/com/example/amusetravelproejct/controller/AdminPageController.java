@@ -5,8 +5,10 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
+import com.example.amusetravelproejct.dto.request.AdminRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
+import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.repository.*;
 import com.example.amusetravelproejct.repository.ItemRepository;
 import com.example.amusetravelproejct.service.*;
@@ -32,6 +34,7 @@ public class AdminPageController {
     private final AlarmService alarmService;
     private final AdvertisementService advertisementService;
     private final MainPageComponentService mainPageComponentService;
+    private final UserService userService;
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -104,7 +107,6 @@ public class AdminPageController {
         // productRegisterDto 데이터 선 처리
 
         Item item = itemService.processCreateOrUpdate(productRegisterDto);
-
         itemService.processItemTicket(productRegisterDto,item);
         itemService.processItemImg(productRegisterDto,utilMethod,item);
         itemService.processItemCourse(productRegisterDto,utilMethod,item);
@@ -136,7 +138,7 @@ public class AdminPageController {
         searchDto.setPage(searchDto.getPage()-1);
         if (searchDto.getOption() == 0){
             return new ResponseTemplate<>(itemService.processSearchOrphanage(searchDto));
-        } else if(searchDto.getOption() ==1){
+        } else if(searchDto.getOption() == 1){
             return new ResponseTemplate<>(itemService.processSearchItem(searchDto));
         } else {
             return new ResponseTemplate<>(itemService.processSearchItemAll(searchDto));
@@ -256,4 +258,45 @@ public class AdminPageController {
         mainPageComponentService.processDeleteMainPageComponent(id);
         return new ResponseTemplate<>("삭제 완료");
     }
+
+
+    @PostMapping("/crate/guide")
+    public ResponseTemplate<AdminResponse.GuideInfo> createGuide(@RequestBody AdminRequest.guide request){
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+
+        return  new ResponseTemplate<>(userService.createGuide(request,utilMethod));
+    }
+
+    @GetMapping("/read/guide/{code}")
+    public ResponseTemplate<AdminResponse.GuideInfo> readGuide(@PathVariable("code") String code){
+
+        return new ResponseTemplate<>(userService.readGuide(code));
+    }
+
+    @PostMapping("/update/guide/{code}")
+    public ResponseTemplate<AdminResponse.GuideInfo> updateGuide(@PathVariable("code") String code,@RequestBody AdminRequest.guide request){
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+
+        return  new ResponseTemplate<>(userService.updateGuide(request,code,utilMethod));
+    }
+
+    @GetMapping("/delete/guide/{code}")
+    public ResponseTemplate<String> deleteGuide(@PathVariable("code") String code){
+
+        userService.deleteGuide(code);
+        return new ResponseTemplate<>("가이드 삭제가 완료 되었습니다.");
+    }
+
+
+    @GetMapping("/list/guide")
+    public ResponseTemplate<List<AdminResponse.GuideInfo>> listGuide(@RequestParam("page") Long page, @RequestParam("limit") Long limit){
+
+
+
+        return new ResponseTemplate<>(userService.listGuide(page,limit));
+    }
+
+
+
+
 }

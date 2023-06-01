@@ -25,4 +25,6 @@ public class AdminController {
             @RequestBody AdminRequest.updateUserRoleType request){
         return userService.updateUserRoleType(user_db_id,request);
     }
+
+
 }
