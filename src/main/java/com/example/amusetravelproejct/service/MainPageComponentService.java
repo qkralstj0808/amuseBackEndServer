@@ -13,6 +13,7 @@ import com.example.amusetravelproejct.repository.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -198,7 +199,21 @@ public class MainPageComponentService {
 
     }
 
+    @Transactional
     public void processDeleteMainPageComponent(Long id) {
+        MainPageComponent mainPageComponent = mainPageComponentRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.MAIN_PAGE_COMPONENT_NOT_FOUND));
+        if (!mainPageComponent.getMainPages().isEmpty()){
+            mainPageComponent.getMainPages().forEach(mainPage ->{
+                mainPage.setItem(null);
+                mainPage.setTile(null);
+            });
+        }
+
         mainPageComponentRepository.deleteById(id);
     }
+
+
+
+
+
 }

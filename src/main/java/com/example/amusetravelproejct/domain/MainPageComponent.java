@@ -23,7 +23,6 @@ public class MainPageComponent extends BaseEntity{
     private String type;
     private String title;
     private Long sequence;
-
     private String PcBannerUrl;
     private String PcBannerLink;
 

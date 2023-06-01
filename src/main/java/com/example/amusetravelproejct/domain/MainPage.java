@@ -19,6 +19,7 @@ public class MainPage {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private MainPageComponent mainPageComponent;
+
     @ManyToOne(cascade = CascadeType.ALL)
     private Item item;
     @ManyToOne(cascade = CascadeType.ALL)
