@@ -97,22 +97,11 @@ public class AdminPageController {
         itemService.processItemImg(productRegisterDto,utilMethod,item);
         itemService.processItemCourse(productRegisterDto,utilMethod,item);
 
-        return new ResponseTemplate<>("상품 생성 완료");
-    }
-
-    @Transactional
-    @PostMapping("/product/update")
-    public ResponseTemplate<String> reqProductEdit(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
-        //TODO
-        // productRegisterDto 데이터 선 처리
-
-        Item item = itemService.processCreateOrUpdate(productRegisterDto);
-        itemService.processItemTicket(productRegisterDto,item);
-        itemService.processItemImg(productRegisterDto,utilMethod,item);
-        itemService.processItemCourse(productRegisterDto,utilMethod,item);
-
-        return new ResponseTemplate<>("상품 수정 완료");
+        if (productRegisterDto.getOption() == "create"){
+            return new ResponseTemplate<>("상품 생성 완료");
+        } else{
+            return new ResponseTemplate<>("상품 수정 완료");
+        }
     }
 
     @GetMapping("/product/{itemCode}")
@@ -137,14 +126,36 @@ public class AdminPageController {
     @PostMapping("/product/search")
     public ResponseTemplate<AdminPageResponse.getItemByCategory> reqProductSearch(@RequestBody AdminPageRequest.getItemByCategory searchDto){
         searchDto.setPage(searchDto.getPage()-1);
-        if (searchDto.getOption() == 0){
+        if (searchDto.getOption() == "orphanage"){
             return new ResponseTemplate<>(itemService.processSearchOrphanage(searchDto));
-        } else if(searchDto.getOption() == 1){
+        } else if(searchDto.getOption() == "Category"){
             return new ResponseTemplate<>(itemService.processSearchItem(searchDto));
         } else {
             return new ResponseTemplate<>(itemService.processSearchItemAll(searchDto));
         }
     }
+
+//    @GetMapping("/product/getList/display")
+//    public ResponseTemplate<List<Item>> reqDisplayProductList(@RequestParam("limit") int limit, @RequestParam("page") int page){
+//        //TODO
+//        // 유저 데이터 선 처리
+//
+//        int sqlPage = page -1;
+//        List <Item> itemList = itemService.processGetAllDisplayItems(limit,sqlPage);
+//        return new ResponseTemplate<>(itemByCategory);
+//
+//    }
+//    @GetMapping("/product/getList/nonDisplay")
+//    public ResponseTemplate<AdminPageResponse.getItemByCategory> reqProductListNonDisplay(@RequestParam("limit") int limit, @RequestParam("page") int page){
+//        //TODO
+//        // 유저 데이터 선 처리
+//
+//        int sqlPage = page -1;
+//
+//        AdminPageResponse.getItemByCategory itemByCategory = new AdminPageResponse.getItemByCategory(itemService.processGetAllItemsNonDisplay(offset,limit,sqlPage));
+//        return new ResponseTemplate<>(itemByCategory);
+//
+//    }
 
 
 

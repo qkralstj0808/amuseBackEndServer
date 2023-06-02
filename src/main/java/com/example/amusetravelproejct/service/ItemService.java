@@ -369,11 +369,11 @@ public class ItemService {
             itemCourse.setContent(productRegisterDto.getCourse().get(i).getContent());
             itemCourse.setSequenceId(productRegisterDto.getCourse().get(i).getSequenceId());
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
-            itemCourse.setDay(productRegisterDto.getCourse().get(i).getDay());
+            itemCourse.setDay(Math.toIntExact(productRegisterDto.getCourse().get(i).getDay()));
 
 
-            itemCourse.setLatitude(productRegisterDto.getCourse().get(i).getLocation().getLatitude());
-            itemCourse.setLongitude(productRegisterDto.getCourse().get(i).getLocation().getLatitude());
+            itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
+            itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
             itemCourseRepository.save(itemCourse);
         }
     }
@@ -554,7 +554,7 @@ public class ItemService {
             courseDto.setContent(itemCourse.getContent());
             courseDto.setTimeCost(itemCourse.getTimeCost());
             courseDto.setSequenceId(itemCourse.getSequenceId());
-            courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(itemCourse.getLatitude(),itemCourse.getLongitude()));
+            courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(itemCourse.getLatitude().toString(),itemCourse.getLongitude().toString()));
             ProductRegisterDto.CourseDto.CourseImageDto courseImageDto = new ProductRegisterDto.CourseDto.CourseImageDto();
             courseImageDto.setImgUrl(itemCourse.getImageUrl());
             courseDto.setImage(courseImageDto);
@@ -649,5 +649,17 @@ public class ItemService {
     }
 
 
+    public List<Item> processGetAllDisplayItems(int limit, int sqlPage) {
+        Pageable pageable = PageRequest.of(Math.toIntExact(sqlPage), Math.toIntExact(limit), Sort.by("id").ascending());
+        List<Item> allDisplayItems = itemRepository.findAllByDisplayStatus(DisplayStatus.DISPLAY);
 
+        return allDisplayItems;
+    }
+
+
+    public Object getPageCount(int limit) {
+        int pageSize = limit;
+        int totalPage = (int) Math.ceil(itemRepository.count() / (double) pageSize);
+        return totalPage;
+    }
 }

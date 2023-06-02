@@ -4,6 +4,7 @@ import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.domain.person_enum.Option;
 import lombok.*;
 
+import javax.print.DocFlavor;
 import java.util.List;
 @Getter
 @Setter
@@ -46,8 +47,6 @@ public class ProductRegisterDto {
     public static class Location {
         private String country;
         private String city;
-
-        // Getters and Setters
     }
 
     @Getter
@@ -95,7 +94,6 @@ public class ProductRegisterDto {
                 private String sat;
                 private String sun;
             }
-
             // Getter, Setter, Constructor 생략
         }
     }
@@ -106,7 +104,7 @@ public class ProductRegisterDto {
     public static class CourseDto {
         private Long id;
         private Long sequenceId;
-        private Integer day;
+        private Long day;
         private String title;
         private String timeCost;
         private String content;
@@ -131,8 +129,8 @@ public class ProductRegisterDto {
         @AllArgsConstructor
         @ToString
         public static class LocationDto {
-            private Double latitude;
-            private Double longitude;
+            private String latitude;
+            private String longitude;
             // Getter, Setter, Constructor 생략
         }
 
