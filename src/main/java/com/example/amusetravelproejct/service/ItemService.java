@@ -71,6 +71,9 @@ public class ItemService {
     public Item processCreateOrUpdate(ProductRegisterDto productRegisterDto) throws ParseException {
         Item item;
         if (productRegisterDto.getOption().equals("create")){
+            itemRepository.findByItemCode(productRegisterDto.getProductId()).ifPresent(data -> {
+                throw new CustomException(ErrorCode.ITEM_ALREADY_EXIST);
+            });
             item = new Item();
             itemRepository.save(item);
         } else{
@@ -82,18 +85,14 @@ public class ItemService {
         List<String> hashTags = productRegisterDto.getCategory();
         hashTags.forEach(data -> {
             TempHashTag tempHashTag = new TempHashTag();
-
             if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
                 tempHashTag.setHashTag(data);
                 tempHashTagRepository.save(tempHashTag);
             } else {
                 tempHashTag = tempHashTagRepository.findByHashTag(data).get();
             }
-
             ItemHashTag itemHashTag = new ItemHashTag();
-
             itemHashTag.setItem(item);
-
             itemHashTag.setHashTag(data);
             itemHashTag.setTempHashTag(tempHashTag);
             itemHashTagRepository.save(itemHashTag);
@@ -119,7 +118,6 @@ public class ItemService {
         }
 
         List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
-
         if (!users.isEmpty()) {
             item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             users.forEach(email -> {
@@ -181,7 +179,6 @@ public class ItemService {
                 itemTicket.setItem(item);
                 itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
                 itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
-                itemTicket.setCount(productRegisterDto.getTicket().get(i).getCount());
 
                 List<Date> startDate = new ArrayList<>();
                 List<Date> endDate = new ArrayList<>();
@@ -197,6 +194,7 @@ public class ItemService {
                     Date startDateTemp;
                     Date endDateTemp;
 
+                    itemTicketPriceRecode.setQuantity(prices.getQuantity());
                     itemTicketPriceRecode.setStartDate(prices.getStartDate());
                     itemTicketPriceRecode.setEndDate(prices.getEndDate());
                     itemTicketPriceRecode.setItemTicket(itemTicket);
@@ -278,6 +276,7 @@ public class ItemService {
                     weekdayPrices.add(prices.getWeekdayPrices());
 
                     ItemTicketPriceRecode itemTicketPriceRecode = itemTicketPriceRecodeRepository.findById(prices.getId()).isEmpty() ? new ItemTicketPriceRecode() : itemTicketPriceRecodeRepository.findById(prices.getId()).get();
+
                     Date startDateTemp;
                     Date endDateTemp;
 
@@ -371,12 +370,13 @@ public class ItemService {
             itemCourse.setSequenceId(productRegisterDto.getCourse().get(i).getSequenceId());
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
             itemCourse.setDay(productRegisterDto.getCourse().get(i).getDay());
-            itemCourse.setLatitude(productRegisterDto.getCourse().get(i).getLatitude());
-            itemCourse.setLongitude(productRegisterDto.getCourse().get(i).getLongitude());
+
+
+            itemCourse.setLatitude(productRegisterDto.getCourse().get(i).getLocation().getLatitude());
+            itemCourse.setLongitude(productRegisterDto.getCourse().get(i).getLocation().getLatitude());
             itemCourseRepository.save(itemCourse);
         }
     }
-
     public AdminPageResponse.getItemByCategory processSearchItem(AdminPageRequest.getItemByCategory findItemsDto){
         BooleanBuilder predicateFirstQ = new BooleanBuilder();
         BooleanBuilder predicateSendQ = new BooleanBuilder();
@@ -520,13 +520,14 @@ public class ItemService {
             ticketDto.setId(itemTicket.getId());
             ticketDto.setTitle(itemTicket.getTitle());
             ticketDto.setContent(itemTicket.getContent());
-            ticketDto.setCount(itemTicket.getCount());
             List<ProductRegisterDto.TicketDto.PriceListDto> priceListDtos = new ArrayList<>();
             itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> {
-                ProductRegisterDto.TicketDto.PriceListDto priceList = new ProductRegisterDto.TicketDto.PriceListDto();
-                priceList.setId(itemTicketPriceRecode.getId());
-                priceList.setStartDate(itemTicketPriceRecode.getStartDate());
-                priceList.setEndDate(itemTicketPriceRecode.getEndDate());
+                ProductRegisterDto.TicketDto.PriceListDto priceRecode = new ProductRegisterDto.TicketDto.PriceListDto();
+
+                priceRecode.setId(itemTicketPriceRecode.getId());
+                priceRecode.setStartDate(itemTicketPriceRecode.getStartDate());
+                priceRecode.setEndDate(itemTicketPriceRecode.getEndDate());
+                priceRecode.setQuantity(itemTicketPriceRecode.getQuantity());
                 ProductRegisterDto.TicketDto.PriceListDto.WeekdayPrices weekdayPrices = new ProductRegisterDto.TicketDto.PriceListDto.WeekdayPrices();
                 weekdayPrices.setMon(itemTicketPriceRecode.getMon());
                 weekdayPrices.setTue(itemTicketPriceRecode.getTue());
@@ -535,8 +536,8 @@ public class ItemService {
                 weekdayPrices.setFri(itemTicketPriceRecode.getFri());
                 weekdayPrices.setSat(itemTicketPriceRecode.getSat());
                 weekdayPrices.setSun(itemTicketPriceRecode.getSun());
-                priceList.setWeekdayPrices(weekdayPrices);
-                priceListDtos.add(priceList);
+                priceRecode.setWeekdayPrices(weekdayPrices);
+                priceListDtos.add(priceRecode);
             });
             ticketDto.setPriceList(priceListDtos);
             ticketDtos.add(ticketDto);
@@ -553,13 +554,9 @@ public class ItemService {
             courseDto.setContent(itemCourse.getContent());
             courseDto.setTimeCost(itemCourse.getTimeCost());
             courseDto.setSequenceId(itemCourse.getSequenceId());
-            courseDto.setLatitude(itemCourse.getLatitude());
-            courseDto.setLongitude(itemCourse.getLongitude());
-
-
+            courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(itemCourse.getLatitude(),itemCourse.getLongitude()));
             ProductRegisterDto.CourseDto.CourseImageDto courseImageDto = new ProductRegisterDto.CourseDto.CourseImageDto();
             courseImageDto.setImgUrl(itemCourse.getImageUrl());
-
             courseDto.setImage(courseImageDto);
             courseDtos.add(courseDto);
         });
