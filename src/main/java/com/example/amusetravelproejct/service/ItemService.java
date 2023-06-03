@@ -114,7 +114,7 @@ public class ItemService {
         if (productRegisterDto.getDuration().length() < 4){
             duration = Long.valueOf(productRegisterDto.getDuration());
         } else{
-            duration = Long.parseLong(productRegisterDto.getDuration().split("박")[1].split("일")[0]);
+            duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
         }
 
         List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
