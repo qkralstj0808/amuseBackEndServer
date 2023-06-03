@@ -97,13 +97,12 @@ public class AdminPageController {
         itemService.processItemImg(productRegisterDto,utilMethod,item);
         itemService.processItemCourse(productRegisterDto,utilMethod,item);
 
-        if (productRegisterDto.getOption() == "create"){
+        if (productRegisterDto.getOption().equals("create")){
             return new ResponseTemplate<>("상품 생성 완료");
         } else{
             return new ResponseTemplate<>("상품 수정 완료");
         }
     }
-
     @GetMapping("/product/{itemCode}")
     public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("itemCode") String itemCode){
         //TODO
