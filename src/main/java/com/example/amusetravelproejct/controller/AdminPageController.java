@@ -90,9 +90,10 @@ public class AdminPageController {
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         //TODO
         // productRegisterDto 데이터 선 처리
-        log.info(productRegisterDto.toString());
 
-        Item item = itemService.processCreateOrUpdate(productRegisterDto);
+        log.info(productRegisterDto.toString());
+        Item item = productRegisterDto.getOption().equals("create") ? itemService.processCreate(productRegisterDto) : itemService.processUpdate(productRegisterDto);
+
         itemService.processItemTicket(productRegisterDto,item);
         itemService.processItemImg(productRegisterDto,utilMethod,item);
         itemService.processItemCourse(productRegisterDto,utilMethod,item);
@@ -102,6 +103,7 @@ public class AdminPageController {
         } else{
             return new ResponseTemplate<>("상품 수정 완료");
         }
+
     }
     @GetMapping("/product/{itemCode}")
     public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("itemCode") String itemCode){

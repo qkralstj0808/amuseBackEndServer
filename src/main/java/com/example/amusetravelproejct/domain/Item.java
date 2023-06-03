@@ -35,6 +35,7 @@ public class Item extends BaseEntity {
 
     @Column(columnDefinition = "LONGTEXT")
     private String content_1;           // html을 String으로 바꾼 내용 1번째
+
     @Column(columnDefinition = "LONGTEXT")
     private String content_2;           // html을 String으로 바꾼 내용 2번째 취소 내용
 
