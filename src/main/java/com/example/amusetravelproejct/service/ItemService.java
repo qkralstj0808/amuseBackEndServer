@@ -123,11 +123,7 @@ public class ItemService {
         }
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-        if(productRegisterDto.getIsConcierge()){
-            item.setDisplayStatus(DisplayStatus.DISPLAY);
-        } else{
-            item.setDisplayStatus(DisplayStatus.HIDDEN);
-        }
+        item.setDisplayStatus(DisplayStatus.DISPLAY);
         return item;
     }
 
@@ -189,11 +185,7 @@ public class ItemService {
         }
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-        if(productRegisterDto.getIsConcierge()){
-            item.setDisplayStatus(DisplayStatus.DISPLAY);
-        } else{
-            item.setDisplayStatus(DisplayStatus.HIDDEN);
-        }
+        item.setDisplayStatus(DisplayStatus.DISPLAY);
         return item;
     }
 

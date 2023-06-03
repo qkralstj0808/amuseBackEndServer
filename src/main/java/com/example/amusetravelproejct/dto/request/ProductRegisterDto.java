@@ -14,7 +14,6 @@ public class ProductRegisterDto {
     private Long id;
     private String productId;
     private List<String> category;
-    private Boolean isConcierge;
     private String title;
     private Location location;
     private List<MainImageDto> mainImg;

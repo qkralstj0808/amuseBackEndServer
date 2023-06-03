@@ -85,7 +85,7 @@ public class AdminPageController {
         return new ResponseTemplate<>(advertisement);
     }
     @Transactional
-    @PostMapping("/product/create")
+    @PostMapping("/product/insert")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         //TODO
