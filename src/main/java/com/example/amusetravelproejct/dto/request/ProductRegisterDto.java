@@ -30,6 +30,10 @@ public class ProductRegisterDto {
     private String option;
     private accessData accessAuthority;
 
+
+
+
+
     @Getter
     @Setter
     @NoArgsConstructor

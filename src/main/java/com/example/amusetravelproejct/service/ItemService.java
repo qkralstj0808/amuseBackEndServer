@@ -53,9 +53,6 @@ public class ItemService {
     private final ItemTicketPriceRecodeRepository itemTicketPriceRecodeRepository;
     private final UserRepository userRepository;
     private final TargetUserRepository targetUserRepository;
-
-
-
     private final CategoryRepository categoryRepository;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -68,17 +65,14 @@ public class ItemService {
 
     //Item
     @Transactional
-    public Item processCreateOrUpdate(ProductRegisterDto productRegisterDto) throws ParseException {
+    public Item processCreate(ProductRegisterDto productRegisterDto) throws ParseException {
         Item item;
-        if (productRegisterDto.getOption().equals("create")){
-            itemRepository.findByItemCode(productRegisterDto.getProductId()).ifPresent(data -> {
-                throw new CustomException(ErrorCode.ITEM_ALREADY_EXIST);
-            });
-            item = new Item();
-            itemRepository.save(item);
-        } else{
-            item = itemRepository.findById(productRegisterDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
-        }
+        itemRepository.findByItemCode(productRegisterDto.getProductId()).ifPresent(data -> {
+            throw new CustomException(ErrorCode.ITEM_ALREADY_EXIST);
+        });
+        item = new Item();
+        itemRepository.save(item);
+
 
         item.setItemCode(productRegisterDto.getProductId());
         item.setTitle(productRegisterDto.getTitle());
@@ -102,11 +96,7 @@ public class ItemService {
         item.setCity(productRegisterDto.getLocation().getCity());
         item.setContent_1(productRegisterDto.getMainInfo());
         item.setContent_2(productRegisterDto.getExtraInfo());
-        if (productRegisterDto.getAdmin() == null){
-            item.setUpdateAdmin(getAdminByEmail(productRegisterDto.getUpdateAdmin()).get());
-        }else{
-            item.setAdmin(getAdminByEmail(productRegisterDto.getAdmin()).get());
-        }
+        item.setAdmin(getAdminByEmail(productRegisterDto.getAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
 
         Long duration = 0L;
@@ -116,6 +106,8 @@ public class ItemService {
         } else{
             duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
         }
+        item.setDuration(Math.toIntExact(duration));
+
 
         List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
         if (!users.isEmpty()) {
@@ -129,12 +121,76 @@ public class ItemService {
                 targetUserRepository.save(targetUser);
             });
         }
-        item.setDuration(Math.toIntExact(duration));
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         item.setDisplayStatus(DisplayStatus.HIDDEN);
         return item;
     }
+
+    @Transactional
+    public Item processUpdate(ProductRegisterDto productRegisterDto) throws ParseException {
+        Item item = itemRepository.findById(productRegisterDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+        item.setItemCode(productRegisterDto.getProductId());
+        item.setTitle(productRegisterDto.getTitle());
+        List<String> hashTags = productRegisterDto.getCategory();
+
+        item.getItemHashTags().clear();
+        hashTags.forEach(data -> {
+            TempHashTag tempHashTag = new TempHashTag();
+            if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
+                tempHashTag.setHashTag(data);
+                tempHashTagRepository.save(tempHashTag);
+            } else {
+                tempHashTag = tempHashTagRepository.findByHashTag(data).get();
+            }
+            ItemHashTag itemHashTag = new ItemHashTag();
+            itemHashTag.setItem(item);
+            itemHashTag.setHashTag(data);
+            itemHashTag.setTempHashTag(tempHashTag);
+            itemHashTagRepository.save(itemHashTag);
+        });
+
+
+        item.setCountry(productRegisterDto.getLocation().getCountry());
+        item.setCity(productRegisterDto.getLocation().getCity());
+
+        item.setContent_1(productRegisterDto.getMainInfo());
+        item.setContent_2(productRegisterDto.getExtraInfo());
+
+
+        item.setUpdateAdmin(getAdminByEmail(productRegisterDto.getAdmin()).get());
+        item.setStartPrice(productRegisterDto.getStartPrice());
+        Long duration = 0L;
+
+        if (productRegisterDto.getDuration().length() < 4){
+            duration = Long.valueOf(productRegisterDto.getDuration());
+        } else{
+            duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+        }
+        item.setDuration(Math.toIntExact(duration));
+
+
+        item.getTargetUsers().clear();
+
+        List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
+        if (!users.isEmpty()) {
+            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+            users.forEach(email -> {
+                User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                TargetUser targetUser = new TargetUser();
+                targetUser.setItem(item);
+                targetUser.setUser(user);
+                targetUserRepository.save(targetUser);
+            });
+        }
+        item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
+        item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        item.setDisplayStatus(DisplayStatus.HIDDEN);
+
+        return item;
+    }
+
+
 
     //ItemImg
     public void processItemImg(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item) {
@@ -173,7 +229,6 @@ public class ItemService {
                 1. 가격 입력
                     1. 요일별 입력 (0이면 입력 X)
          */
-
         if (productRegisterDto.getOption().equals("create")){
             for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
                 ItemTicket itemTicket = new ItemTicket();
@@ -249,18 +304,61 @@ public class ItemService {
             }
         } else {
 
+            //1. 입력된 티켓의 id를 저장
+            //2. 기존에 있던 티켓의 id를 저장
+            //3. 기존에 있던 티켓의 id와 입력된 티켓의 id를 비교
+            //4. 기존에 있던 티켓의 id중 입력된 티켓의 id가 없는 id를 제거
+            //5. 입력된 티켓의 id중 기존에 있던 티켓의 id가 없는 id를 저장
+
             List<Long> inputTicketId = new ArrayList<>();
-            List<Long> inputTicketPriceId = new ArrayList<>();
+            List<Long> oldTicketId = new ArrayList<>();
+            List<Long> inputTicketPriceRecodeId = new ArrayList<>();
+            List<Long> oldTicketPriceRecodeId = new ArrayList<>();
+
             productRegisterDto.getTicket().forEach(ticketDto -> {
                 inputTicketId.add(ticketDto.getId());
             });
+            item.getItemTickets().forEach(itemTicket -> {
+                oldTicketId.add(itemTicket.getId());
+            });
+            productRegisterDto.getTicket().forEach(ticketDto -> {
+                ticketDto.getPriceList().forEach(priceListDto -> {
+                    inputTicketPriceRecodeId.add(priceListDto.getId());
+                });
+            });
+            item.getItemTickets().forEach(itemTicket -> {
+                itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPrice -> {
+                    oldTicketPriceRecodeId.add(itemTicketPrice.getId());
+                });
+            });
+            oldTicketId.forEach(ticketId -> {
+                if (!inputTicketId.contains(ticketId)){
+                    ItemTicket itemTicket = itemTicketRepository.findById(ticketId).get();
+                    itemTicket.getItemTicketPrices().forEach(itemTicketPrice -> {
+                        itemTicketPriceRepository.delete(itemTicketPrice);
+                    });
 
-            inputTicketId.forEach(data->{
-                itemTicketRepository.deleteById(data);
+                    itemTicket.setItem(null);
+                    itemTicketRepository.save(itemTicket);
+                }
             });
 
+            oldTicketPriceRecodeId.forEach(ticketPriceId -> {
+                if (!inputTicketPriceRecodeId.contains(ticketPriceId)){
+                    ItemTicketPriceRecode itemTicketPriceRecode = itemTicketPriceRecodeRepository.findById(ticketPriceId).get();
+                    itemTicketPriceRecode.setItemTicket(null);
+                    itemTicketPriceRecodeRepository.save(itemTicketPriceRecode);
+                }
+            });
+
+            oldTicketId.forEach(itemTicketId ->{
+                ItemTicket itemTicket = itemTicketRepository.findById(itemTicketId).get();
+                itemTicket.getItemTicketPrices().forEach(itemTicketPrice -> {
+                    itemTicketPriceRepository.delete(itemTicketPrice);
+                });
+            });
             for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
-                ItemTicket itemTicket = itemTicketRepository.findById(productRegisterDto.getTicket().get(i).getId()).isEmpty() ? new ItemTicket() : itemTicketRepository.findById(productRegisterDto.getTicket().get(i).getId()).get();
+                ItemTicket itemTicket = productRegisterDto.getTicket().get(i).getId() == null ? new ItemTicket() : itemTicketRepository.findById(productRegisterDto.getTicket().get(i).getId()).orElseThrow(() -> new RuntimeException("존재하지 않는 티켓입니다."));
                 itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
                 itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
                 itemTicket.setItem(item);
@@ -276,7 +374,7 @@ public class ItemService {
                 productRegisterDto.getTicket().get(i).getPriceList().forEach(prices -> {
                     weekdayPrices.add(prices.getWeekdayPrices());
 
-                    ItemTicketPriceRecode itemTicketPriceRecode = itemTicketPriceRecodeRepository.findById(prices.getId()).isEmpty() ? new ItemTicketPriceRecode() : itemTicketPriceRecodeRepository.findById(prices.getId()).get();
+                    ItemTicketPriceRecode itemTicketPriceRecode = prices.getId() == null ? new ItemTicketPriceRecode() : itemTicketPriceRecodeRepository.findById(prices.getId()).orElseThrow(() -> new RuntimeException("존재하지 않는 가격정보입니다."));
 
                     Date startDateTemp;
                     Date endDateTemp;
@@ -308,11 +406,10 @@ public class ItemService {
 
                     startDate.add(startDateTemp);
                     endDate.add(endDateTemp);
-
-
                     datePoint.add(endDateTemp.getTime() - startDateTemp.getTime());
 
                 });
+
                 int count = datePoint.size();
                 while (count-- != 0) {
                     int index = datePoint.indexOf(datePoint.stream().min(Long::compareTo).get());
@@ -336,23 +433,34 @@ public class ItemService {
     }
     //ItemCourse
     public void processItemCourse(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item) {
+        // 1. 기존에 있던 코스의 id중 입력된 코스의 id가 없는 id를 제거
+
+        if (productRegisterDto.getOption() == "update") {
+            List<Long> inputCourseId = new ArrayList<>();
+            List<Long> oldCourseId = new ArrayList<>();
+
+            productRegisterDto.getCourse().forEach(courseDto -> {
+                inputCourseId.add(courseDto.getId());
+            });
+
+            item.getItemCourses().forEach(itemCourse -> {
+                oldCourseId.add(itemCourse.getId());
+            });
+
+            oldCourseId.forEach(courseId -> {
+                if (!inputCourseId.contains(courseId)) {
+                    ItemCourse itemCourse = itemCourseRepository.findById(courseId).get();
+                    itemCourse.setItem(null);
+                    itemCourseRepository.save(itemCourse);
+                }
+            });
+        }
+
+
         for (int i = 0; i < productRegisterDto.getCourse().size(); i++) {
             ItemCourse itemCourse = null;
 
-            if (productRegisterDto.getOption() == "update"){
-                List<Long> inputCourseId = new ArrayList<>();
-                productRegisterDto.getCourse().forEach(course -> {
-                    inputCourseId.add(course.getId());
-                });
-
-                for (int j = 0; j < item.getItemCourses().size(); i++){
-                    if (!inputCourseId.contains(item.getItemCourses().get(i).getId())){
-                        itemCourseRepository.deleteById(item.getItemCourses().get(i).getId());
-                    }
-                }
-            }
-
-            if(productRegisterDto.getCourse().get(i).getId() == null){
+            if(productRegisterDto.getCourse().get(i).getId() == null && productRegisterDto.getOption().equals("create")){
                 itemCourse = new ItemCourse();
             }else{
                 itemCourse = itemCourseRepository.findById(productRegisterDto.getCourse().get(i).getId()).get();
@@ -372,9 +480,8 @@ public class ItemService {
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
             itemCourse.setDay(Math.toIntExact(productRegisterDto.getCourse().get(i).getDay()));
 
-
             itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
-            itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
+            itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
             itemCourseRepository.save(itemCourse);
         }
     }
@@ -524,7 +631,6 @@ public class ItemService {
             List<ProductRegisterDto.TicketDto.PriceListDto> priceListDtos = new ArrayList<>();
             itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> {
                 ProductRegisterDto.TicketDto.PriceListDto priceRecode = new ProductRegisterDto.TicketDto.PriceListDto();
-
                 priceRecode.setId(itemTicketPriceRecode.getId());
                 priceRecode.setStartDate(itemTicketPriceRecode.getStartDate());
                 priceRecode.setEndDate(itemTicketPriceRecode.getEndDate());
@@ -546,8 +652,8 @@ public class ItemService {
         productRegisterDto.setTicket(ticketDtos);
         productRegisterDto.setMainInfo(item.getContent_1());
 
-
         List<ProductRegisterDto.CourseDto> courseDtos = new ArrayList<>();
+
         item.getItemCourses().forEach(itemCourse -> {
             ProductRegisterDto.CourseDto courseDto = new ProductRegisterDto.CourseDto();
             courseDto.setId(itemCourse.getId());
@@ -555,6 +661,7 @@ public class ItemService {
             courseDto.setContent(itemCourse.getContent());
             courseDto.setTimeCost(itemCourse.getTimeCost());
             courseDto.setSequenceId(itemCourse.getSequenceId());
+            courseDto.setDay(Long.valueOf(itemCourse.getDay()));
             courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(itemCourse.getLatitude().toString(),itemCourse.getLongitude().toString()));
             ProductRegisterDto.CourseDto.CourseImageDto courseImageDto = new ProductRegisterDto.CourseDto.CourseImageDto();
             courseImageDto.setImgUrl(itemCourse.getImageUrl());

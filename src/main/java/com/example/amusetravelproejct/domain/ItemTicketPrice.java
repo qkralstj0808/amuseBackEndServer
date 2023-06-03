@@ -19,7 +19,7 @@ public class ItemTicketPrice {
     private Long price;
 
     // payment_ticket과 item_ticket은 N:1 관계
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "itemTicket")
     private ItemTicket itemTicket;
 
