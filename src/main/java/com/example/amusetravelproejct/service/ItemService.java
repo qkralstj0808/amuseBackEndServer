@@ -158,7 +158,7 @@ public class ItemService {
         item.setContent_2(productRegisterDto.getExtraInfo());
 
 
-        item.setUpdateAdmin(getAdminByEmail(productRegisterDto.getAdmin()).get());
+        item.setUpdateAdmin(getAdminByEmail(productRegisterDto.getUpdateAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
         Long duration = 0L;
 
@@ -382,6 +382,7 @@ public class ItemService {
                     itemTicketPriceRecode.setStartDate(prices.getStartDate());
                     itemTicketPriceRecode.setEndDate(prices.getEndDate());
                     itemTicketPriceRecode.setItemTicket(itemTicket);
+                    itemTicketPriceRecode.setQuantity(prices.getQuantity());
                     itemTicketPriceRecode.setMon(prices.getWeekdayPrices().getMon());
                     itemTicketPriceRecode.setTue(prices.getWeekdayPrices().getTue());
                     itemTicketPriceRecode.setWed(prices.getWeekdayPrices().getWed());
