@@ -22,7 +22,7 @@ public class UtilMethod {
     public static SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
     public static String[] day = {"sun","mon","tue","wed","thu","fri","sat"};
-    public static String[] outGrad = {"bronze","silver","gold","platinum","diamond"};
+    public static String[] outGrad = {"Bronze","Silver","Gold","Platinum","Diamond"};
 
     public static String[] status = {"creat","update","read"};
     public static HashMap<String,Long> grad = new HashMap<String,Long>(){

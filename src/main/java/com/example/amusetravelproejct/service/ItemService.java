@@ -132,6 +132,7 @@ public class ItemService {
         item.setDuration(Math.toIntExact(duration));
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        item.setDisplayStatus(DisplayStatus.HIDDEN);
         return item;
     }
 
@@ -646,14 +647,38 @@ public class ItemService {
         } else{
             item.setDisplayStatus(DisplayStatus.HIDDEN);
         }
+        itemRepository.save(item);
     }
 
 
-    public List<Item> processGetAllDisplayItems(int limit, int sqlPage) {
+    public AdminPageResponse.getItemByDisplayStatus processGetAllDisplayItems(int limit, int sqlPage,String status) {
         Pageable pageable = PageRequest.of(Math.toIntExact(sqlPage), Math.toIntExact(limit), Sort.by("id").ascending());
-        List<Item> allDisplayItems = itemRepository.findAllByDisplayStatus(DisplayStatus.DISPLAY);
+        Page<Item> allDisplayItems = null;
+        if (status.equals("DISPLAY")){
+            allDisplayItems = itemRepository.findAllByDisplayStatus(DisplayStatus.DISPLAY, pageable);
+        } else{
+            allDisplayItems = itemRepository.findAllByDisplayStatus(DisplayStatus.HIDDEN, pageable);
+        }
+        AdminPageResponse.getItemByDisplayStatus getItemByDisplayStatus = new AdminPageResponse.getItemByDisplayStatus();
+        List<AdminPageResponse.getItemsByDisplayStat> itemsByDisplayStats = new ArrayList<>();
+        getItemByDisplayStatus.setPageCount((long) allDisplayItems.getTotalPages());
 
-        return allDisplayItems;
+        allDisplayItems.getContent().forEach(item ->{
+            AdminPageResponse.getItemsByDisplayStat itemsByDisplayStat = new AdminPageResponse.getItemsByDisplayStat();
+            itemsByDisplayStat.setItemCode(item.getItemCode());
+            itemsByDisplayStat.setTitle(item.getTitle());
+            if (item.getItemImg_list().isEmpty()){
+                itemsByDisplayStat.setImgUrl(null);
+            } else{
+                itemsByDisplayStat.setImgUrl(item.getItemImg_list().get(0).getImgUrl());
+            }
+            itemsByDisplayStats.add(itemsByDisplayStat);
+        });
+
+        getItemByDisplayStatus.setData(itemsByDisplayStats);
+
+
+        return getItemByDisplayStatus;
     }
 
 

@@ -134,31 +134,21 @@ public class AdminPageController {
         }
     }
 
-//    @GetMapping("/product/getList/display")
-//    public ResponseTemplate<List<Item>> reqDisplayProductList(@RequestParam("limit") int limit, @RequestParam("page") int page){
-//        //TODO
-//        // 유저 데이터 선 처리
-//
-//        int sqlPage = page -1;
-//        List <Item> itemList = itemService.processGetAllDisplayItems(limit,sqlPage);
-//        return new ResponseTemplate<>(itemByCategory);
-//
-//    }
-//    @GetMapping("/product/getList/nonDisplay")
-//    public ResponseTemplate<AdminPageResponse.getItemByCategory> reqProductListNonDisplay(@RequestParam("limit") int limit, @RequestParam("page") int page){
-//        //TODO
-//        // 유저 데이터 선 처리
-//
-//        int sqlPage = page -1;
-//
-//        AdminPageResponse.getItemByCategory itemByCategory = new AdminPageResponse.getItemByCategory(itemService.processGetAllItemsNonDisplay(offset,limit,sqlPage));
-//        return new ResponseTemplate<>(itemByCategory);
-//
-//    }
+    @GetMapping("/product/getList/byDisplay")
+    public ResponseTemplate<AdminPageResponse.getItemByDisplayStatus> reqDisplayProductList(@RequestParam("limit") int limit, @RequestParam("page") int page, @RequestParam("displayStatus") String displayStatus){
+        //TODO
+        // 유저 데이터 선 처리
 
+        int sqlPage = page -1;
 
+        return new ResponseTemplate<>(itemService.processGetAllDisplayItems(limit,sqlPage,displayStatus));
+    }
+    @GetMapping("/change/displayStatus")
+    public ResponseTemplate<String> changeDisplayStatus(@RequestParam("status") String displayStatus, @RequestParam("itemCode") String itemCode){
+        itemService.changeItemStatus(displayStatus,itemCode);
 
-
+        return new ResponseTemplate<>("상품 상태가 변경되었습니다.");
+    }
 
     @PostMapping("/notice/register")
     public ResponseTemplate<AdminPageResponse.noticeRegister> noticeRegister(@RequestBody AdminPageRequest.noticeRegister noticeRegisterDto){
@@ -302,16 +292,9 @@ public class AdminPageController {
     @GetMapping("/list/guide")
     public ResponseTemplate<List<AdminResponse.GuideInfo>> listGuide(@RequestParam("page") Long page, @RequestParam("limit") Long limit){
 
-
-
         return new ResponseTemplate<>(userService.listGuide(page,limit));
     }
 
 
-    @GetMapping("/change/displayStatus")
-    public ResponseTemplate<String> changeDisplayStatus(@RequestParam("status") String displayStatus, @RequestParam("itemCode") String itemCode){
-        itemService.changeItemStatus(displayStatus,itemCode);
 
-        return new ResponseTemplate<>("상품 상태가 변경되었습니다.");
-    }
 }

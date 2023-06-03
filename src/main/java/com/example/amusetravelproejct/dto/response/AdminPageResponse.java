@@ -187,6 +187,25 @@ public class AdminPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class getItemByDisplayStatus{
+        private Long pageCount;
+        private List<getItemsByDisplayStat> data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getItemsByDisplayStat{
+        private String itemCode;
+        private String title;
+        private String imgUrl;
+    }
+
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class getItemByCategory{
         private Long pageCount;
         private List<findItemByCategory> data;
