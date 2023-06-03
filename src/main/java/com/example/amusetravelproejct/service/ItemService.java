@@ -123,7 +123,11 @@ public class ItemService {
         }
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-        item.setDisplayStatus(DisplayStatus.HIDDEN);
+        if(productRegisterDto.getIsConcierge()){
+            item.setDisplayStatus(DisplayStatus.DISPLAY);
+        } else{
+            item.setDisplayStatus(DisplayStatus.HIDDEN);
+        }
         return item;
     }
 
@@ -185,8 +189,11 @@ public class ItemService {
         }
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-        item.setDisplayStatus(DisplayStatus.HIDDEN);
-
+        if(productRegisterDto.getIsConcierge()){
+            item.setDisplayStatus(DisplayStatus.DISPLAY);
+        } else{
+            item.setDisplayStatus(DisplayStatus.HIDDEN);
+        }
         return item;
     }
 
@@ -461,7 +468,7 @@ public class ItemService {
         for (int i = 0; i < productRegisterDto.getCourse().size(); i++) {
             ItemCourse itemCourse = null;
 
-            if(productRegisterDto.getCourse().get(i).getId() == null && productRegisterDto.getOption().equals("create")){
+            if(productRegisterDto.getCourse().get(i).getId() == null || productRegisterDto.getOption().equals("create")){
                 itemCourse = new ItemCourse();
             }else{
                 itemCourse = itemCourseRepository.findById(productRegisterDto.getCourse().get(i).getId()).get();
