@@ -353,8 +353,9 @@ public class AdminPageController {
     }
 
     @GetMapping("/page/all")
-    public ResponseTemplate<AdminPageResponse.getAllPage> getAllPage(){
-        return pageService.getAllPage();
+    public ResponseTemplate<AdminPageResponse.getAllPage> getAllPage(
+            @RequestParam(value = "disable",required = false) Boolean disable){
+        return pageService.getAllPage(disable);
     }
 
     @DeleteMapping("/delete/page/{page-id}")

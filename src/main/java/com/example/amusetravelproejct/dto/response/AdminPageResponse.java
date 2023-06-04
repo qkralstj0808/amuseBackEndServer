@@ -343,6 +343,7 @@ public class AdminPageResponse {
     @NoArgsConstructor
     public static class updatePage {
         private Long id;
+        private Boolean disable;
         private String name;
         private String imgUrl;
         private Long sequence;
@@ -393,6 +394,7 @@ public class AdminPageResponse {
     @NoArgsConstructor
     public static class getPage {
         private Long   id;
+        private Boolean disable;
         private String name;
         private String imgUrl;
         private Long sequence;
@@ -410,6 +412,7 @@ public class AdminPageResponse {
     @NoArgsConstructor
     public static class getAllPage {
         private Long   id;
+        private Boolean disable;
         private String name;
         private String imgUrl;
         private Long sequence;

@@ -30,7 +30,7 @@ public class Category extends BaseEntity{
     private Long sequence;
 
     @ColumnDefault("false")
-    private Boolean disable;
+    private Boolean disable = false;
     private String imgUrl;
 
     @Column(columnDefinition = "LONGTEXT")
