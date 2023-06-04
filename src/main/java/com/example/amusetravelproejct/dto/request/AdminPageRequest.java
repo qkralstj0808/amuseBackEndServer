@@ -122,14 +122,24 @@ public class AdminPageRequest {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class createMainPage{
+    public static class registerComponent{
         private Long id;
         private String title;
         private String type;
-        private String createBy;
-        private Long sequence;
+        private String createdBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerListComponent extends registerComponent{
         private List<String> itemCode;
-        private List<getMainItem> tile;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerBannerComponent extends registerComponent{
         private String pcBannerFileName;
         private String pcBannerBase64;
         private String pcBannerImgUrl;
@@ -140,9 +150,12 @@ public class AdminPageRequest {
         private String mobileBannerLink;
         private String content;
     }
-
-
-
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerTileComponent extends registerComponent{
+        private List<getMainItem> tile;
+    }
 
     @Data
     @AllArgsConstructor
@@ -153,7 +166,6 @@ public class AdminPageRequest {
         private String tileFileName;
         private String tileBase64;
         private String tileImgUrl;
-
     }
 
 

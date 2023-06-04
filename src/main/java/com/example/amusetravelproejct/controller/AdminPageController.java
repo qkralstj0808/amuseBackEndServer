@@ -33,7 +33,7 @@ public class AdminPageController {
     private final AdminService adminService;
     private final AlarmService alarmService;
     private final AdvertisementService advertisementService;
-    private final MainPageComponentService mainPageComponentService;
+    private final PageComponentService pageComponentService;
     private final UserService userService;
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
@@ -224,41 +224,62 @@ public class AdminPageController {
 
 
     @Transactional
-    @PostMapping("/mainPage/create")
-    public ResponseTemplate<String> reqMainPageCreate(@RequestBody AdminPageRequest.createMainPage createMainPageDto ){
+    @PostMapping("/component/register/list")
+    public ResponseTemplate<?> reqComponentRegisterList(@RequestBody AdminPageRequest.registerListComponent registerListComponentDto){
+        UtilMethod utilMethod =  new UtilMethod(amazonS3Client);
+
+        //TODO
+        // 유저 데이터 선 처리
+        log.info(registerListComponentDto.toString());
+        return new ResponseTemplate<>(pageComponentService.registerListComponent(registerListComponentDto));
+
+    }
+
+    @Transactional
+    @PostMapping("/component/register/banner")
+    public ResponseTemplate<?> reqComponentRegisterBanner(@RequestBody AdminPageRequest.registerBannerComponent registerBannerComponentDto){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         //TODO
         // 유저 데이터 선 처리
-        log.info(createMainPageDto.toString());
+        log.info(registerBannerComponentDto.toString());
 
-        mainPageComponentService.createMainPageComponent(createMainPageDto, utilMethod);
-
-        return new ResponseTemplate<>("컴포넌트가 추가되었습니다.");
+        return new ResponseTemplate<>(pageComponentService.registerBannerComponent(registerBannerComponentDto,utilMethod));
     }
 
-    @GetMapping("/mainPage/list")
-    public ResponseTemplate<List<AdminPageResponse.getMainPageItem>> reqMainPageList(){
-        return new ResponseTemplate<>(mainPageComponentService.processGetMainPageList());
-    }
-
-    @GetMapping("/mainPage/{id}")
-    public ResponseTemplate<?> reqMainPageGet(@PathVariable("id") Long id){
+    @Transactional
+    @PostMapping("/component/register/tile")
+    public ResponseTemplate<?> reqComponentRegisterTile(@RequestBody AdminPageRequest.registerTileComponent registerTileComponentDto){
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         //TODO
         // 유저 데이터 선 처리
+        log.info(registerTileComponentDto.toString());
 
-//        return  null;
-        return mainPageComponentService.processGetMainPageComponent(id);
+        return new ResponseTemplate<>(pageComponentService.registerTileComponent(registerTileComponentDto,utilMethod));
     }
 
-    @GetMapping("/mainPage/delete/{id}")
+
+
+    @GetMapping("/component")
+    public ResponseTemplate<?> reqComponentList(){
+        return new ResponseTemplate<>(pageComponentService.getComponentList());
+    }
+
+    @GetMapping("/component/{id}")
+    public ResponseTemplate<?> reqComponentDetail(@PathVariable("id") Long id){
+        return new ResponseTemplate<>(pageComponentService.getComponentDetail(id));
+    }
+
+
+
+    @GetMapping("/component/delete/{id}")
     public ResponseTemplate<?> reqMainPageDelete(@PathVariable("id") Long id){
 
         //TODO
         // 유저 데이터 선 처리
 
-        mainPageComponentService.processDeleteMainPageComponent(id);
+        pageComponentService.processDeleteMainPageComponent(id);
         return new ResponseTemplate<>("삭제 완료");
     }
 
@@ -292,11 +313,8 @@ public class AdminPageController {
 
 
     @GetMapping("/list/guide")
-    public ResponseTemplate<List<AdminResponse.GuideInfo>> listGuide(@RequestParam("page") Long page, @RequestParam("limit") Long limit){
+    public ResponseTemplate<AdminResponse.ListGuide> listGuide(@RequestParam("page") Long page, @RequestParam("limit") Long limit){
 
         return new ResponseTemplate<>(userService.listGuide(page,limit));
     }
-
-
-
 }

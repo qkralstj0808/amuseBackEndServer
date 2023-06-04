@@ -1,10 +1,10 @@
 package com.example.amusetravelproejct.repository.custom;
 
-import com.example.amusetravelproejct.domain.MainPageComponent;
+import com.example.amusetravelproejct.domain.PageComponent;
 
 import java.util.List;
 
 public interface MainPageComponentRepositoryCustom {
 
-    List<MainPageComponent> findByTypeSortSequence(String type);
+    List<PageComponent> findByTypeSortSequence(String type);
 }

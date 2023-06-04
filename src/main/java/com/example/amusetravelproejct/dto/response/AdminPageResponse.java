@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.dto.response;
 
+import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -221,17 +222,105 @@ public class AdminPageResponse {
         private String type;
         private LocalDateTime createAt;
         private String createBy;
+        private LocalDateTime updateAt;
+        private String updateBy;
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getMainPageItem{
+        private String itemCode;
+        private String title;
+        private List<String> category;
+        private LocalDateTime createAt;
+        private String createBy;
+        private LocalDateTime updateAt;
+        private String updateBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class respRegisterComponent{
         private Long id;
         private String title;
-        private Long sequence;
         private String type;
-        private String createAt;
-        private String createBy;
+        private LocalDateTime createdAt;
+        private String createdBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerListComponent extends respRegisterComponent {
+        private List<String> itemCode;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getListComponent extends respRegisterComponent {
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private List<getMainPageItem> productList;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerBannerComponent extends respRegisterComponent {
+        private String pcBannerImgUrl;
+        private String pcBannerLink;
+        private String mobileBannerImgUrl;
+        private String mobileBannerLink;
+        private String content;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getBannerComponent extends respRegisterComponent {
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private String pcBannerImgUrl;
+        private String pcBannerLink;
+        private String mobileBannerImgUrl;
+        private String mobileBannerLink;
+        private String content;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerTileComponent extends respRegisterComponent {
+        private List<AdminPageResponse.getMainItem> tile;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getTileComponent extends respRegisterComponent{
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private List<AdminPageResponse.getDetailItem> tile;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getDetailItem {
+        private String title;
+        List<getMainPageItem> productList;
+        private String tileImgUrl;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getMainItem{
+        private String tileName;
+        private List<String> itemCode;
+        private String tileImgUrl;
     }
 }

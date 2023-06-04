@@ -1,11 +1,12 @@
 package com.example.amusetravelproejct.repository.customImpl;
 
-import com.example.amusetravelproejct.domain.MainPageComponent;
-import static com.example.amusetravelproejct.domain.QMainPageComponent.mainPageComponent;
+import com.example.amusetravelproejct.domain.PageComponent;
 import com.example.amusetravelproejct.repository.custom.MainPageComponentRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import java.util.List;
+
+import static com.example.amusetravelproejct.domain.QPageComponent.pageComponent;
 
 public class MainPageComponentRepositoryImpl implements MainPageComponentRepositoryCustom {
 
@@ -16,10 +17,10 @@ public class MainPageComponentRepositoryImpl implements MainPageComponentReposit
     }
 
     @Override
-    public List<MainPageComponent> findByTypeSortSequence(String type) {
-        return jpaQueryFactory.selectFrom(mainPageComponent)
-                .where(mainPageComponent.type.eq(type))
-                .orderBy(mainPageComponent.sequence.desc())
+    public List<PageComponent> findByTypeSortSequence(String type) {
+        return jpaQueryFactory.selectFrom(pageComponent)
+                .where(pageComponent.type.eq(type))
+                .orderBy(pageComponent.id.desc())
                 .fetch();
     }
 }

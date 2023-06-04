@@ -38,11 +38,15 @@ public class AdminResponse {
         private RoleType roleType;
     }
 
+    @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class createGuide{
-        private GuideInfo guideInfo;
+    public static class ListGuide{
+        private Long PageCount;
+        private List<GuideInfo> guideInfo;
     }
+
+
 
     @Data
     @AllArgsConstructor

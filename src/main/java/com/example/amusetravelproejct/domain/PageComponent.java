@@ -15,27 +15,33 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MainPageComponent extends BaseEntity{
+public class PageComponent extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private Long id;
     private String type;
     private String title;
-    private Long sequence;
     private String PcBannerUrl;
     private String PcBannerLink;
 
     private String MobileBannerUrl;
     private String MobileBannerLink;
-
     @Column(columnDefinition = "TEXT")
     private String content;
-
     @ManyToOne
     private Admin admin;
 
-    @OneToMany(mappedBy = "mainPageComponent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne
+    private Admin updateAdmin;
+
+
+    @ManyToOne
+    private Page page;
+
+    @OneToMany(mappedBy = "pageComponent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MainPage> mainPages;
+
+
 
 }
