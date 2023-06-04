@@ -173,7 +173,7 @@ public class ItemService {
         item.getTargetUsers().clear();
 
         List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
-        if (!users.isEmpty()) {
+        if (users != null) {
             item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             users.forEach(email -> {
                 User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -193,6 +193,25 @@ public class ItemService {
 
     //ItemImg
     public void processItemImg(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item) {
+
+
+
+        if (productRegisterDto.getOption().equals("update")){
+            List<Long> ordId = new ArrayList<>();
+            List<Long> inputId = new ArrayList<>();
+            item.getItemImg_list().forEach(itemImg -> {
+                ordId.add(itemImg.getId());
+            });
+            productRegisterDto.getMainImg().forEach(itemImg -> {
+                inputId.add(itemImg.getId());
+            });
+
+            for (int i = 0; i < ordId.size(); i ++){
+                if (!inputId.contains(ordId.get(i))){
+                    item.getItemImg_list().remove(i);
+                }
+            }
+        }
 
         for (int i = 0; i < productRegisterDto.getMainImg().size(); i++) {
             if(productRegisterDto.getMainImg().get(i).getId() == null){
