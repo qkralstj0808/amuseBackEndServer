@@ -35,9 +35,8 @@ public class PageComponent extends BaseEntity{
     @ManyToOne
     private Admin updateAdmin;
 
-
-    @ManyToOne
-    private Page page;
+    @OneToMany(mappedBy = "pageComponent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CategoryPageComponent> categoryPageComponents;
 
     @OneToMany(mappedBy = "pageComponent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MainPage> mainPages;

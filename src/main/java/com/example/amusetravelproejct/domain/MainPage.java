@@ -17,9 +17,12 @@ public class MainPage {
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "page_component_id")
     private PageComponent pageComponent;
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "item_id")
     private Item item;
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "tile_id")
     private Tile tile;
 }

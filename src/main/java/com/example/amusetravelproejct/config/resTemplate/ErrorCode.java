@@ -42,7 +42,8 @@ public enum ErrorCode {
     ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 상품에 매니저를 찾을 수 없습니다."),
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST,"잘못된 요청입니다."),
     ASC_DESC_WORD_ERROR(HttpStatus.BAD_REQUEST,"asc_desc 칸에는 '오른차순' 또는 '내림차순' 둘 중 하나로 적어주세요"),
-    SORT_FUNCTION_ERROR(HttpStatus.BAD_REQUEST,"sort 함수를 만드는 과정에서 Null이 발생했습니다.");
+    SORT_FUNCTION_ERROR(HttpStatus.BAD_REQUEST,"sort 함수를 만드는 과정에서 Null이 발생했습니다."),
+    CATEGORY_EXIT(HttpStatus.BAD_REQUEST,"이미 해당 이름의 category가 존재합니다. 수정을 원하면 PUT 해주세요" );
 
     private final HttpStatus httpStatus;
     private final String message;

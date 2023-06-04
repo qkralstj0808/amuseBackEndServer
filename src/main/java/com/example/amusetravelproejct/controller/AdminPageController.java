@@ -9,12 +9,14 @@ import com.example.amusetravelproejct.dto.request.AdminRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
 import com.example.amusetravelproejct.dto.response.AdminResponse;
+import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
 import com.example.amusetravelproejct.repository.*;
 import com.example.amusetravelproejct.repository.ItemRepository;
 import com.example.amusetravelproejct.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +37,8 @@ public class AdminPageController {
     private final AdvertisementService advertisementService;
     private final PageComponentService pageComponentService;
     private final UserService userService;
+
+    private final PageService pageService;
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -317,4 +321,48 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(userService.listGuide(page,limit));
     }
+
+    @PostMapping("create/page")
+    public ResponseTemplate<String> createPage(
+            @RequestBody AdminPageRequest.createPage request,
+            @AuthenticationPrincipal UserPrincipal userPrincipal){
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+
+        User findUser = userService.getUserByPrincipal(userPrincipal);
+
+        return pageService.createPage(request,utilMethod,findUser);
+    }
+
+    @PutMapping("update/page/{page-id}")
+    public ResponseTemplate<AdminPageResponse.updatePage> updatePage(
+            @PathVariable("page-id") Long page_id,
+            @RequestBody AdminPageRequest.updatePage request,
+            @AuthenticationPrincipal UserPrincipal userPrincipal){
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+
+        User findUser = userService.getUserByPrincipal(userPrincipal);
+
+        return pageService.updatePage(page_id,request,utilMethod,findUser);
+    }
+
+    @GetMapping("/page/{page-id}")
+    public ResponseTemplate<AdminPageResponse.getPage> getPage(
+            @PathVariable("page-id") Long page_id){
+
+        return pageService.getPage(page_id);
+    }
+
+    @GetMapping("/page/all")
+    public ResponseTemplate<AdminPageResponse.getAllPage> getAllPage(){
+        return pageService.getAllPage();
+    }
+
+    @DeleteMapping("/delete/page/{page-id}")
+    public ResponseTemplate<String> deletePage(
+            @PathVariable("page-id") Long page_id){
+        return pageService.deletePage(page_id);
+    }
+
+
+
 }
