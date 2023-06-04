@@ -52,6 +52,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 onAuthenticationSuccess");
         log.info("authentication.getAuthorities().toString() : " + authentication.getAuthorities().toString());
+
+
         String targetUrl = determineTargetUrl(request, response, authentication);
 //        String accessToken = determineTargetUrl(request,response,authentication);
 
@@ -74,20 +76,29 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 determineTargetUrl");
         log.info("authentication : " + authentication);
 
-        Optional<String> redirectUri = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
-                .map(Cookie::getValue);
+        String referer = request.getHeader("Referer");
 
-        log.info("redirectUri : " + redirectUri);
+        String targetUrl = null;
 
-        log.info("redirect uri : " + redirectUri);
-        log.info("redirectUri.isPresent() : " + redirectUri.isPresent());
-        log.info("!isAuthorizedRedirectUri(redirectUri.get() : " + !isAuthorizedRedirectUri(redirectUri.get()));
+        if (referer != null && !referer.isEmpty()){
+            targetUrl = referer;
+        }else{
+            Optional<String> redirectUri = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
+                    .map(Cookie::getValue);
 
-        if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
-            throw new IllegalArgumentException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
+            if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
+                throw new IllegalArgumentException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
+            }
+
+            log.info("redirectUri : " + redirectUri);
+
+            log.info("redirect uri : " + redirectUri);
+            log.info("redirectUri.isPresent() : " + redirectUri.isPresent());
+            log.info("!isAuthorizedRedirectUri(redirectUri.get() : " + !isAuthorizedRedirectUri(redirectUri.get()));
+
+            targetUrl = redirectUri.orElse(getDefaultTargetUrl());
         }
 
-        String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
         OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
         Map<String, Object> attributes = authToken.getPrincipal().getAttributes();

@@ -1,6 +1,8 @@
 package com.example.amusetravelproejct.oauth.filter;
 
 import com.example.amusetravelproejct.config.properties.AppProperties;
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.oauth.token.AuthToken;
 import com.example.amusetravelproejct.oauth.token.AuthTokenProvider;
@@ -34,7 +36,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain)  throws ServletException, IOException {
+            FilterChain filterChain)  throws ServletException, IOException ,CustomException{
 
         String tokenStr = HeaderUtil.getAccessToken(request);
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
@@ -47,6 +49,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+
         filterChain.doFilter(request, response);
     }
 
