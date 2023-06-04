@@ -28,20 +28,20 @@ public class MyPageController {
     private final AmazonS3 amazonS3Client;
 
 
-//    @GetMapping("/like")
-//    public ResponseTemplate<MyPageResponse.getLikeItems> getLikeItems(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
-//        User findUser = userService.getUserByPrincipal(userPrincipal);
-//
-//        return myPageService.getLikeItems(findUser);
-//    }
-//
-//    @PostMapping("/item/{item-id}/review")
-//    public ResponseTemplate<MyPageResponse.setReview> setReview(@PathVariable("item-id") Long item_id,
-//                                                                @AuthenticationPrincipal UserPrincipal userPrincipal,
-//                                                                @RequestBody MyPageRequest.setReview request) throws Exception{
-//        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
-//        User findUser = userService.getUserByPrincipal(userPrincipal);
-//
-//        return myPageService.setReview(findUser,item_id,request,utilMethod);
-//    }
+    @GetMapping("/like")
+    public ResponseTemplate<MyPageResponse.getLikeItems> getLikeItems(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
+        User findUser = userService.getUserByPrincipal(userPrincipal);
+
+        return myPageService.getLikeItems(findUser);
+    }
+
+    @PostMapping("/item/{item-id}/review")
+    public ResponseTemplate<MyPageResponse.setReview> setReview(@PathVariable("item-id") Long item_id,
+                                                                @AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                                @RequestBody MyPageRequest.setReview request) throws Exception{
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+        User findUser = userService.getUserByPrincipal(userPrincipal);
+
+        return myPageService.setReview(findUser,item_id,request,utilMethod);
+    }
 }
