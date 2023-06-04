@@ -1,6 +1,9 @@
 package com.example.amusetravelproejct.service;
 
+import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.Admin;
+import com.example.amusetravelproejct.dto.request.AdminRequest;
+import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.repository.AdminRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,5 +20,7 @@ public class AdminService {
     public Optional<Admin> getAdminByEmail(String email) {
         return adminRepository.findByEmail(email);
     }
+
+
 
 }

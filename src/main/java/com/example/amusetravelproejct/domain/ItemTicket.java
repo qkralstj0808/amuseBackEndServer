@@ -15,7 +15,6 @@ public class ItemTicket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    private Long count;
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String content;
@@ -31,4 +30,5 @@ public class ItemTicket {
 
     @OneToMany(mappedBy = "itemTicket",orphanRemoval=true , cascade = CascadeType.ALL)
     private List<ItemTicketPriceRecode> itemTicketPriceRecodes = new ArrayList<>();
+
 }

@@ -5,8 +5,10 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
+import com.example.amusetravelproejct.dto.request.AdminRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
+import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.repository.*;
 import com.example.amusetravelproejct.repository.ItemRepository;
 import com.example.amusetravelproejct.service.*;
@@ -32,6 +34,7 @@ public class AdminPageController {
     private final AlarmService alarmService;
     private final AdvertisementService advertisementService;
     private final MainPageComponentService mainPageComponentService;
+    private final UserService userService;
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -82,36 +85,26 @@ public class AdminPageController {
         return new ResponseTemplate<>(advertisement);
     }
     @Transactional
-    @PostMapping("/product/create")
+    @PostMapping("/product/insert")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         //TODO
         // productRegisterDto 데이터 선 처리
 
-        Item item = itemService.processCreateOrUpdate(productRegisterDto);
-        itemService.processItemTicket(productRegisterDto,item);
-        itemService.processItemImg(productRegisterDto,utilMethod,item);
-        itemService.processItemCourse(productRegisterDto,utilMethod,item);
-
-        return new ResponseTemplate<>("상품 생성 완료");
-    }
-
-    @Transactional
-    @PostMapping("/product/update")
-    public ResponseTemplate<String> reqProductEdit(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
-        //TODO
-        // productRegisterDto 데이터 선 처리
-
-        Item item = itemService.processCreateOrUpdate(productRegisterDto);
+        log.info(productRegisterDto.toString());
+        Item item = productRegisterDto.getOption().equals("create") ? itemService.processCreate(productRegisterDto) : itemService.processUpdate(productRegisterDto);
 
         itemService.processItemTicket(productRegisterDto,item);
         itemService.processItemImg(productRegisterDto,utilMethod,item);
         itemService.processItemCourse(productRegisterDto,utilMethod,item);
 
-        return new ResponseTemplate<>("상품 수정 완료");
-    }
+        if (productRegisterDto.getOption().equals("create")){
+            return new ResponseTemplate<>("상품 생성 완료");
+        } else{
+            return new ResponseTemplate<>("상품 수정 완료");
+        }
 
+    }
     @GetMapping("/product/{itemCode}")
     public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("itemCode") String itemCode){
         //TODO
@@ -134,18 +127,30 @@ public class AdminPageController {
     @PostMapping("/product/search")
     public ResponseTemplate<AdminPageResponse.getItemByCategory> reqProductSearch(@RequestBody AdminPageRequest.getItemByCategory searchDto){
         searchDto.setPage(searchDto.getPage()-1);
-        if (searchDto.getOption() == 0){
+        if (searchDto.getOption() == "orphanage"){
             return new ResponseTemplate<>(itemService.processSearchOrphanage(searchDto));
-        } else if(searchDto.getOption() ==1){
+        } else if(searchDto.getOption() == "Category"){
             return new ResponseTemplate<>(itemService.processSearchItem(searchDto));
         } else {
             return new ResponseTemplate<>(itemService.processSearchItemAll(searchDto));
         }
     }
 
+    @GetMapping("/product/getList/byDisplay")
+    public ResponseTemplate<AdminPageResponse.getItemByDisplayStatus> reqDisplayProductList(@RequestParam("limit") int limit, @RequestParam("page") int page, @RequestParam("displayStatus") String displayStatus){
+        //TODO
+        // 유저 데이터 선 처리
 
+        int sqlPage = page -1;
 
+        return new ResponseTemplate<>(itemService.processGetAllDisplayItems(limit,sqlPage,displayStatus));
+    }
+    @GetMapping("/change/displayStatus")
+    public ResponseTemplate<String> changeDisplayStatus(@RequestParam("status") String displayStatus, @RequestParam("itemCode") String itemCode){
+        itemService.changeItemStatus(displayStatus,itemCode);
 
+        return new ResponseTemplate<>("상품 상태가 변경되었습니다.");
+    }
 
     @PostMapping("/notice/register")
     public ResponseTemplate<AdminPageResponse.noticeRegister> noticeRegister(@RequestBody AdminPageRequest.noticeRegister noticeRegisterDto){
@@ -256,4 +261,42 @@ public class AdminPageController {
         mainPageComponentService.processDeleteMainPageComponent(id);
         return new ResponseTemplate<>("삭제 완료");
     }
+
+
+    @PostMapping("/crate/guide")
+    public ResponseTemplate<AdminResponse.GuideInfo> createGuide(@RequestBody AdminRequest.guide request){
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+
+        return  new ResponseTemplate<>(userService.createGuide(request,utilMethod));
+    }
+
+    @GetMapping("/read/guide/{code}")
+    public ResponseTemplate<AdminResponse.GuideInfo> readGuide(@PathVariable("code") String code){
+
+        return new ResponseTemplate<>(userService.readGuide(code));
+    }
+
+    @PostMapping("/update/guide/{code}")
+    public ResponseTemplate<AdminResponse.GuideInfo> updateGuide(@PathVariable("code") String code,@RequestBody AdminRequest.guide request){
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+
+        return  new ResponseTemplate<>(userService.updateGuide(request,code,utilMethod));
+    }
+
+    @GetMapping("/delete/guide/{code}")
+    public ResponseTemplate<String> deleteGuide(@PathVariable("code") String code){
+
+        userService.deleteGuide(code);
+        return new ResponseTemplate<>("가이드 삭제가 완료 되었습니다.");
+    }
+
+
+    @GetMapping("/list/guide")
+    public ResponseTemplate<List<AdminResponse.GuideInfo>> listGuide(@RequestParam("page") Long page, @RequestParam("limit") Long limit){
+
+        return new ResponseTemplate<>(userService.listGuide(page,limit));
+    }
+
+
+
 }

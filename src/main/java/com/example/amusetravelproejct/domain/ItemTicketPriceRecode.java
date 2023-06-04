@@ -19,6 +19,8 @@ public class ItemTicketPriceRecode  extends BaseEntity{
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private Long id;
 
+    private Long quantity;
+
     private String startDate;
     private String endDate;
     private String mon;

@@ -5,6 +5,7 @@ import com.example.amusetravelproejct.oauth.entity.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.List;
 
@@ -37,4 +38,21 @@ public class AdminResponse {
         private RoleType roleType;
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class createGuide{
+        private GuideInfo guideInfo;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GuideInfo{
+        private Long guide_db_id;
+        private String guideCode;
+        private String userName;
+        private String email;
+        private String profileImageUrl;
+        private String introduce;
+    }
 }

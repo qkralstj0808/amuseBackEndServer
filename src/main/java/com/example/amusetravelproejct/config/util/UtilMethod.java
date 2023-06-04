@@ -22,18 +22,10 @@ public class UtilMethod {
     public static SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
     public static String[] day = {"sun","mon","tue","wed","thu","fri","sat"};
-    public static String[] outGrad = {"bronze","silver","gold","platinum","diamond"};
+    public static String[] outGrad = {"Bronze","Silver","Gold","Platinum","Diamond"};
 
     public static String[] status = {"creat","update","read"};
-    public static HashMap<String,Long> grad = new HashMap<String,Long>(){
-        {
-            put("bronze",0L);
-            put("silver",1L);
-            put("gold",2L);
-            put("platinum",3L);
-            put("diamond",4L);
-        }
-    };
+
     public String getImgUrl(String base64Img, String fileName) {
         // TODO
         // 멀티파트, base64로 받은 이미지 S3로 보내어 이미지 저장
