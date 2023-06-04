@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.swing.*;
 import java.util.List;
 
 public class AdminPageRequest {
@@ -169,6 +170,39 @@ public class AdminPageRequest {
     }
 
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class createPage {
+        private String name;
+        private String fileName;
+        private String base64Data;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private List<PageComponentInfo> pageComponentInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PageComponentInfo {
+        private Long componentId;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class updatePage {
+        private String name;
+        private String fileName;
+        private String base64Data;
+        private Boolean disable;
+        private String mainDescription;
+        private String subDescription;
+        private String updatedBy;
+        private List<PageComponentInfo> pageComponentInfos;
+    }
 }
 
 

@@ -1,10 +1,7 @@
 package com.example.amusetravelproejct.domain;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -16,6 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Page {
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
@@ -27,6 +25,6 @@ public class Page {
     private Long sequence;
     @ManyToOne
     private Admin admin;
-    @OneToMany(mappedBy = "page", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PageComponent> pageComponents;
+//    @OneToMany(mappedBy = "page", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<PageComponent> pageComponents;
 }

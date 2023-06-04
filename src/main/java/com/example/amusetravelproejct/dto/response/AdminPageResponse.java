@@ -323,4 +323,109 @@ public class AdminPageResponse {
         private List<String> itemCode;
         private String tileImgUrl;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class createPage {
+        private Long   id;
+        private String hashTag;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class updatePage {
+        private Long id;
+        private String name;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private List<PageComponentInfo> pageComponentInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PageComponentInfo {
+        private Long id;
+        private String type;
+        private String title;
+        private String PcBannerUrl;
+        private String PcBannerLink;
+        private String MobileBannerUrl;
+        private String MobileBannerLink;
+        private String content;
+        private String createBy;
+        private String updateBy;
+    }
+
+//    @Data
+//    @AllArgsConstructor
+//    @NoArgsConstructor
+//    public static class ItemInfo {
+//        private Long id;
+//        private Long type;
+//        private Long title;
+//        private String PcBannerUrl;
+//        private String PcBannerLink;
+//        private String MobileBannerUrl;
+//        private String MobileBannerLink;
+//        private String content;
+//        private String createBy;
+//        private String updateBy;
+////        private List<ItemInfo> itemInfos;
+//    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getPage {
+        private Long   id;
+        private String name;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private List<PageComponentInfo> pageComponentInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getAllPage {
+        private Long   id;
+        private String name;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private List<PageComponentId> pageComponentInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PageComponentId {
+        private Long id;
+    }
 }
