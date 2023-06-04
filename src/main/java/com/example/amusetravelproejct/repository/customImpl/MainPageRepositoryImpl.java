@@ -1,8 +1,8 @@
 package com.example.amusetravelproejct.repository.customImpl;
 
-import static com.example.amusetravelproejct.domain.QMainPageComponent.mainPageComponent;
 import static com.example.amusetravelproejct.domain.QMainPage.mainPage;
 import static com.example.amusetravelproejct.domain.QItem.item;
+import static com.example.amusetravelproejct.domain.QPageComponent.pageComponent;
 
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.dto.request.*;
@@ -24,13 +24,13 @@ public class MainPageRepositoryImpl implements MainPageRepositoryCustom {
     }
 
     @Override
-    public List<MainPageComponent> findItemInListsByMainPageRequestListDto() {
+    public List<PageComponent> findItemInListsByMainPageRequestListDto() {
 
-        return jpaQueryFactory.select(mainPageComponent)
-                .from(mainPageComponent)
-                .where(mainPageComponent.type.eq("리스트"))
-                .orderBy(mainPageComponent.sequence.asc())
-                .groupBy(mainPageComponent)
+        return jpaQueryFactory.select(pageComponent)
+                .from(pageComponent)
+                .where(pageComponent.type.eq("리스트"))
+                .orderBy(pageComponent.id.asc())
+                .groupBy(pageComponent)
                 .fetch();
     }
 //    return null;

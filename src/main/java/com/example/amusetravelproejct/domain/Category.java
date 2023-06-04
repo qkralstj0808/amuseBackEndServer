@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 /*
     메인 페이지에 보여줄 카테고리
@@ -25,7 +26,9 @@ public class Category extends BaseEntity{
     private Long id;
     private String category_name;
     private Long sequence;
+    private String disable;
     private String imgUrl;
+
     @Column(columnDefinition = "LONGTEXT")
     private String mainDescription;
     @Column(columnDefinition = "LONGTEXT")
@@ -38,4 +41,7 @@ public class Category extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "update_admin")
     private Admin updateAdmin;
+
+    @OneToMany(mappedBy = "page", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PageComponent> pageComponents;
 }

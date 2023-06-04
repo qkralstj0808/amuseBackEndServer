@@ -167,7 +167,7 @@ public class UserService {
         guideRepository.delete(guide);
     }
 
-    public List<AdminResponse.GuideInfo> listGuide(Long page, Long limit){
+    public AdminResponse.ListGuide listGuide(Long page, Long limit){
         Pageable pageable = PageRequest.of(Math.toIntExact(page - 1), Math.toIntExact(limit));
         List<AdminResponse.GuideInfo> guideInfos = new ArrayList<>();
         Page<Guide> guides = guideRepository.findAll(pageable);
@@ -177,6 +177,7 @@ public class UserService {
 
             log.info(data.getCode());
         });
-        return guideInfos;
+        AdminResponse.ListGuide listGuide = new AdminResponse.ListGuide(pageCount,guideInfos);
+        return listGuide;
     }
 }

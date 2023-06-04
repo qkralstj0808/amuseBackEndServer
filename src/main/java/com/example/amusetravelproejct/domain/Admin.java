@@ -81,8 +81,11 @@ public class Admin {
     private List<Category> displayCategoriesUpdates = new ArrayList<>();
 
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MainPageComponent> mainPageComponents = new ArrayList<>();
+    private List<PageComponent> pageComponents = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "updateAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PageComponent> updatePageComponents = new ArrayList<>();
 
 
 }
