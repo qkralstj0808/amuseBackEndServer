@@ -322,7 +322,7 @@ public class AdminPageController {
         return new ResponseTemplate<>(userService.listGuide(page,limit));
     }
 
-    @PostMapping("create/page")
+    @PostMapping("page/register")
     public ResponseTemplate<String> createPage(
             @RequestBody AdminPageRequest.createPage request,
             @AuthenticationPrincipal UserPrincipal userPrincipal){
@@ -333,7 +333,7 @@ public class AdminPageController {
         return pageService.createPage(request,utilMethod,findUser);
     }
 
-    @PutMapping("update/page/{page-id}")
+    @PutMapping("page/edit/{page-id}")
     public ResponseTemplate<AdminPageResponse.updatePage> updatePage(
             @PathVariable("page-id") Long page_id,
             @RequestBody AdminPageRequest.updatePage request,
