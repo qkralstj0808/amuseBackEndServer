@@ -3,7 +3,6 @@ package com.example.amusetravelproejct.controller;
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
-import com.example.amusetravelproejct.dto.request.ItemSearchRequest;
 import com.example.amusetravelproejct.dto.response.ItemResponse;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.service.ItemService;
@@ -12,11 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor

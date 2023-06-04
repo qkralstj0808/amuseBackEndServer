@@ -14,7 +14,7 @@ public class AdminController {
 
     private final UserService userService;
 
-    @GetMapping("")
+    @GetMapping("/search/users")
     public ResponseTemplate<AdminResponse.getUser> getUserInfo(@RequestParam(value = "email",required = true) String email){
         return userService.getUserByEmail(email);
     }
@@ -23,6 +23,8 @@ public class AdminController {
     public ResponseTemplate<AdminResponse.updateUserRoleType> updateUserRoleType(
             @PathVariable("user-db-id") Long user_db_id,
             @RequestBody AdminRequest.updateUserRoleType request){
+
         return userService.updateUserRoleType(user_db_id,request);
     }
+
 }

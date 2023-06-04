@@ -2,9 +2,7 @@ package com.example.amusetravelproejct.domain;
 
 import com.example.amusetravelproejct.oauth.entity.ProviderType;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -18,20 +16,21 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(name = "ADMIN_ID", length = 64, unique = true)
-//    @NotNull
-//    @Size(max = 64)
-//    private String userId;
+    @Column(name = "ADMIN_ID", length = 64, unique = true)
+    @NotNull
+    @Size(max = 64)
+    private String userId;
 
-//    @Column(name = "PROVIDER_TYPE", length = 20)
-//    @Enumerated(EnumType.STRING)
-//    @NotNull
-//    private ProviderType providerType;
+    @Column(name = "PROVIDER_TYPE", length = 20)
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ProviderType providerType;
 //
 //    @Column(name = "ROLE_TYPE", length = 20)
 //    @Enumerated(EnumType.STRING)
@@ -47,6 +46,10 @@ public class Admin {
     private String password;
     private String name;
     private String profileImgLink;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     // admin과 supervisor_info는 1:N 관계
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
