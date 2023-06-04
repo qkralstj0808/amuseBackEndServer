@@ -92,17 +92,39 @@ public class PageService {
         Category findCategory = categoryRepository.findById(page_id).orElseThrow(
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
         );
+
         Admin admin = adminRepository.findByUserId(findUser.getUserId()).orElseThrow(
                 () -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)
         );
+        log.info(request.getDisable().toString());
+        if(request.getDisable()){
+            findCategory.setDisable(request.getDisable());
+            List<Category> lessSequenceCategoryList = categoryRepository.findgreaterSequence(findCategory.getSequence());
+            findCategory.setSequence(0L);
+            for(Category category:lessSequenceCategoryList){
+                category.setSequence(category.getSequence()-1);
+                category.setUpdateAdmin(admin);
+            }
+            categoryRepository.saveAll(lessSequenceCategoryList);
+            categoryRepository.saveAndFlush(findCategory);
+            return new ResponseTemplate(new AdminPageResponse.updatePage(
+                    findCategory.getId(),findCategory.getDisable(),findCategory.getCategory_name(),findCategory.getImgUrl(),
+                    findCategory.getSequence(),findCategory.getMainDescription(),
+                    findCategory.getSubDescription(),findCategory.getCreatedDate(),
+                    findCategory.getAdmin().getName(),findCategory.getModifiedDate(),admin.getName(),
+                    null));
+        }
 
+
+
+
+        findCategory.setDisable(request.getDisable());
         findCategory.setUpdateAdmin(admin);
         findCategory.setDisable(request.getDisable());
         findCategory.setCategory_name(request.getName());
         findCategory.setMainDescription(request.getMainDescription());
         findCategory.setSubDescription(request.getSubDescription());
         findCategory.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(), request.getFileName()));
-
         List<CategoryPageComponent> categoryPageComponents = findCategory.getCategoryPageComponents();
         categoryPageComponents.clear();
         List<Long> newPageComponentId = new ArrayList<>();
@@ -128,7 +150,7 @@ public class PageService {
         categoryRepository.saveAndFlush(findCategory);
 
         return new ResponseTemplate(new AdminPageResponse.updatePage(
-                findCategory.getId(),findCategory.getCategory_name(),findCategory.getImgUrl(),
+                findCategory.getId(),findCategory.getDisable(),findCategory.getCategory_name(),findCategory.getImgUrl(),
                 findCategory.getSequence(),findCategory.getMainDescription(),
                 findCategory.getSubDescription(),findCategory.getCreatedDate(),
                 findCategory.getAdmin().getName(),findCategory.getModifiedDate(),findCategory.getUpdateAdmin().getName(),
@@ -166,7 +188,7 @@ public class PageService {
         }
 
         return new ResponseTemplate(new AdminPageResponse.getPage(
-                findCategory.getId(),findCategory.getCategory_name(),findCategory.getImgUrl(),
+                findCategory.getId(),findCategory.getDisable(),findCategory.getCategory_name(),findCategory.getImgUrl(),
                 findCategory.getSequence(),findCategory.getMainDescription(),
                 findCategory.getSubDescription(),findCategory.getCreatedDate(),
                 findCategory.getAdmin().getName(),findCategory.getModifiedDate(),findCategory.getUpdateAdmin().getName(),
@@ -186,13 +208,14 @@ public class PageService {
                 ).collect(Collectors.toList())));
     }
 
-    public ResponseTemplate<AdminPageResponse.getAllPage> getAllPage() {
+    public ResponseTemplate<AdminPageResponse.getAllPage> getAllPage(Boolean disable) {
 
-        List<Category> allCategory = categoryRepository.findAll();
+        List<Category> allCategory = categoryRepository.findAllByDisable(disable);
 
         return new ResponseTemplate(allCategory.stream().map(
                 category -> new AdminPageResponse.getAllPage(
                         category.getId(),
+                        category.getDisable(),
                         category.getCategory_name(),
                         category.getImgUrl(),
                         category.getSequence(),
