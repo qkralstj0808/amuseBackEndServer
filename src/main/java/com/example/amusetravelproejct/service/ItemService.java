@@ -109,9 +109,10 @@ public class ItemService {
         item.setDuration(Math.toIntExact(duration));
 
 
-        List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
-        if (!users.isEmpty()) {
-            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+
+        if (productRegisterDto.getAccessAuthority() != null) {
+            List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
             users.forEach(email -> {
                 User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
                 TargetUser targetUser = new TargetUser();
@@ -172,12 +173,13 @@ public class ItemService {
 
         item.getTargetUsers().clear();
 
-        List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
-        if (users != null) {
-            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        if (productRegisterDto.getAccessAuthority() != null) {
+            List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
             users.forEach(email -> {
                 User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
                 TargetUser targetUser = new TargetUser();
+
                 targetUser.setItem(item);
                 targetUser.setUser(user);
                 targetUserRepository.save(targetUser);
@@ -193,6 +195,7 @@ public class ItemService {
 
     //ItemImg
     public void processItemImg(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item) {
+
 
 
 
@@ -213,6 +216,8 @@ public class ItemService {
             }
         }
 
+
+
         for (int i = 0; i < productRegisterDto.getMainImg().size(); i++) {
             if(productRegisterDto.getMainImg().get(i).getId() == null){
                 ItemImg itemImg = new ItemImg();
@@ -223,6 +228,13 @@ public class ItemService {
                 itemImg.setItem(item);
                 imgRepository.save(itemImg);
             }else{
+                if (productRegisterDto.getMainImg().get(i).getBase64Data() == null && productRegisterDto.getOption().equals("create")){
+                    ItemImg itemImg = new ItemImg();
+                    itemImg.setImgUrl(productRegisterDto.getMainImg().get(i).getImgUrl());
+                    itemImg.setItem(item);
+                    imgRepository.save(itemImg);
+                }
+
                 if (productRegisterDto.getMainImg().get(i).getBase64Data() !=null){
                     ItemImg itemImg = imgRepository.findById(productRegisterDto.getMainImg().get(i).getId()).get();
                     String url = utilMethod.getImgUrl(productRegisterDto.getMainImg().get(i).getBase64Data(),
@@ -233,6 +245,8 @@ public class ItemService {
                     imgRepository.save(itemImg);
                 }
             }
+
+
         }
     }
     //ItemTicket
@@ -791,7 +805,7 @@ public class ItemService {
 
         allDisplayItems.getContent().forEach(item ->{
             AdminPageResponse.getItemsByDisplayStat itemsByDisplayStat = new AdminPageResponse.getItemsByDisplayStat();
-            itemsByDisplayStat.setItemCode(item.getItemCode());
+            itemsByDisplayStat.setProductId(item.getItemCode());
             itemsByDisplayStat.setTitle(item.getTitle());
             if (item.getItemImg_list().isEmpty()){
                 itemsByDisplayStat.setImgUrl(null);
