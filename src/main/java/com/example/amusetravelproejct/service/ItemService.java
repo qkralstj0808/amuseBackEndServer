@@ -805,7 +805,7 @@ public class ItemService {
 
         allDisplayItems.getContent().forEach(item ->{
             AdminPageResponse.getItemsByDisplayStat itemsByDisplayStat = new AdminPageResponse.getItemsByDisplayStat();
-            itemsByDisplayStat.setProductId(item.getItemCode());
+            itemsByDisplayStat.setItemCode(item.getItemCode());
             itemsByDisplayStat.setTitle(item.getTitle());
             if (item.getItemImg_list().isEmpty()){
                 itemsByDisplayStat.setImgUrl(null);
