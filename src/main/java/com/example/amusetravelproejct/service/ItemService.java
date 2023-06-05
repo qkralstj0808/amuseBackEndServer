@@ -111,7 +111,7 @@ public class ItemService {
 
         item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
 
-        if (productRegisterDto.getAccessAuthority() != null) {
+        if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null) {
             List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
             users.forEach(email -> {
                 User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -174,7 +174,7 @@ public class ItemService {
         item.getTargetUsers().clear();
 
         item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
-        if (productRegisterDto.getAccessAuthority() != null) {
+        if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
             List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
             users.forEach(email -> {
                 User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -643,6 +643,22 @@ public class ItemService {
         location.setCity(item.getCity());
         location.setCountry(item.getCountry());
         productRegisterDto.setLocation(location);
+
+        ProductRegisterDto.accessData accessData = new ProductRegisterDto.accessData();
+        List<String> userEmail = new ArrayList<>();
+
+        if (item.getGrade() != null){
+            accessData.setAccessibleTier(UtilMethod.outGrad[Math.toIntExact(item.getGrade())]);
+        }
+
+        if (item.getTargetUsers() != null){
+            item.getTargetUsers().forEach(user ->{
+                userEmail.add(user.getUser().getEmail());
+            });
+            accessData.setAccessibleUserList(userEmail);
+        }
+        productRegisterDto.setAccessAuthority(accessData);
+
 
         List<ProductRegisterDto.MainImageDto> mainImageDtos = new ArrayList<>();
 
