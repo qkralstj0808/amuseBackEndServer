@@ -109,7 +109,11 @@ public class ItemService {
         item.setDuration(Math.toIntExact(duration));
 
 
-        item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
+            item.setGrade(null);
+        }else{
+            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        }
 
         if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null) {
             List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
@@ -172,8 +176,11 @@ public class ItemService {
 
 
         item.getTargetUsers().clear();
-
-        item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
+            item.setGrade(null);
+        }else{
+            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        }
         if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
             List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
             users.forEach(email -> {
@@ -337,15 +344,9 @@ public class ItemService {
         } else {
 
             //1. 입력된 티켓의 id를 저장
-            //2. 기존에 있던 티켓의 id를 저장
-            //3. 기존에 있던 티켓의 id와 입력된 티켓의 id를 비교
-            //4. 기존에 있던 티켓의 id중 입력된 티켓의 id가 없는 id를 제거
-            //5. 입력된 티켓의 id중 기존에 있던 티켓의 id가 없는 id를 저장
 
             List<Long> inputTicketId = new ArrayList<>();
             List<Long> oldTicketId = new ArrayList<>();
-            List<Long> inputTicketPriceRecodeId = new ArrayList<>();
-            List<Long> oldTicketPriceRecodeId = new ArrayList<>();
 
             productRegisterDto.getTicket().forEach(ticketDto -> {
                 inputTicketId.add(ticketDto.getId());
@@ -353,44 +354,24 @@ public class ItemService {
             item.getItemTickets().forEach(itemTicket -> {
                 oldTicketId.add(itemTicket.getId());
             });
-            productRegisterDto.getTicket().forEach(ticketDto -> {
-                ticketDto.getPriceList().forEach(priceListDto -> {
-                    inputTicketPriceRecodeId.add(priceListDto.getId());
-                });
-            });
+
+
             item.getItemTickets().forEach(itemTicket -> {
-                itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPrice -> {
-                    oldTicketPriceRecodeId.add(itemTicketPrice.getId());
-                });
-            });
-            oldTicketId.forEach(ticketId -> {
-                if (!inputTicketId.contains(ticketId)){
-                    ItemTicket itemTicket = itemTicketRepository.findById(ticketId).get();
-                    itemTicket.getItemTicketPrices().forEach(itemTicketPrice -> {
-                        itemTicketPriceRepository.delete(itemTicketPrice);
+                if (!inputTicketId.contains(itemTicket.getId())){
+                    itemTicket.getItemTicketPrices().clear();
+                    itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> {
+                        itemTicketPriceRecode.setItemTicket(null);
                     });
-
                     itemTicket.setItem(null);
-                    itemTicketRepository.save(itemTicket);
+
                 }
             });
 
-            oldTicketPriceRecodeId.forEach(ticketPriceId -> {
-                if (!inputTicketPriceRecodeId.contains(ticketPriceId)){
-                    ItemTicketPriceRecode itemTicketPriceRecode = itemTicketPriceRecodeRepository.findById(ticketPriceId).get();
-                    itemTicketPriceRecode.setItemTicket(null);
-                    itemTicketPriceRecodeRepository.save(itemTicketPriceRecode);
-                }
-            });
-
-            oldTicketId.forEach(itemTicketId ->{
-                ItemTicket itemTicket = itemTicketRepository.findById(itemTicketId).get();
-                itemTicket.getItemTicketPrices().forEach(itemTicketPrice -> {
-                    itemTicketPriceRepository.delete(itemTicketPrice);
-                });
-            });
             for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
-                ItemTicket itemTicket = productRegisterDto.getTicket().get(i).getId() == null ? new ItemTicket() : itemTicketRepository.findById(productRegisterDto.getTicket().get(i).getId()).orElseThrow(() -> new RuntimeException("존재하지 않는 티켓입니다."));
+                if (productRegisterDto.getTicket().get(i).getId() !=null){
+                    continue;
+                }
+                ItemTicket itemTicket = new ItemTicket();
                 itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
                 itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
                 itemTicket.setItem(item);
@@ -401,7 +382,6 @@ public class ItemService {
 
                 List<ProductRegisterDto.TicketDto.PriceListDto.WeekdayPrices> weekdayPrices = new ArrayList<>();
                 Set<Long> dateSet = new HashSet<>();
-
                 //가격 관련 데이터 받기
                 productRegisterDto.getTicket().get(i).getPriceList().forEach(prices -> {
                     weekdayPrices.add(prices.getWeekdayPrices());
@@ -468,27 +448,22 @@ public class ItemService {
     public void processItemCourse(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item) {
         // 1. 기존에 있던 코스의 id중 입력된 코스의 id가 없는 id를 제거
 
-        if (productRegisterDto.getOption() == "update") {
+        if (productRegisterDto.getOption().equals("update")) {
             List<Long> inputCourseId = new ArrayList<>();
-            List<Long> oldCourseId = new ArrayList<>();
 
             productRegisterDto.getCourse().forEach(courseDto -> {
                 inputCourseId.add(courseDto.getId());
             });
 
-            item.getItemCourses().forEach(itemCourse -> {
-                oldCourseId.add(itemCourse.getId());
-            });
 
-            oldCourseId.forEach(courseId -> {
-                if (!inputCourseId.contains(courseId)) {
-                    ItemCourse itemCourse = itemCourseRepository.findById(courseId).get();
+            item.getItemCourses().forEach(courseId -> {
+                if (!inputCourseId.contains(courseId.getId())) {
+                    ItemCourse itemCourse = itemCourseRepository.findById(courseId.getId()).orElseThrow(() -> new RuntimeException("존재하지 않는 코스입니다."));
                     itemCourse.setItem(null);
-                    itemCourseRepository.save(itemCourse);
+
                 }
             });
         }
-
 
         for (int i = 0; i < productRegisterDto.getCourse().size(); i++) {
             ItemCourse itemCourse = null;
