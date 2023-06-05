@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.example.amusetravelproejct.domain.QItem.item;
@@ -212,6 +213,11 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
                 .join(item.itemHashTags, itemHashTag)
                 .where(notContainHashTag(contain_words).and(list_notContainTitle(contain_words)).and(list_containContent1_or_Content2(contain_words)))
                 .fetch();
+
+        if(hashTagQuery.size() == 0 && titleQuery.size() == 0 && contentQuery.size() == 0){
+            List<Item> itemList = Collections.emptyList();
+            return new PageImpl<>(itemList, pageable, 0);
+        }
 
 
         List<Item> itemList = jpaQueryFactory.selectFrom(item)
