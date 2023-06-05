@@ -37,7 +37,12 @@ public class PageComponentService {
         pageComponent.setType(registerListComponent.getType());
 
         if (registerListComponent.getId() != null){
+            pageComponent.getMainPages().forEach(mainPage ->{
+                mainPage.setPageComponent(null);
+                mainPage.setItem(null);
+            });
             pageComponent.getMainPages().clear();
+            pageComponent.setUpdateAdmin(adminRepository.findByEmail(registerListComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         }
 
         registerListComponent.getItemCode().forEach(itemCode -> {
@@ -52,22 +57,37 @@ public class PageComponentService {
         registerListComponentDto.setId(pageComponent.getId());
         registerListComponentDto.setTitle(pageComponent.getTitle());
         registerListComponentDto.setType(pageComponent.getType());
+        registerListComponentDto.setCreatedAt(pageComponent.getCreatedDate());
         registerListComponentDto.setCreatedBy(pageComponent.getAdmin().getEmail());
         registerListComponentDto.setItemCode(registerListComponent.getItemCode());
+
+        if (registerListComponent.getId() != null){
+            registerListComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getEmail());
+            registerListComponentDto.setUpdatedAt(pageComponent.getModifiedDate());
+        }
         return registerListComponentDto;
     }
 
     public AdminPageResponse.registerBannerComponent registerBannerComponent (AdminPageRequest.registerBannerComponent registerBannerComponent,UtilMethod utilMethod){
-        PageComponent pageComponent = new PageComponent();
+        PageComponent pageComponent = registerBannerComponent.getId() == null ? new PageComponent() : pageComponentRepository.findById(registerBannerComponent.getId()).orElseThrow(() -> new CustomException(ErrorCode.PAGE_COMPONENT_NOT_FOUND));
         pageComponent.setAdmin(adminRepository.findByEmail(registerBannerComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         pageComponent.setTitle(registerBannerComponent.getTitle());
         pageComponent.setType(registerBannerComponent.getType());
         pageComponent.setContent(registerBannerComponent.getContent());
 
-        pageComponent.setPcBannerUrl(utilMethod.getImgUrl(registerBannerComponent.getPcBannerBase64(), registerBannerComponent.getPcBannerFileName()));
+        if (registerBannerComponent.getId() != null){
+            pageComponent.setUpdateAdmin(adminRepository.findByEmail(registerBannerComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+        }
+
+        if (registerBannerComponent.getPcBannerBase64() != null){
+            pageComponent.setPcBannerUrl(utilMethod.getImgUrl(registerBannerComponent.getPcBannerBase64(), registerBannerComponent.getPcBannerFileName()));
+        }
 
         pageComponent.setPcBannerLink(registerBannerComponent.getPcBannerLink());
-        pageComponent.setMobileBannerUrl(utilMethod.getImgUrl(registerBannerComponent.getMobileBannerBase64(), registerBannerComponent.getMobileBannerFileName()));
+
+        if (registerBannerComponent.getMobileBannerBase64() != null){
+            pageComponent.setMobileBannerUrl(utilMethod.getImgUrl(registerBannerComponent.getMobileBannerBase64(), registerBannerComponent.getMobileBannerFileName()));
+        }
         pageComponent.setMobileBannerLink(registerBannerComponent.getMobileBannerLink());
         pageComponentRepository.save(pageComponent);
 
@@ -75,31 +95,49 @@ public class PageComponentService {
         registerBannerComponentDto.setId(pageComponent.getId());
         registerBannerComponentDto.setTitle(pageComponent.getTitle());
         registerBannerComponentDto.setType(pageComponent.getType());
+        registerBannerComponentDto.setCreatedAt(pageComponent.getCreatedDate());
         registerBannerComponentDto.setCreatedBy(pageComponent.getAdmin().getEmail());
         registerBannerComponentDto.setPcBannerImgUrl(pageComponent.getPcBannerUrl());
         registerBannerComponentDto.setPcBannerLink(pageComponent.getPcBannerLink());
         registerBannerComponentDto.setMobileBannerImgUrl(pageComponent.getMobileBannerUrl());
         registerBannerComponentDto.setMobileBannerLink(pageComponent.getMobileBannerLink());
         registerBannerComponentDto.setContent(pageComponent.getContent());
+
+        if (registerBannerComponent.getId() != null){
+            registerBannerComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getEmail());
+            registerBannerComponentDto.setUpdatedAt(pageComponent.getModifiedDate());
+        }
         return registerBannerComponentDto;
     }
 
     public AdminPageResponse.registerTileComponent registerTileComponent (AdminPageRequest.registerTileComponent registerTileComponent,UtilMethod utilMethod){
-        PageComponent pageComponent = new PageComponent();
+        PageComponent pageComponent = registerTileComponent.getId() == null ? new PageComponent() : pageComponentRepository.findById(registerTileComponent.getId()).orElseThrow(() -> new CustomException(ErrorCode.PAGE_COMPONENT_NOT_FOUND));
         List<AdminPageResponse.getMainItem> tileRespDto = new ArrayList<>();
         pageComponent.setAdmin(adminRepository.findByEmail(registerTileComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         pageComponent.setTitle(registerTileComponent.getTitle());
         pageComponent.setType(registerTileComponent.getType());
         pageComponentRepository.save(pageComponent);
 
+        if (registerTileComponent.getId() != null){
+            pageComponent.getMainPages().forEach(mainPage ->{
+                mainPage.setPageComponent(null);
+                mainPage.setItem(null);
+                mainPage.setTile(null);
+            });
+            pageComponent.getMainPages().clear();
+            pageComponent.setUpdateAdmin(adminRepository.findByEmail(registerTileComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+        }
+
         registerTileComponent.getTile().forEach(tileDto -> {
             Tile tile = new Tile();
             AdminPageResponse.getMainItem tileResp = new AdminPageResponse.getMainItem();
 
             tile.setTileName(tileDto.getTileName());
-            tile.setImgUrl(utilMethod.getImgUrl(tileDto.getTileBase64(), tileDto.getTileFileName()));
-
-           tileResp.setTileName(tileDto.getTileName());
+            if (tileDto.getTileBase64() != null){
+                tile.setImgUrl(utilMethod.getImgUrl(tileDto.getTileBase64(), tileDto.getTileFileName()));
+            } else{
+                tile.setImgUrl(tileDto.getTileImgUrl());
+            }
            tileResp.setTileImgUrl(tile.getImgUrl());
            tileRepository.save(tile);
 
@@ -123,6 +161,12 @@ public class PageComponentService {
         registerTileComponentDto.setType(pageComponent.getType());
         registerTileComponentDto.setCreatedBy(pageComponent.getAdmin().getEmail());
         registerTileComponentDto.setTile(tileRespDto);
+
+        if (registerTileComponent.getId() != null){
+            registerTileComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getEmail());
+            registerTileComponentDto.setUpdatedAt(pageComponent.getModifiedDate());
+        }
+
         return registerTileComponentDto;
     }
 
