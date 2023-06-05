@@ -128,6 +128,7 @@ public class AdminPageRequest {
         private String title;
         private String type;
         private String createdBy;
+        private String updatedBy;
     }
 
     @Data

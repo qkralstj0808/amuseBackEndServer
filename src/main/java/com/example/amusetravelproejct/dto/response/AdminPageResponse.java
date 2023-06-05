@@ -255,6 +255,8 @@ public class AdminPageResponse {
     @NoArgsConstructor
     public static class registerListComponent extends respRegisterComponent {
         private List<String> itemCode;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
     }
 
     @Data
@@ -270,6 +272,8 @@ public class AdminPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class registerBannerComponent extends respRegisterComponent {
+        private LocalDateTime updatedAt;
+        private String updatedBy;
         private String pcBannerImgUrl;
         private String pcBannerLink;
         private String mobileBannerImgUrl;
@@ -295,6 +299,8 @@ public class AdminPageResponse {
     @NoArgsConstructor
     public static class registerTileComponent extends respRegisterComponent {
         private List<AdminPageResponse.getMainItem> tile;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
     }
 
     @Data
