@@ -23,11 +23,6 @@ public class MainPageController {
 
     private final MainPageService mainPageService;
 
-    @GetMapping("/main/category")
-    public ResponseTemplate<MainPageResponse.getCategory> getCategory(){
-        return mainPageService.getCategory();
-    }
-
     // main page에서 가장 좋아요 수 많은 상품 10개 가지고 오기
     @GetMapping("/main/best-item")
     public ResponseTemplate<?> getBestItem(){
@@ -81,6 +76,18 @@ public class MainPageController {
 
         return mainPageService.getListItem();
     }
+
+    @GetMapping("/main/category")
+    public ResponseTemplate<MainPageResponse.getCategory> getCategory(){
+        return mainPageService.getCategory();
+    }
+
+    @GetMapping("/main/category/{category-id}/page")
+    public ResponseTemplate<MainPageResponse.getCategoryPage> getCategoryPage(
+            @PathVariable("category-id") Long category_id){
+        return mainPageService.getCategoryPage(category_id);
+    }
+
 
 
 }

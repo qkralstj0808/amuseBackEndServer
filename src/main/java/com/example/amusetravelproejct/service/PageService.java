@@ -96,7 +96,12 @@ public class PageService {
         Admin admin = adminRepository.findByUserId(findUser.getUserId()).orElseThrow(
                 () -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)
         );
-        log.info(request.getDisable().toString());
+
+
+        if(request.getDisable() == null){
+            request.setDisable(false);
+        }
+
         if(request.getDisable()){
             findCategory.setDisable(request.getDisable());
             List<Category> lessSequenceCategoryList = categoryRepository.findgreaterSequence(findCategory.getSequence());
@@ -115,37 +120,52 @@ public class PageService {
                     null));
         }
 
-
-
-
-        findCategory.setDisable(request.getDisable());
         findCategory.setUpdateAdmin(admin);
         findCategory.setDisable(request.getDisable());
-        findCategory.setCategory_name(request.getName());
-        findCategory.setMainDescription(request.getMainDescription());
-        findCategory.setSubDescription(request.getSubDescription());
-        findCategory.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(), request.getFileName()));
-        List<CategoryPageComponent> categoryPageComponents = findCategory.getCategoryPageComponents();
-        categoryPageComponents.clear();
+
+        if(request.getName() != null){
+            findCategory.setCategory_name(request.getName());
+        }
+
+        if (request.getMainDescription() != null){
+            findCategory.setMainDescription(request.getMainDescription());
+        }
+
+        if (request.getSubDescription() != null){
+            findCategory.setMainDescription(request.getSubDescription());
+        }
+
+        if (request.getBase64Data() != null && request.getFileName() != null){
+            findCategory.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(), request.getFileName()));
+        }
+
         List<Long> newPageComponentId = new ArrayList<>();
-        List<AdminPageRequest.PageComponentInfo> pageComponentInfos = request.getPageComponentInfos();
 
-        for (AdminPageRequest.PageComponentInfo pageComponentInfo : pageComponentInfos) {
-            newPageComponentId.add(pageComponentInfo.getComponentId());
+        List<CategoryPageComponent> categoryPageComponents = findCategory.getCategoryPageComponents();
+
+        if(request.getPageComponentInfos() != null && request.getPageComponentInfos().size() != 0){
+            categoryPageComponents.clear();
+
+            List<AdminPageRequest.PageComponentInfo> pageComponentInfos = request.getPageComponentInfos();
+
+            for (AdminPageRequest.PageComponentInfo pageComponentInfo : pageComponentInfos) {
+                newPageComponentId.add(pageComponentInfo.getComponentId());
+            }
+
+            List<PageComponent> pageComponentList = pageComponentRepository.findListByPageComponentIdList(newPageComponentId);
+
+            List<CategoryPageComponent> categoryPageComponentArrayList = new ArrayList<>();
+
+            for(PageComponent pageComponent:pageComponentList){
+                CategoryPageComponent categoryPageComponent = new CategoryPageComponent();
+                categoryPageComponent.setPageComponent(pageComponent);
+                categoryPageComponent.setCategory(findCategory);
+                categoryPageComponentArrayList.add(categoryPageComponent);
+            }
+
+            categoryPageComponents.addAll(categoryPageComponentArrayList);
         }
 
-        List<PageComponent> pageComponentList = pageComponentRepository.findListByPageComponentIdList(newPageComponentId);
-
-        List<CategoryPageComponent> categoryPageComponentArrayList = new ArrayList<>();
-
-        for(PageComponent pageComponent:pageComponentList){
-            CategoryPageComponent categoryPageComponent = new CategoryPageComponent();
-            categoryPageComponent.setPageComponent(pageComponent);
-            categoryPageComponent.setCategory(findCategory);
-            categoryPageComponentArrayList.add(categoryPageComponent);
-        }
-
-        categoryPageComponents.addAll(categoryPageComponentArrayList);
 
         categoryRepository.saveAndFlush(findCategory);
 
@@ -154,7 +174,8 @@ public class PageService {
                 findCategory.getSequence(),findCategory.getMainDescription(),
                 findCategory.getSubDescription(),findCategory.getCreatedDate(),
                 findCategory.getAdmin().getName(),findCategory.getModifiedDate(),findCategory.getUpdateAdmin().getName(),
-                pageComponentList.stream().map(
+                findCategory.getCategoryPageComponents().stream().map(
+                        CategoryPageComponent::getPageComponent).map(
                         pageComponent -> new AdminPageResponse.PageComponentInfo(
                                 pageComponent.getId(),
                                 pageComponent.getType(),
@@ -165,7 +186,7 @@ public class PageService {
                                 pageComponent.getMobileBannerLink(),
                                 pageComponent.getContent(),
                                 pageComponent.getAdmin().getName(),
-                                admin.getName()
+                                pageComponent.getUpdateAdmin() != null ? pageComponent.getUpdateAdmin().getName() : null
                         )
                 ).collect(Collectors.toList())
                 ));
