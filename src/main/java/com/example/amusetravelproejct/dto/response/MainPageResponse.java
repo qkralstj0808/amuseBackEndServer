@@ -108,7 +108,7 @@ public class MainPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class PageComponentInfo {
-        private Long id;
+        private Long page_component_id;
         private String type;
         private String title;
         private String PcBannerUrl;
