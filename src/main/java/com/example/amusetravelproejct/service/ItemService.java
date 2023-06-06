@@ -7,7 +7,6 @@ import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 
 import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
-import com.example.amusetravelproejct.domain.person_enum.Option;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
@@ -20,9 +19,7 @@ import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.tomcat.jni.Time;
 import org.springframework.data.domain.*;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,10 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.ParseException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,6 +47,8 @@ public class ItemService {
     private final ItemTicketPriceRecodeRepository itemTicketPriceRecodeRepository;
     private final UserRepository userRepository;
     private final TargetUserRepository targetUserRepository;
+    private final IconRepository iconRepository;
+    private final LikeItemRepository likeItemRepository;
     private final CategoryRepository categoryRepository;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -61,6 +57,10 @@ public class ItemService {
     //Admin
     public Optional<Admin> getAdminByEmail(String email) {
         return Optional.ofNullable(adminRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+    }
+
+    public List<Icon> getIconList() {
+        return iconRepository.findAll();
     }
 
     //Item
@@ -594,8 +594,29 @@ public class ItemService {
         return getItemByCategory;
     }
 
+    @Transactional
     public void processDeleteItem(String itemCode) {
         Item item = itemRepository.findByItemCode(itemCode).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+
+        item.getItemImg_list().clear();
+        item.getItemHashTags().clear();
+        item.getTargetUsers().clear();
+        item.getItemIcon_list().clear();
+        likeItemRepository.deleteByItem(item);
+        item.getItemCourses().forEach(itemCourse -> {
+            itemCourse.setItem(null);
+        });
+        item.getItemTickets().forEach(itemTicket -> {
+            itemTicket.setItem(null);
+        });
+        item.getMainPages().forEach(mainPage -> {
+            mainPage.setItem(null);
+        });
+        item.getItemReviews().forEach(
+                itemReview -> {
+                    itemReview.setItem(null);
+                }
+        );
         itemRepository.delete(item);
     }
 

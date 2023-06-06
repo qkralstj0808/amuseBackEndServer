@@ -118,10 +118,12 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(productRegisterDto);
     }
+
     @GetMapping("/product/delete")
     public ResponseTemplate<String> reqProductDelete(@RequestParam("itemCode") String itemCode){
         //TODO
         // productRegisterDto 데이터 선 처리
+
 
         itemService.processDeleteItem(itemCode);
         return new ResponseTemplate<>("상품 삭제 완료");
@@ -238,10 +240,33 @@ public class AdminPageController {
         return new ResponseTemplate<>(pageComponentService.registerListComponent(registerListComponentDto));
 
     }
+    @Transactional
+    @PostMapping("/component/edit/list")
+    public ResponseTemplate<?> reqComponentEditList(@RequestBody AdminPageRequest.registerListComponent registerListComponentDto){
+        UtilMethod utilMethod =  new UtilMethod(amazonS3Client);
+
+        //TODO
+        // 유저 데이터 선 처리
+        log.info(registerListComponentDto.toString());
+        return new ResponseTemplate<>(pageComponentService.registerListComponent(registerListComponentDto));
+
+    }
 
     @Transactional
     @PostMapping("/component/register/banner")
     public ResponseTemplate<?> reqComponentRegisterBanner(@RequestBody AdminPageRequest.registerBannerComponent registerBannerComponentDto){
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+
+        //TODO
+        // 유저 데이터 선 처리
+        log.info(registerBannerComponentDto.toString());
+
+        return new ResponseTemplate<>(pageComponentService.registerBannerComponent(registerBannerComponentDto,utilMethod));
+    }
+
+    @Transactional
+    @PostMapping("/component/edit/banner")
+    public ResponseTemplate<?> reqComponentEditBanner(@RequestBody AdminPageRequest.registerBannerComponent registerBannerComponentDto){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         //TODO
@@ -263,6 +288,17 @@ public class AdminPageController {
         return new ResponseTemplate<>(pageComponentService.registerTileComponent(registerTileComponentDto,utilMethod));
     }
 
+    @Transactional
+    @PostMapping("/component/edit/tile")
+    public ResponseTemplate<?> reqComponentEditTile(@RequestBody AdminPageRequest.registerTileComponent registerTileComponentDto){
+        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+
+        //TODO
+        // 유저 데이터 선 처리
+        log.info(registerTileComponentDto.toString());
+
+        return new ResponseTemplate<>(pageComponentService.registerTileComponent(registerTileComponentDto,utilMethod));
+    }
 
 
     @GetMapping("/component")
@@ -322,6 +358,11 @@ public class AdminPageController {
         return new ResponseTemplate<>(userService.listGuide(page,limit));
     }
 
+    @GetMapping("/icon/list")
+    public ResponseTemplate<?> listIcon(){
+        return new ResponseTemplate<>(itemService.getIconList());
+    }
+
     @PostMapping("page/register")
     public ResponseTemplate<String> createPage(
             @RequestBody AdminPageRequest.createPage request,
@@ -363,6 +404,7 @@ public class AdminPageController {
             @PathVariable("page-id") Long page_id){
         return pageService.deletePage(page_id);
     }
+
 
 
 
