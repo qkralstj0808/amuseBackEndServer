@@ -139,6 +139,7 @@ public class PageComponentService {
                 tile.setImgUrl(tileDto.getTileImgUrl());
             }
            tileResp.setTileImgUrl(tile.getImgUrl());
+           tileResp.setTileName(tile.getTileName());
            tileRepository.save(tile);
 
             tileDto.getItemCode().forEach(itemCode -> {

@@ -97,6 +97,9 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TargetUser> targetUsers = new ArrayList<>();
 
+
+
+
     // 로직
     public void plus_like(){
         this.like_num++;
