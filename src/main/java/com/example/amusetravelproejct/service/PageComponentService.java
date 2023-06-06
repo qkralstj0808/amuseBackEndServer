@@ -218,7 +218,9 @@ public class PageComponentService {
             List<AdminPageResponse.getMainPageItem> mainPageItemDto = new ArrayList<>();
             pageComponent.getMainPages().forEach(mainPage -> {
                 AdminPageResponse.getMainPageItem mainPageItem = new AdminPageResponse.getMainPageItem();
-                mainPageItem.setItemCode(mainPage.getItem().getItemCode());
+                mainPageItem.setItem_db_id(mainPage.getItem().getId());
+                mainPageItem.setProduct_code(mainPage.getItem().getItemCode());
+                mainPageItem.setStartPrice(mainPage.getItem().getStartPrice());
                 mainPageItem.setTitle(mainPage.getItem().getTitle());
 
                 List<String> category = new ArrayList<>();
@@ -271,7 +273,9 @@ public class PageComponentService {
 
                 mainPageRepository.findByTile(mainPage).forEach(mainPageItem ->{
                     AdminPageResponse.getMainPageItem tileItems = new AdminPageResponse.getMainPageItem();
-                    tileItems.setItemCode(mainPageItem.getItem().getItemCode());
+                    tileItems.setItem_db_id(mainPageItem.getItem().getId());
+                    tileItems.setProduct_code(mainPageItem.getItem().getItemCode());
+                    tileItems.setStartPrice(mainPageItem.getItem().getStartPrice());
                     tileItems.setTitle(mainPageItem.getItem().getTitle());
                     List<String> category = new ArrayList<>();
                     mainPageItem.getItem().getItemHashTags().forEach(itemHashTag -> {
