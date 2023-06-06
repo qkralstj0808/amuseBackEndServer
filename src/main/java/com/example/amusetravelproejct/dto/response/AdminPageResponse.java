@@ -230,7 +230,9 @@ public class AdminPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getMainPageItem{
-        private String itemCode;
+        private Long item_db_id;
+        private String product_code;
+        private Long startPrice;
         private String title;
         private List<String> category;
         private LocalDateTime createAt;
