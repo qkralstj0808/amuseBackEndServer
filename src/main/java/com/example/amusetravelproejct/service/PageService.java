@@ -102,8 +102,8 @@ public class PageService {
             request.setDisable(false);
         }
 
+        // 만약 disable을 true로 한다면 어차피 사용하지 않을 페이지라서 다른 업데이트 사항들을 반영 안했습니다
         if(request.getDisable()){
-            findCategory.setDisable(request.getDisable());
             List<Category> lessSequenceCategoryList = categoryRepository.findgreaterSequence(findCategory.getSequence());
             findCategory.setSequence(0L);
             for(Category category:lessSequenceCategoryList){
@@ -111,13 +111,15 @@ public class PageService {
                 category.setUpdateAdmin(admin);
             }
             categoryRepository.saveAll(lessSequenceCategoryList);
-            categoryRepository.saveAndFlush(findCategory);
-            return new ResponseTemplate(new AdminPageResponse.updatePage(
-                    findCategory.getId(),findCategory.getDisable(),findCategory.getCategory_name(),findCategory.getImgUrl(),
-                    findCategory.getSequence(),findCategory.getMainDescription(),
-                    findCategory.getSubDescription(),findCategory.getCreatedDate(),
-                    findCategory.getAdmin().getName(),findCategory.getModifiedDate(),admin.getName(),
-                    null));
+//            categoryRepository.saveAndFlush(findCategory);
+//            return new ResponseTemplate(new AdminPageResponse.updatePage(
+//                    findCategory.getId(),findCategory.getDisable(),findCategory.getCategory_name(),findCategory.getImgUrl(),
+//                    findCategory.getSequence(),findCategory.getMainDescription(),
+//                    findCategory.getSubDescription(),findCategory.getCreatedDate(),
+//                    findCategory.getAdmin().getName(),findCategory.getModifiedDate(),admin.getName(),
+//                    null));
+        }else{
+            findCategory.setSequence(request.getSequence());
         }
 
         findCategory.setUpdateAdmin(admin);
@@ -127,12 +129,13 @@ public class PageService {
             findCategory.setCategory_name(request.getName());
         }
 
+
         if (request.getMainDescription() != null){
             findCategory.setMainDescription(request.getMainDescription());
         }
 
         if (request.getSubDescription() != null){
-            findCategory.setMainDescription(request.getSubDescription());
+            findCategory.setSubDescription(request.getSubDescription());
         }
 
         if (request.getBase64Data() != null && request.getFileName() != null){

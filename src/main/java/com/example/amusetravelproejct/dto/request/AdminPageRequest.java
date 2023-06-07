@@ -198,6 +198,7 @@ public class AdminPageRequest {
         private String name;
         private String fileName;
         private String base64Data;
+        private Long sequence;
         private Boolean disable;
         private String mainDescription;
         private String subDescription;
