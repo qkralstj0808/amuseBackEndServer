@@ -177,6 +177,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", accessToken.getToken())
+                .queryParam("email",findUser.getEmail())
                 .build().toUriString();
 //        return accessToken.getToken();
     }
