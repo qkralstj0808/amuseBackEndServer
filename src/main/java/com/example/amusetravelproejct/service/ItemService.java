@@ -49,6 +49,7 @@ public class ItemService {
     private final TargetUserRepository targetUserRepository;
     private final IconRepository iconRepository;
     private final LikeItemRepository likeItemRepository;
+    private final ItemIconRepository itemIconRepository;
     private final CategoryRepository categoryRepository;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -72,6 +73,17 @@ public class ItemService {
         });
         item = new Item();
         itemRepository.save(item);
+
+
+        // 프론트 미구현
+//        productRegisterDto.getItemIcon().forEach(data -> {
+//            ItemIcon itemIcon = new ItemIcon();
+//            itemIcon.setItem(item);
+//            itemIcon.setText(data.getText());
+//            itemIcon.setIcon(iconRepository.findById(data.getIconId()).get());
+//            itemIconRepository.save(itemIcon);
+//        });
+
 
 
         item.setItemCode(productRegisterDto.getProductId());
@@ -139,6 +151,17 @@ public class ItemService {
         item.setTitle(productRegisterDto.getTitle());
         List<String> hashTags = productRegisterDto.getCategory();
 
+        // 프론트 미구현
+//        item.getItemIcons().clear();
+//        productRegisterDto.getItemIcon().forEach(data -> {
+//            ItemIcon itemIcon = new ItemIcon();
+//            itemIcon.setItem(item);
+//            itemIcon.setText(data.getText());
+//            itemIcon.setIcon(iconRepository.findById(data.getIconId()).get());
+//            itemIconRepository.save(itemIcon);
+//        });
+
+
         item.getItemHashTags().clear();
         hashTags.forEach(data -> {
             TempHashTag tempHashTag = new TempHashTag();
@@ -202,9 +225,6 @@ public class ItemService {
 
     //ItemImg
     public void processItemImg(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item) {
-
-
-
 
         if (productRegisterDto.getOption().equals("update")){
             List<Long> ordId = new ArrayList<>();
@@ -627,6 +647,17 @@ public class ItemService {
         productRegisterDto.setId(item.getId());
         productRegisterDto.setProductId(item.getItemCode());
 
+        //프론트 미구현
+
+//        List<ProductRegisterDto.ItemIcon> itemIcons = new ArrayList<>();
+//        item.getItemIcon_list().forEach(itemIcon -> {
+//            ProductRegisterDto.ItemIcon itemIconInput = new ProductRegisterDto.ItemIcon();
+//            itemIconInput.setIconId(itemIcon.getIcon().getId());
+//            itemIconInput.setText(itemIcon.getText());
+//            itemIcons.add(itemIconInput);
+//        });
+//        productRegisterDto.setItemIcon(itemIcons);
+
         List<String> category = new ArrayList<>();
         item.getItemHashTags().forEach(itemHashTag -> {
             category.add(itemHashTag.getHashTag());
@@ -738,6 +769,9 @@ public class ItemService {
         productRegisterDto.setAccessAuthority(accessAuthority);
         productRegisterDto.setStartPrice(item.getStartPrice());
         productRegisterDto.setOption("update"); //create
+
+
+
         return productRegisterDto;
     }
 

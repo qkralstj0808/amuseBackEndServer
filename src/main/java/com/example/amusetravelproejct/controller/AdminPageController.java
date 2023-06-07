@@ -114,16 +114,13 @@ public class AdminPageController {
         //TODO
         // productRegisterDto 데이터 선 처리
 
-        ProductRegisterDto productRegisterDto = itemService.processGetItemDetail(itemCode);
-
-        return new ResponseTemplate<>(productRegisterDto);
+        return new ResponseTemplate<>(itemService.processGetItemDetail(itemCode));
     }
 
     @GetMapping("/product/delete")
     public ResponseTemplate<String> reqProductDelete(@RequestParam("itemCode") String itemCode){
         //TODO
         // productRegisterDto 데이터 선 처리
-
 
         itemService.processDeleteItem(itemCode);
         return new ResponseTemplate<>("상품 삭제 완료");
@@ -351,7 +348,6 @@ public class AdminPageController {
         return new ResponseTemplate<>("가이드 삭제가 완료 되었습니다.");
     }
 
-
     @GetMapping("/list/guide")
     public ResponseTemplate<AdminResponse.ListGuide> listGuide(@RequestParam("page") Long page, @RequestParam("limit") Long limit){
 
@@ -362,6 +358,7 @@ public class AdminPageController {
     public ResponseTemplate<?> listIcon(){
         return new ResponseTemplate<>(itemService.getIconList());
     }
+
 
     @PostMapping("page/register")
     public ResponseTemplate<String> createPage(

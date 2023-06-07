@@ -14,6 +14,7 @@ public class ProductRegisterDto {
     private Long id;
     private String productId;
     private List<String> category;
+//    private List<ItemIcon> itemIcon;  프론트 미구현
     private String title;
     private Location location;
     private List<MainImageDto> mainImg;
@@ -31,7 +32,13 @@ public class ProductRegisterDto {
     private accessData accessAuthority;
 
 
-
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ItemIcon{
+        private String text;
+        private Long iconId;
+    }
 
 
     @Getter
