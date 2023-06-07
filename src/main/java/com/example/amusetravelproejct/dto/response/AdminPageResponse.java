@@ -1,15 +1,29 @@
 package com.example.amusetravelproejct.dto.response;
 
+import com.example.amusetravelproejct.domain.Item;
+import com.example.amusetravelproejct.domain.ItemIcon;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
+import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class AdminPageResponse {
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    @ToString
+    public static class itemInfo{
+        ProductRegisterDto item;
+        List<ItemIcon> itemIcons;
+    }
+
+
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

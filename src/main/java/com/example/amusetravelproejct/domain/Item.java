@@ -97,6 +97,8 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TargetUser> targetUsers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemIcon> itemIcons = new ArrayList<>();
 
 
 
