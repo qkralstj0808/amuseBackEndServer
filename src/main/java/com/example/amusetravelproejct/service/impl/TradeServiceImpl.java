@@ -44,4 +44,11 @@ public class TradeServiceImpl implements TradeService {
             throw new Exception("구매정보 등록에 실패했습니다.");
 
     }
+
+    @Override
+    public String getRefund(Long payInfoId) throws Exception {
+        tradeDao.getRefund(payInfoId);
+
+        return new String("환불 처리가 완료되었습니다.");
+    }
 }

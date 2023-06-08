@@ -55,4 +55,9 @@ public class PayInfo extends BaseEntity {
     @JoinColumn(name = "coupon_code_id", referencedColumnName = "id")
     private Coupon couponCode;
 
+    @Column(name = "is_refund", nullable = false)
+    private Long isRefund;
+
+
+
 }
