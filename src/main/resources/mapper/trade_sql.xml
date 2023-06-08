@@ -34,4 +34,16 @@
                )
     </insert>
 
+
+    <update id="getRefund">
+        update payInfo
+        set
+            is_refund = 1
+        where
+            id = #{payInfoId}
+    </update>
+
+
+
+
 </mapper>

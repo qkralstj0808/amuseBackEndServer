@@ -11,4 +11,6 @@ public interface TradeService  {
     String pushPayType(String payType)throws Exception;
 
     String pushPayInfo(PushPayInfoReq pushPayInfoReq) throws Exception;
+
+    String getRefund(Long payInfoId)throws Exception;
 }

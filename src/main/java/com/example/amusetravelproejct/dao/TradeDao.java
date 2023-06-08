@@ -13,4 +13,6 @@ public interface TradeDao {
     int pushPayType(String payType);
 
     int pushPayInfo(PushPayInfoReq pushPayInfoReq);
+
+    void getRefund(Long payInfoId);
 }

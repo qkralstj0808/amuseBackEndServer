@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -102,5 +101,16 @@ public class TradeController {
         String code = emailService.sendSimpleMessage(email);
         log.info("인증코드 : " + code);
         return new ResponseTemplate<>(code);
+    }
+
+    @PatchMapping("/refund")
+    public ResponseTemplate<String> getRefund(@PathVariable Long payInfoId){
+        try{
+            String result = tradeService.getRefund(payInfoId);
+            return new ResponseTemplate<>(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseTemplate<>(new String());
+        }
     }
 }
