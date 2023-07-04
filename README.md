@@ -1,4 +1,4 @@
-# amuseBackEndServer
+# amuseBackEndServer 리펙토링
 
 ## 1. 개발환경
 - Spring Boot 2.3.4
