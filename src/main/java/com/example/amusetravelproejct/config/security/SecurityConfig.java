@@ -1,6 +1,7 @@
 package com.example.amusetravelproejct.config.security;
 
 import com.example.amusetravelproejct.config.properties.CorsProperties;
+import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
 import com.example.amusetravelproejct.oauth.exception.RestAuthenticationEntryPoint;
@@ -76,8 +77,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     // 권한을 줄 수 있다.
                     .authorizeRequests()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//                    .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
-//                    .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
+//                    .antMatchers("/api/**/users/**").hasAnyAuthority(RoleType.USER.getCode())
+                    .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                     .anyRequest().permitAll()   // 위에 언급한 url 말고 나머지는 authenticated 된 사용자만 이용할 수 있도록 한다.
 
                 .and()

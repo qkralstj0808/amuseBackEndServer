@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.swing.*;
 import java.util.List;
 
 public class AdminPageRequest {
@@ -113,7 +114,7 @@ public class AdminPageRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getItemByCategory{
-        private Long option;
+        private String option;
         private Long page;
         private Long limit;
         private List<String> categoryNames;
@@ -122,13 +123,25 @@ public class AdminPageRequest {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class createMainPage{
+    public static class registerComponent{
+        private Long id;
         private String title;
         private String type;
-        private String createBy;
-        private Long sequence;
+        private String createdBy;
+        private String updatedBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerListComponent extends registerComponent{
         private List<String> itemCode;
-        private List<getMainItem> tile;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerBannerComponent extends registerComponent{
         private String pcBannerFileName;
         private String pcBannerBase64;
         private String pcBannerImgUrl;
@@ -139,9 +152,12 @@ public class AdminPageRequest {
         private String mobileBannerLink;
         private String content;
     }
-
-
-
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerTileComponent extends registerComponent{
+        private List<getMainItem> tile;
+    }
 
     @Data
     @AllArgsConstructor
@@ -152,8 +168,44 @@ public class AdminPageRequest {
         private String tileFileName;
         private String tileBase64;
         private String tileImgUrl;
-
     }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class createPage {
+        private String name;
+        private String fileName;
+        private String base64Data;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private List<PageComponentInfo> pageComponentInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PageComponentInfo {
+        private Long componentId;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class updatePage {
+        private String name;
+        private String fileName;
+        private String base64Data;
+        private Long sequence;
+        private Boolean disable;
+        private String mainDescription;
+        private String subDescription;
+        private String updatedBy;
+        private List<PageComponentInfo> pageComponentInfos;
+    }
+
 
 
 }

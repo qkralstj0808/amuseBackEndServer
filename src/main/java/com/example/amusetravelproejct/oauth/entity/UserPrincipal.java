@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -84,18 +85,18 @@ public class UserPrincipal implements OAuth2User, UserDetails, OidcUser {
         return null;
     }
 
-    public static UserPrincipal create(User user) {
+    public static UserPrincipal create(User user, Collection<GrantedAuthority> authorities) {
         return new UserPrincipal(
                 user.getUserId(),
                 user.getPassword(),
                 user.getProviderType(),
-                RoleType.USER,
-                Collections.singletonList(new SimpleGrantedAuthority(RoleType.USER.getCode()))
+                user.getRoleType(),
+                authorities
         );
     }
 
-    public static UserPrincipal create(User user, Map<String, Object> attributes) {
-        UserPrincipal userPrincipal = create(user);
+    public static UserPrincipal create(User user, Collection<GrantedAuthority> authorities,Map<String, Object> attributes) {
+        UserPrincipal userPrincipal = create(user,authorities);
         userPrincipal.setAttributes(attributes);
 
         return userPrincipal;

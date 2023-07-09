@@ -6,7 +6,7 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 
-import com.example.amusetravelproejct.domain.person_enum.Option;
+import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
@@ -19,9 +19,7 @@ import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.tomcat.jni.Time;
 import org.springframework.data.domain.*;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,10 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.ParseException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,8 +47,9 @@ public class ItemService {
     private final ItemTicketPriceRecodeRepository itemTicketPriceRecodeRepository;
     private final UserRepository userRepository;
     private final TargetUserRepository targetUserRepository;
-
-
+    private final IconRepository iconRepository;
+    private final LikeItemRepository likeItemRepository;
+    private final ItemIconRepository itemIconRepository;
     private final CategoryRepository categoryRepository;
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -64,75 +60,190 @@ public class ItemService {
         return Optional.ofNullable(adminRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
     }
 
+    public List<Icon> getIconList() {
+        return iconRepository.findAll();
+    }
+
     //Item
     @Transactional
-    public Item processCreateOrUpdate(ProductRegisterDto productRegisterDto) throws ParseException {
+    public Item processCreate(ProductRegisterDto productRegisterDto) throws ParseException {
         Item item;
-
-        if (productRegisterDto.getOption().equals("create")){
-            item = new Item();
-        } else{
-            item = itemRepository.findById(productRegisterDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
-        }
-
+        itemRepository.findByItemCode(productRegisterDto.getProductId()).ifPresent(data -> {
+            throw new CustomException(ErrorCode.ITEM_ALREADY_EXIST);
+        });
+        item = new Item();
         itemRepository.save(item);
 
-        if (productRegisterDto.getAccessAuthority().getAccessibleTier()  != null) {
-            item.setGrade(UtilMethod.grad.get(productRegisterDto.getAccessAuthority().getAccessibleTier()));
 
-            productRegisterDto.getAccessAuthority().getAccessibleUserList().forEach(
-                    data -> {
-                        User user = userRepository.findByEmail(data).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                        TargetUser targetUser = new TargetUser();
-                        targetUser.setUser(user);
-                        targetUser.setItem(item);
-                        targetUserRepository.save(targetUser);
-                    }
-            );
-        }
+        // 프론트 미구현
+//        productRegisterDto.getItemIcon().forEach(data -> {
+//            ItemIcon itemIcon = new ItemIcon();
+//            itemIcon.setItem(item);
+//            itemIcon.setText(data.getText());
+//            itemIcon.setIcon(iconRepository.findById(data.getIconId()).get());
+//            itemIconRepository.save(itemIcon);
+//        });
 
-        item.setItemCode(productRegisterDto.getItemCode());
+
+
+        item.setItemCode(productRegisterDto.getProductId());
         item.setTitle(productRegisterDto.getTitle());
         List<String> hashTags = productRegisterDto.getCategory();
-
         hashTags.forEach(data -> {
             TempHashTag tempHashTag = new TempHashTag();
-
             if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
                 tempHashTag.setHashTag(data);
                 tempHashTagRepository.save(tempHashTag);
             } else {
                 tempHashTag = tempHashTagRepository.findByHashTag(data).get();
             }
-
-
             ItemHashTag itemHashTag = new ItemHashTag();
             itemHashTag.setItem(item);
-
             itemHashTag.setHashTag(data);
             itemHashTag.setTempHashTag(tempHashTag);
             itemHashTagRepository.save(itemHashTag);
         });
+
         item.setCountry(productRegisterDto.getLocation().getCountry());
         item.setCity(productRegisterDto.getLocation().getCity());
         item.setContent_1(productRegisterDto.getMainInfo());
         item.setContent_2(productRegisterDto.getExtraInfo());
-        if (productRegisterDto.getAdmin() == null){
-            item.setUpdateAdmin(getAdminByEmail(productRegisterDto.getUpdateAdmin()).get());
-        }else{
-            item.setAdmin(getAdminByEmail(productRegisterDto.getAdmin()).get());
-        }
+        item.setAdmin(getAdminByEmail(productRegisterDto.getAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
 
-        Long duration = Long.parseLong(productRegisterDto.getDuration().split("박")[1].split("일")[0]);
+        Long duration = 0L;
+
+        if (productRegisterDto.getDuration().length() < 4){
+            duration = Long.valueOf(productRegisterDto.getDuration());
+        } else{
+            duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+        }
         item.setDuration(Math.toIntExact(duration));
+
+
+        if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
+            item.setGrade(null);
+        }else{
+            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        }
+
+        if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null) {
+            List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
+            users.forEach(email -> {
+                User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                TargetUser targetUser = new TargetUser();
+
+                targetUser.setItem(item);
+                targetUser.setUser(user);
+                targetUserRepository.save(targetUser);
+            });
+        }
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        item.setDisplayStatus(DisplayStatus.DISPLAY);
         return item;
     }
 
+    @Transactional
+    public Item processUpdate(ProductRegisterDto productRegisterDto) throws ParseException {
+        Item item = itemRepository.findById(productRegisterDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+        item.setItemCode(productRegisterDto.getProductId());
+        item.setTitle(productRegisterDto.getTitle());
+        List<String> hashTags = productRegisterDto.getCategory();
+
+        // 프론트 미구현
+//        item.getItemIcons().clear();
+//        productRegisterDto.getItemIcon().forEach(data -> {
+//            ItemIcon itemIcon = new ItemIcon();
+//            itemIcon.setItem(item);
+//            itemIcon.setText(data.getText());
+//            itemIcon.setIcon(iconRepository.findById(data.getIconId()).get());
+//            itemIconRepository.save(itemIcon);
+//        });
+
+
+        item.getItemHashTags().clear();
+        hashTags.forEach(data -> {
+            TempHashTag tempHashTag = new TempHashTag();
+            if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
+                tempHashTag.setHashTag(data);
+                tempHashTagRepository.save(tempHashTag);
+            } else {
+                tempHashTag = tempHashTagRepository.findByHashTag(data).get();
+            }
+            ItemHashTag itemHashTag = new ItemHashTag();
+            itemHashTag.setItem(item);
+            itemHashTag.setHashTag(data);
+            itemHashTag.setTempHashTag(tempHashTag);
+            itemHashTagRepository.save(itemHashTag);
+        });
+
+
+        item.setCountry(productRegisterDto.getLocation().getCountry());
+        item.setCity(productRegisterDto.getLocation().getCity());
+
+        item.setContent_1(productRegisterDto.getMainInfo());
+        item.setContent_2(productRegisterDto.getExtraInfo());
+
+
+        item.setUpdateAdmin(getAdminByEmail(productRegisterDto.getUpdateAdmin()).get());
+        item.setStartPrice(productRegisterDto.getStartPrice());
+        Long duration = 0L;
+
+        if (productRegisterDto.getDuration().length() < 4){
+            duration = Long.valueOf(productRegisterDto.getDuration());
+        } else{
+            duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+        }
+        item.setDuration(Math.toIntExact(duration));
+
+
+        item.getTargetUsers().clear();
+        if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
+            item.setGrade(null);
+        }else{
+            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        }
+        if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
+            List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
+            users.forEach(email -> {
+                User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                TargetUser targetUser = new TargetUser();
+
+                targetUser.setItem(item);
+                targetUser.setUser(user);
+                targetUserRepository.save(targetUser);
+            });
+        }
+        item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
+        item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        item.setDisplayStatus(DisplayStatus.DISPLAY);
+        return item;
+    }
+
+
+
     //ItemImg
     public void processItemImg(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item) {
+
+        if (productRegisterDto.getOption().equals("update")){
+            List<Long> ordId = new ArrayList<>();
+            List<Long> inputId = new ArrayList<>();
+            item.getItemImg_list().forEach(itemImg -> {
+                ordId.add(itemImg.getId());
+            });
+            productRegisterDto.getMainImg().forEach(itemImg -> {
+                inputId.add(itemImg.getId());
+            });
+
+            for (int i = 0; i < ordId.size(); i ++){
+                if (!inputId.contains(ordId.get(i))){
+                    item.getItemImg_list().remove(i);
+                }
+            }
+        }
+
+
 
         for (int i = 0; i < productRegisterDto.getMainImg().size(); i++) {
             if(productRegisterDto.getMainImg().get(i).getId() == null){
@@ -144,6 +255,13 @@ public class ItemService {
                 itemImg.setItem(item);
                 imgRepository.save(itemImg);
             }else{
+                if (productRegisterDto.getMainImg().get(i).getBase64Data() == null && productRegisterDto.getOption().equals("create")){
+                    ItemImg itemImg = new ItemImg();
+                    itemImg.setImgUrl(productRegisterDto.getMainImg().get(i).getImgUrl());
+                    itemImg.setItem(item);
+                    imgRepository.save(itemImg);
+                }
+
                 if (productRegisterDto.getMainImg().get(i).getBase64Data() !=null){
                     ItemImg itemImg = imgRepository.findById(productRegisterDto.getMainImg().get(i).getId()).get();
                     String url = utilMethod.getImgUrl(productRegisterDto.getMainImg().get(i).getBase64Data(),
@@ -154,6 +272,8 @@ public class ItemService {
                     imgRepository.save(itemImg);
                 }
             }
+
+
         }
     }
     //ItemTicket
@@ -189,6 +309,7 @@ public class ItemService {
                     Date startDateTemp;
                     Date endDateTemp;
 
+                    itemTicketPriceRecode.setQuantity(prices.getQuantity());
                     itemTicketPriceRecode.setStartDate(prices.getStartDate());
                     itemTicketPriceRecode.setEndDate(prices.getEndDate());
                     itemTicketPriceRecode.setItemTicket(itemTicket);
@@ -200,7 +321,6 @@ public class ItemService {
                     itemTicketPriceRecode.setSat(prices.getWeekdayPrices().getSat());
                     itemTicketPriceRecode.setSun(prices.getWeekdayPrices().getSun());
                     itemTicketPriceRecodeRepository.save(itemTicketPriceRecode);
-
 
                     try {
                         startDateTemp = (Date) UtilMethod.date.parse(prices.getStartDate());
@@ -243,38 +363,58 @@ public class ItemService {
             }
         } else {
 
+            //1. 입력된 티켓의 id를 저장
+
+            List<Long> inputTicketId = new ArrayList<>();
+            List<Long> oldTicketId = new ArrayList<>();
+
+            productRegisterDto.getTicket().forEach(ticketDto -> {
+                inputTicketId.add(ticketDto.getId());
+            });
+            item.getItemTickets().forEach(itemTicket -> {
+                oldTicketId.add(itemTicket.getId());
+            });
+
+
+            item.getItemTickets().forEach(itemTicket -> {
+                if (!inputTicketId.contains(itemTicket.getId())){
+                    itemTicket.getItemTicketPrices().clear();
+                    itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> {
+                        itemTicketPriceRecode.setItemTicket(null);
+                    });
+                    itemTicket.setItem(null);
+
+                }
+            });
+
             for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
-                ItemTicket itemTicket = itemTicketRepository.findById(productRegisterDto.getTicket().get(i).getId()).isEmpty() ? new ItemTicket() : itemTicketRepository.findById(productRegisterDto.getTicket().get(i).getId()).get();
+                if (productRegisterDto.getTicket().get(i).getId() !=null){
+                    continue;
+                }
+                ItemTicket itemTicket = new ItemTicket();
                 itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
                 itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
+                itemTicket.setItem(item);
 
-                if (itemTicket.getId() == null) {
-                    itemTicket.setItem(item);
-                } else {
-                    itemTicketPriceRepository.deleteByItemTicket(itemTicket);
-                }
-                itemTicketRepository.save(itemTicket);
-            }
-
-            for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
-                ItemTicket itemTicket = itemTicketRepository.findById(productRegisterDto.getTicket().get(i).getId()).get();
                 List<Date> startDate = new ArrayList<>();
                 List<Date> endDate = new ArrayList<>();
                 List<Long> datePoint = new ArrayList<>();
 
                 List<ProductRegisterDto.TicketDto.PriceListDto.WeekdayPrices> weekdayPrices = new ArrayList<>();
                 Set<Long> dateSet = new HashSet<>();
-
                 //가격 관련 데이터 받기
                 productRegisterDto.getTicket().get(i).getPriceList().forEach(prices -> {
                     weekdayPrices.add(prices.getWeekdayPrices());
-                    ItemTicketPriceRecode itemTicketPriceRecode = itemTicketPriceRecodeRepository.findById(prices.getId()).isEmpty() ? new ItemTicketPriceRecode() : itemTicketPriceRecodeRepository.findById(prices.getId()).get();
+
+                    ItemTicketPriceRecode itemTicketPriceRecode = prices.getId() == null ? new ItemTicketPriceRecode() : itemTicketPriceRecodeRepository.findById(prices.getId()).orElseThrow(() -> new RuntimeException("존재하지 않는 가격정보입니다."));
+
                     Date startDateTemp;
                     Date endDateTemp;
 
                     itemTicketPriceRecode.setStartDate(prices.getStartDate());
                     itemTicketPriceRecode.setEndDate(prices.getEndDate());
                     itemTicketPriceRecode.setItemTicket(itemTicket);
+                    itemTicketPriceRecode.setQuantity(prices.getQuantity());
                     itemTicketPriceRecode.setMon(prices.getWeekdayPrices().getMon());
                     itemTicketPriceRecode.setTue(prices.getWeekdayPrices().getTue());
                     itemTicketPriceRecode.setWed(prices.getWeekdayPrices().getWed());
@@ -299,11 +439,10 @@ public class ItemService {
 
                     startDate.add(startDateTemp);
                     endDate.add(endDateTemp);
-
-
                     datePoint.add(endDateTemp.getTime() - startDateTemp.getTime());
 
                 });
+
                 int count = datePoint.size();
                 while (count-- != 0) {
                     int index = datePoint.indexOf(datePoint.stream().min(Long::compareTo).get());
@@ -327,9 +466,29 @@ public class ItemService {
     }
     //ItemCourse
     public void processItemCourse(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item) {
+        // 1. 기존에 있던 코스의 id중 입력된 코스의 id가 없는 id를 제거
+
+        if (productRegisterDto.getOption().equals("update")) {
+            List<Long> inputCourseId = new ArrayList<>();
+
+            productRegisterDto.getCourse().forEach(courseDto -> {
+                inputCourseId.add(courseDto.getId());
+            });
+
+
+            item.getItemCourses().forEach(courseId -> {
+                if (!inputCourseId.contains(courseId.getId())) {
+                    ItemCourse itemCourse = itemCourseRepository.findById(courseId.getId()).orElseThrow(() -> new RuntimeException("존재하지 않는 코스입니다."));
+                    itemCourse.setItem(null);
+
+                }
+            });
+        }
+
         for (int i = 0; i < productRegisterDto.getCourse().size(); i++) {
             ItemCourse itemCourse = null;
-            if(productRegisterDto.getCourse().get(i).getId() == null){
+
+            if(productRegisterDto.getCourse().get(i).getId() == null || productRegisterDto.getOption().equals("create")){
                 itemCourse = new ItemCourse();
             }else{
                 itemCourse = itemCourseRepository.findById(productRegisterDto.getCourse().get(i).getId()).get();
@@ -347,13 +506,13 @@ public class ItemService {
             itemCourse.setContent(productRegisterDto.getCourse().get(i).getContent());
             itemCourse.setSequenceId(productRegisterDto.getCourse().get(i).getSequenceId());
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
+            itemCourse.setDay(Math.toIntExact(productRegisterDto.getCourse().get(i).getDay()));
+
+            itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
+            itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
             itemCourseRepository.save(itemCourse);
-
-
-
         }
     }
-
     public AdminPageResponse.getItemByCategory processSearchItem(AdminPageRequest.getItemByCategory findItemsDto){
         BooleanBuilder predicateFirstQ = new BooleanBuilder();
         BooleanBuilder predicateSendQ = new BooleanBuilder();
@@ -455,8 +614,29 @@ public class ItemService {
         return getItemByCategory;
     }
 
+    @Transactional
     public void processDeleteItem(String itemCode) {
         Item item = itemRepository.findByItemCode(itemCode).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+
+        item.getItemImg_list().clear();
+        item.getItemHashTags().clear();
+        item.getTargetUsers().clear();
+        item.getItemIcon_list().clear();
+        likeItemRepository.deleteByItem(item);
+        item.getItemCourses().forEach(itemCourse -> {
+            itemCourse.setItem(null);
+        });
+        item.getItemTickets().forEach(itemTicket -> {
+            itemTicket.setItem(null);
+        });
+        item.getMainPages().forEach(mainPage -> {
+            mainPage.setItem(null);
+        });
+        item.getItemReviews().forEach(
+                itemReview -> {
+                    itemReview.setItem(null);
+                }
+        );
         itemRepository.delete(item);
     }
 
@@ -465,7 +645,18 @@ public class ItemService {
 
         ProductRegisterDto productRegisterDto = new ProductRegisterDto();
         productRegisterDto.setId(item.getId());
-        productRegisterDto.setItemCode(item.getItemCode());
+        productRegisterDto.setProductId(item.getItemCode());
+
+        //프론트 미구현
+
+//        List<ProductRegisterDto.ItemIcon> itemIcons = new ArrayList<>();
+//        item.getItemIcon_list().forEach(itemIcon -> {
+//            ProductRegisterDto.ItemIcon itemIconInput = new ProductRegisterDto.ItemIcon();
+//            itemIconInput.setIconId(itemIcon.getIcon().getId());
+//            itemIconInput.setText(itemIcon.getText());
+//            itemIcons.add(itemIconInput);
+//        });
+//        productRegisterDto.setItemIcon(itemIcons);
 
         List<String> category = new ArrayList<>();
         item.getItemHashTags().forEach(itemHashTag -> {
@@ -480,7 +671,24 @@ public class ItemService {
         location.setCountry(item.getCountry());
         productRegisterDto.setLocation(location);
 
+        ProductRegisterDto.accessData accessData = new ProductRegisterDto.accessData();
+        List<String> userEmail = new ArrayList<>();
+
+        if (item.getGrade() != null){
+            accessData.setAccessibleTier(UtilMethod.outGrad[Math.toIntExact(item.getGrade())]);
+        }
+
+        if (item.getTargetUsers() != null){
+            item.getTargetUsers().forEach(user ->{
+                userEmail.add(user.getUser().getEmail());
+            });
+            accessData.setAccessibleUserList(userEmail);
+        }
+        productRegisterDto.setAccessAuthority(accessData);
+
+
         List<ProductRegisterDto.MainImageDto> mainImageDtos = new ArrayList<>();
+
         item.getItemImg_list().forEach(itemImg -> {
             ProductRegisterDto.MainImageDto mainImageDto = new ProductRegisterDto.MainImageDto();
             mainImageDto.setId(itemImg.getId());
@@ -488,7 +696,6 @@ public class ItemService {
             mainImageDtos.add(mainImageDto);
         });
         productRegisterDto.setMainImg(mainImageDtos);
-
 
         List<ProductRegisterDto.TicketDto> ticketDtos = new ArrayList<>();
 
@@ -499,10 +706,11 @@ public class ItemService {
             ticketDto.setContent(itemTicket.getContent());
             List<ProductRegisterDto.TicketDto.PriceListDto> priceListDtos = new ArrayList<>();
             itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> {
-                ProductRegisterDto.TicketDto.PriceListDto priceList = new ProductRegisterDto.TicketDto.PriceListDto();
-                priceList.setId(itemTicketPriceRecode.getId());
-                priceList.setStartDate(itemTicketPriceRecode.getStartDate());
-                priceList.setEndDate(itemTicketPriceRecode.getEndDate());
+                ProductRegisterDto.TicketDto.PriceListDto priceRecode = new ProductRegisterDto.TicketDto.PriceListDto();
+                priceRecode.setId(itemTicketPriceRecode.getId());
+                priceRecode.setStartDate(itemTicketPriceRecode.getStartDate());
+                priceRecode.setEndDate(itemTicketPriceRecode.getEndDate());
+                priceRecode.setQuantity(itemTicketPriceRecode.getQuantity());
                 ProductRegisterDto.TicketDto.PriceListDto.WeekdayPrices weekdayPrices = new ProductRegisterDto.TicketDto.PriceListDto.WeekdayPrices();
                 weekdayPrices.setMon(itemTicketPriceRecode.getMon());
                 weekdayPrices.setTue(itemTicketPriceRecode.getTue());
@@ -511,8 +719,8 @@ public class ItemService {
                 weekdayPrices.setFri(itemTicketPriceRecode.getFri());
                 weekdayPrices.setSat(itemTicketPriceRecode.getSat());
                 weekdayPrices.setSun(itemTicketPriceRecode.getSun());
-                priceList.setWeekdayPrices(weekdayPrices);
-                priceListDtos.add(priceList);
+                priceRecode.setWeekdayPrices(weekdayPrices);
+                priceListDtos.add(priceRecode);
             });
             ticketDto.setPriceList(priceListDtos);
             ticketDtos.add(ticketDto);
@@ -521,6 +729,7 @@ public class ItemService {
         productRegisterDto.setMainInfo(item.getContent_1());
 
         List<ProductRegisterDto.CourseDto> courseDtos = new ArrayList<>();
+
         item.getItemCourses().forEach(itemCourse -> {
             ProductRegisterDto.CourseDto courseDto = new ProductRegisterDto.CourseDto();
             courseDto.setId(itemCourse.getId());
@@ -528,10 +737,10 @@ public class ItemService {
             courseDto.setContent(itemCourse.getContent());
             courseDto.setTimeCost(itemCourse.getTimeCost());
             courseDto.setSequenceId(itemCourse.getSequenceId());
-
+            courseDto.setDay(Long.valueOf(itemCourse.getDay()));
+            courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(itemCourse.getLatitude().toString(),itemCourse.getLongitude().toString()));
             ProductRegisterDto.CourseDto.CourseImageDto courseImageDto = new ProductRegisterDto.CourseDto.CourseImageDto();
             courseImageDto.setImgUrl(itemCourse.getImageUrl());
-
             courseDto.setImage(courseImageDto);
             courseDtos.add(courseDto);
         });
@@ -560,12 +769,15 @@ public class ItemService {
         productRegisterDto.setAccessAuthority(accessAuthority);
         productRegisterDto.setStartPrice(item.getStartPrice());
         productRegisterDto.setOption("update"); //create
+
+
+
         return productRegisterDto;
     }
 
-    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndConditionSortInTitle(int current_page, PageRequest pageRequest,
+    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndConditionSort(int current_page, PageRequest pageRequest,
                                                                                            String[] contain_words) {
-        Page<Item> searchItemByWordInTitle = itemRepository.searchItemByWordInTitle(contain_words,pageRequest);
+        Page<Item> searchItemByWordInTitle = itemRepository.searchItemByWordAndSort(contain_words,pageRequest);
 
         int total_page = searchItemByWordInTitle.getTotalPages();
 
@@ -581,23 +793,6 @@ public class ItemService {
 
     }
 
-    public ResponseTemplate<MainPageResponse.getItemPage> searchItemByWordAndConditionSortInContent(int current_page, PageRequest pageRequest,
-                                                                                                  String[] contain_words) {
-        Page<Item> searchItemByWordInTitle = itemRepository.searchItemByWordInContent(contain_words,pageRequest);
-
-        int total_page = searchItemByWordInTitle.getTotalPages();
-
-        if(current_page == 1 && searchItemByWordInTitle.getContent().size() < 1){
-            throw new CustomException(ErrorCode.ITEM_NOT_FOUND_IN_PAGE);
-        }
-
-        if(current_page-1 > total_page-1){
-            throw new CustomException(ErrorCode.OUT_BOUND_PAGE);
-        }
-
-        return returnItemPage(searchItemByWordInTitle,total_page,current_page);
-
-    }
     private ResponseTemplate<MainPageResponse.getItemPage> returnItemPage(Page<Item> categoryAllItemPage, int total_page, int current_page) {
         List<MainPageResponse.ItemInfo> itemInfo = new ArrayList<>();
 
@@ -614,7 +809,7 @@ public class ItemService {
                     itemImg = item.getItemImg_list().get(0).getImgUrl();
                 }
 
-                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),item.getItemHashTag_list().stream().map(
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),item.getItemHashTags().stream().map(
                         itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
                 ).collect(Collectors.toList()),
                         itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
@@ -626,5 +821,56 @@ public class ItemService {
     public ResponseTemplate<ItemResponse.getAllItemId> getAllItemId() {
         List<Long> allItemId = itemRepository.findAllItemId();
         return new ResponseTemplate(new ItemResponse.getAllItemId(allItemId.stream().collect(Collectors.toList())));
+    }
+
+
+    public void changeItemStatus(String displayStatus,String itemCode){
+        Item item = itemRepository.findByItemCode(itemCode).orElseThrow(
+                () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
+        );
+        if (DisplayStatus.DISPLAY.name().equals(displayStatus)){
+            item.setDisplayStatus(DisplayStatus.DISPLAY);
+        } else{
+            item.setDisplayStatus(DisplayStatus.HIDDEN);
+        }
+        itemRepository.save(item);
+    }
+
+
+    public AdminPageResponse.getItemByDisplayStatus processGetAllDisplayItems(int limit, int sqlPage,String status) {
+        Pageable pageable = PageRequest.of(Math.toIntExact(sqlPage), Math.toIntExact(limit), Sort.by("id").ascending());
+        Page<Item> allDisplayItems = null;
+        if (status.equals("DISPLAY")){
+            allDisplayItems = itemRepository.findAllByDisplayStatus(DisplayStatus.DISPLAY, pageable);
+        } else{
+            allDisplayItems = itemRepository.findAllByDisplayStatus(DisplayStatus.HIDDEN, pageable);
+        }
+        AdminPageResponse.getItemByDisplayStatus getItemByDisplayStatus = new AdminPageResponse.getItemByDisplayStatus();
+        List<AdminPageResponse.getItemsByDisplayStat> itemsByDisplayStats = new ArrayList<>();
+        getItemByDisplayStatus.setPageCount((long) allDisplayItems.getTotalPages());
+
+        allDisplayItems.getContent().forEach(item ->{
+            AdminPageResponse.getItemsByDisplayStat itemsByDisplayStat = new AdminPageResponse.getItemsByDisplayStat();
+            itemsByDisplayStat.setItemCode(item.getItemCode());
+            itemsByDisplayStat.setTitle(item.getTitle());
+            if (item.getItemImg_list().isEmpty()){
+                itemsByDisplayStat.setImgUrl(null);
+            } else{
+                itemsByDisplayStat.setImgUrl(item.getItemImg_list().get(0).getImgUrl());
+            }
+            itemsByDisplayStats.add(itemsByDisplayStat);
+        });
+
+        getItemByDisplayStatus.setData(itemsByDisplayStats);
+
+
+        return getItemByDisplayStatus;
+    }
+
+
+    public Object getPageCount(int limit) {
+        int pageSize = limit;
+        int totalPage = (int) Math.ceil(itemRepository.count() / (double) pageSize);
+        return totalPage;
     }
 }

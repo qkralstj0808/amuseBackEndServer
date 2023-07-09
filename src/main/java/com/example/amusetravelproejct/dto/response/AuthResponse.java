@@ -1,5 +1,7 @@
 package com.example.amusetravelproejct.dto.response;
 
+import com.example.amusetravelproejct.oauth.entity.ProviderType;
+import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.example.amusetravelproejct.oauth.token.AuthToken;
 import lombok.AllArgsConstructor;
 import lombok.Data;

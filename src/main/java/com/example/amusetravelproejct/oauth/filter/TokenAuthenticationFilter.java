@@ -1,13 +1,11 @@
 package com.example.amusetravelproejct.oauth.filter;
 
 import com.example.amusetravelproejct.config.properties.AppProperties;
-import com.example.amusetravelproejct.domain.UserRefreshToken;
-import com.example.amusetravelproejct.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.example.amusetravelproejct.config.resTemplate.CustomException;
+import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
-import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.example.amusetravelproejct.oauth.token.AuthToken;
 import com.example.amusetravelproejct.oauth.token.AuthTokenProvider;
-import com.example.amusetravelproejct.config.util.CookieUtil;
 import com.example.amusetravelproejct.config.util.HeaderUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +36,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain)  throws ServletException, IOException {
+            FilterChain filterChain)  throws ServletException, IOException ,CustomException{
 
         String tokenStr = HeaderUtil.getAccessToken(request);
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
+
+        log.info("tokenauthenticationfilter에서 authoken : " + token.getTokenClaims());
 
         if (token.validate()) {
             if(token.getExpiredTokenClaims() == null){
@@ -49,6 +49,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+
         filterChain.doFilter(request, response);
     }
 

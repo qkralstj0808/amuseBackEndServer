@@ -23,6 +23,7 @@ public class MainPageResponse {
     @NoArgsConstructor
     public static class CategoryInfo {
         private Long categoryId;
+        private Long sequence;
         private String categoryName;
         private String categoryImg;
         private String mainDescription;
@@ -46,6 +47,26 @@ public class MainPageResponse {
         private Integer currentPage;
     }
 
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getListItem {
+        private Integer list_count;
+        private List<ListItem> listItems;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ListItem {
+        private String list_title;
+        private Long sequence;
+        private Integer item_count;
+        private List<ItemInfo> items;
+    }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -60,6 +81,7 @@ public class MainPageResponse {
         private Integer duration;
         private Integer likeNum;
         private Long startPrice;
+
     }
 
     @Data
@@ -67,6 +89,34 @@ public class MainPageResponse {
     @NoArgsConstructor
     public static class HashTag {
         private String hashtag;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getCategoryPage {
+        private Long category_id;
+        private String name;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private List<PageComponentInfo> pageComponentInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PageComponentInfo {
+        private Long page_component_id;
+        private String type;
+        private String title;
+        private String PcBannerUrl;
+        private String PcBannerLink;
+        private String MobileBannerUrl;
+        private String MobileBannerLink;
+        private String content;
+        private List<ItemInfo> itemInfos;
     }
 
 }

@@ -1,14 +1,29 @@
 package com.example.amusetravelproejct.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.amusetravelproejct.domain.Item;
+import com.example.amusetravelproejct.domain.ItemIcon;
+import com.example.amusetravelproejct.dto.request.AdminPageRequest;
+import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
+import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class AdminPageResponse {
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    @ToString
+    public static class itemInfo{
+        ProductRegisterDto item;
+        List<ItemIcon> itemIcons;
+    }
+
+
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -187,6 +202,25 @@ public class AdminPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class getItemByDisplayStatus{
+        private Long pageCount;
+        private List<getItemsByDisplayStat> data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getItemsByDisplayStat{
+        private String itemCode;
+        private String title;
+        private String imgUrl;
+    }
+
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class getItemByCategory{
         private Long pageCount;
         private List<findItemByCategory> data;
@@ -202,17 +236,221 @@ public class AdminPageResponse {
         private String type;
         private LocalDateTime createAt;
         private String createBy;
+        private LocalDateTime updateAt;
+        private String updateBy;
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getMainPageItem{
+        private Long item_db_id;
+        private String product_code;
+        private Long startPrice;
+        private String title;
+        private List<String> category;
+        private LocalDateTime createAt;
+        private String createBy;
+        private LocalDateTime updateAt;
+        private String updateBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class respRegisterComponent{
         private Long id;
         private String title;
-        private Long sequence;
         private String type;
-        private String createAt;
+        private LocalDateTime createdAt;
+        private String createdBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerListComponent extends respRegisterComponent {
+        private List<String> itemCode;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getListComponent extends respRegisterComponent {
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private List<getMainPageItem> productList;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerBannerComponent extends respRegisterComponent {
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private String pcBannerImgUrl;
+        private String pcBannerLink;
+        private String mobileBannerImgUrl;
+        private String mobileBannerLink;
+        private String content;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getBannerComponent extends respRegisterComponent {
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private String pcBannerImgUrl;
+        private String pcBannerLink;
+        private String mobileBannerImgUrl;
+        private String mobileBannerLink;
+        private String content;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class registerTileComponent extends respRegisterComponent {
+        private List<AdminPageResponse.getMainItem> tile;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getTileComponent extends respRegisterComponent{
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private List<AdminPageResponse.getDetailItem> tile;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getDetailItem {
+        private String title;
+        List<getMainPageItem> productList;
+        private String tileImgUrl;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getMainItem{
+        private String tileName;
+        private List<String> itemCode;
+        private String tileImgUrl;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class createPage {
+        private Long   id;
+        private String hashTag;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class updatePage {
+        private Long id;
+        private Boolean disable;
+        private String name;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private List<PageComponentInfo> pageComponentInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PageComponentInfo {
+        private Long id;
+        private String type;
+        private String title;
+        private String PcBannerUrl;
+        private String PcBannerLink;
+        private String MobileBannerUrl;
+        private String MobileBannerLink;
+        private String content;
         private String createBy;
+        private String updateBy;
+    }
+
+//    @Data
+//    @AllArgsConstructor
+//    @NoArgsConstructor
+//    public static class ItemInfo {
+//        private Long id;
+//        private Long type;
+//        private Long title;
+//        private String PcBannerUrl;
+//        private String PcBannerLink;
+//        private String MobileBannerUrl;
+//        private String MobileBannerLink;
+//        private String content;
+//        private String createBy;
+//        private String updateBy;
+////        private List<ItemInfo> itemInfos;
+//    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getPage {
+        private Long   id;
+        private Boolean disable;
+        private String name;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private List<PageComponentInfo> pageComponentInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getAllPage {
+        private Long   id;
+        private Boolean disable;
+        private String name;
+        private String imgUrl;
+        private Long sequence;
+        private String mainDescription;
+        private String subDescription;
+        private LocalDateTime createdAt;
+        private String createdBy;
+        private LocalDateTime updatedAt;
+        private String updatedBy;
+        private List<PageComponentId> pageComponentInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PageComponentId {
+        private Long id;
     }
 }

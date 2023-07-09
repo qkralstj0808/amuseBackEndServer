@@ -30,6 +30,10 @@ public enum ErrorCode {
     ADVERTISEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 광고를 찾을 수 없습니다."),
     ITEM_CODE_DUPLICATION(HttpStatus.BAD_REQUEST,"상품 코드가 중복됩니다."),
     MAIN_PAGE_COMPONENT_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 컴포넌트가 없습니다."),
+    SEQUENCE_ERROR_SET(HttpStatus.BAD_REQUEST,"해당 순서는 잘못된 설정입니다." ),
+    NOT_FOUND_GUIDE(HttpStatus.NOT_FOUND,"해당 가이드는 찾을 수 없습니다."),
+    ITEM_ALREADY_EXIST(HttpStatus.BAD_REQUEST,"해당 상품코드는 이미 존재 합니다"),
+    PAGE_COMPONENT_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 컴포넌트는 존재 하지 않습니다."),
 
 
     // paging 관련 오류
@@ -38,7 +42,8 @@ public enum ErrorCode {
     ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 상품에 매니저를 찾을 수 없습니다."),
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST,"잘못된 요청입니다."),
     ASC_DESC_WORD_ERROR(HttpStatus.BAD_REQUEST,"asc_desc 칸에는 '오른차순' 또는 '내림차순' 둘 중 하나로 적어주세요"),
-    SORT_FUNCTION_ERROR(HttpStatus.BAD_REQUEST,"sort 함수를 만드는 과정에서 Null이 발생했습니다.");
+    SORT_FUNCTION_ERROR(HttpStatus.BAD_REQUEST,"sort 함수를 만드는 과정에서 Null이 발생했습니다."),
+    CATEGORY_EXIT(HttpStatus.BAD_REQUEST,"이미 해당 이름의 category가 존재합니다. 수정을 원하면 PUT 해주세요" );
 
     private final HttpStatus httpStatus;
     private final String message;

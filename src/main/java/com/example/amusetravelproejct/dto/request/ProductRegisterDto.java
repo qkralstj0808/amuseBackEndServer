@@ -2,11 +2,9 @@ package com.example.amusetravelproejct.dto.request;
 
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.domain.person_enum.Option;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
+import javax.print.DocFlavor;
 import java.util.List;
 @Getter
 @Setter
@@ -14,8 +12,9 @@ import java.util.List;
 @ToString
 public class ProductRegisterDto {
     private Long id;
-    private String itemCode;
+    private String productId;
     private List<String> category;
+//    private List<ItemIcon> itemIcon;  프론트 미구현
     private String title;
     private Location location;
     private List<MainImageDto> mainImg;
@@ -31,6 +30,16 @@ public class ProductRegisterDto {
     private String endDate;
     private String option;
     private accessData accessAuthority;
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ItemIcon{
+        private String text;
+        private Long iconId;
+    }
+
 
     @Getter
     @Setter
@@ -49,9 +58,8 @@ public class ProductRegisterDto {
     public static class Location {
         private String country;
         private String city;
-
-        // Getters and Setters
     }
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -82,6 +90,7 @@ public class ProductRegisterDto {
             private Long id;
             private String startDate;
             private String endDate;
+            private Long quantity;
             private WeekdayPrices weekdayPrices;
             @Getter
             @Setter
@@ -96,7 +105,6 @@ public class ProductRegisterDto {
                 private String sat;
                 private String sun;
             }
-
             // Getter, Setter, Constructor 생략
         }
     }
@@ -107,10 +115,11 @@ public class ProductRegisterDto {
     public static class CourseDto {
         private Long id;
         private Long sequenceId;
-        private Integer day;
+        private Long day;
         private String title;
         private String timeCost;
         private String content;
+        private LocationDto location;
         private CourseImageDto image;
 
         // Getter, Setter, Constructor 생략
@@ -122,9 +131,20 @@ public class ProductRegisterDto {
             private String fileName;
             private String base64Data;
             private String imgUrl;
-
-
             // Getter, Setter, Constructor 생략
         }
+
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @ToString
+        public static class LocationDto {
+            private String latitude;
+            private String longitude;
+            // Getter, Setter, Constructor 생략
+        }
+
     }
+
 }

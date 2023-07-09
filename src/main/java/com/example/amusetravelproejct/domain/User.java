@@ -73,6 +73,9 @@ public class User extends BaseEntity{
     @NotNull
     private RoleType roleType;
 
+    @OneToOne(mappedBy = "user")
+    private Admin admin;
+
     @Column(name = "POINT")     //유저가 지닌 포인트
     private Long point = 0L;
 

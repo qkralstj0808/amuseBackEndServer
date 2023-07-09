@@ -4,6 +4,7 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
+import com.example.amusetravelproejct.dto.request.MainPageRequest;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.service.MainPageService;
 import lombok.RequiredArgsConstructor;
@@ -13,17 +14,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("")
 public class MainPageController {
 
     private final MainPageService mainPageService;
-
-    @GetMapping("/main/category")
-    public ResponseTemplate<MainPageResponse.getCategory> getCategory(){
-        return mainPageService.getCategory();
-    }
 
     // main page에서 가장 좋아요 수 많은 상품 10개 가지고 오기
     @GetMapping("/main/best-item")
@@ -72,5 +70,24 @@ public class MainPageController {
         PageRequest pageRequest = PageRequest.of(current_page, 40);
         return mainPageService.getCategoryCurrentItemAllPage(category_id,current_page+1,pageRequest);
     }
+
+    @GetMapping("/main-page/lists")
+    public ResponseTemplate<MainPageResponse.getListItem> getListItem(){
+
+        return mainPageService.getListItem();
+    }
+
+    @GetMapping("/main/category")
+    public ResponseTemplate<MainPageResponse.getCategory> getCategory(){
+        return mainPageService.getCategory();
+    }
+
+    @GetMapping("/main/category/{category-id}/page")
+    public ResponseTemplate<MainPageResponse.getCategoryPage> getCategoryPage(
+            @PathVariable("category-id") Long category_id){
+        return mainPageService.getCategoryPage(category_id);
+    }
+
+
 
 }

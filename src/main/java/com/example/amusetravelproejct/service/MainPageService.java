@@ -4,14 +4,11 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
-import com.example.amusetravelproejct.domain.Category;
-import com.example.amusetravelproejct.domain.ItemHashTag;
-import com.example.amusetravelproejct.domain.Item;
+import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
+import com.example.amusetravelproejct.dto.request.MainPageRequest;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
-import com.example.amusetravelproejct.repository.CategoryRepository;
-import com.example.amusetravelproejct.repository.ItemHashTagRepository;
-import com.example.amusetravelproejct.repository.ItemRepository;
+import com.example.amusetravelproejct.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,13 +32,16 @@ public class MainPageService {
     public final ItemRepository itemRepository;
     public final CategoryRepository categoryRepository;
 
+    public final PageComponentRepository pageComponentRepository;
+    public final MainPageRepository mainPageRepository;
+
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
 
-        List<Category> categories = categoryRepository.findAll();
+        List<Category> categories = categoryRepository.findAllByDisable(false);
 
         return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(
-                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getCategory_name(),category.getImgUrl(),
+                category -> new MainPageResponse.CategoryInfo(category.getId(),category.getSequence(),category.getCategory_name(),category.getImgUrl(),
                         category.getMainDescription(),category.getSubDescription())
         ).collect(Collectors.toList())));
     }
@@ -131,7 +131,7 @@ public class MainPageService {
                     itemImg = item.getItemImg_list().get(0).getImgUrl();
                 }
 
-                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),item.getItemHashTag_list().stream().map(
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(),item.getItemCode(),item.getItemHashTags().stream().map(
                         itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
                 ).collect(Collectors.toList()),
                         itemImg,item.getTitle(),item.getCountry(),item.getCity(),item.getDuration(),
@@ -149,14 +149,14 @@ public class MainPageService {
             for (Item item : items) {
                 String itemImg = null;
 
-                List<ItemHashTag> itemHashTag_list = item.getItemHashTag_list();
+                List<ItemHashTag> itemHashTag_list = item.getItemHashTags();
 
                 // img가 하나라도 있다면
                 if (item.getItemImg_list().size() != 0) {
                     itemImg = item.getItemImg_list().get(0).getImgUrl();
                 }
 
-                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(), item.getItemCode(), item.getItemHashTag_list().stream().map(
+                itemInfo.add(new MainPageResponse.ItemInfo(item.getId(), item.getItemCode(), item.getItemHashTags().stream().map(
                         itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
                 ).collect(Collectors.toList()),
                         itemImg, item.getTitle(), item.getCountry(), item.getCity(), item.getDuration(),
@@ -168,7 +168,82 @@ public class MainPageService {
     }
 
 
+    public ResponseTemplate<MainPageResponse.getListItem> getListItem() {
 
+//        List<PageComponent> itemInListsByMainPageRequestListDtos = mainPageRepository.findItemInListsByMainPageRequestListDto();
+//
+//        MainPageResponse.getListItem getListItem = new MainPageResponse.getListItem(itemInListsByMainPageRequestListDtos.size(),itemInListsByMainPageRequestListDtos.stream().map(
+//                itemInListsByMainPageRequestListDto -> new MainPageResponse.ListItem(
+//                        itemInListsByMainPageRequestListDto.getTitle(),
+//                        itemInListsByMainPageRequestListDto.getId(),
+//                        itemInListsByMainPageRequestListDto.getMainPages().size(),
+//                        itemInListsByMainPageRequestListDto.getMainPages().stream().map(
+//                                mainPage -> new MainPageResponse.ItemInfo(
+//                                        mainPage.getItem().getId(),
+//                                        mainPage.getItem().getItemCode(),
+//                                        mainPage.getItem().getItemHashTags().stream().map(
+//                                                itemHashTag -> new MainPageResponse.HashTag(itemHashTag.getHashTag())
+//                                        ).collect(Collectors.toList()),
+//                                        mainPage.getItem().getItemImg_list().size() == 0 ? null : mainPage.getItem().getItemImg_list().get(0).getImgUrl(),
+//                                        mainPage.getItem().getTitle(),
+//                                        mainPage.getItem().getCountry(),
+//                                        mainPage.getItem().getCity(),
+//                                        mainPage.getItem().getDuration(),
+//                                        mainPage.getItem().getLike_num(),
+//                                        mainPage.getItem().getStartPrice()
+//                                )
+//                        ).collect(Collectors.toList()))).collect(Collectors.toList()));
 
+//        return new ResponseTemplate(getListItem);
+        return null;
+    }
+
+    public ResponseTemplate<MainPageResponse.getCategoryPage> getCategoryPage(Long category_id) {
+
+        Category category = categoryRepository.findById(category_id).orElseThrow(
+                () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
+        );
+
+        return new ResponseTemplate(new MainPageResponse.getCategoryPage(
+                category.getId(),
+                category.getCategory_name(),
+                category.getImgUrl(),
+                category.getSequence(),
+                category.getMainDescription(),
+                category.getSubDescription(),
+                category.getCategoryPageComponents().stream().map(
+                        CategoryPageComponent::getPageComponent).map(
+                        pageComponent -> new MainPageResponse.PageComponentInfo(
+                            pageComponent.getId(),
+                                pageComponent.getType(),
+                                pageComponent.getTitle(),
+                                pageComponent.getPcBannerUrl(),
+                                pageComponent.getPcBannerLink(),
+                                pageComponent.getMobileBannerUrl(),
+                                pageComponent.getMobileBannerLink(),
+                                pageComponent.getContent(),
+                                pageComponent.getMainPages().stream().map(
+                                        mainPage -> mainPage.getItem()).map(
+                                                item -> new MainPageResponse.ItemInfo(
+                                                     item.getId(),
+                                                     item.getItemCode(),
+                                                     item.getItemHashTags().stream().map(
+                                                             itemHashTag -> new MainPageResponse.HashTag(
+                                                                     itemHashTag.getHashTag()
+                                                             )
+                                                     ).collect(Collectors.toList()),
+                                                        item.getItemImg_list().size() != 0 ?  item.getItemImg_list().get(0).getImgUrl() : null,
+                                                        item.getTitle(),
+                                                        item.getCountry(),
+                                                        item.getCity(),
+                                                        item.getDuration(),
+                                                        item.getLike_num(),
+                                                        item.getStartPrice()
+                                                )
+                                ).collect(Collectors.toList())
+                        )
+                ).collect(Collectors.toList())
+        ));
+    }
 }
 
