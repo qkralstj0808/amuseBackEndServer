@@ -48,19 +48,19 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t app .
-          docker tag app ${{ secrets.DOCKER_USERNAME }}/vikrant:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/vikrant:latest
+          docker tag app ${{ secrets.DOCKER_USERNAME }}/amuse:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/amuse:latest
 
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
           username: ubuntu
-          key: ${{ secrets.PRIVATE_KEY }} # pem 키
+          key: ${{ secrets.EC2_PEM_KEY }} # pem 키
           # 도커 작업
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/vikrant:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/amuse:latest
             docker stop $(docker ps -a -q)
-            docker run -d --log-driver=syslog -p 8076:8076 ${{ secrets.DOCKER_USERNAME }}/vikrant:latest
+            docker run -d --log-driver=syslog -p 8075:8075 ${{ secrets.DOCKER_USERNAME }}/amuse:latest
             docker rm $(docker ps --filter 'status=exited' -a -q)
             docker image prune -a -f
