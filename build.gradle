@@ -13,8 +13,8 @@ plugins {
     id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+group = 'org.example'
+version = '1.0-SNAPSHOT'
 sourceCompatibility = '17'
 
 
