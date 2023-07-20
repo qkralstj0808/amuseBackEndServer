@@ -34,6 +34,7 @@ public class CookieUtil {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
+        response.addCookie(cookie);
 
         log.info("cookie : ");
         log.info(cookie.getValue());
@@ -44,7 +45,7 @@ public class CookieUtil {
         log.info(String.valueOf(cookie.getMaxAge()));
         log.info(String.valueOf(cookie.getSecure()));
         log.info(String.valueOf(cookie.getVersion()));
-        response.addCookie(cookie);
+
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

@@ -68,9 +68,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         clearAuthenticationAttributes(request, response);
 
-
-
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+
+
+        System.out.println("여기 밑에는 access token 관련 cookie가 있음");
+        log.info(CookieUtil.getCookie(request,"access_token").toString());
+        System.out.println();
+
+        System.out.println("여기 밑에는 sdlfksjf 관련 cookie가 있음");
+        log.info(CookieUtil.getCookie(request,"sdlfksjf").toString());
+        System.out.println();
     }
 
     @Transactional
@@ -87,6 +94,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }else{
             Optional<String> redirectUri = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
                     .map(Cookie::getValue);
+
 
             if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
                 throw new IllegalArgumentException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
@@ -176,7 +184,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         CookieUtil.deleteCookie(request, response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN);
         CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-        CookieUtil.addCookie(response, "access_token", accessToken.getToken(), cookieMaxAge);
+
+        log.info(CookieUtil.getCookie(request,"__jwtk__").toString());
+        System.out.println();
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", accessToken.getToken())
