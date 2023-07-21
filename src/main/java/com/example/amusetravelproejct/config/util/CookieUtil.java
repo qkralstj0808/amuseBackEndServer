@@ -52,7 +52,17 @@ public class CookieUtil {
 
     public static void setCookie(HttpServletResponse response, String name, String value, int maxAge,String domain) {
         log.info("\n\nCookieUtil 에서 setCookie 진입");
+
+
+        String[] parts = domain.split("\\.");
+        int len = parts.length;
+        if (len >= 2) {
+            // 마지막 두 개의 요소를 연결하여 도메인을 구성
+            domain =  parts[len - 2] + "." + parts[len - 1];
+            domain = "." + domain;
+        }
         log.info("domain" + ": " + domain);
+
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .path("/")
                 .domain(domain)
