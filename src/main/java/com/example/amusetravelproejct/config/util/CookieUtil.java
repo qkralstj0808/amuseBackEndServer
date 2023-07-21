@@ -66,7 +66,7 @@ public class CookieUtil {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .path("/")
                 .domain(domain)
-                .sameSite("None")
+                .sameSite("LAX")
                 .httpOnly(false)
                 .secure(true)
                 .maxAge(maxAge)
