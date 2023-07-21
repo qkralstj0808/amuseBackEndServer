@@ -1,6 +1,7 @@
 package com.example.amusetravelproejct.config.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 import javax.servlet.http.Cookie;
@@ -30,21 +31,31 @@ public class CookieUtil {
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         log.info("\n\nCookieUtil 에서 addCookie 진입");
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(maxAge);
-        response.addCookie(cookie);
+//        Cookie cookie = new Cookie(name, value);
+//        cookie.setPath("/");
+//        cookie.setHttpOnly(true);
+//        cookie.setMaxAge(maxAge);
+//        cookie.set
+//        response.addCookie(cookie);
 
-        log.info("cookie : ");
-        log.info(cookie.getValue());
-        log.info(cookie.getName());
-        log.info(cookie.getComment());
-        log.info(cookie.getPath());
-        log.info("domain : " + cookie.getDomain());
-        log.info(String.valueOf(cookie.getMaxAge()));
-        log.info(String.valueOf(cookie.getSecure()));
-        log.info(String.valueOf(cookie.getVersion()));
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(false)
+                .secure(false)
+                .maxAge(maxAge)
+                .build();
+        response.addHeader("Set-Cookie",cookie.toString());
+
+//        log.info("cookie : ");
+//        log.info(cookie.getValue());
+//        log.info(cookie.getName());
+//        log.info(cookie.getComment());
+//        log.info(cookie.getPath());
+//        log.info("domain : " + cookie.getDomain());
+//        log.info(String.valueOf(cookie.getMaxAge()));
+//        log.info(String.valueOf(cookie.getSecure()));
+//        log.info(String.valueOf(cookie.getVersion()));
 
     }
 
