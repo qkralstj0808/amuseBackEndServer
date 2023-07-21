@@ -41,7 +41,28 @@ public class CookieUtil {
         log.info(cookie.getName());
         log.info(cookie.getComment());
         log.info(cookie.getPath());
-        log.info(cookie.getDomain());
+        log.info("domain : " + cookie.getDomain());
+        log.info(String.valueOf(cookie.getMaxAge()));
+        log.info(String.valueOf(cookie.getSecure()));
+        log.info(String.valueOf(cookie.getVersion()));
+
+    }
+
+    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge,String domain) {
+        log.info("\n\nCookieUtil 에서 addCookie 진입");
+        Cookie cookie = new Cookie(name, value);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(maxAge);
+        cookie.setDomain(domain);
+        response.addCookie(cookie);
+
+        log.info("cookie : ");
+        log.info(cookie.getValue());
+        log.info(cookie.getName());
+        log.info(cookie.getComment());
+        log.info(cookie.getPath());
+        log.info("domain : " + cookie.getDomain());
         log.info(String.valueOf(cookie.getMaxAge()));
         log.info(String.valueOf(cookie.getSecure()));
         log.info(String.valueOf(cookie.getVersion()));

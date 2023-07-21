@@ -30,7 +30,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -55,16 +57,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 
         String targetUrl = determineTargetUrl(request, response, authentication);
-//        String accessToken = determineTargetUrl(request,response,authentication);
-
-//        if (response.isCommitted()) {
-//            log.debug("response가 committed 되어서 해당 redirect로 못감 : " + accessToken);
-//            return;
-//        }
-
-//        String targetUrl =  UriComponentsBuilder.fromUriString(targetUrl)
-//                .queryParam("token", accessToken)
-//                .build().toUriString();
 
         clearAuthenticationAttributes(request, response);
 
@@ -72,11 +64,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 
         System.out.println("여기 밑에는 access token 관련 cookie가 있음");
-        log.info(CookieUtil.getCookie(request,"access_token").toString());
-        System.out.println();
-
-        System.out.println("여기 밑에는 sdlfksjf 관련 cookie가 있음");
-        log.info(CookieUtil.getCookie(request,"sdlfksjf").toString());
+        log.info(CookieUtil.getCookie(request,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN).toString());
         System.out.println();
     }
 
@@ -184,6 +172,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         CookieUtil.deleteCookie(request, response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN);
         CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
+//        URL parsedUrl = null;
+//        try {
+//            parsedUrl = new URL(targetUrl);
+//        } catch (MalformedURLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        String domain = parsedUrl.getHost();
+//        System.out.println();
+//        System.out.println("domain : " + domain);
+        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge);
 
         log.info(CookieUtil.getCookie(request,"__jwtk__").toString());
         System.out.println();
