@@ -62,7 +62,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
-
         System.out.println("여기 밑에는 access token 관련 cookie가 있음");
         log.info(CookieUtil.getCookie(request,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN).toString());
         System.out.println();
