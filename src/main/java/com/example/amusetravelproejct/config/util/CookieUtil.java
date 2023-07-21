@@ -1,6 +1,7 @@
 package com.example.amusetravelproejct.config.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 import javax.servlet.http.Cookie;
@@ -32,16 +33,58 @@ public class CookieUtil {
         log.info("\n\nCookieUtil 에서 addCookie 진입");
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(false);
+        cookie.setSecure(true);
         cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
+
+//        log.info("cookie : ");
+//        log.info(cookie.getValue());
+//        log.info(cookie.getName());
+//        log.info(cookie.getComment());
+//        log.info(cookie.getPath());
+//        log.info("domain : " + cookie.getDomain());
+//        log.info(String.valueOf(cookie.getMaxAge()));
+//        log.info(String.valueOf(cookie.getSecure()));
+//        log.info(String.valueOf(cookie.getVersion()));
+
+    }
+
+    public static void setCookie(HttpServletResponse response, String name, String value, int maxAge,String domain) {
+        log.info("\n\nCookieUtil 에서 setCookie 진입");
+        log.info("domain" + ": " + domain);
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .path("/")
+                .domain(domain)
+                .sameSite("None")
+                .httpOnly(false)
+                .secure(true)
+                .maxAge(maxAge)
+                .build();
+        response.addHeader("Set-Cookie",cookie.toString());
+    }
+
+
+        public static void addCookie(HttpServletResponse response, String name, String value, int maxAge,String domain) {
+        log.info("\n\nCookieUtil 에서 addCookie 진입");
+        Cookie cookie = new Cookie(name, value);
+        cookie.setPath("/");
+        cookie.setHttpOnly(false);
+        cookie.setMaxAge(maxAge);
+        cookie.setDomain(domain);
+        response.addCookie(cookie);
+            System.out.println();
+            Package servletPackage = javax.servlet.http.Cookie.class.getPackage();
+            String version = servletPackage.getImplementationVersion();
+
+            System.out.println("Servlet API version: " + version);
 
         log.info("cookie : ");
         log.info(cookie.getValue());
         log.info(cookie.getName());
         log.info(cookie.getComment());
         log.info(cookie.getPath());
-        log.info(cookie.getDomain());
+        log.info("domain : " + cookie.getDomain());
         log.info(String.valueOf(cookie.getMaxAge()));
         log.info(String.valueOf(cookie.getSecure()));
         log.info(String.valueOf(cookie.getVersion()));

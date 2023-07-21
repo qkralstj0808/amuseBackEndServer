@@ -15,6 +15,7 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
     public final static String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public final static String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
     public final static String REFRESH_TOKEN = "refresh_token";
+    public final static String ACCESS_TOKEN = "__jwtk__";       // access token을 쿠키에 담아서 클라이언트로 보낸다.
     private final static int cookieExpireSeconds = 18000;
 
     @Override
