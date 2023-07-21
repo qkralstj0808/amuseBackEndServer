@@ -60,11 +60,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         clearAuthenticationAttributes(request, response);
 
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
-
-        System.out.println("여기 밑에는 access token 관련 cookie가 있음");
-        log.info(CookieUtil.getCookie(request,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN).toString());
-        System.out.println();
+        log.info("response : " + response);
+        response.sendRedirect(targetUrl);
+//        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
     @Transactional
@@ -86,12 +84,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
                 throw new IllegalArgumentException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
             }
-
-            log.info("redirectUri : " + redirectUri);
-
-            log.info("redirect uri : " + redirectUri);
-            log.info("redirectUri.isPresent() : " + redirectUri.isPresent());
-            log.info("!isAuthorizedRedirectUri(redirectUri.get() : " + !isAuthorizedRedirectUri(redirectUri.get()));
 
             targetUrl = redirectUri.orElse(getDefaultTargetUrl());
         }
@@ -172,23 +164,25 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         CookieUtil.deleteCookie(request, response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN);
         CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
-//        URL parsedUrl = null;
-//        try {
-//            parsedUrl = new URL(targetUrl);
-//        } catch (MalformedURLException e) {
-//            throw new RuntimeException(e);
-//        }
-//        String domain = parsedUrl.getHost();
-//        System.out.println();
-//        System.out.println("domain : " + domain);
-        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge);
-
-        log.info(CookieUtil.getCookie(request,"__jwtk__").toString());
+        log.info("response : " + response);
         System.out.println();
 
+        URL parsedUrl = null;
+        try {
+            parsedUrl = new URL(targetUrl);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        String domain = parsedUrl.getHost();
+        String path = parsedUrl.getPath();
+        System.out.println();
+        System.out.println("domain : " + domain + path);
+
+        CookieUtil.setCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge,domain);
+
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", accessToken.getToken())
-                .queryParam("email",findUser.getEmail())
+//                .queryParam("token", accessToken.getToken())
+//                .queryParam("email",findUser.getEmail())
                 .build().toUriString();
 //        return accessToken.getToken();
     }
