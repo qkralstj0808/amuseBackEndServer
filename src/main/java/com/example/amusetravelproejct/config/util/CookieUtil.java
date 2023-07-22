@@ -33,7 +33,7 @@ public class CookieUtil {
         log.info("\n\nCookieUtil 에서 addCookie 진입");
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
@@ -79,7 +79,7 @@ public class CookieUtil {
         log.info("\n\nCookieUtil 에서 addCookie 진입");
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         cookie.setDomain(domain);
         cookie.setSecure(true);
