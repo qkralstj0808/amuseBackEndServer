@@ -82,7 +82,7 @@ public class CookieUtil {
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         cookie.setDomain(domain);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         response.addCookie(cookie);
             System.out.println();
             Package servletPackage = javax.servlet.http.Cookie.class.getPackage();
