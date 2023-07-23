@@ -84,11 +84,6 @@ public class CookieUtil {
         cookie.setDomain(domain);
         cookie.setSecure(false);
         response.addCookie(cookie);
-            System.out.println();
-            Package servletPackage = javax.servlet.http.Cookie.class.getPackage();
-            String version = servletPackage.getImplementationVersion();
-
-            System.out.println("Servlet API version: " + version);
 
         log.info("cookie : ");
         log.info(cookie.getValue());
