@@ -57,25 +57,39 @@ public class AuthController {
 
 
     @GetMapping("/token/success")
-    public ResponseEntity<?> getTokenSuccess(HttpServletRequest request,
-                                             HttpServletResponse response,
-                                             HttpSession session,
-                                             @RequestParam("targetUrl") String targetUrl){
+//    public ResponseEntity<?> getTokenSuccess(HttpServletRequest request,
+//                                             HttpServletResponse response,
+//                                             HttpSession session,
+//                                             @RequestParam("targetUrl") String targetUrl){
+
+    public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam("targetUrl") String targetUrl,
+            @RequestParam("access-token") String access_token){
 
         log.info("targetUrl : " + targetUrl);
 
-        Optional<String> access_token_option = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN).map(Cookie::getValue);
-        String access_token = access_token_option.orElse("not_defined_access_token");
-
-//        CookieUtil.addCookie(response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN,access_token,1008000);
-
-        session.setAttribute("__jwt__",access_token);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create(targetUrl));
-        headers.add("Authorization", "Bearer " + access_token);
-        return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setLocation(URI.create(targetUrl));
+//        headers.add("Authorization", "Bearer " + access_token);
+//        return new <>(headers, HttpStatus.MOVED_PERMANENTLY);
+        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(targetUrl,access_token));
 
     }
+    @GetMapping("/session/access-token")
+    public ResponseTemplate<AuthResponse.getAccessToken> getTokenSuccess(HttpServletRequest request){
+
+        HttpSession session = request.getSession();
+
+        // 세션에서 값 가져오기
+        String access_token = (String) session.getAttribute(OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN);
+
+        return new ResponseTemplate(new AuthResponse.getAccessToken(access_token));
+
+    }
+
+
 
     @GetMapping("/token/fail")
     public ResponseTemplate<AuthResponse.getError> getTokeFailed(HttpServletRequest request,
@@ -160,7 +174,8 @@ public class AuthController {
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
-        return new ResponseTemplate(new AuthResponse.getAccessToken(accessToken.getToken()));
+//        return new ResponseTemplate(new AuthResponse.getAccessToken(accessToken.getToken()));
+        return null;
     }
 
     @GetMapping("/refresh")

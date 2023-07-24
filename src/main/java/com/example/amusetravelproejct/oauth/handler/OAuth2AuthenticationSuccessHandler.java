@@ -62,7 +62,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         clearAuthenticationAttributes(request, response);
 
         log.info("response : " + response);
-        getRedirectStrategy().sendRedirect(request, response, "/api/v1/auth/token/success"+"?targetUrl=" + targetUrl);
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
 //        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
@@ -182,7 +182,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge,domain);
 
-        return UriComponentsBuilder.fromUriString(targetUrl)
+        return UriComponentsBuilder.fromUriString("/api/v1/auth/token/success")
+                .queryParam("targetUrl",targetUrl)
+                .queryParam("access-token",accessToken.getToken())
                 .build().toUriString();
 //        return accessToken.getToken();
     }
