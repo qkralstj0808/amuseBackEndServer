@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.net.URI;
 import java.util.Date;
 import java.util.Optional;
@@ -58,6 +59,7 @@ public class AuthController {
     @GetMapping("/token/success")
     public ResponseEntity<?> getTokenSuccess(HttpServletRequest request,
                                              HttpServletResponse response,
+                                             HttpSession session,
                                              @RequestParam("targetUrl") String targetUrl){
 
         log.info("targetUrl : " + targetUrl);
@@ -67,6 +69,7 @@ public class AuthController {
 
 //        CookieUtil.addCookie(response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN,access_token,1008000);
 
+        session.setAttribute("__jwt__",access_token);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(targetUrl));
         headers.add("Authorization", "Bearer " + access_token);
