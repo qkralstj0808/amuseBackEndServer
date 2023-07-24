@@ -7,6 +7,7 @@ import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
 import com.example.amusetravelproejct.dto.response.AuthResponse;
+import com.example.amusetravelproejct.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
@@ -19,20 +20,28 @@ import com.example.amusetravelproejct.repository.UserRepository;
 import com.example.amusetravelproejct.service.UserService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
 import java.util.Date;
+import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
     private final AppProperties appProperties;
     private final AuthTokenProvider tokenProvider;
@@ -47,9 +56,22 @@ public class AuthController {
 
 
     @GetMapping("/token/success")
-    public ResponseTemplate<AuthResponse.getAccessToken> getTokenSuccess(HttpServletRequest request,
-                                HttpServletResponse response, @RequestParam("token") String accessToken){
-        return new ResponseTemplate(new AuthResponse.getAccessToken(accessToken));
+    public ResponseEntity<?> getTokenSuccess(HttpServletRequest request,
+                                             HttpServletResponse response,
+                                             @RequestParam("targetUrl") String targetUrl){
+
+        log.info("targetUrl : " + targetUrl);
+
+        Optional<String> access_token_option = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN).map(Cookie::getValue);
+        String access_token = access_token_option.orElse("not_defined_access_token");
+
+//        CookieUtil.addCookie(response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN,access_token,1008000);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(targetUrl));
+        headers.add("Authorization", "Bearer " + access_token);
+        return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
+
     }
 
     @GetMapping("/token/fail")
