@@ -16,6 +16,7 @@ import com.example.amusetravelproejct.config.util.CookieUtil;
 import com.example.amusetravelproejct.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -61,7 +62,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         clearAuthenticationAttributes(request, response);
 
         log.info("response : " + response);
-        response.sendRedirect(targetUrl);
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
 //        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
@@ -180,9 +181,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         CookieUtil.setCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge,domain);
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        response.addHeader("Authorization", "Bearer " + accessToken);
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", accessToken.getToken())
-                .queryParam("email",findUser.getEmail())
+//                .queryParam("token", accessToken.getToken())
+//                .queryParam("email",findUser.getEmail())
                 .build().toUriString();
 //        return accessToken.getToken();
     }
