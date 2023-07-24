@@ -19,6 +19,15 @@ public class AuthResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class getAccessToken_targetUrl {
+        private String targetUrl;
+        private String accessToken;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class getAccessToken {
         private String accessToken;
     }
