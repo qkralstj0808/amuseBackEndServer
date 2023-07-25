@@ -21,8 +21,8 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
         log.info("\n\nOAuth2AuthorizationRequestBasedOnCookieRepository에서 loadAuthorizationRequest 메서드 실행");
-        log.info("cookie(OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME) : " + CookieUtil.getCookie(request,OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
-                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class)));
+//        log.info("cookie(OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME) : " + CookieUtil.getCookie(request,OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
+//                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class)));
 
 
         return CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
