@@ -82,7 +82,7 @@ public class CookieUtil {
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         cookie.setDomain(domain);
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         response.addCookie(cookie);
 
         log.info("cookie : ");
