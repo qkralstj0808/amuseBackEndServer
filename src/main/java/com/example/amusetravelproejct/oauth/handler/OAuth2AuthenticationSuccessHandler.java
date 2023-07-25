@@ -180,7 +180,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         System.out.println();
         System.out.println("domain : " + domain + path);
 
-        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge);
+        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge,domain);
         log.info("성공했습니다.");
 //        return UriComponentsBuilder.fromUriString("/api/v1/auth/token/success")
 //                .queryParam("targetUrl",targetUrl)
