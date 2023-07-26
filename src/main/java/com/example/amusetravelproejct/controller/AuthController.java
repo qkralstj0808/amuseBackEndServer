@@ -324,6 +324,15 @@ public class AuthController {
 
         String userId = claims.getSubject();
         User user = userRepository.findByUserId(userId);
+//        Optional<Admin> byAdminId = adminRepository.findByAdminId(userId);
+//        Admin admin;
+//        if(byAdminId.isEmpty()){
+//            admin = null;
+//        }else{
+//            admin = byAdminId.get();
+//        }
+
+//        log.info("userId : " + userId);
         RoleType roleType = RoleType.of(claims.get("role", String.class));
 
         // userId refresh token 으로 DB 확인
@@ -345,7 +354,7 @@ public class AuthController {
         AuthToken newAccessToken = tokenProvider.createAuthToken(
                 userId,
                 roleType.getCode(),
-                user.getGrade(),
+                user == null ? null : user.getGrade() ,
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
 
@@ -371,5 +380,7 @@ public class AuthController {
 
         return new ResponseTemplate(new AuthResponse.getNewAccessToken(newAccessToken));
     }
+
+
 
 }
