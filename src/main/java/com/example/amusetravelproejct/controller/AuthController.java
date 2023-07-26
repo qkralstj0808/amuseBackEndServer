@@ -326,6 +326,25 @@ public class AuthController {
 
     }
 
+    @DeleteMapping("/withdraw")
+    public ResponseTemplate<String> withdraw(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam(value = "id",required = true) String adminId
+    ){
+        Optional<Admin> adminByAdminId = adminService.getAdminByAdminId(adminId);
+        if(adminByAdminId.isEmpty()){
+            throw new CustomException(ErrorCode.ADMINID_NOT_EXIST);
+        }
+        Admin findAdmin = adminByAdminId.get();
+
+        // refreshToken 삭제
+        authService.withdraw(findAdmin);
+
+        return new ResponseTemplate("삭제 성공");
+
+    }
+
 
 
 

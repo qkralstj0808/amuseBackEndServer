@@ -17,10 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +31,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws CustomException {
         System.out.println("CustomUserDetailsService에서 loadUserByUsername 진입");
         User user = userRepository.findByUserId(username);
-        Admin admin = adminRepository.findByAdminId(username).get();
+        Optional<Admin> byAdminId = adminRepository.findByAdminId(username);
+        Admin admin;
+        if(byAdminId.isEmpty()){
+            admin=null;
+        }else{
+            admin = byAdminId.get();
+        }
 
         log.info("userName : " + username);
         log.info("admin : " + admin);
