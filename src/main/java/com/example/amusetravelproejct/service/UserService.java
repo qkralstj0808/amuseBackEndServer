@@ -77,51 +77,53 @@ public class UserService {
         ).collect(Collectors.toList()));
     }
 
-    @Transactional
-    public ResponseTemplate<AdminResponse.updateUserRoleType> updateUserRoleType(Long user_db_id, AdminRequest.updateUserRoleType request) {
-        User findUser = userRepository.findById(user_db_id).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
-
-        Optional<Admin> findAdmin = adminRepository.findByUserId(findUser.getUserId());
-
-        if(findAdmin.isEmpty()){
-            Admin admin = new Admin();
-            admin.setUser(findUser);
-            admin.setEmail(findUser.getEmail());
-            admin.setPassword(findUser.getPassword());
-            admin.setName(findUser.getUsername());
-            admin.setProfileImgLink(findUser.getProfileImageUrl());
-            admin.setUserId(findUser.getUserId());
-            admin.setProviderType(findUser.getProviderType());
-            adminRepository.save(admin);
-        }else{
-            Admin admin = findAdmin.get();
-            admin.setUser(findUser);
-            admin.setEmail(findUser.getEmail());
-            admin.setPassword(findUser.getPassword());
-            admin.setName(findUser.getUsername());
-            admin.setProfileImgLink(findUser.getProfileImageUrl());
-            admin.setUserId(findUser.getUserId());
-            admin.setProviderType(findUser.getProviderType());
-        }
-
-
-        findUser.setRoleType(request.getRoleType());
-
-
-        return new ResponseTemplate(new AdminResponse.updateUserRoleType(
-                new AdminResponse.UserInfo(
-                        findUser.getId(),
-                        findUser.getUserId(),
-                        findUser.getUsername(),
-                        findUser.getEmail(),
-                        findUser.getProfileImageUrl(),
-                        findUser.getProviderType(),
-                        findUser.getRoleType()
-                )
-        ));
-    }
+//    @Transactional
+//    public ResponseTemplate<AdminResponse.updateUserRoleType> updateUserRoleType(Long user_db_id, AdminRequest.updateUserRoleType request) {
+//        User findUser = userRepository.findById(user_db_id).orElseThrow(
+//                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+//        );
+//
+//        Optional<Admin> findAdmin = adminRepository.findByUserId(findUser.getUserId());
+//
+//        if(findAdmin.isEmpty()){
+//            Admin admin = new Admin();
+////            admin.setUser(findUser);
+//            admin.setEmail(findUser.getEmail());
+//            admin.setEmail(findUser.getAdminId());
+//            admin.setPassword(findUser.getPassword());
+//            admin.setName(findUser.getUsername());
+//            admin.setProfileImgLink(findUser.getProfileImageUrl());
+////            admin.setUserId(findUser.getUserId());
+////            admin.setProviderType(findUser.getProviderType());
+//            adminRepository.save(admin);
+//        }else{
+//            Admin admin = findAdmin.get();
+////            admin.setUser(findUser);
+//            admin.setEmail(findUser.getEmail());
+//            admin.setAdminId(findUser.getAdmin());
+//            admin.setPassword(findUser.getPassword());
+//            admin.setName(findUser.getUsername());
+//            admin.setProfileImgLink(findUser.getProfileImageUrl());
+////            admin.setUserId(findUser.getUserId());
+////            admin.setProviderType(findUser.getProviderType());
+//        }
+//
+//
+//        findUser.setRoleType(request.getRoleType());
+//
+//
+//        return new ResponseTemplate(new AdminResponse.updateUserRoleType(
+//                new AdminResponse.UserInfo(
+//                        findUser.getId(),
+//                        findUser.getUserId(),
+//                        findUser.getUsername(),
+//                        findUser.getEmail(),
+//                        findUser.getProfileImageUrl(),
+//                        findUser.getProviderType(),
+//                        findUser.getRoleType()
+//                )
+//        ));
+//    }
 
     @Transactional(readOnly = false)
     public AdminResponse.GuideInfo createGuide(AdminRequest.guide request,UtilMethod utilMethod){

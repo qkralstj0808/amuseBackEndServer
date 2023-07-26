@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.oauth.entity;
 
+import com.example.amusetravelproejct.domain.Admin;
 import com.example.amusetravelproejct.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -94,6 +95,17 @@ public class UserPrincipal implements OAuth2User, UserDetails, OidcUser {
                 authorities
         );
     }
+
+    public static UserPrincipal create(Admin admin, Collection<GrantedAuthority> authorities){
+        return new UserPrincipal(
+                admin.getAdminId(),
+                admin.getPassword(),
+                null,
+                RoleType.ADMIN,
+                authorities
+        );
+    }
+
 
     public static UserPrincipal create(User user, Collection<GrantedAuthority> authorities,Map<String, Object> attributes) {
         UserPrincipal userPrincipal = create(user,authorities);

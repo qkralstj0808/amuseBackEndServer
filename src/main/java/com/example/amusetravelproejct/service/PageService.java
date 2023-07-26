@@ -49,7 +49,7 @@ public class PageService {
         if(findCategory != null){
             throw new CustomException(ErrorCode.CATEGORY_EXIT);
         }
-        Admin admin = adminRepository.findByUserId(findUser.getUserId()).orElseThrow(
+        Admin admin = adminRepository.findByAdminId(findUser.getUserId()).orElseThrow(
                 () -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)
         );
 
@@ -93,7 +93,7 @@ public class PageService {
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
         );
 
-        Admin admin = adminRepository.findByUserId(findUser.getUserId()).orElseThrow(
+        Admin admin = adminRepository.findByAdminId(findUser.getUserId()).orElseThrow(
                 () -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)
         );
 

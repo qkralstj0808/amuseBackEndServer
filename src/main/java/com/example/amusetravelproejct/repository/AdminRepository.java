@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public interface AdminRepository extends JpaRepository<Admin, Long> {
-    Optional<Admin> findByEmail(String email);
-    Optional<Admin> findByUserId(String user_id);
+//    Optional<Admin> findByEmail(String email);
+    Optional<Admin> findByAdminId(String admin_id);
     //    Admin findByUserId(String userId);
 }

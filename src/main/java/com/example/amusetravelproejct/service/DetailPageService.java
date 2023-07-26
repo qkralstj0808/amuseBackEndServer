@@ -95,8 +95,8 @@ public class DetailPageService {
             throw new CustomException(ErrorCode.CATEGORY_NOT_FOUND);
         }
 
-        return new ResponseTemplate(new DetailPageResponse.getManager(findItem.getTitle(),findItemAdmin.getName(),findItemAdmin.getEmail(),
-                findItemAdmin.getProfileImgLink(),findItem.getAdminContent()));
+        return new ResponseTemplate(new DetailPageResponse.getManager(findItem.getTitle(),findItemAdmin.getName(),findItemAdmin.getAdminId(),
+                null,findItem.getAdminContent()));
     }
 
 
