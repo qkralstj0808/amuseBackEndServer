@@ -45,5 +45,10 @@ public class AdminController {
         return "id : " + findAdmin.getAdminId();
     }
 
+    @GetMapping("accounts")
+    public ResponseTemplate<AdminResponse.getAllAccountsId> getAllAccountsId(){
+        return adminService.getAllAccountsId();
+    }
+
 
 }
