@@ -20,6 +20,7 @@ import com.example.amusetravelproejct.config.util.CookieUtil;
 import com.example.amusetravelproejct.config.util.HeaderUtil;
 import com.example.amusetravelproejct.repository.UserRepository;
 import com.example.amusetravelproejct.service.AdminService;
+import com.example.amusetravelproejct.service.AuthService;
 import com.example.amusetravelproejct.service.UserService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +51,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
+    private final AuthService authService;
     private final AppProperties appProperties;
     private final AuthTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
@@ -110,7 +114,7 @@ public class AuthController {
     public ResponseTemplate<AuthResponse.getAccessToken> signup(
             HttpServletRequest request,
             HttpServletResponse response,
-            @RequestBody AuthRequest authRequest
+            @RequestBody AuthRequest.Id_Password authRequest
     ) {
         System.out.println("\n\nAuthController에서 /login api 진입");
 
@@ -209,12 +213,13 @@ public class AuthController {
     public ResponseTemplate<AuthResponse.getAccessToken> login(
             HttpServletRequest request,
             HttpServletResponse response,
-            @RequestBody AuthRequest authRequest
+            @RequestParam(value = "id",required = true) String adminId,
+            @RequestParam(value = "password",required = true) String password
     ) {
         System.out.println("\n\nAuthController에서 /login api 진입");
 
-        String adminId = authRequest.getId();
-        String password = authRequest.getPassword();
+//        String adminId = authRequest.getId();
+//        String password = authRequest.getPassword();
 
         Date now = new Date();
 
@@ -303,6 +308,26 @@ public class AuthController {
         return new ResponseTemplate(new AuthResponse.getAccessToken(accessToken.getToken()));
 //        return null;
     }
+
+    @PostMapping("/password/change")
+    public ResponseTemplate<String> changePassword(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestBody AuthRequest.changePassword authRequest
+    ){
+        Optional<Admin> adminByAdminId = adminService.getAdminByAdminId(authRequest.getId());
+        if(adminByAdminId.isEmpty()){
+            throw new CustomException(ErrorCode.ADMINID_NOT_EXIST);
+        }
+
+        Admin findAdmin = adminByAdminId.get();
+
+        return authService.changePassword(findAdmin,authRequest);
+
+    }
+
+
+
 
     @GetMapping("/refresh")
     public ResponseTemplate<AuthResponse.getNewAccessToken> refreshToken (HttpServletRequest request, HttpServletResponse response){

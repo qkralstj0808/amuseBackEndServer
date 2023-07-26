@@ -38,4 +38,11 @@ public class AuthResponse {
     public static class getError {
         private String accessToken;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class changePassword {
+        private String massage;
+    }
 }
