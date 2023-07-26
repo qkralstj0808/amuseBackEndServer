@@ -172,9 +172,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         CorsConfiguration corsConfig = new CorsConfiguration();
 
-        corsConfig.addAllowedOrigin("https://www.myadmin.wheelgo.net");
-        corsConfig.addAllowedOrigin("http://www.amuse-travel-client.s3-website.ap-northeast-2.amazonaws.com");
-        corsConfig.addAllowedOrigin("http://www.naver.com");
+        corsConfig.addAllowedOrigin("http://amusetravel.wheelgo.net/");
+        corsConfig.addAllowedOrigin("https://myadmin.wheelgo.net/");
+        corsConfig.addAllowedOrigin("http://localhost:3000");
         corsConfig.addAllowedHeader("*");
         corsConfig.addAllowedMethod("*");
         corsConfig.setAllowCredentials(true);
