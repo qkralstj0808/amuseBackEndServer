@@ -60,10 +60,10 @@ jobs:
           # 도커 작업
           script: |
             if [ "$(docker ps -aq)" ]; then
-              docker rm -f $(docker ps -aq)
+              sudo docker rm -f $(docker ps -aq)
             fi
             if [ "$(docker images -q ${{ secrets.USERNAME }}/text-in-the-road-server:0.1)" ]; then
-              docker rmi ${{ secrets.USERNAME }}/text-in-the-road-server:0.1
+              sudo docker rmi ${{ secrets.USERNAME }}/text-in-the-road-server:0.1
             fi
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/amuse:latest
             sudo docker run -d --log-driver=syslog -p 8075:8075 ${{ secrets.DOCKER_USERNAME }}/amuse:latest
