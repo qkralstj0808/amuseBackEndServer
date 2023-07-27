@@ -59,11 +59,11 @@ jobs:
           key: ${{ secrets.EC2_PEM_KEY }} # pem 키
           # 도커 작업
           script: |
-            if [ "$(docker ps -aq)" ]; then
+            if [ "$(sudo docker ps -aq)" ]; then
               sudo docker rm -f $(docker ps -aq)
             fi
-            if [ "$(docker images -q ${{ secrets.USERNAME }}/text-in-the-road-server:0.1)" ]; then
-              sudo docker rmi ${{ secrets.USERNAME }}/text-in-the-road-server:0.1
+            if [ "$(sudo docker images -q ${{ secrets.USERNAME }}/amuse)" ]; then
+              sudo docker rmi ${{ secrets.USERNAME }}/amuse
             fi
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/amuse:latest
             sudo docker run -d --log-driver=syslog -p 8075:8075 ${{ secrets.DOCKER_USERNAME }}/amuse:latest
