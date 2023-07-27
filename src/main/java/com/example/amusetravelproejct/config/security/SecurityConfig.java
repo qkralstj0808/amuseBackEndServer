@@ -1,6 +1,7 @@
 package com.example.amusetravelproejct.config.security;
 
 import com.example.amusetravelproejct.config.properties.CorsProperties;
+//import com.example.amusetravelproejct.config.resTemplate.CustomAccessDeniedHandler;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.example.amusetravelproejct.oauth.handler.CustomAuthenticationFailureHandler;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
@@ -48,6 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
+//    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
 
     private final UserRepository userRepository;
 
@@ -75,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .httpBasic().disable()
                     .exceptionHandling()
                     .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                    .accessDeniedHandler(tokenAccessDeniedHandler)
+
                 .and()
 
                     // 권한을 줄 수 있다.
@@ -98,7 +101,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .userService(oAuth2UserService)
                 .and()
                     .successHandler(oAuth2AuthenticationSuccessHandler())
-                    .failureHandler(oAuth2AuthenticationFailureHandler());
+                    .failureHandler(oAuth2AuthenticationFailureHandler())
+                .and()
+                    .exceptionHandling()
+                .accessDeniedHandler(tokenAccessDeniedHandler);
+
 
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(tokenExceptionFilter, TokenAuthenticationFilter.class);

@@ -17,7 +17,7 @@ import java.util.HashMap;
 @Slf4j
 public class UtilMethod {
     private  AmazonS3 amazonS3Client;
-    static String bucketName = "amuse-img";
+    static String bucketName = "amuseimg";
 
     public static SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 

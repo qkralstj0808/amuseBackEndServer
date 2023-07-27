@@ -10,6 +10,8 @@ public enum ErrorCode {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(HttpStatus.UNAUTHORIZED, "권한 정보가 없는 토큰입니다."),
+    NOT_ALLOWED_ACCESS_TOKEN(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS,"해당 api는 관리자만 사용할 수 있습니다 해당 access token은 관리자 " +
+            "권한이 없습니다"),
 
     /* 404 NOT_FOUND : Resource를 찾을 수 없음 */
     ITEM_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 상품은 존재하지 않습니다"),

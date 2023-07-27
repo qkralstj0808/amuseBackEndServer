@@ -90,10 +90,17 @@ public class AdminPageController {
     }
     @Transactional
     @PostMapping("/product/insert")
-    public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto) throws ParseException {
+    public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto,
+                                                     @AuthenticationPrincipal UserPrincipal userPrincipal) throws ParseException {
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+        Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         //TODO
         // productRegisterDto 데이터 선 처리
+
+        if(productRegisterDto.getOption().equals("create")){
+            productRegisterDto.setAdmin(findAdmin.getAdminId());
+        }
+        productRegisterDto.setUpdateAdmin(findAdmin.getAdminId());
 
         log.info(productRegisterDto.toString());
         Item item = productRegisterDto.getOption().equals("create") ? itemService.processCreate(productRegisterDto) : itemService.processUpdate(productRegisterDto);
