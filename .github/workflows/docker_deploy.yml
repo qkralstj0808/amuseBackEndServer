@@ -63,4 +63,5 @@ jobs:
             sudo docker stop $(docker ps -a -q)
             sudo docker run -d --log-driver=syslog -p 8075:8075 ${{ secrets.DOCKER_USERNAME }}/amuse:latest
             sudo docker rm $(docker ps --filter 'status=exited' -a -q)
+            sudo docker images | grep -v "latest" | grep "${{ secrets.DOCKER_USERNAME }}/amuse" | awk '{print $3}' | xargs docker rmi 
             sudo docker image prune -a -f
