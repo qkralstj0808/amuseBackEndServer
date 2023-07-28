@@ -95,7 +95,7 @@ public class DetailPageService {
 //        Admin findItemAdmin = findItem.getAdmin();
 
         if(guide == null){
-            return new ResponseTemplate(null);
+            return new ResponseTemplate(new DetailPageResponse.getManager(null,null,null,null,null,null,null));
         }
 
         return new ResponseTemplate(new DetailPageResponse.getManager(guide.getId(),guide.getCode(),
