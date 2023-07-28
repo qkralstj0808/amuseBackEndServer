@@ -29,6 +29,9 @@ public class ProductRegisterDto {
     private String startDate;
     private String endDate;
     private String option;
+    private String guide_code;
+//    private Long guide_db_id;
+    private String guide_comment;
     private accessData accessAuthority;
 
 

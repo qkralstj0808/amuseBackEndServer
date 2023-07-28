@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity(name = "item")
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
@@ -65,8 +67,14 @@ public class Item extends BaseEntity {
     @JoinColumn(name = "update_admin")
     private Admin updateAdmin;
 
-    // item와 category는 N:1 관계 ManyToOne
+    // 가이드는 상품 하나당 한명
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "guide_id")
+    private Guide guide;
 
+    private String guide_comment;
+
+    // item와 category는 N:1 관계 ManyToOne
 
     // item와 ItemImg 1:N 관계
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -51,6 +51,8 @@ public class ItemService {
     private final LikeItemRepository likeItemRepository;
     private final ItemIconRepository itemIconRepository;
     private final CategoryRepository categoryRepository;
+
+    private final GuideRepository guideRepository;
     ObjectMapper objectMapper = new ObjectMapper();
 
     static String bucketName = "amuse-img";
@@ -110,6 +112,18 @@ public class ItemService {
         item.setContent_2(productRegisterDto.getExtraInfo());
         item.setAdmin(getAdminByAdminId(productRegisterDto.getAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
+
+        // 가이드 추가
+        Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+        );
+
+//        Guide guide1 = guideRepository.findById(productRegisterDto.getGuide_db_id()).orElseThrow(
+//                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+//        );
+
+        item.setGuide(guide);
+        item.setGuide_comment(productRegisterDto.getGuide_comment());
 
         Long duration = 0L;
 
@@ -188,6 +202,19 @@ public class ItemService {
 
         item.setUpdateAdmin(getAdminByAdminId(productRegisterDto.getUpdateAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
+
+        // 가이드 업데이트
+        Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+        );
+
+//        Guide guide1 = guideRepository.findById(productRegisterDto.getGuide_db_id()).orElseThrow(
+//                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+//        );
+
+        item.setGuide(guide);
+        item.setGuide_comment(productRegisterDto.getGuide_comment());
+
         Long duration = 0L;
 
         if (productRegisterDto.getDuration().length() < 4){

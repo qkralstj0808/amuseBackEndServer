@@ -130,12 +130,13 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getManager {
-        private String title;
-        private String name;
+        private Long guide_db_id;
+        private String guideCode;
+        private String userName;
         private String email;
-        private String img;
-        private String manager_content;
-
+        private String profileImageUrl;
+        private String introduce;
+        private String guide_comment_by_item;
     }
 
     @Data
