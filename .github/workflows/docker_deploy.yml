@@ -59,8 +59,12 @@ jobs:
           key: ${{ secrets.EC2_PEM_KEY }} # pem 키
           # 도커 작업
           script: |
+            if [ "$(sudo docker ps -aq)" ]; then
+              sudo docker rm -f $(docker ps -aq)
+            fi
+            if [ "$(sudo docker images -q ${{ secrets.USERNAME }}/amuse)" ]; then
+              sudo docker rmi ${{ secrets.USERNAME }}/amuse
+            fi
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/amuse:latest
-            sudo docker stop $(docker ps -a -q)
             sudo docker run -d --log-driver=syslog -p 8075:8075 ${{ secrets.DOCKER_USERNAME }}/amuse:latest
-            sudo docker rm $(docker ps --filter 'status=exited' -a -q)
             sudo docker image prune -a -f
