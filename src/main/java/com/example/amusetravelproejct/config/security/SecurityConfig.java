@@ -31,6 +31,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.Arrays;
 
@@ -179,11 +181,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         CorsConfiguration corsConfig = new CorsConfiguration();
 
-//        corsConfig.addAllowedOrigin("http://amusetravel.wheelgo.net/");
-//        corsConfig.addAllowedOrigin("https://myadmin.wheelgo.net/");
-//        corsConfig.addAllowedOrigin("http://localhost:3000");
-//        corsConfig.addAllowedOrigin("http://localhost:3001");
-        corsConfig.addAllowedOriginPattern("*");
+        corsConfig.addAllowedOrigin("http://amusetravel.wheelgo.net/");
+        corsConfig.addAllowedOrigin("https://amusetravel.wheelgo.net/");
+        corsConfig.addAllowedOrigin("https://myadmin.wheelgo.net/");
+        corsConfig.addAllowedOrigin("http://myadmin.wheelgo.net/");
+        corsConfig.addAllowedOrigin("http://localhost:3000");
+        corsConfig.addAllowedOrigin("http://localhost:3001");
+//        corsConfig.addAllowedOriginPattern("*");
         corsConfig.addAllowedHeader("*");
         corsConfig.addAllowedMethod("*");
         corsConfig.setAllowCredentials(true);
@@ -192,4 +196,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         corsConfigSource.registerCorsConfiguration("/**", corsConfig);
         return corsConfigSource;
     }
+
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry){
+//        registry.addMapping("/**")
+//                .allowedOriginPatterns("*")
+//                .allowedMethods("*")
+//                .allowedHeaders("*")
+//                .allowCredentials(true)
+//                .maxAge(3600);
+//    }
+
+
 }
