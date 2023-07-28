@@ -508,8 +508,19 @@ public class ItemService {
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
             itemCourse.setDay(Math.toIntExact(productRegisterDto.getCourse().get(i).getDay()));
 
-            itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
-            itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
+            if(productRegisterDto.getCourse().get(i).getLocation().getLatitude().isEmpty()){
+                itemCourse.setLatitude(null);
+            }else{
+                itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
+            }
+
+            if(productRegisterDto.getCourse().get(i).getLocation().getLongitude().isEmpty()){
+                itemCourse.setLongitude(null);
+            }else{
+                itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
+            }
+
+
             itemCourseRepository.save(itemCourse);
         }
     }
