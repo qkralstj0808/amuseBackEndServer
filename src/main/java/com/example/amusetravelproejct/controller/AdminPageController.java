@@ -372,10 +372,10 @@ public class AdminPageController {
             @RequestBody AdminPageRequest.createPage request,
             @AuthenticationPrincipal UserPrincipal userPrincipal){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+        Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
+//        User findUser = userService.getUserByPrincipal(userPrincipal);
 
-        User findUser = userService.getUserByPrincipal(userPrincipal);
-
-        return pageService.createPage(request,utilMethod,findUser);
+        return pageService.createPage(request,utilMethod,findAdmin);
     }
 
     @PutMapping("page/edit/{page-id}")
@@ -385,9 +385,9 @@ public class AdminPageController {
             @AuthenticationPrincipal UserPrincipal userPrincipal){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
-        User findUser = userService.getUserByPrincipal(userPrincipal);
+        Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
 
-        return pageService.updatePage(page_id,request,utilMethod,findUser);
+        return pageService.updatePage(page_id,request,utilMethod,findAdmin);
     }
 
     @GetMapping("/page/{page-id}")
