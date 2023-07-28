@@ -89,6 +89,7 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getManager> getManager(Long item_id) {
         Item findItem = findItemById(item_id);
+
         Admin findItemAdmin = findItem.getAdmin();
 
         if(findItemAdmin == null){
