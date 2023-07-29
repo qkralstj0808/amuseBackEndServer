@@ -355,10 +355,10 @@ public class AdminPageController {
         return  new ResponseTemplate<>(userService.updateGuide(request,code,utilMethod));
     }
 
-    @GetMapping("/delete/guide/{code}")
-    public ResponseTemplate<String> deleteGuide(@PathVariable("code") String code){
+    @GetMapping("/delete/guide/{guide_db_id}")
+    public ResponseTemplate<String> deleteGuide(@PathVariable("guide_db_id") Long guide_db_id){
 
-        userService.deleteGuide(code);
+        userService.deleteGuide(guide_db_id);
         return new ResponseTemplate<>("가이드 삭제가 완료 되었습니다.");
     }
 

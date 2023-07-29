@@ -162,8 +162,8 @@ public class UserService {
     }
     @Transactional(readOnly = false)
 
-    public void deleteGuide(String guideCode){
-        Guide guide = guideRepository.findByCode(guideCode).orElseThrow(
+    public void deleteGuide(Long guide_db_id){
+        Guide guide = guideRepository.findById(guide_db_id).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
         );
         guideRepository.delete(guide);
