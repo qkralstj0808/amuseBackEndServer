@@ -138,8 +138,8 @@ public class UserService {
         return new AdminResponse.GuideInfo(guide.getId(), guide.getCode(), guide.getName(),guide.getEmile(), guide.getImgUrl(),guide.getIntroduce());
     }
     @Transactional(readOnly = false)
-    public AdminResponse.GuideInfo updateGuide(AdminRequest.guide request,String guideCode,UtilMethod utilMethod){
-        Guide guide = guideRepository.findByCode(guideCode).orElseThrow(
+    public AdminResponse.GuideInfo updateGuide(AdminRequest.guide request,Long guide_db_id,UtilMethod utilMethod){
+        Guide guide = guideRepository.findById(guide_db_id).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
         );
         guide.setName(request.getName());
@@ -153,8 +153,8 @@ public class UserService {
         return new AdminResponse.GuideInfo(guide.getId(), guide.getCode(), guide.getName(),guide.getEmile(), guide.getImgUrl(),guide.getIntroduce());
     }
 
-    public AdminResponse.GuideInfo readGuide(String guideCode) {
-        Guide guide = guideRepository.findByCode(guideCode).orElseThrow(
+    public AdminResponse.GuideInfo readGuide(Long guide_db_id) {
+        Guide guide = guideRepository.findById(guide_db_id).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
         );
 

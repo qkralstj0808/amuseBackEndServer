@@ -342,17 +342,17 @@ public class AdminPageController {
         return  new ResponseTemplate<>(userService.createGuide(request,utilMethod));
     }
 
-    @GetMapping("/read/guide/{code}")
-    public ResponseTemplate<AdminResponse.GuideInfo> readGuide(@PathVariable("code") String code){
+    @GetMapping("/read/guide/{guide_db_id}")
+    public ResponseTemplate<AdminResponse.GuideInfo> readGuide(@PathVariable("guide_db_id") Long guide_db_id){
 
-        return new ResponseTemplate<>(userService.readGuide(code));
+        return new ResponseTemplate<>(userService.readGuide(guide_db_id));
     }
 
-    @PostMapping("/update/guide/{code}")
-    public ResponseTemplate<AdminResponse.GuideInfo> updateGuide(@PathVariable("code") String code,@RequestBody AdminRequest.guide request){
+    @PostMapping("/update/guide/{guide_db_id}")
+    public ResponseTemplate<AdminResponse.GuideInfo> updateGuide(@PathVariable("guide_db_id") Long guide_db_id,@RequestBody AdminRequest.guide request){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
-        return  new ResponseTemplate<>(userService.updateGuide(request,code,utilMethod));
+        return  new ResponseTemplate<>(userService.updateGuide(request,guide_db_id,utilMethod));
     }
 
     @GetMapping("/delete/guide/{guide_db_id}")
