@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop" , "master"]
 
 permissions:
   contents: read
@@ -31,18 +31,12 @@ jobs:
 #            ${{ runner.os }}-gradle-
 
 
-      - name: make application.yml
+      - name: make application-develop.yml
+        if: contains(github.ref, 'develop')
         run: |
           mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION }}" | base64 --decode > src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION_DEVELOP_YML }}" | base64 --decode > src/main/resources/application.yml
           find src
-
-#      - name: make application.yml
-#        run: |
-#          cd ./src/main/resources
-#          touch ./application-develop.yml
-#          echo "${{ secrets.APPLICATION }}" | base64 --decode > ./application-develop.yml
-#        shell: bash
 
 
       - name: Grant execute permission for gradlew
@@ -51,14 +45,18 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build -x test
 
-      - name: Docker build
+
+      - name: Develop_Docker build
+        if: contains(github.ref, 'develop')
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t app .
           docker tag app ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
+      
 
-      - name: Deploy
+      - name: Develop_Deploy
+        if: contains(github.ref, 'develop')
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
