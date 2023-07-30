@@ -31,18 +31,18 @@ jobs:
 #            ${{ runner.os }}-gradle-
 
 
-#      - name: make application.yml
-#        run: |
-#          mkdir -p src/main/resources
-#          echo "${{ secrets.APPLICATION }}" | base64 --decode > src/main/resources/application_develop.yml
-#          find src
-
       - name: make application.yml
         run: |
-          cd ./src/main/resources 
-          touch ./application-develop.yml
-          echo "${{ secrets.APPLICATION }}" | base64 --decode > ./application-develop.yml
-        shell: bash
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION }}" | base64 --decode > src/main/resources/application.yml
+          find src
+
+#      - name: make application.yml
+#        run: |
+#          cd ./src/main/resources
+#          touch ./application-develop.yml
+#          echo "${{ secrets.APPLICATION }}" | base64 --decode > ./application-develop.yml
+#        shell: bash
 
 
       - name: Grant execute permission for gradlew
