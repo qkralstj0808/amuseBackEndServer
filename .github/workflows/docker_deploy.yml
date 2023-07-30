@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "develop" , "master"]
+    branches: [ "develop" , "deploy"]
 
 permissions:
   contents: read
@@ -39,7 +39,7 @@ jobs:
           find src
 
       - name: make application-master.yml
-        if: contains(github.ref, 'master')
+        if: contains(github.ref, 'deploy')
         run: |
           mkdir -p src/main/resources
           echo "${{ secrets.APPLICATION_MASTER_YML }}" | base64 --decode > src/main/resources/application.yml
@@ -62,7 +62,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
 
       - name: Master_Docker build
-        if: contains(github.ref, 'master')
+        if: contains(github.ref, 'deploy')
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t app .
@@ -90,7 +90,7 @@ jobs:
             sudo docker image prune -a -f
 
       - name: Master_Deploy
-        if: contains(github.ref, 'master')
+        if: contains(github.ref, 'deploy')
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.MASTER_EC2_HOST_IPV4_DNS }} # EC2 인스턴스 퍼블릭 DNS
