@@ -38,6 +38,13 @@ jobs:
           echo "${{ secrets.APPLICATION_DEVELOP_YML }}" | base64 --decode > src/main/resources/application.yml
           find src
 
+      - name: make application-master.yml
+        if: contains(github.ref, 'master')
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_MASTER_YML }}" | base64 --decode > src/main/resources/application.yml
+          find src
+
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -53,6 +60,14 @@ jobs:
           docker build -t app .
           docker tag app ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
+
+      - name: Master_Docker build
+        if: contains(github.ref, 'master')
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t app .
+          docker tag app ${{ secrets.DOCKER_USERNAME }}/amuse_master:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/amuse_master:latest
       
 
       - name: Develop_Deploy
@@ -61,7 +76,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
           username: ubuntu
-          key: ${{ secrets.EC2_PEM_KEY }} # pem 키
+          key: ${{ secrets.EC2_DEVELOP_PEM_KEY }} # pem 키
           # 도커 작업
           script: |
             if [ "$(sudo docker ps -aq)" ]; then
@@ -72,4 +87,23 @@ jobs:
             fi
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
             sudo docker run -d --log-driver=syslog -p 8075:8075 ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
+            sudo docker image prune -a -f
+
+      - name: Master_Deploy
+        if: contains(github.ref, 'master')
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
+          username: ubuntu
+          key: ${{ secrets.EC2_PEM_KEY }} # pem 키
+          # 도커 작업
+          script: |
+            if [ "$(sudo docker ps -aq)" ]; then
+              sudo docker rm -f $(docker ps -aq)
+            fi
+            if [ "$(sudo docker images -q ${{ secrets.USERNAME }}/amuse_master)" ]; then
+              sudo docker rmi ${{ secrets.USERNAME }}/amuse_master
+            fi
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/amuse_master:latest
+            sudo docker run -d --log-driver=syslog -p 8075:8075 ${{ secrets.DOCKER_USERNAME }}/amuse_master:latest
             sudo docker image prune -a -f
