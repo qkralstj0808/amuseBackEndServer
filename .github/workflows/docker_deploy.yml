@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "develop" , "master"]
+    branches: [ "develop" ]
 
 permissions:
   contents: read
@@ -93,9 +93,9 @@ jobs:
         if: contains(github.ref, 'master')
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
+          host: ${{ secrets.MASTER_EC2_HOST_IPV4_DNS }} # EC2 인스턴스 퍼블릭 DNS
           username: ubuntu
-          key: ${{ secrets.EC2_PEM_KEY }} # pem 키
+          key: ${{ secrets.EC2_MASTER_PEM_KEY }} # pem 키
           # 도커 작업
           script: |
             if [ "$(sudo docker ps -aq)" ]; then
