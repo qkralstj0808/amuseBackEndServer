@@ -51,13 +51,15 @@ public class ItemService {
     private final LikeItemRepository likeItemRepository;
     private final ItemIconRepository itemIconRepository;
     private final CategoryRepository categoryRepository;
+
+    private final GuideRepository guideRepository;
     ObjectMapper objectMapper = new ObjectMapper();
 
     static String bucketName = "amuse-img";
 
     //Admin
-    public Optional<Admin> getAdminByEmail(String email) {
-        return Optional.ofNullable(adminRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+    public Optional<Admin> getAdminByAdminId(String admin_id) {
+        return Optional.ofNullable(adminRepository.findByAdminId(admin_id).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
     }
 
     public List<Icon> getIconList() {
@@ -108,8 +110,20 @@ public class ItemService {
         item.setCity(productRegisterDto.getLocation().getCity());
         item.setContent_1(productRegisterDto.getMainInfo());
         item.setContent_2(productRegisterDto.getExtraInfo());
-        item.setAdmin(getAdminByEmail(productRegisterDto.getAdmin()).get());
+        item.setAdmin(getAdminByAdminId(productRegisterDto.getAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
+
+        // 가이드 추가
+        Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+        );
+
+//        Guide guide1 = guideRepository.findById(productRegisterDto.getGuide_db_id()).orElseThrow(
+//                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+//        );
+
+        item.setGuide(guide);
+        item.setGuide_comment(productRegisterDto.getGuide_comment());
 
         Long duration = 0L;
 
@@ -186,8 +200,21 @@ public class ItemService {
         item.setContent_2(productRegisterDto.getExtraInfo());
 
 
-        item.setUpdateAdmin(getAdminByEmail(productRegisterDto.getUpdateAdmin()).get());
+        item.setUpdateAdmin(getAdminByAdminId(productRegisterDto.getUpdateAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
+
+        // 가이드 업데이트
+        Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+        );
+
+//        Guide guide1 = guideRepository.findById(productRegisterDto.getGuide_db_id()).orElseThrow(
+//                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+//        );
+
+        item.setGuide(guide);
+        item.setGuide_comment(productRegisterDto.getGuide_comment());
+
         Long duration = 0L;
 
         if (productRegisterDto.getDuration().length() < 4){
@@ -508,8 +535,19 @@ public class ItemService {
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
             itemCourse.setDay(Math.toIntExact(productRegisterDto.getCourse().get(i).getDay()));
 
-            itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
-            itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
+            if(productRegisterDto.getCourse().get(i).getLocation().getLatitude().isEmpty()){
+                itemCourse.setLatitude(null);
+            }else{
+                itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
+            }
+
+            if(productRegisterDto.getCourse().get(i).getLocation().getLongitude().isEmpty()){
+                itemCourse.setLongitude(null);
+            }else{
+                itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
+            }
+
+
             itemCourseRepository.save(itemCourse);
         }
     }
@@ -541,8 +579,8 @@ public class ItemService {
             data.getItemHashTags().forEach(hashTag -> {
                 categoryNames.add(hashTag.getHashTag());
             });
-            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getEmail(),data.getCreatedDate(),
-                    data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getEmail(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
+            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getAdminId(),data.getCreatedDate(),
+                    data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getAdminId(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
         });
 
         getItemByCategory.setData(findItemByCategories);
@@ -563,8 +601,8 @@ public class ItemService {
             data.getItemHashTags().forEach(hashTag -> {
                 categoryNames.add(hashTag.getHashTag());
             });
-            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getEmail(),data.getCreatedDate(),
-                    data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getEmail(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
+            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getAdminId(),data.getCreatedDate(),
+                    data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getAdminId(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
         });
 
         getItemByCategory.setData(findItemByCategories);
@@ -606,8 +644,8 @@ public class ItemService {
             data.getItemHashTags().forEach(hashTag -> {
                 categoryNames.add(hashTag.getHashTag());
             });
-            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getEmail(),data.getCreatedDate(),
-                    data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getEmail(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
+            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getAdminId(),data.getCreatedDate(),
+                    data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getAdminId(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
         });
 
         getItemByCategory.setData(findItemByCategories);
@@ -747,8 +785,8 @@ public class ItemService {
 
         productRegisterDto.setCourse(courseDtos);
         productRegisterDto.setExtraInfo(item.getContent_2());
-        productRegisterDto.setAdmin(item.getAdmin().getEmail());
-        productRegisterDto.setUpdateAdmin(item.getUpdateAdmin() == null ? null : item.getUpdateAdmin().getEmail());
+        productRegisterDto.setAdmin(item.getAdmin().getAdminId());
+        productRegisterDto.setUpdateAdmin(item.getUpdateAdmin() == null ? null : item.getUpdateAdmin().getAdminId());
         productRegisterDto.setStartDate(String.valueOf(item.getStartDate()));
         productRegisterDto.setEndDate(String.valueOf(item.getEndDate()));
         productRegisterDto.setDuration(String.valueOf(item.getDuration()));

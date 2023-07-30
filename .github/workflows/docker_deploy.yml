@@ -31,11 +31,19 @@ jobs:
 #            ${{ runner.os }}-gradle-
 
 
-      - name: make application.yml
+      - name: make application-develop.yml
+        if: contains(github.ref, 'develop')
         run: |
-          cd ./src/main/resources
-          touch ./application.yml
-          echo "${{ secrets.APPLICATION }}" > ./application.yml
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_DEVELOP_YML }}" | base64 --decode > src/main/resources/application.yml
+          find src
+
+      - name: make application-master.yml
+        if: contains(github.ref, 'master')
+        run: |
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_MASTER_YML }}" | base64 --decode > src/main/resources/application.yml
+          find src
 
 
       - name: Grant execute permission for gradlew
@@ -44,23 +52,58 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build -x test
 
-      - name: Docker build
+
+      - name: Develop_Docker build
+        if: contains(github.ref, 'develop')
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t app .
-          docker tag app ${{ secrets.DOCKER_USERNAME }}/amuse:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/amuse:latest
+          docker tag app ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
 
-      - name: Deploy
+      - name: Master_Docker build
+        if: contains(github.ref, 'master')
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t app .
+          docker tag app ${{ secrets.DOCKER_USERNAME }}/amuse_master:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/amuse_master:latest
+      
+
+      - name: Develop_Deploy
+        if: contains(github.ref, 'develop')
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }} # EC2 인스턴스 퍼블릭 DNS
+          host: ${{ secrets.DEVELOP_EC2_HOST_IPV4_DNS }} # EC2 인스턴스 퍼블릭 DNS
           username: ubuntu
-          key: ${{ secrets.EC2_PEM_KEY }} # pem 키
+          key: ${{ secrets.EC2_DEVELOP_PEM_KEY }} # pem 키
           # 도커 작업
           script: |
-            sudo docker stop $(docker ps -a -q)
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/amuse:latest
-            sudo docker run -d --log-driver=syslog -p 8075:8075 ${{ secrets.DOCKER_USERNAME }}/amuse:latest
-            sudo docker rm $(docker ps --filter 'status=exited' -a -q)
+            if [ "$(sudo docker ps -aq)" ]; then
+              sudo docker rm -f $(docker ps -aq)
+            fi
+            if [ "$(sudo docker images -q ${{ secrets.USERNAME }}/amuse_develop)" ]; then
+              sudo docker rmi ${{ secrets.USERNAME }}/amuse_develop
+            fi
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
+            sudo docker run -d --log-driver=syslog -p 8075:8075 ${{ secrets.DOCKER_USERNAME }}/amuse_develop:latest
+            sudo docker image prune -a -f
+
+      - name: Master_Deploy
+        if: contains(github.ref, 'master')
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.MASTER_EC2_HOST_IPV4_DNS }} # EC2 인스턴스 퍼블릭 DNS
+          username: ubuntu
+          key: ${{ secrets.EC2_MASTER_PEM_KEY }} # pem 키
+          # 도커 작업
+          script: |
+            if [ "$(sudo docker ps -aq)" ]; then
+              sudo docker rm -f $(docker ps -aq)
+            fi
+            if [ "$(sudo docker images -q ${{ secrets.USERNAME }}/amuse_master)" ]; then
+              sudo docker rmi ${{ secrets.USERNAME }}/amuse_master
+            fi
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/amuse_master:latest
+            sudo docker run -d --log-driver=syslog -p 8075:8075 ${{ secrets.DOCKER_USERNAME }}/amuse_master:latest
             sudo docker image prune -a -f

@@ -60,7 +60,7 @@ public class DetailPageController {
         return detailPageService.getOtherContent(item_id);
     }
 
-    @GetMapping("/manager-info")
+    @GetMapping("/guide-info")
     public ResponseTemplate<DetailPageResponse.getManager> getManager(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
         return detailPageService.getManager(item_id);
     }

@@ -41,7 +41,7 @@ public class PageService {
 
     @Transactional
     public ResponseTemplate<String> createPage(
-            AdminPageRequest.createPage request, UtilMethod utilMethod, User findUser) {
+            AdminPageRequest.createPage request, UtilMethod utilMethod, Admin admin) {
 
         Category category = new Category();
         Category findCategory = categoryRepository.findByCategoryName(request.getName());
@@ -49,9 +49,9 @@ public class PageService {
         if(findCategory != null){
             throw new CustomException(ErrorCode.CATEGORY_EXIT);
         }
-        Admin admin = adminRepository.findByUserId(findUser.getUserId()).orElseThrow(
-                () -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)
-        );
+//        Admin admin = adminRepository.findByAdminId(findUser.getUserId()).orElseThrow(
+//                () -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)
+//        );
 
 
         category.setCategory_name(request.getName());
@@ -88,14 +88,14 @@ public class PageService {
     }
 
     @Transactional
-    public ResponseTemplate<AdminPageResponse.updatePage> updatePage(Long page_id, AdminPageRequest.updatePage request, UtilMethod utilMethod, User findUser) {
+    public ResponseTemplate<AdminPageResponse.updatePage> updatePage(Long page_id, AdminPageRequest.updatePage request, UtilMethod utilMethod, Admin admin) {
         Category findCategory = categoryRepository.findById(page_id).orElseThrow(
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
         );
 
-        Admin admin = adminRepository.findByUserId(findUser.getUserId()).orElseThrow(
-                () -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)
-        );
+//        Admin admin = adminRepository.findByAdminId(findUser.getUserId()).orElseThrow(
+//                () -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)
+//        );
 
 
         if(request.getDisable() == null){

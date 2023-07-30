@@ -24,7 +24,7 @@ public class AdminRequest {
         private String introduce;
         private String fileName;
         private String base64Data;
-        private String imgUrl;
+//        private String imgUrl;
     }
 
 

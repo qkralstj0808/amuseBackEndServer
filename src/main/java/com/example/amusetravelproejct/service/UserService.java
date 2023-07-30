@@ -77,51 +77,53 @@ public class UserService {
         ).collect(Collectors.toList()));
     }
 
-    @Transactional
-    public ResponseTemplate<AdminResponse.updateUserRoleType> updateUserRoleType(Long user_db_id, AdminRequest.updateUserRoleType request) {
-        User findUser = userRepository.findById(user_db_id).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
-
-        Optional<Admin> findAdmin = adminRepository.findByUserId(findUser.getUserId());
-
-        if(findAdmin.isEmpty()){
-            Admin admin = new Admin();
-            admin.setUser(findUser);
-            admin.setEmail(findUser.getEmail());
-            admin.setPassword(findUser.getPassword());
-            admin.setName(findUser.getUsername());
-            admin.setProfileImgLink(findUser.getProfileImageUrl());
-            admin.setUserId(findUser.getUserId());
-            admin.setProviderType(findUser.getProviderType());
-            adminRepository.save(admin);
-        }else{
-            Admin admin = findAdmin.get();
-            admin.setUser(findUser);
-            admin.setEmail(findUser.getEmail());
-            admin.setPassword(findUser.getPassword());
-            admin.setName(findUser.getUsername());
-            admin.setProfileImgLink(findUser.getProfileImageUrl());
-            admin.setUserId(findUser.getUserId());
-            admin.setProviderType(findUser.getProviderType());
-        }
-
-
-        findUser.setRoleType(request.getRoleType());
-
-
-        return new ResponseTemplate(new AdminResponse.updateUserRoleType(
-                new AdminResponse.UserInfo(
-                        findUser.getId(),
-                        findUser.getUserId(),
-                        findUser.getUsername(),
-                        findUser.getEmail(),
-                        findUser.getProfileImageUrl(),
-                        findUser.getProviderType(),
-                        findUser.getRoleType()
-                )
-        ));
-    }
+//    @Transactional
+//    public ResponseTemplate<AdminResponse.updateUserRoleType> updateUserRoleType(Long user_db_id, AdminRequest.updateUserRoleType request) {
+//        User findUser = userRepository.findById(user_db_id).orElseThrow(
+//                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+//        );
+//
+//        Optional<Admin> findAdmin = adminRepository.findByUserId(findUser.getUserId());
+//
+//        if(findAdmin.isEmpty()){
+//            Admin admin = new Admin();
+////            admin.setUser(findUser);
+//            admin.setEmail(findUser.getEmail());
+//            admin.setEmail(findUser.getAdminId());
+//            admin.setPassword(findUser.getPassword());
+//            admin.setName(findUser.getUsername());
+//            admin.setProfileImgLink(findUser.getProfileImageUrl());
+////            admin.setUserId(findUser.getUserId());
+////            admin.setProviderType(findUser.getProviderType());
+//            adminRepository.save(admin);
+//        }else{
+//            Admin admin = findAdmin.get();
+////            admin.setUser(findUser);
+//            admin.setEmail(findUser.getEmail());
+//            admin.setAdminId(findUser.getAdmin());
+//            admin.setPassword(findUser.getPassword());
+//            admin.setName(findUser.getUsername());
+//            admin.setProfileImgLink(findUser.getProfileImageUrl());
+////            admin.setUserId(findUser.getUserId());
+////            admin.setProviderType(findUser.getProviderType());
+//        }
+//
+//
+//        findUser.setRoleType(request.getRoleType());
+//
+//
+//        return new ResponseTemplate(new AdminResponse.updateUserRoleType(
+//                new AdminResponse.UserInfo(
+//                        findUser.getId(),
+//                        findUser.getUserId(),
+//                        findUser.getUsername(),
+//                        findUser.getEmail(),
+//                        findUser.getProfileImageUrl(),
+//                        findUser.getProviderType(),
+//                        findUser.getRoleType()
+//                )
+//        ));
+//    }
 
     @Transactional(readOnly = false)
     public AdminResponse.GuideInfo createGuide(AdminRequest.guide request,UtilMethod utilMethod){
@@ -136,8 +138,8 @@ public class UserService {
         return new AdminResponse.GuideInfo(guide.getId(), guide.getCode(), guide.getName(),guide.getEmile(), guide.getImgUrl(),guide.getIntroduce());
     }
     @Transactional(readOnly = false)
-    public AdminResponse.GuideInfo updateGuide(AdminRequest.guide request,String guideCode,UtilMethod utilMethod){
-        Guide guide = guideRepository.findByCode(guideCode).orElseThrow(
+    public AdminResponse.GuideInfo updateGuide(AdminRequest.guide request,Long guide_db_id,UtilMethod utilMethod){
+        Guide guide = guideRepository.findById(guide_db_id).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
         );
         guide.setName(request.getName());
@@ -151,8 +153,8 @@ public class UserService {
         return new AdminResponse.GuideInfo(guide.getId(), guide.getCode(), guide.getName(),guide.getEmile(), guide.getImgUrl(),guide.getIntroduce());
     }
 
-    public AdminResponse.GuideInfo readGuide(String guideCode) {
-        Guide guide = guideRepository.findByCode(guideCode).orElseThrow(
+    public AdminResponse.GuideInfo readGuide(Long guide_db_id) {
+        Guide guide = guideRepository.findById(guide_db_id).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
         );
 
@@ -160,8 +162,8 @@ public class UserService {
     }
     @Transactional(readOnly = false)
 
-    public void deleteGuide(String guideCode){
-        Guide guide = guideRepository.findByCode(guideCode).orElseThrow(
+    public void deleteGuide(Long guide_db_id){
+        Guide guide = guideRepository.findById(guide_db_id).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
         );
         guideRepository.delete(guide);

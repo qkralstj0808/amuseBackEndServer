@@ -6,6 +6,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.w3c.dom.Text;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @EntityListeners(value = {AuditingEntityListener.class})
@@ -22,5 +24,9 @@ public class Guide extends BaseEntity{
     private String code;
     @Column(columnDefinition = "TEXT")
     private String introduce;
+
+    @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Item> item_list = new ArrayList<>();
+
 
 }

@@ -19,6 +19,15 @@ public class AuthResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class getAccessToken_targetUrl {
+        private String targetUrl;
+        private String accessToken;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class getAccessToken {
         private String accessToken;
     }
@@ -28,5 +37,12 @@ public class AuthResponse {
     @NoArgsConstructor
     public static class getError {
         private String accessToken;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class changePassword {
+        private String massage;
     }
 }

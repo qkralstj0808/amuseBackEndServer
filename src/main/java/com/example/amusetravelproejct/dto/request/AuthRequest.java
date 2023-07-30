@@ -1,15 +1,23 @@
 package com.example.amusetravelproejct.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class AuthRequest {
-    private String id;
-    private String password;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Id_Password {
+        private String id;
+        private String password;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class changePassword {
+        private String id;
+        private String password_for_change;
+    }
+
 }

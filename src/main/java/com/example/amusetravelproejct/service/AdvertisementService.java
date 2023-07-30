@@ -37,7 +37,7 @@ public class AdvertisementService {
         advertisement.setContent(adminAdvertisementRegisterDto.getAdContent());
         advertisement.setStartDate(Date.valueOf(adminAdvertisementRegisterDto.getStartDate()));
         advertisement.setEndDate(Date.valueOf(adminAdvertisementRegisterDto.getEndDate()));
-        Admin admin = adminRepository.findByEmail(adminAdvertisementRegisterDto.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
+        Admin admin = adminRepository.findByAdminId(adminAdvertisementRegisterDto.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
         advertisement.setAdmin(admin);
 
         String category = "";
@@ -59,7 +59,7 @@ public class AdvertisementService {
         advertisementRegister.setEndDate(advertisement.getEndDate().toString());
         advertisementRegister.setAdCategory(advertisement.getCategory().split(","));
         advertisementRegister.setAdContent(advertisement.getContent());
-        advertisementRegister.setCreatedBy(advertisement.getAdmin().getEmail());
+        advertisementRegister.setCreatedBy(advertisement.getAdmin().getAdminId());
         advertisementRegister.setPcBannerUrl(advertisement.getPcBannerUrl());
         advertisementRegister.setMobileBannerUrl(advertisement.getMobileBannerUrl());
         advertisementRegister.setPcBannerLink(advertisement.getPcBannerLink());
@@ -91,7 +91,7 @@ public class AdvertisementService {
         advertisement.setMobileBannerUrl(utilMethod.getImgUrl(advertisementEditDto.getMobileBannerBase64(), advertisementEditDto.getMobileBannerFileName()));
         advertisement.setPcBannerLink(advertisementEditDto.getPcBannerLink());
         advertisement.setMobileBannerLink(advertisementEditDto.getMobileBannerLink());
-        advertisement.setUpdateAdmin(adminService.getAdminByEmail(advertisementEditDto.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+        advertisement.setUpdateAdmin(adminService.getAdminByAdminId(advertisementEditDto.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         AdvertisementRepository.save(advertisement);
 
         AdminPageResponse.advertisementEdit advertisementEdit = new AdminPageResponse.advertisementEdit();
@@ -102,9 +102,9 @@ public class AdvertisementService {
         advertisementEdit.setAdCategory(advertisement.getCategory().split(","));
         advertisementEdit.setAdContent(advertisement.getContent());
         advertisementEdit.setCreatedAt(advertisement.getCreatedAt().toString());
-        advertisementEdit.setCreatedBy(advertisement.getAdmin().getEmail());
+        advertisementEdit.setCreatedBy(advertisement.getAdmin().getAdminId());
         advertisementEdit.setUpdatedAt(advertisement.getModifiedAt().toString());
-        advertisementEdit.setUpdatedBy(advertisement.getUpdateAdmin().getEmail());
+        advertisementEdit.setUpdatedBy(advertisement.getUpdateAdmin().getAdminId());
         advertisementEdit.setPcBannerUrl(advertisement.getPcBannerUrl());
         advertisementEdit.setMobileBannerUrl(advertisement.getMobileBannerUrl());
         advertisementEdit.setPcBannerLink(advertisement.getPcBannerLink());
@@ -130,9 +130,9 @@ public class AdvertisementService {
             advertisementList.setEndDate(advertisement.getEndDate());
             advertisementList.setAdCategory(advertisement.getCategory().split(","));
             advertisementList.setCreatedAt(advertisement.getCreatedAt());
-            advertisementList.setCreatedBy(advertisement.getAdmin().getEmail());
+            advertisementList.setCreatedBy(advertisement.getAdmin().getAdminId());
             advertisementList.setUpdatedAt(advertisement.getUpdateAdmin() == null ? null : advertisement.getModifiedAt());
-            advertisementList.setUpdatedBy(advertisement.getUpdateAdmin() == null ? "" : advertisement.getUpdateAdmin().getEmail());
+            advertisementList.setUpdatedBy(advertisement.getUpdateAdmin() == null ? "" : advertisement.getUpdateAdmin().getAdminId());
 //            advertisementList.setPcBannerUrl (advertisement.getPcBannerUrl());
 //            advertisementList.setMobileBannerUrl(advertisement.getMobileBannerUrl());
 //            advertisementList.setPcBannerLink(advertisement.getPcBannerLink());
@@ -160,9 +160,9 @@ public class AdvertisementService {
         advertisementEdit.setAdCategory(advertisement.getCategory().split(","));
         advertisementEdit.setAdContent(advertisement.getContent());
         advertisementEdit.setCreatedAt(advertisement.getCreatedAt().toString());
-        advertisementEdit.setCreatedBy(advertisement.getAdmin().getEmail());
+        advertisementEdit.setCreatedBy(advertisement.getAdmin().getAdminId());
         advertisementEdit.setUpdatedAt(advertisement.getUpdateAdmin() != null ? advertisement.getModifiedAt().toString() : "");
-        advertisementEdit.setUpdatedBy(advertisement.getUpdateAdmin() != null ? advertisement.getUpdateAdmin().getEmail() : "");
+        advertisementEdit.setUpdatedBy(advertisement.getUpdateAdmin() != null ? advertisement.getUpdateAdmin().getAdminId() : "");
         advertisementEdit.setPcBannerUrl(advertisement.getPcBannerUrl() != null ? advertisement.getPcBannerUrl() : "");
         advertisementEdit.setMobileBannerUrl(advertisement.getMobileBannerUrl() != null ? advertisement.getMobileBannerUrl() : "");
         advertisementEdit.setPcBannerLink(advertisement.getPcBannerLink() != null ? advertisement.getPcBannerLink() : "");

@@ -22,15 +22,15 @@ public class Admin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "ADMIN_ID", length = 64, unique = true)
-    @NotNull
-    @Size(max = 64)
-    private String userId;
+//    @Column(name = "ADMIN_ID", length = 64, unique = true)
+//    @NotNull
+//    @Size(max = 64)
+//    private String userId;
 
-    @Column(name = "PROVIDER_TYPE", length = 20)
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private ProviderType providerType;
+//    @Column(name = "PROVIDER_TYPE", length = 20)
+//    @Enumerated(EnumType.STRING)
+//    @NotNull
+//    private ProviderType providerType;
 //
 //    @Column(name = "ROLE_TYPE", length = 20)
 //    @Enumerated(EnumType.STRING)
@@ -42,14 +42,14 @@ public class Admin {
 //    @Size(min = 1, max = 1)
 //    private String emailVerifiedYn;
 
-    private String email;
+//    private String email;
+    private String adminId;
     private String password;
     private String name;
-    private String profileImgLink;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     // admin과 supervisor_info는 1:N 관계
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)

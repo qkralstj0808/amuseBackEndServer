@@ -13,8 +13,8 @@ plugins {
     id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+group = 'org.example'
+version = '1.0-SNAPSHOT'
 sourceCompatibility = '17'
 
 
@@ -58,7 +58,6 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
 
     implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.0' //메일알림용
-
 }
 
 test {
@@ -72,12 +71,15 @@ querydsl {
     jpa = true
     querydslSourcesDir = querydslDir
 }
+
 sourceSets {
     main.java.srcDir querydslDir
 }
+
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor

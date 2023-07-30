@@ -26,22 +26,22 @@ public class AlarmService {
         Alarm alarm = new Alarm();
         alarm.setTitle(noticeRegisterDto.getTitle());
         alarm.setContent(noticeRegisterDto.getContent());
-        alarm.setAdmin(adminService.getAdminByEmail(noticeRegisterDto.getCreatedBy()).get());
+        alarm.setAdmin(adminService.getAdminByAdminId(noticeRegisterDto.getCreatedBy()).get());
         alarm.setContent(noticeRegisterDto.getContent());
         alarm = alarmRepository.save(alarm);
 
 
-        return new AdminPageResponse.noticeRegister(alarm.getId(), alarm.getTitle(), alarm.getContent(),alarm.getCreatedAt() , alarm.getAdmin().getEmail());
+        return new AdminPageResponse.noticeRegister(alarm.getId(), alarm.getTitle(), alarm.getContent(),alarm.getCreatedAt() , alarm.getAdmin().getAdminId());
     }
 
     public AdminPageResponse.noticeEdit processEditNotice(AdminPageRequest.noticeEdit noticeEditDto,AdminService adminService){
         Alarm alarm = alarmRepository.findById(noticeEditDto.getId()).get();
         alarm.setTitle(noticeEditDto.getTitle());
         alarm.setContent(noticeEditDto.getContent());
-        alarm.setUpdateAdmin(adminService.getAdminByEmail(noticeEditDto.getUpdatedBy()).get());
+        alarm.setUpdateAdmin(adminService.getAdminByAdminId(noticeEditDto.getUpdatedBy()).get());
         alarm = alarmRepository.save(alarm);
 
-        return new AdminPageResponse.noticeEdit(alarm.getId(), alarm.getTitle(), alarm.getContent(), alarm.getCreatedAt(),alarm.getAdmin().getEmail(), alarm.getUpdatedAt(),alarm.getUpdateAdmin().getEmail());
+        return new AdminPageResponse.noticeEdit(alarm.getId(), alarm.getTitle(), alarm.getContent(), alarm.getCreatedAt(),alarm.getAdmin().getAdminId(), alarm.getUpdatedAt(),alarm.getUpdateAdmin().getAdminId());
     }
 
 
@@ -50,7 +50,7 @@ public class AlarmService {
 
         Alarm alarm = alarmRepository.findById(id).orElseThrow(()->new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        return new AdminPageResponse.noticeEdit(alarm.getId(), alarm.getTitle(), alarm.getContent(), alarm.getCreatedAt(),alarm.getAdmin().getEmail(), alarm.getUpdateAdmin() == null ? null : alarm.getUpdatedAt() ,alarm.getUpdateAdmin() == null ? "" : alarm.getUpdateAdmin().getEmail());
+        return new AdminPageResponse.noticeEdit(alarm.getId(), alarm.getTitle(), alarm.getContent(), alarm.getCreatedAt(),alarm.getAdmin().getAdminId(), alarm.getUpdateAdmin() == null ? null : alarm.getUpdatedAt() ,alarm.getUpdateAdmin() == null ? "" : alarm.getUpdateAdmin().getAdminId());
     }
 
     public List<AdminPageResponse.noticeList> processGetAllNotices(Long offset, int limit, int page) {
@@ -65,9 +65,9 @@ public class AlarmService {
         for (Alarm notice : notices) {
             noticeListList.add(new AdminPageResponse.noticeList(notice.getId(),
                     notice.getTitle(),
-                    notice.getCreatedAt(), notice.getAdmin().getEmail(),
+                    notice.getCreatedAt(), notice.getAdmin().getAdminId(),
                     notice.getUpdateAdmin() == null ? null : notice.getUpdatedAt(),
-                    notice.getUpdateAdmin() == null ? "" : notice.getUpdateAdmin().getEmail()));
+                    notice.getUpdateAdmin() == null ? "" : notice.getUpdateAdmin().getAdminId()));
         }
 
 

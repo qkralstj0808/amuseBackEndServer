@@ -32,7 +32,7 @@ public class PageComponentService {
 
     public AdminPageResponse.registerListComponent registerListComponent (AdminPageRequest.registerListComponent registerListComponent){
         PageComponent pageComponent = registerListComponent.getId() == null ? new PageComponent() : pageComponentRepository.findById(registerListComponent.getId()).orElseThrow(() -> new CustomException(ErrorCode.PAGE_COMPONENT_NOT_FOUND));
-        pageComponent.setAdmin(adminRepository.findByEmail(registerListComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+        pageComponent.setAdmin(adminRepository.findByAdminId(registerListComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         pageComponent.setTitle(registerListComponent.getTitle());
         pageComponent.setType(registerListComponent.getType());
 
@@ -42,7 +42,7 @@ public class PageComponentService {
                 mainPage.setItem(null);
             });
             pageComponent.getMainPages().clear();
-            pageComponent.setUpdateAdmin(adminRepository.findByEmail(registerListComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+            pageComponent.setUpdateAdmin(adminRepository.findByAdminId(registerListComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         }
 
         registerListComponent.getItemCode().forEach(itemCode -> {
@@ -58,11 +58,11 @@ public class PageComponentService {
         registerListComponentDto.setTitle(pageComponent.getTitle());
         registerListComponentDto.setType(pageComponent.getType());
         registerListComponentDto.setCreatedAt(pageComponent.getCreatedDate());
-        registerListComponentDto.setCreatedBy(pageComponent.getAdmin().getEmail());
+        registerListComponentDto.setCreatedBy(pageComponent.getAdmin().getAdminId());
         registerListComponentDto.setItemCode(registerListComponent.getItemCode());
 
         if (registerListComponent.getId() != null){
-            registerListComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getEmail());
+            registerListComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getAdminId());
             registerListComponentDto.setUpdatedAt(pageComponent.getModifiedDate());
         }
         return registerListComponentDto;
@@ -70,13 +70,13 @@ public class PageComponentService {
 
     public AdminPageResponse.registerBannerComponent registerBannerComponent (AdminPageRequest.registerBannerComponent registerBannerComponent,UtilMethod utilMethod){
         PageComponent pageComponent = registerBannerComponent.getId() == null ? new PageComponent() : pageComponentRepository.findById(registerBannerComponent.getId()).orElseThrow(() -> new CustomException(ErrorCode.PAGE_COMPONENT_NOT_FOUND));
-        pageComponent.setAdmin(adminRepository.findByEmail(registerBannerComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+        pageComponent.setAdmin(adminRepository.findByAdminId(registerBannerComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         pageComponent.setTitle(registerBannerComponent.getTitle());
         pageComponent.setType(registerBannerComponent.getType());
         pageComponent.setContent(registerBannerComponent.getContent());
 
         if (registerBannerComponent.getId() != null){
-            pageComponent.setUpdateAdmin(adminRepository.findByEmail(registerBannerComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+            pageComponent.setUpdateAdmin(adminRepository.findByAdminId(registerBannerComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         }
 
         if (registerBannerComponent.getPcBannerBase64() != null){
@@ -96,7 +96,7 @@ public class PageComponentService {
         registerBannerComponentDto.setTitle(pageComponent.getTitle());
         registerBannerComponentDto.setType(pageComponent.getType());
         registerBannerComponentDto.setCreatedAt(pageComponent.getCreatedDate());
-        registerBannerComponentDto.setCreatedBy(pageComponent.getAdmin().getEmail());
+        registerBannerComponentDto.setCreatedBy(pageComponent.getAdmin().getAdminId());
         registerBannerComponentDto.setPcBannerImgUrl(pageComponent.getPcBannerUrl());
         registerBannerComponentDto.setPcBannerLink(pageComponent.getPcBannerLink());
         registerBannerComponentDto.setMobileBannerImgUrl(pageComponent.getMobileBannerUrl());
@@ -104,7 +104,7 @@ public class PageComponentService {
         registerBannerComponentDto.setContent(pageComponent.getContent());
 
         if (registerBannerComponent.getId() != null){
-            registerBannerComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getEmail());
+            registerBannerComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getAdminId());
             registerBannerComponentDto.setUpdatedAt(pageComponent.getModifiedDate());
         }
         return registerBannerComponentDto;
@@ -113,7 +113,7 @@ public class PageComponentService {
     public AdminPageResponse.registerTileComponent registerTileComponent (AdminPageRequest.registerTileComponent registerTileComponent,UtilMethod utilMethod){
         PageComponent pageComponent = registerTileComponent.getId() == null ? new PageComponent() : pageComponentRepository.findById(registerTileComponent.getId()).orElseThrow(() -> new CustomException(ErrorCode.PAGE_COMPONENT_NOT_FOUND));
         List<AdminPageResponse.getMainItem> tileRespDto = new ArrayList<>();
-        pageComponent.setAdmin(adminRepository.findByEmail(registerTileComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+        pageComponent.setAdmin(adminRepository.findByAdminId(registerTileComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         pageComponent.setTitle(registerTileComponent.getTitle());
         pageComponent.setType(registerTileComponent.getType());
         pageComponentRepository.save(pageComponent);
@@ -125,7 +125,7 @@ public class PageComponentService {
                 mainPage.setTile(null);
             });
             pageComponent.getMainPages().clear();
-            pageComponent.setUpdateAdmin(adminRepository.findByEmail(registerTileComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+            pageComponent.setUpdateAdmin(adminRepository.findByAdminId(registerTileComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
         }
 
         registerTileComponent.getTile().forEach(tileDto -> {
@@ -160,11 +160,11 @@ public class PageComponentService {
         registerTileComponentDto.setId(pageComponent.getId());
         registerTileComponentDto.setTitle(pageComponent.getTitle());
         registerTileComponentDto.setType(pageComponent.getType());
-        registerTileComponentDto.setCreatedBy(pageComponent.getAdmin().getEmail());
+        registerTileComponentDto.setCreatedBy(pageComponent.getAdmin().getAdminId());
         registerTileComponentDto.setTile(tileRespDto);
 
         if (registerTileComponent.getId() != null){
-            registerTileComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getEmail());
+            registerTileComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getAdminId());
             registerTileComponentDto.setUpdatedAt(pageComponent.getModifiedDate());
         }
 
@@ -182,9 +182,9 @@ public class PageComponentService {
             getMainPageList.setTitle(mainPageComponent.getTitle());
             getMainPageList.setType(mainPageComponent.getType());
             getMainPageList.setCreateAt(mainPageComponent.getCreatedDate());
-            getMainPageList.setCreateBy(mainPageComponent.getAdmin().getEmail());
+            getMainPageList.setCreateBy(mainPageComponent.getAdmin().getAdminId());
             getMainPageList.setUpdateAt(mainPageComponent.getUpdateAdmin() == null ? null : mainPageComponent.getModifiedDate());
-            getMainPageList.setUpdateBy(mainPageComponent.getUpdateAdmin() == null ? null : mainPageComponent.getUpdateAdmin().getEmail());
+            getMainPageList.setUpdateBy(mainPageComponent.getUpdateAdmin() == null ? null : mainPageComponent.getUpdateAdmin().getAdminId());
             getMainPageLists.add(getMainPageList);
         });
 
@@ -213,9 +213,9 @@ public class PageComponentService {
             getListComponentDto.setTitle(pageComponent.getTitle());
             getListComponentDto.setType(pageComponent.getType());
             getListComponentDto.setCreatedAt(pageComponent.getCreatedDate());
-            getListComponentDto.setCreatedBy(pageComponent.getAdmin().getEmail());
+            getListComponentDto.setCreatedBy(pageComponent.getAdmin().getAdminId());
             getListComponentDto.setUpdatedAt(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getModifiedDate());
-            getListComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getUpdateAdmin().getEmail());
+            getListComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getUpdateAdmin().getAdminId());
             List<AdminPageResponse.getMainPageItem> mainPageItemDto = new ArrayList<>();
             pageComponent.getMainPages().forEach(mainPage -> {
                 AdminPageResponse.getMainPageItem mainPageItem = new AdminPageResponse.getMainPageItem();
@@ -230,9 +230,9 @@ public class PageComponentService {
                 });
                 mainPageItem.setCategory(category);
                 mainPageItem.setCreateAt(mainPage.getItem().getCreatedDate());
-                mainPageItem.setCreateBy(mainPage.getItem().getAdmin().getEmail());
+                mainPageItem.setCreateBy(mainPage.getItem().getAdmin().getAdminId());
                 mainPageItem.setUpdateAt(mainPage.getItem().getUpdateAdmin() == null ? null : mainPage.getItem().getModifiedDate());
-                mainPageItem.setUpdateBy(mainPage.getItem().getUpdateAdmin() == null ? null : mainPage.getItem().getUpdateAdmin().getEmail());
+                mainPageItem.setUpdateBy(mainPage.getItem().getUpdateAdmin() == null ? null : mainPage.getItem().getUpdateAdmin().getAdminId());
                 mainPageItemDto.add(mainPageItem);
             });
             getListComponentDto.setProductList(mainPageItemDto);
@@ -243,9 +243,9 @@ public class PageComponentService {
             getBannerComponentDto.setTitle(pageComponent.getTitle());
             getBannerComponentDto.setType(pageComponent.getType());
             getBannerComponentDto.setCreatedAt(pageComponent.getCreatedDate());
-            getBannerComponentDto.setCreatedBy(pageComponent.getAdmin().getEmail());
+            getBannerComponentDto.setCreatedBy(pageComponent.getAdmin().getAdminId());
             getBannerComponentDto.setUpdatedAt(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getModifiedDate());
-            getBannerComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getUpdateAdmin().getEmail());
+            getBannerComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getUpdateAdmin().getAdminId());
             getBannerComponentDto.setPcBannerImgUrl(pageComponent.getPcBannerUrl());
             getBannerComponentDto.setPcBannerLink(pageComponent.getPcBannerLink());
             getBannerComponentDto.setMobileBannerImgUrl(pageComponent.getMobileBannerUrl());
@@ -258,9 +258,9 @@ public class PageComponentService {
             getTileComponentDto.setTitle(pageComponent.getTitle());
             getTileComponentDto.setType(pageComponent.getType());
             getTileComponentDto.setCreatedAt(pageComponent.getCreatedDate());
-            getTileComponentDto.setCreatedBy(pageComponent.getAdmin().getEmail());
+            getTileComponentDto.setCreatedBy(pageComponent.getAdmin().getAdminId());
             getTileComponentDto.setUpdatedAt(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getModifiedDate());
-            getTileComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getUpdateAdmin().getEmail());
+            getTileComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getUpdateAdmin().getAdminId());
             List<AdminPageResponse.getDetailItem> tileDto = new ArrayList<>();
             Set<Tile> tile = new HashSet<>();
             pageComponent.getMainPages().forEach(mainPage -> {
@@ -284,9 +284,9 @@ public class PageComponentService {
                     });
                     tileItems.setCategory(category);
                     tileItems.setCreateAt(mainPageItem.getItem().getCreatedDate());
-                    tileItems.setCreateBy(mainPageItem.getItem().getAdmin().getEmail());
+                    tileItems.setCreateBy(mainPageItem.getItem().getAdmin().getAdminId());
                     tileItems.setUpdateAt(mainPageItem.getItem().getUpdateAdmin() == null ? null : mainPageItem.getItem().getModifiedDate());
-                    tileItems.setUpdateBy(mainPageItem.getItem().getUpdateAdmin() == null ? null : mainPageItem.getItem().getUpdateAdmin().getEmail());
+                    tileItems.setUpdateBy(mainPageItem.getItem().getUpdateAdmin() == null ? null : mainPageItem.getItem().getUpdateAdmin().getAdminId());
                     mainPageItems.add(tileItems);
                 });
                 detailItem.setProductList(mainPageItems);

@@ -15,13 +15,14 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
     public final static String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public final static String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
     public final static String REFRESH_TOKEN = "refresh_token";
+    public final static String ACCESS_TOKEN = "__jwtk__";       // access token을 쿠키에 담아서 클라이언트로 보낸다.
     private final static int cookieExpireSeconds = 18000;
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
         log.info("\n\nOAuth2AuthorizationRequestBasedOnCookieRepository에서 loadAuthorizationRequest 메서드 실행");
-        log.info("cookie(OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME) : " + CookieUtil.getCookie(request,OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
-                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class)));
+//        log.info("cookie(OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME) : " + CookieUtil.getCookie(request,OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
+//                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class)));
 
 
         return CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
@@ -65,6 +66,6 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
     public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {
         CookieUtil.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
         CookieUtil.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
-//        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
     }
 }

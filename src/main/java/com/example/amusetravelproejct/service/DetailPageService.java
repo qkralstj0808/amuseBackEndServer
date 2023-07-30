@@ -89,14 +89,17 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getManager> getManager(Long item_id) {
         Item findItem = findItemById(item_id);
-        Admin findItemAdmin = findItem.getAdmin();
 
-        if(findItemAdmin == null){
-            throw new CustomException(ErrorCode.CATEGORY_NOT_FOUND);
+        Guide guide = findItem.getGuide();
+
+//        Admin findItemAdmin = findItem.getAdmin();
+
+        if(guide == null){
+            return new ResponseTemplate(new DetailPageResponse.getManager(null,null,null,null,null,null,null));
         }
 
-        return new ResponseTemplate(new DetailPageResponse.getManager(findItem.getTitle(),findItemAdmin.getName(),findItemAdmin.getEmail(),
-                findItemAdmin.getProfileImgLink(),findItem.getAdminContent()));
+        return new ResponseTemplate(new DetailPageResponse.getManager(guide.getId(),guide.getCode(),
+                guide.getName(),guide.getEmile(),guide.getImgUrl(),guide.getIntroduce(),findItem.getGuide_comment()));
     }
 
 

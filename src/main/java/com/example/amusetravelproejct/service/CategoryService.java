@@ -24,7 +24,7 @@ public class CategoryService {
     public AdminPageResponse.categoryRegister processRegisterCategory(AdminPageRequest.categoryRegister categoryRegisterDto, AdminService adminService, UtilMethod utilMethod) {
 
         Category category = new Category();
-        Admin admin = adminService.getAdminByEmail(categoryRegisterDto.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
+        Admin admin = adminService.getAdminByAdminId(categoryRegisterDto.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
 
 
         category.setCategory_name(categoryRegisterDto.getCategory());
@@ -36,7 +36,7 @@ public class CategoryService {
         category = categoryRepository.save(category);
 
 
-        return new AdminPageResponse.categoryRegister(category.getId(),category.getCategory_name(),category.getImgUrl(),category.getSequence(),category.getMainDescription(),category.getSubDescription(),category.getCreatedDate(),category.getAdmin().getEmail());
+        return new AdminPageResponse.categoryRegister(category.getId(),category.getCategory_name(),category.getImgUrl(),category.getSequence(),category.getMainDescription(),category.getSubDescription(),category.getCreatedDate(),category.getAdmin().getAdminId());
     }
 
 
@@ -44,7 +44,7 @@ public class CategoryService {
 
         Category category = categoryRepository.findById(categoryEditDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
         category.setCategory_name(categoryEditDto.getCategory());
-        Admin admin = adminService.getAdminByEmail(categoryEditDto.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
+        Admin admin = adminService.getAdminByAdminId(categoryEditDto.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
 
 
         if (categoryEditDto.getFileName() != ""){
@@ -55,7 +55,7 @@ public class CategoryService {
         category.setSubDescription(categoryEditDto.getSubDescription());
         category.setUpdateAdmin(admin);
         categoryRepository.save(category);
-        return new AdminPageResponse.categoryEdit(category.getId(),category.getCategory_name(),category.getImgUrl(),category.getSequence(),category.getMainDescription(),category.getSubDescription(),category.getCreatedDate(),category.getAdmin().getEmail(),category.getModifiedDate(),category.getUpdateAdmin().getEmail());
+        return new AdminPageResponse.categoryEdit(category.getId(),category.getCategory_name(),category.getImgUrl(),category.getSequence(),category.getMainDescription(),category.getSubDescription(),category.getCreatedDate(),category.getAdmin().getAdminId(),category.getModifiedDate(),category.getUpdateAdmin().getAdminId());
     }
 
     public List<AdminPageResponse.categorySequence> processGetCategorySequence() {
@@ -64,14 +64,14 @@ public class CategoryService {
         List<Category> categoryList = categoryRepository.findAll();
 
         for (Category category : categoryList) {
-            categorySequenceList.add(new AdminPageResponse.categorySequence(category.getId(),category.getCategory_name(),category.getSequence(),category.getCreatedDate(),category.getAdmin().getEmail(), category.getUpdateAdmin() == null ? null : category.getModifiedDate(), category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getEmail()));
+            categorySequenceList.add(new AdminPageResponse.categorySequence(category.getId(),category.getCategory_name(),category.getSequence(),category.getCreatedDate(),category.getAdmin().getAdminId(), category.getUpdateAdmin() == null ? null : category.getModifiedDate(), category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getAdminId()));
         }
         return categorySequenceList;
     }
 
     public AdminPageResponse.categoryEdit processGetCategoryDetail(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
-        return new AdminPageResponse.categoryEdit(category.getId(),category.getCategory_name(),category.getImgUrl(),category.getSequence(),category.getMainDescription(),category.getSubDescription(),category.getCreatedDate(),category.getAdmin().getEmail(),category.getUpdateAdmin() == null ? null : category.getModifiedDate(),category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getEmail());
+        return new AdminPageResponse.categoryEdit(category.getId(),category.getCategory_name(),category.getImgUrl(),category.getSequence(),category.getMainDescription(),category.getSubDescription(),category.getCreatedDate(),category.getAdmin().getAdminId(),category.getUpdateAdmin() == null ? null : category.getModifiedDate(),category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getAdminId());
     }
 
     public List<String> processGetCategoryList(){

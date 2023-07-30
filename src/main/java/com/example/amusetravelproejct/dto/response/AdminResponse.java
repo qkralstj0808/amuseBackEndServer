@@ -59,4 +59,11 @@ public class AdminResponse {
         private String profileImageUrl;
         private String introduce;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getAllAccountsId{
+        private List<String> accounts;
+    }
 }

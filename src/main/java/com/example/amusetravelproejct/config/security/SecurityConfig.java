@@ -1,7 +1,9 @@
 package com.example.amusetravelproejct.config.security;
 
 import com.example.amusetravelproejct.config.properties.CorsProperties;
+//import com.example.amusetravelproejct.config.resTemplate.CustomAccessDeniedHandler;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
+import com.example.amusetravelproejct.oauth.handler.CustomAuthenticationFailureHandler;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
 import com.example.amusetravelproejct.oauth.exception.RestAuthenticationEntryPoint;
@@ -29,6 +31,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.Arrays;
 
@@ -44,6 +48,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final TokenExceptionFilter tokenExceptionFilter;
+
+    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+
+//    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
 
     private final UserRepository userRepository;
 
@@ -71,7 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .httpBasic().disable()
                     .exceptionHandling()
                     .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                    .accessDeniedHandler(tokenAccessDeniedHandler)
+
                 .and()
 
                     // 권한을 줄 수 있다.
@@ -94,7 +103,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .userService(oAuth2UserService)
                 .and()
                     .successHandler(oAuth2AuthenticationSuccessHandler())
-                    .failureHandler(oAuth2AuthenticationFailureHandler());
+                    .failureHandler(oAuth2AuthenticationFailureHandler())
+                .and()
+                    .exceptionHandling()
+                .accessDeniedHandler(tokenAccessDeniedHandler);
+
 
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(tokenExceptionFilter, TokenAuthenticationFilter.class);
@@ -168,7 +181,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         CorsConfiguration corsConfig = new CorsConfiguration();
 
-        corsConfig.addAllowedOriginPattern("*");
+        corsConfig.addAllowedOrigin("http://amusetravel.wheelgo.net/");
+        corsConfig.addAllowedOrigin("https://amusetravel.wheelgo.net/");
+        corsConfig.addAllowedOrigin("https://myadmin.wheelgo.net/");
+        corsConfig.addAllowedOrigin("http://myadmin.wheelgo.net/");
+        corsConfig.addAllowedOrigin("http://localhost:3000");
+        corsConfig.addAllowedOrigin("http://localhost:3001");
+//        corsConfig.addAllowedOriginPattern("*");
         corsConfig.addAllowedHeader("*");
         corsConfig.addAllowedMethod("*");
         corsConfig.setAllowCredentials(true);
@@ -177,4 +196,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         corsConfigSource.registerCorsConfiguration("/**", corsConfig);
         return corsConfigSource;
     }
+
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry){
+//        registry.addMapping("/**")
+//                .allowedOriginPatterns("*")
+//                .allowedMethods("*")
+//                .allowedHeaders("*")
+//                .allowCredentials(true)
+//                .maxAge(3600);
+//    }
+
+
 }
