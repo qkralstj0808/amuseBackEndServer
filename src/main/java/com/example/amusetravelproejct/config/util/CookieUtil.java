@@ -20,7 +20,7 @@ public class CookieUtil {
 
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
-                System.out.println("cookie의 이름은" + cookie.getName());
+                log.info("지금 존재하는 쿠키의 이름은 : " + cookie.getName());
                 if (name.equals(cookie.getName())) {
                     return Optional.of(cookie);
                 }
@@ -111,12 +111,10 @@ public class CookieUtil {
         log.info("\n\nCookieUtil 에서 deleteCookie");
 
         Cookie[] cookies = request.getCookies();
-        log.info("cookies : " + cookies);
-
 
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
-                log.info(cookie.getName());
+                log.info("지금 존재하는 쿠키의 이름은 : " + cookie.getName());
                 if (name.equals(cookie.getName())) {
                     cookie.setValue("");
                     cookie.setPath("/");

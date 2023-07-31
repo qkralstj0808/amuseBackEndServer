@@ -180,17 +180,23 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         System.out.println();
         System.out.println("domain : " + domain + path);
 
-        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge,domain);
-        log.info("성공했습니다.");
-//        return UriComponentsBuilder.fromUriString("/api/v1/auth/token/success")
-//                .queryParam("targetUrl",targetUrl)
-//                .queryParam("access-token",accessToken.getToken())
-//                .build().toUriString();
+        System.out.println("cookie에 있는 access token을 삭제합니다");
+        CookieUtil.deleteCookie(request,response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN);
+        System.out.println("cookie에 있는 access token을 추가합니다");
+        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge);
 
-        return UriComponentsBuilder.fromUriString(targetUrl)
+        log.info("성공했습니다.");
+        System.out.println();
+        System.out.println("access token : " + accessToken.getToken());
+        return UriComponentsBuilder.fromUriString("/api/v1/auth/token/success")
 //                .queryParam("targetUrl",targetUrl)
 //                .queryParam("access-token",accessToken.getToken())
                 .build().toUriString();
+
+//        return UriComponentsBuilder.fromUriString(targetUrl)
+////                .queryParam("targetUrl",targetUrl)
+////                .queryParam("access-token",accessToken.getToken())
+//                .build().toUriString();
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {

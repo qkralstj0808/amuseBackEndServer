@@ -69,24 +69,21 @@ public class AuthController {
 
 
     @GetMapping("/token/success")
-//    public ResponseEntity<?> getTokenSuccess(HttpServletRequest request,
-//                                             HttpServletResponse response,
-//                                             HttpSession session,
-//                                             @RequestParam("targetUrl") String targetUrl){
-
     public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(
             HttpServletRequest request,
-            HttpServletResponse response,
-            @RequestParam("targetUrl") String targetUrl,
-            @RequestParam("access-token") String access_token){
+            HttpServletResponse response){
+//            @RequestParam("targetUrl") String targetUrl,
+//            @RequestParam("access-token") String access_token){
 
-        log.info("targetUrl : " + targetUrl);
+//        log.info("targetUrl : " + targetUrl);
+        Optional<Cookie> cookie = CookieUtil.getCookie(request, ACCESS_TOKEN);
+        log.info("cookie : " + cookie.get());
 
 //        HttpHeaders headers = new HttpHeaders();
 //        headers.setLocation(URI.create(targetUrl));
 //        headers.add("Authorization", "Bearer " + access_token);
 //        return new <>(headers, HttpStatus.MOVED_PERMANENTLY);
-        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(targetUrl,access_token));
+        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(cookie.get().getValue()));
 
     }
     @GetMapping("/session/access-token")
