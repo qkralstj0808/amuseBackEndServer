@@ -20,8 +20,9 @@ public class CookieUtil {
 
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
-                log.info("지금 존재하는 쿠키의 이름은 : " + cookie.getName());
+//                log.info("지금 존재하는 쿠키의 이름은 : " + cookie.getName());
                 if (name.equals(cookie.getName())) {
+                    log.info("지금 찾고자 하는 쿠키의 이름은 : " + cookie.getName());
                     return Optional.of(cookie);
                 }
             }
@@ -114,8 +115,9 @@ public class CookieUtil {
 
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
-                log.info("지금 존재하는 쿠키의 이름은 : " + cookie.getName());
+//                log.info("지금 존재하는 쿠키의 이름은 : " + cookie.getName());
                 if (name.equals(cookie.getName())) {
+                    log.info("지금 삭제되는 쿠키의 이름은 : " + cookie.getName());
                     cookie.setValue("");
                     cookie.setPath("/");
                     cookie.setMaxAge(0);
@@ -123,6 +125,8 @@ public class CookieUtil {
                 }
             }
         }
+
+        getCookie(request,name);
     }
 
     public static String serialize(Object obj) {
