@@ -129,6 +129,28 @@ public class CookieUtil {
         getCookie(request,name);
     }
 
+    public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name,String domain) {
+        log.info("\n\nCookieUtil 에서 deleteCookie");
+
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie cookie : cookies) {
+//                log.info("지금 존재하는 쿠키의 이름은 : " + cookie.getName());
+                if (name.equals(cookie.getName())) {
+                    log.info("지금 삭제되는 쿠키의 이름은 : " + cookie.getName());
+                    cookie.setValue("");
+                    cookie.setPath("/");
+                    cookie.setDomain("wheelgo.net");
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
+                }
+            }
+        }
+
+        getCookie(request,name);
+    }
+
     public static String serialize(Object obj) {
         return Base64.getUrlEncoder()
                 .encodeToString(SerializationUtils.serialize(obj));

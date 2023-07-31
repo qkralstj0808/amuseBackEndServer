@@ -180,8 +180,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         System.out.println();
         System.out.println("domain : " + domain + path);
 
+        String[] parts = domain.split("\\.");
+        int len = parts.length;
+        if (len >= 2) {
+            // 마지막 두 개의 요소를 연결하여 도메인을 구성
+            domain =  parts[len - 2] + "." + parts[len - 1];
+            domain = "." + domain;
+        }
+        log.info("domain" + ": " + domain);
+
         System.out.println("cookie에 있는 access token을 삭제합니다");
-        CookieUtil.deleteCookie(request,response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN);
+        CookieUtil.deleteCookie(request,response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN,domain);
         System.out.println("cookie에 있는 access token을 추가합니다");
         CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge);
 
