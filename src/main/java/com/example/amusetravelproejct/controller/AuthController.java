@@ -67,7 +67,7 @@ public class AuthController {
     private final static String REFRESH_TOKEN = "refresh_token";
     private final static String ACCESS_TOKEN = "__jwtk__";
 
-
+    @CrossOrigin(origins = "*")
     @GetMapping("/token/success")
     public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(
             HttpServletRequest request,
