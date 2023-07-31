@@ -176,43 +176,41 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     /*
     * Cors 설정
     * */
-//    @Bean
-//    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
-//        System.out.println("SecurityConfig에서 corsConfigurationSource 진입");
-//        UrlBasedCorsConfigurationSource corsConfigSource = new UrlBasedCorsConfigurationSource();
-//
-//        CorsConfiguration corsConfig = new CorsConfiguration();
-//
-//        corsConfig.addAllowedOrigin("http://amusetravel.wheelgo.net/");
-//        corsConfig.addAllowedOrigin("https://amusetravel.wheelgo.net/");
-//        corsConfig.addAllowedOrigin("https://myadmin.wheelgo.net/");
-//        corsConfig.addAllowedOrigin("http://myadmin.wheelgo.net/");
-//        corsConfig.addAllowedOrigin("http://localhost:3000");
-//        corsConfig.addAllowedOrigin("http://localhost:3001");
-//        corsConfig.
-////        corsConfig.addAllowedOriginPattern("*");
-//        corsConfig.addAllowedHeader("*");
-//        corsConfig.addAllowedMethod("*");
-//        corsConfig.setAllowCredentials(true);
-////        corsConfig.setMaxAge(corsConfig.getMaxAge());
-//
-//        corsConfigSource.registerCorsConfiguration("/**", corsConfig);
-//        return corsConfigSource;
-//    }
-
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        System.out.println("SecurityConfig에서 corsConfigurationSource 진입");
+        UrlBasedCorsConfigurationSource corsConfigSource = new UrlBasedCorsConfigurationSource();
 
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(true);
+        CorsConfiguration corsConfig = new CorsConfiguration();
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+        corsConfig.addAllowedOrigin("http://amusetravel.wheelgo.net/");
+        corsConfig.addAllowedOrigin("https://amusetravel.wheelgo.net/");
+        corsConfig.addAllowedOrigin("https://myadmin.wheelgo.net/");
+        corsConfig.addAllowedOrigin("http://myadmin.wheelgo.net/");
+        corsConfig.addAllowedOrigin("http://localhost:3000");
+        corsConfig.addAllowedOrigin("http://localhost:3001");
+        corsConfig.addAllowedHeader("*");
+        corsConfig.addAllowedMethod("*");
+        corsConfig.setAllowCredentials(true);
+//        corsConfig.setMaxAge(corsConfig.getMaxAge());
+
+        corsConfigSource.registerCorsConfiguration("/**", corsConfig);
+        return corsConfigSource;
     }
+
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//
+//        configuration.addAllowedOrigin("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.addAllowedMethod("*");
+//        configuration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
 
 
