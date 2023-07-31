@@ -113,7 +113,7 @@ public class ItemController {
     }
 
 
-    @GetMapping("/item/all")
+    @GetMapping("/all")
     public ResponseTemplate<ItemResponse.getAllItemId> getAllItemId(){
         return itemService.getAllItemId();
     }
