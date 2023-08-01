@@ -139,7 +139,7 @@ public class AuthController {
         CookieUtil.deleteCookie(request,response,"access_token",domain);
         CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
 
-        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+//        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         redirectStrategy.sendRedirect(request,response,target_url);
 //        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(access_token_cookie.get().getValue()));
 
