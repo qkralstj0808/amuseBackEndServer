@@ -72,13 +72,13 @@ public class CookieUtil {
 
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .path("/")
-                .domain(domain)
+//                .domain(domain)
                 .sameSite("None")
                 .httpOnly(false)
-                .secure(false)
+                .secure(true)
                 .maxAge(maxAge)
                 .build();
-        response.setHeader("Set-Cookie",cookie.toString());
+        response.addHeader("Set-Cookie",cookie.toString());
     }
 
 

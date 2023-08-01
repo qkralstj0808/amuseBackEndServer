@@ -134,18 +134,19 @@ public class AuthController {
         log.info("domain" + ": " + domain);
 
         CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,domain);
-        CookieUtil.setCookie(response,"access_token_set",access_token,COOKIE_MAX_AGE,domain);
+
 
         CookieUtil.deleteCookie(request,response,"access_token",domain);
         CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
 
 //        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-//        redirectStrategy.sendRedirect(request,response,target_url);
+        redirectStrategy.sendRedirect(request,response,target_url);
 //        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(access_token_cookie.get().getValue()));
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY); // 302 리다이렉트 코드 설정
-        response.setHeader("Location", target_url); // Location 헤더에 리다이렉트할 URL 설정
+//        response.setHeader("Access-Control-Allow-Origin", "http://localhost");
+//        response.setHeader("Access-Control-Allow-Credentials", "true");
+//        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY); // 302 리다이렉트 코드 설정x
+//        CookieUtil.setCookie(response,"access_token_set",access_token,COOKIE_MAX_AGE,domain);
+//        response.setHeader("Location", target_url); // Location 헤더에 리다이렉트할 URL 설정
 
 
     }
