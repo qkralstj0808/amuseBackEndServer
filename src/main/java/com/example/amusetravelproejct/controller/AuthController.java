@@ -108,9 +108,8 @@ public class AuthController {
 
         log.info("access_token : " + access_token_cookie.get().getValue());
         log.info("redirect_uri : " + redirect_uri_cookie.get().getValue());
-
-        CookieUtil.deleteCookie(request,response,"access_token",request.getServerName());
-        CookieUtil.deleteCookie(request,response,REDIRECT_URL,request.getServerName());
+        CookieUtil.deleteCookie(request,response,"access_token");
+        CookieUtil.deleteCookie(request,response,REDIRECT_URL);
 
         String domain = target_url;
 
