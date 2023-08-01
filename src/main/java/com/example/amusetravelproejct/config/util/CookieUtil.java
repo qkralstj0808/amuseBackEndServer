@@ -67,7 +67,7 @@ public class CookieUtil {
         if (len >= 2) {
             // 마지막 두 개의 요소를 연결하여 도메인을 구성
             domain =  parts[len - 2] + "." + parts[len - 1];
-            domain = "." + domain;
+//            domain = "." + domain;
         }
         log.info("domain" + ": " + domain);
 
@@ -76,7 +76,7 @@ public class CookieUtil {
                 .domain(domain)
                 .sameSite("None")
                 .httpOnly(false)
-                .secure(true)
+                .secure(false)
                 .maxAge(maxAge)
                 .build();
         response.addHeader("Set-Cookie",cookie.toString());

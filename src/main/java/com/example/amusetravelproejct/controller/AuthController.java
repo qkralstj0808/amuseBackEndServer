@@ -134,6 +134,7 @@ public class AuthController {
         log.info("domain" + ": " + domain);
 
         CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,domain);
+        CookieUtil.setCookie(response,"access_token_set",access_token,COOKIE_MAX_AGE,domain);
 
         CookieUtil.deleteCookie(request,response,"access_token",domain);
         CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
