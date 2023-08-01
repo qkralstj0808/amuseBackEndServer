@@ -110,8 +110,8 @@ public class AuthController {
         log.info("redirect_uri : " + redirect_uri_cookie.get().getValue());
 //        CookieUtil.deleteCookie(request,response,"access_token");
 //        CookieUtil.deleteCookie(request,response,REDIRECT_URL);
-        CookieUtil.deleteCookie(request,response,"access_token",request.getServerName());
-        CookieUtil.deleteCookie(request,response,REDIRECT_URL,request.getServerName());
+//        CookieUtil.deleteCookie(request,response,"access_token",request.getServerName());
+//        CookieUtil.deleteCookie(request,response,REDIRECT_URL,request.getServerName());
 
 
         String domain = target_url;
@@ -133,9 +133,10 @@ public class AuthController {
         }
         log.info("domain" + ": " + domain);
 
+        CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,domain);
 
-
-        CookieUtil.addCookie(response,"access_token",access_token,COOKIE_MAX_AGE,domain);
+        CookieUtil.deleteCookie(request,response,"access_token",domain);
+        CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
 
         log.info("targetUrl : " + target_url);
         response.setHeader("Access-Control-Allow-Origin", target_url); // 다른 도메인 주소 설정
