@@ -135,7 +135,6 @@ public class AuthController {
 
         CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,domain);
 
-
         CookieUtil.deleteCookie(request,response,"access_token",domain);
         CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
 
