@@ -39,23 +39,15 @@ public class CookieUtil {
     }
 
     public static void addCookie(HttpServletResponse response,String name, String value, int maxAge) {
-        log.info("\n\nCookieUtil 에서 addCookie 진입");
+        log.info("");
+        log.info("CookieUtil 에서 addCookie 진입");
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(false);
         cookie.setSecure(false);
         cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
-
-//        log.info("cookie : ");
-//        log.info(cookie.getValue());
-//        log.info(cookie.getName());
-//        log.info(cookie.getComment());
-//        log.info(cookie.getPath());
-//        log.info("domain : " + cookie.getDomain());
-//        log.info(String.valueOf(cookie.getMaxAge()));
-//        log.info(String.valueOf(cookie.getSecure()));
-//        log.info(String.valueOf(cookie.getVersion()));
+        log.info("");
 
     }
 
@@ -140,7 +132,8 @@ public class CookieUtil {
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name,String domain) {
-        log.info("\n\nCookieUtil 에서 deleteCookie");
+        log.info("");
+        log.info("CookieUtil 에서 deleteCookie");
 
         Cookie[] cookies = request.getCookies();
 
