@@ -101,7 +101,7 @@ public class CookieUtil {
         cookie.setHttpOnly(false);
         cookie.setMaxAge(maxAge);
         cookie.setDomain(domain);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         response.addCookie(cookie);
 
         log.info("cookie 값 : "+cookie.getValue());
