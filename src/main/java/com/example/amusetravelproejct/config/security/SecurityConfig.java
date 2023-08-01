@@ -1,9 +1,7 @@
 package com.example.amusetravelproejct.config.security;
 
 import com.example.amusetravelproejct.config.properties.CorsProperties;
-//import com.example.amusetravelproejct.config.resTemplate.CustomAccessDeniedHandler;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
-import com.example.amusetravelproejct.oauth.handler.CustomAuthenticationFailureHandler;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
 import com.example.amusetravelproejct.oauth.exception.RestAuthenticationEntryPoint;
@@ -29,14 +27,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor
@@ -50,10 +42,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final TokenExceptionFilter tokenExceptionFilter;
-
-    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-
-//    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
 
     private final UserRepository userRepository;

@@ -1,7 +1,6 @@
 package com.example.amusetravelproejct.oauth.service;
 
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
-import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.domain.Admin;
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
@@ -32,7 +31,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println("CustomUserDetailsService에서 loadUserByUsername 진입");
         User user = userRepository.findByUserId(username);
         Optional<Admin> byAdminId = adminRepository.findByAdminId(username);
+
         Admin admin;
+
         if(byAdminId.isEmpty()){
             admin=null;
         }else{

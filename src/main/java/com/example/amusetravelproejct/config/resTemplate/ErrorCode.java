@@ -48,7 +48,8 @@ public enum ErrorCode {
     CATEGORY_EXIT(HttpStatus.BAD_REQUEST,"이미 해당 이름의 category가 존재합니다. 수정을 원하면 PUT 해주세요" ),
     ADMINID_EXIST(HttpStatus.FOUND,"아이디가 존재합니다"),
     ADMINID_NOT_EXIST(HttpStatus.FOUND,"아이디가 존재하지 않습니다"),
-    PASSWORD_INCORRECT(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS,"비밀번호가 일치하지 않습니다");
+    PASSWORD_INCORRECT(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS,"비밀번호가 일치하지 않습니다"),
+    EMPTY(HttpStatus.BAD_GATEWAY,"값이 비었습니다");
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -35,12 +35,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.Optional;
@@ -64,26 +67,38 @@ public class AuthController {
     private final AdminService adminService;
 
     private final static long THREE_DAYS_MSEC = 259200000;
+
+    private final static int COOKIE_MAX_AGE = 10080000;
     private final static String REFRESH_TOKEN = "refresh_token";
+    private final static String REDIRECT_URL = "redirect_uri";
     private final static String ACCESS_TOKEN = "__jwtk__";
 
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(originPatterns = "*", allowCredentials = "true")
     @GetMapping("/token/success")
-    public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(
+//    public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(
+    public void getTokenSuccess(
             HttpServletRequest request,
-            HttpServletResponse response){
-//            @RequestParam("targetUrl") String targetUrl,
-//            @RequestParam("access-token") String access_token){
+            HttpServletResponse response) throws IOException {
 
-//        log.info("targetUrl : " + targetUrl);
-        Optional<Cookie> cookie = CookieUtil.getCookie(request, ACCESS_TOKEN);
-        log.info("cookie : " + cookie.get());
+        Optional<Cookie> access_token_cookie = CookieUtil.getCookie(request, ACCESS_TOKEN);
+        Optional<Cookie> redirect_uri_cookie = CookieUtil.getCookie(request, REDIRECT_URL);
 
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setLocation(URI.create(targetUrl));
-//        headers.add("Authorization", "Bearer " + access_token);
-//        return new <>(headers, HttpStatus.MOVED_PERMANENTLY);
-        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(cookie.get().getValue()));
+        if(access_token_cookie.isEmpty()){
+            throw new CustomException(ErrorCode.EMPTY);
+        }
+
+        if(redirect_uri_cookie.isEmpty()){
+            throw new CustomException(ErrorCode.EMPTY);
+        }
+
+        log.info("access_token : " + access_token_cookie.get().getValue());
+        log.info("redirect_uri : " + redirect_uri_cookie.get().getValue());
+
+
+        CookieUtil.addCookie(response,ACCESS_TOKEN,access_token_cookie.get().getValue(),COOKIE_MAX_AGE);
+
+        response.sendRedirect(redirect_uri_cookie.get().getValue());
+//        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(access_token_cookie.get().getValue()));
 
     }
     @GetMapping("/session/access-token")
