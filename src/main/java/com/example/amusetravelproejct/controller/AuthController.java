@@ -111,6 +111,7 @@ public class AuthController {
         CookieUtil.deleteCookie(request,response,"access_token");
         CookieUtil.deleteCookie(request,response,REDIRECT_URL);
 
+
         String domain = target_url;
 
         URL parsedUrl = null;
@@ -129,6 +130,9 @@ public class AuthController {
             domain =  parts[len - 2] + "." + parts[len - 1];
         }
         log.info("domain" + ": " + domain);
+
+        CookieUtil.deleteCookie(request,response,"access_token",domain);
+        CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
 
         CookieUtil.addCookie(response,"access_token",access_token,COOKIE_MAX_AGE,domain);
 
