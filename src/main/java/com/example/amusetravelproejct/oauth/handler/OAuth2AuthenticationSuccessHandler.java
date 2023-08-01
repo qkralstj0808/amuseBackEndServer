@@ -166,38 +166,37 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         CookieUtil.deleteCookie(request, response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN);
 //        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
-        String domain = null;
-        if(!targetUrl.equals("/")){
-            URL parsedUrl = null;
-            try {
-                parsedUrl = new URL(targetUrl);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-            domain = parsedUrl.getHost();
-            String path = parsedUrl.getPath();
-            System.out.println();
-            System.out.println("domain : " + domain + path);
-
-            String[] parts = domain.split("\\.");
-            int len = parts.length;
-            if (len >= 2) {
-                // 마지막 두 개의 요소를 연결하여 도메인을 구성
-                domain =  parts[len - 2] + "." + parts[len - 1];
-                domain = "." + domain;
-            }
-            log.info("domain" + ": " + domain);
-        }else{
-            domain = "wheelgo.net";
-        }
+//        String domain = null;
+//        if(!targetUrl.equals("/")){
+//            URL parsedUrl = null;
+//            try {
+//                parsedUrl = new URL(targetUrl);
+//            } catch (MalformedURLException e) {
+//                throw new RuntimeException(e);
+//            }
+//            domain = parsedUrl.getHost();
+//            String path = parsedUrl.getPath();
+//            System.out.println();
+//            System.out.println("domain : " + domain + path);
+//
+//            String[] parts = domain.split("\\.");
+//            int len = parts.length;
+//            if (len >= 2) {
+//                // 마지막 두 개의 요소를 연결하여 도메인을 구성
+//                domain =  parts[len - 2] + "." + parts[len - 1];
+//                domain = "." + domain;
+//            }
+//            log.info("domain" + ": " + domain);
+//        }else{
+//            domain = "wheelgo.net";
+//        }
 
         CookieUtil.deleteCookie(request,response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN);
 
 //        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge/60,request.getServerName());
-        CookieUtil.addCookie(response,OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME,targetUrl,cookieMaxAge/60,request.getServerName());
-        log.info("target url : " + targetUrl);
-        log.info("현재 백엔드 도메인 : " + request.getServerName());
-        CookieUtil.addCookie(response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN,accessToken.getToken(),cookieMaxAge/60,request.getServerName());
+        CookieUtil.addCookie(response,"target_url",targetUrl,cookieMaxAge/60,request.getServerName());
+
+        CookieUtil.addCookie(response,"access_token",accessToken.getToken(),cookieMaxAge/60,request.getServerName());
 
         return UriComponentsBuilder.fromUriString("/api/v1/auth/token/success")
 //                .queryParam("targetUrl",targetUrl)

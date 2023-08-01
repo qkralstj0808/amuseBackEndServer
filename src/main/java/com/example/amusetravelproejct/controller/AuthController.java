@@ -44,7 +44,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Date;
 import java.util.Optional;
 
@@ -70,7 +72,7 @@ public class AuthController {
 
     private final static int COOKIE_MAX_AGE = 10080000;
     private final static String REFRESH_TOKEN = "refresh_token";
-    private final static String REDIRECT_URL = "redirect_uri";
+    private final static String REDIRECT_URL = "target_url";
     private final static String ACCESS_TOKEN = "__jwtk__";
 
     @CrossOrigin(originPatterns = "*", allowCredentials = "true")
@@ -80,24 +82,61 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response) throws IOException {
 
-        Optional<Cookie> access_token_cookie = CookieUtil.getCookie(request, ACCESS_TOKEN);
+        Optional<Cookie> access_token_cookie = CookieUtil.getCookie(request, "access_token");
         Optional<Cookie> redirect_uri_cookie = CookieUtil.getCookie(request, REDIRECT_URL);
 
+
         if(access_token_cookie.isEmpty()){
+            log.info("access_token_cookie가 비었습니다.");
             throw new CustomException(ErrorCode.EMPTY);
+        }else{
+            log.info("access_token_cookie는 있습니다.");
+            log.info("access_token : " + access_token_cookie.get().getValue());
         }
+
+        log.info(String.valueOf(redirect_uri_cookie.isEmpty()));
 
         if(redirect_uri_cookie.isEmpty()){
             throw new CustomException(ErrorCode.EMPTY);
+        }else{
+            log.info("redirect_uri_cookie 있습니다.");
+            log.info("redirect_uri_cookie : " + redirect_uri_cookie.get().getValue());
         }
+
+        String access_token = access_token_cookie.get().getValue();
+        String target_url = redirect_uri_cookie.get().getValue();
 
         log.info("access_token : " + access_token_cookie.get().getValue());
         log.info("redirect_uri : " + redirect_uri_cookie.get().getValue());
 
+        CookieUtil.deleteCookie(request,response,"access_token",request.getServerName());
+        CookieUtil.deleteCookie(request,response,REDIRECT_URL,request.getServerName());
 
-        CookieUtil.addCookie(response,"access_token",access_token_cookie.get().getValue(),COOKIE_MAX_AGE);
+        String domain = target_url;
 
-        response.sendRedirect(redirect_uri_cookie.get().getValue());
+        URL parsedUrl = null;
+        try {
+            parsedUrl = new URL(domain);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        domain = parsedUrl.getHost();
+        String path = parsedUrl.getPath();
+
+        String[] parts = domain.split("\\.");
+        int len = parts.length;
+        if (len >= 2) {
+            // 마지막 두 개의 요소를 연결하여 도메인을 구성
+            domain =  parts[len - 2] + "." + parts[len - 1];
+        }
+        log.info("domain" + ": " + domain);
+
+        CookieUtil.addCookie(response,"access_token",access_token,COOKIE_MAX_AGE,domain);
+
+        log.info("targetUrl : " + target_url);
+        response.setHeader("Access-Control-Allow-Origin", target_url); // 다른 도메인 주소 설정
+        response.setHeader("Access-Control-Allow-Credentials", "true"); // 쿠키를 전송하기 위해 true로 설정
+        response.sendRedirect(target_url);
 //        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(access_token_cookie.get().getValue()));
 
     }
