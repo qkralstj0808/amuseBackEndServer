@@ -37,6 +37,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -75,6 +76,9 @@ public class AuthController {
     private final static String REDIRECT_URL = "target_url";
     private final static String ACCESS_TOKEN = "__jwtk__";
 
+    private final RedirectStrategy redirectStrategy;
+
+
     @CrossOrigin(originPatterns = "*", allowCredentials = "true")
     @GetMapping("/token/success")
 //    public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(
@@ -108,10 +112,6 @@ public class AuthController {
 
         log.info("access_token : " + access_token_cookie.get().getValue());
         log.info("redirect_uri : " + redirect_uri_cookie.get().getValue());
-//        CookieUtil.deleteCookie(request,response,"access_token");
-//        CookieUtil.deleteCookie(request,response,REDIRECT_URL);
-//        CookieUtil.deleteCookie(request,response,"access_token",request.getServerName());
-//        CookieUtil.deleteCookie(request,response,REDIRECT_URL,request.getServerName());
 
 
         String domain = target_url;
@@ -138,10 +138,8 @@ public class AuthController {
         CookieUtil.deleteCookie(request,response,"access_token",domain);
         CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
 
-        log.info("targetUrl : " + target_url);
-        response.setHeader("Access-Control-Allow-Origin", target_url); // 다른 도메인 주소 설정
-        response.setHeader("Access-Control-Allow-Credentials", "true"); // 쿠키를 전송하기 위해 true로 설정
-        response.sendRedirect(target_url);
+        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+        redirectStrategy.sendRedirect(request,response,target_url);
 //        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(access_token_cookie.get().getValue()));
 
     }
