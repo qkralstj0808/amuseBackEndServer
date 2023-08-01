@@ -61,7 +61,6 @@ public class CookieUtil {
     public static void setCookie(HttpServletResponse response, String name, String value, int maxAge,String domain) {
         log.info("\n\nCookieUtil 에서 setCookie 진입");
 
-
         String[] parts = domain.split("\\.");
         int len = parts.length;
         if (len >= 2) {
@@ -76,7 +75,7 @@ public class CookieUtil {
                 .domain(domain)
                 .sameSite("None")
                 .httpOnly(false)
-                .secure(true)
+                .secure(false)
                 .maxAge(maxAge)
                 .build();
         response.addHeader("Set-Cookie",cookie.toString());
