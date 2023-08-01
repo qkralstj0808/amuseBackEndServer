@@ -144,6 +144,17 @@ public class AuthController {
 
 
     }
+    @GetMapping("/getCookie")
+    public String getCookie(HttpServletRequest request,
+                            @CookieValue(value = "__jwtk__") Cookie cookie) {
+        Cookie[] cookies = request.getCookies();
+
+        log.debug("cookie.getValue() : " + cookie.getValue());
+        CookieUtil.getCookie(request,cookie.getValue());
+
+        log.debug("cookie :{}", cookie.getValue());
+        return "getCookie";
+    }
     @GetMapping("/session/access-token")
     public ResponseTemplate<AuthResponse.getAccessToken> getTokenSuccess(HttpServletRequest request){
 
