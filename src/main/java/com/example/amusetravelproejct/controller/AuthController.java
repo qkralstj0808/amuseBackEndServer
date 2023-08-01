@@ -95,7 +95,7 @@ public class AuthController {
         log.info("redirect_uri : " + redirect_uri_cookie.get().getValue());
 
 
-        CookieUtil.addCookie(response,ACCESS_TOKEN,access_token_cookie.get().getValue(),COOKIE_MAX_AGE);
+        CookieUtil.addCookie(response,"access_token",access_token_cookie.get().getValue(),COOKIE_MAX_AGE);
 
         response.sendRedirect(redirect_uri_cookie.get().getValue());
 //        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(access_token_cookie.get().getValue()));
