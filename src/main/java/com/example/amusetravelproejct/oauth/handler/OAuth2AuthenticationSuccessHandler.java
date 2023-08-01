@@ -166,7 +166,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         CookieUtil.deleteCookie(request, response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN);
 //        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
-        log.info("response : " + response);
         String domain = null;
         if(!targetUrl.equals("/")){
             URL parsedUrl = null;
@@ -192,12 +191,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             domain = "wheelgo.net";
         }
 
-
-
         CookieUtil.deleteCookie(request,response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN);
 
 //        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge/60,request.getServerName());
         CookieUtil.addCookie(response,OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME,targetUrl,cookieMaxAge/60,request.getServerName());
+        log.info("target url : " + targetUrl);
+        log.info("현재 백엔드 도메인 : " + request.getServerName());
         CookieUtil.addCookie(response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN,accessToken.getToken(),cookieMaxAge/60,request.getServerName());
 
         return UriComponentsBuilder.fromUriString("/api/v1/auth/token/success")
