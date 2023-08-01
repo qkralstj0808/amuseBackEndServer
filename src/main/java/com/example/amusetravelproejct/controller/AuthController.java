@@ -108,8 +108,10 @@ public class AuthController {
 
         log.info("access_token : " + access_token_cookie.get().getValue());
         log.info("redirect_uri : " + redirect_uri_cookie.get().getValue());
-        CookieUtil.deleteCookie(request,response,"access_token");
-        CookieUtil.deleteCookie(request,response,REDIRECT_URL);
+//        CookieUtil.deleteCookie(request,response,"access_token");
+//        CookieUtil.deleteCookie(request,response,REDIRECT_URL);
+        CookieUtil.deleteCookie(request,response,"access_token",request.getServerName());
+        CookieUtil.deleteCookie(request,response,REDIRECT_URL,request.getServerName());
 
 
         String domain = target_url;
@@ -131,8 +133,7 @@ public class AuthController {
         }
         log.info("domain" + ": " + domain);
 
-        CookieUtil.deleteCookie(request,response,"access_token",domain);
-        CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
+
 
         CookieUtil.addCookie(response,"access_token",access_token,COOKIE_MAX_AGE,domain);
 
