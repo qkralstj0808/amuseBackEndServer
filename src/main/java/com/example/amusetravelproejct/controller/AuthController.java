@@ -142,7 +142,7 @@ public class AuthController {
 //        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
 //        redirectStrategy.sendRedirect(request,response,target_url);
 //        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(access_token_cookie.get().getValue()));
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost");
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY); // 302 리다이렉트 코드 설정
         response.setHeader("Location", target_url); // Location 헤더에 리다이렉트할 URL 설정
