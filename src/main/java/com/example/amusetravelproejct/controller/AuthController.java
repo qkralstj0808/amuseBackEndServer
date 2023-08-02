@@ -143,12 +143,12 @@ public class AuthController {
     }
 
     @GetMapping("/getCookie/access-token")
-    public ResponseTemplate<AuthResponse.getAccessToken> getCookie(HttpServletRequest request,
+    public ResponseEntity<AuthResponse.getAccessToken> getCookie(HttpServletRequest request,
                             @CookieValue(value = "__jwtk__") Cookie cookie) {
         if(cookie==null){
             throw new CustomException(ErrorCode.EMPTY);
         }
-        return new ResponseTemplate(new AuthResponse.getAccessToken(cookie.getValue()));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/session/access-token")
