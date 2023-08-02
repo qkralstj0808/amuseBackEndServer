@@ -134,7 +134,7 @@ public class AuthController {
         CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,request.getServerName());
         CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,domain);
 
-        CookieUtil.deleteCookie(request,response,"access_token",domain);
+//        CookieUtil.deleteCookie(request,response,"access_token",domain);
         CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
 
 //        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
@@ -144,8 +144,8 @@ public class AuthController {
 
     @GetMapping("/getCookie/access-token")
     public ResponseEntity<AuthResponse.getAccessToken> getCookie(HttpServletRequest request,
-                            @CookieValue(value = "__jwtk__") Cookie cookie) {
-        log.debug("/getCookie/access-token 실행");
+                            @CookieValue(value = "access_token") Cookie cookie) {
+        log.info("/getCookie/access-token 실행");
         if(cookie==null){
             throw new CustomException(ErrorCode.EMPTY);
         }
@@ -163,7 +163,6 @@ public class AuthController {
         return new ResponseTemplate(new AuthResponse.getAccessToken(access_token));
 
     }
-
 
 
     @GetMapping("/token/fail")
