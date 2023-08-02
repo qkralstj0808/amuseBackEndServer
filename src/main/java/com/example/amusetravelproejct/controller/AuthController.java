@@ -145,6 +145,7 @@ public class AuthController {
     @GetMapping("/getCookie/access-token")
     public ResponseEntity<AuthResponse.getAccessToken> getCookie(HttpServletRequest request,
                             @CookieValue(value = "__jwtk__") Cookie cookie) {
+        log.debug("/getCookie/access-token 실행");
         if(cookie==null){
             throw new CustomException(ErrorCode.EMPTY);
         }
