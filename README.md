@@ -1,4 +1,4 @@
-# amuseBackEndServer
+# 개발 서버
 
 ## 1. 개발환경
 - Spring Boot 2.3.4
