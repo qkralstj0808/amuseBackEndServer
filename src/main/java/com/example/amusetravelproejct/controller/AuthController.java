@@ -147,7 +147,7 @@ public class AuthController {
 //                            @CookieValue(value = "access_token") Cookie cookie) {
         log.info("/getCookie/access-token 실행");
         log.info(request.toString());
-        Optional<Cookie> access_token_optional = CookieUtil.getCookie(request, "access_token");
+        Optional<Cookie> access_token_optional = CookieUtil.getCookie(request, "__jwtk__");
         log.info(access_token_optional.toString());
 
         if(!access_token_optional.isEmpty()){
