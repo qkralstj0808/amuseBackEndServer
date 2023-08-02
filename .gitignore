@@ -73,3 +73,5 @@ build/
 application.yml
 
 /src/main/java/com/example/amusetravelproejct/controller/TestController.java
+
+README.md
