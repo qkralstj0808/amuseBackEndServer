@@ -143,8 +143,8 @@ public class AuthController {
     }
 
     @GetMapping("/getCookie/access-token")
-    public ResponseEntity<AuthResponse.getAccessToken> getCookie(HttpServletRequest request,
-                            @CookieValue(value = "access_token") Cookie cookie) {
+    public ResponseEntity<AuthResponse.getAccessToken> getCookie(HttpServletRequest request){
+//                            @CookieValue(value = "access_token") Cookie cookie) {
         log.info("/getCookie/access-token 실행");
         log.info(request.toString());
         Optional<Cookie> access_token_optional = CookieUtil.getCookie(request, "access_token");
@@ -154,10 +154,7 @@ public class AuthController {
             log.info(access_token_optional.get().getValue());
         }
 
-        if(cookie==null){
-            throw new CustomException(ErrorCode.EMPTY);
-        }
-        return new ResponseEntity<>(new AuthResponse.getAccessToken(cookie.getValue()),HttpStatus.OK);
+        return new ResponseEntity<>(new AuthResponse.getAccessToken(access_token_optional.get().getValue()),HttpStatus.OK);
     }
 
     @GetMapping("/session/access-token")
