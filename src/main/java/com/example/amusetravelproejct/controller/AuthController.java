@@ -25,6 +25,7 @@ import com.example.amusetravelproejct.service.UserService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.impl.BHttpConnectionBase;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -47,6 +48,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Optional;
 
@@ -81,14 +83,32 @@ public class AuthController {
     public ResponseEntity<?> handleGoogleLogin() {
         // Google 로그인 API로 요청 전달
         // (예시를 위해 간단하게 GET 요청으로 표현했지만, 실제로는 인증과정 등이 포함되어야 합니다.)
-        String googleLoginApiUrl = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&" +
-                "client_id=447573425784-oi306n0uhisvg77bakmfkqubd44bij74.apps.googleusercontent.com&" +
-                "scope=email%20profile&" +
-                "state=rPkQWbQIDvCa2zXns_gu31N80ysXtEsNaa_QMp6yeqE%3D&" +
-                "redirect_uri=http://devapi.wheelgo.net/login/oauth2/code/google";
+
+        String client_id = "447573425784-oi306n0uhisvg77bakmfkqubd44bij74.apps.googleusercontent.com";
+        String redirectUri = "http://localhost:8075/login/oauth2/code/google";
+        String scope = "email profile";
+        String googleLoginApiUrl = null;
+//        try{
+//            googleLoginApiUrl = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code" +
+//                "&client_id=" + client_id +
+//                "&scope=" + URLEncoder.encode(scope, "UTF-8") +
+//                "&state=rPkQWbQIDvCa2zXns_gu31N80ysXtEsNaa_QMp6yeqE%3D" +
+////                    "&redirect_uri=" + URLEncoder.encode(redirectUri, "UTF-8");
+//                "&redirect_uri=" + redirectUri;
+//        }catch (Exception e){
+//
+//            e.getMessage();
+//        }
+
+        googleLoginApiUrl = "https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code" +
+                "&client_id=447573425784-oi306n0uhisvg77bakmfkqubd44bij74.apps.googleusercontent.com" +
+                "&scope=email%20profile" +
+                "&state=gP1ec16vgf1U7eNDOGQvI2b7YFQFrZ06bcpCHdZuN7Q%3D" +
+                "&redirect_uri=http%3A%2F%2Fdevapi.wheelgo.net%2Flogin%2Foauth2%2Fcode%2Fgoogle&service=lso&o2v=2&flowName=GeneralOAuthFlow";
+
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "YOUR_GOOGLE_API_KEY");
+//        headers.add("Authorization", "sdfs");
         ResponseEntity<String> response = new RestTemplate().exchange(
                 googleLoginApiUrl,
                 HttpMethod.GET,
