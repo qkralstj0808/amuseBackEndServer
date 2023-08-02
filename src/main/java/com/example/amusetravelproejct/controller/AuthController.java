@@ -25,9 +25,8 @@ import com.example.amusetravelproejct.service.UserService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.apache.http.impl.BHttpConnectionBase;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,13 +34,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Optional;
 
@@ -64,31 +71,93 @@ public class AuthController {
     private final AdminService adminService;
 
     private final static long THREE_DAYS_MSEC = 259200000;
+
+    private final static int COOKIE_MAX_AGE = 10080000;
     private final static String REFRESH_TOKEN = "refresh_token";
+    private final static String REDIRECT_URL = "target_url";
     private final static String ACCESS_TOKEN = "__jwtk__";
+    private final RedirectStrategy redirectStrategy;
 
-
+    @CrossOrigin(originPatterns = "*", allowCredentials = "true")
     @GetMapping("/token/success")
-//    public ResponseEntity<?> getTokenSuccess(HttpServletRequest request,
-//                                             HttpServletResponse response,
-//                                             HttpSession session,
-//                                             @RequestParam("targetUrl") String targetUrl){
-
-    public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(
+//    public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(
+    public void getTokenSuccess(
             HttpServletRequest request,
-            HttpServletResponse response,
-            @RequestParam("targetUrl") String targetUrl,
-            @RequestParam("access-token") String access_token){
+            HttpServletResponse response) throws IOException {
+        Optional<Cookie> access_token_cookie = CookieUtil.getCookie(request, "access_token");
+        Optional<Cookie> redirect_uri_cookie = CookieUtil.getCookie(request, REDIRECT_URL);
 
-        log.info("targetUrl : " + targetUrl);
+        if(access_token_cookie.isEmpty()){
+            log.info("access_token_cookie가 비었습니다.");
+            throw new CustomException(ErrorCode.EMPTY);
+        }else{
+            log.info("access_token_cookie는 있습니다.");
+            log.info("access_token : " + access_token_cookie.get().getValue());
+        }
 
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setLocation(URI.create(targetUrl));
-//        headers.add("Authorization", "Bearer " + access_token);
-//        return new <>(headers, HttpStatus.MOVED_PERMANENTLY);
-        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(targetUrl,access_token));
+        log.info(String.valueOf(redirect_uri_cookie.isEmpty()));
 
+        if(redirect_uri_cookie.isEmpty()){
+            throw new CustomException(ErrorCode.EMPTY);
+        }else{
+            log.info("redirect_uri_cookie 있습니다.");
+            log.info("redirect_uri_cookie : " + redirect_uri_cookie.get().getValue());
+        }
+
+        String access_token = access_token_cookie.get().getValue();
+        String target_url = redirect_uri_cookie.get().getValue();
+
+        log.info("access_token : " + access_token_cookie.get().getValue());
+        log.info("redirect_uri : " + redirect_uri_cookie.get().getValue());
+
+
+        String domain = target_url;
+
+        URL parsedUrl = null;
+        try {
+            parsedUrl = new URL(domain);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        domain = parsedUrl.getHost();
+        String path = parsedUrl.getPath();
+
+        String[] parts = domain.split("\\.");
+        int len = parts.length;
+        if (len >= 2) {
+            // 마지막 두 개의 요소를 연결하여 도메인을 구성
+            domain =  parts[len - 2] + "." + parts[len - 1];
+        }
+        log.info("domain" + ": " + domain);
+        CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,request.getServerName());
+        CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,domain);
+
+        CookieUtil.deleteCookie(request,response,"access_token",domain);
+        CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
+
+        log.info(request.toString());
+
+        redirectStrategy.sendRedirect(request,response,target_url);
+//        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(access_token_cookie.get().getValue()));
     }
+
+    @GetMapping("/getCookie/access-token")
+    public ResponseEntity<AuthResponse.getAccessToken> getCookie(HttpServletRequest request){
+//                            @CookieValue(value = "access_token") Cookie cookie) {
+        log.info("/getCookie/access-token 실행");
+        log.info(request.toString());
+        Optional<Cookie> access_token_optional = CookieUtil.getCookie(request, "__jwtk__");
+        log.info(access_token_optional.toString());
+
+        if(!access_token_optional.isEmpty()){
+            log.info(access_token_optional.get().getValue());
+        }else{
+            throw new CustomException(ErrorCode.EMPTY);
+        }
+
+        return new ResponseEntity<>(new AuthResponse.getAccessToken(access_token_optional.get().getValue()),HttpStatus.OK);
+    }
+
     @GetMapping("/session/access-token")
     public ResponseTemplate<AuthResponse.getAccessToken> getTokenSuccess(HttpServletRequest request){
 
@@ -100,7 +169,6 @@ public class AuthController {
         return new ResponseTemplate(new AuthResponse.getAccessToken(access_token));
 
     }
-
 
 
     @GetMapping("/token/fail")

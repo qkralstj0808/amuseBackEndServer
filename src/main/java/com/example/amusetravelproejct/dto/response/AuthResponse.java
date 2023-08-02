@@ -20,7 +20,7 @@ public class AuthResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getAccessToken_targetUrl {
-        private String targetUrl;
+//        private String targetUrl;
         private String accessToken;
     }
 

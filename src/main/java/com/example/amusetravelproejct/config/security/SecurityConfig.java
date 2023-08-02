@@ -1,9 +1,7 @@
 package com.example.amusetravelproejct.config.security;
 
 import com.example.amusetravelproejct.config.properties.CorsProperties;
-//import com.example.amusetravelproejct.config.resTemplate.CustomAccessDeniedHandler;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
-import com.example.amusetravelproejct.oauth.handler.CustomAuthenticationFailureHandler;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
 import com.example.amusetravelproejct.oauth.exception.RestAuthenticationEntryPoint;
@@ -27,14 +25,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-
-import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor
@@ -48,10 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final TokenExceptionFilter tokenExceptionFilter;
-
-    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-
-//    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
 
     private final UserRepository userRepository;
@@ -130,6 +122,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+
+    @Bean
+    public RedirectStrategy redirectStrategy() {
+        return new DefaultRedirectStrategy();
+    }
+
     /*
     * 토큰 필터 설정
     * */
@@ -187,7 +185,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         corsConfig.addAllowedOrigin("http://myadmin.wheelgo.net/");
         corsConfig.addAllowedOrigin("http://localhost:3000");
         corsConfig.addAllowedOrigin("http://localhost:3001");
-//        corsConfig.addAllowedOriginPattern("*");
         corsConfig.addAllowedHeader("*");
         corsConfig.addAllowedMethod("*");
         corsConfig.setAllowCredentials(true);
@@ -197,10 +194,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return corsConfigSource;
     }
 
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//
+//        configuration.addAllowedOrigin("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.addAllowedMethod("*");
+//        configuration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
+
+
+
 //    @Override
 //    public void addCorsMappings(CorsRegistry registry){
 //        registry.addMapping("/**")
-//                .allowedOriginPatterns("*")
+//                .allowedOrigins("*")
 //                .allowedMethods("*")
 //                .allowedHeaders("*")
 //                .allowCredentials(true)

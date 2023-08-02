@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 public class OAuth2AuthorizationRequestBasedOnCookieRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
-
     public final static String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public final static String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
     public final static String REFRESH_TOKEN = "refresh_token";
@@ -24,7 +23,9 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
 //        log.info("cookie(OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME) : " + CookieUtil.getCookie(request,OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
 //                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class)));
 
-
+//        log.info(CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
+//                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class))
+//                .orElse(null).get);
         return CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
                 .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class))
                 .orElse(null);
