@@ -75,7 +75,6 @@ public class AuthController {
     private final static String REFRESH_TOKEN = "refresh_token";
     private final static String REDIRECT_URL = "target_url";
     private final static String ACCESS_TOKEN = "__jwtk__";
-
     private final RedirectStrategy redirectStrategy;
 
 
@@ -146,6 +145,9 @@ public class AuthController {
     @GetMapping("/getCookie/access-token")
     public ResponseTemplate<AuthResponse.getAccessToken> getCookie(HttpServletRequest request,
                             @CookieValue(value = "__jwtk__") Cookie cookie) {
+        if(cookie==null){
+            throw new CustomException(ErrorCode.EMPTY);
+        }
         return new ResponseTemplate(new AuthResponse.getAccessToken(cookie.getValue()));
     }
 
