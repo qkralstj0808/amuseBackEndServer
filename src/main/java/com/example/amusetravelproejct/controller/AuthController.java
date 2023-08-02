@@ -141,19 +141,14 @@ public class AuthController {
 //        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         redirectStrategy.sendRedirect(request,response,target_url);
 //        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(access_token_cookie.get().getValue()));
-
-
     }
+
     @GetMapping("/getCookie/access-token")
-    public String getCookie(HttpServletRequest request,
+    public ResponseTemplate<AuthResponse.getAccessToken> getCookie(HttpServletRequest request,
                             @CookieValue(value = "__jwtk__") Cookie cookie) {
-
-        log.debug("cookie.getValue() : " + cookie.getValue());
-        CookieUtil.getCookie(request,cookie.getValue());
-
-        log.debug("cookie :{}", cookie.getValue());
-        return cookie.getValue();
+        return new ResponseTemplate(new AuthResponse.getAccessToken(cookie.getValue()));
     }
+
     @GetMapping("/session/access-token")
     public ResponseTemplate<AuthResponse.getAccessToken> getTokenSuccess(HttpServletRequest request){
 
