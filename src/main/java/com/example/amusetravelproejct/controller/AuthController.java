@@ -148,7 +148,7 @@ public class AuthController {
         if(cookie==null){
             throw new CustomException(ErrorCode.EMPTY);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(new AuthResponse.getAccessToken(cookie.getValue()),HttpStatus.OK);
     }
 
     @GetMapping("/session/access-token")
