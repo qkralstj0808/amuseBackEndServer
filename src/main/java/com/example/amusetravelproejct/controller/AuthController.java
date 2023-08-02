@@ -152,6 +152,8 @@ public class AuthController {
 
         if(!access_token_optional.isEmpty()){
             log.info(access_token_optional.get().getValue());
+        }else{
+            throw new CustomException(ErrorCode.EMPTY);
         }
 
         return new ResponseEntity<>(new AuthResponse.getAccessToken(access_token_optional.get().getValue()),HttpStatus.OK);
