@@ -84,7 +84,6 @@ public class AuthController {
     public void getTokenSuccess(
             HttpServletRequest request,
             HttpServletResponse response) throws IOException {
-
         Optional<Cookie> access_token_cookie = CookieUtil.getCookie(request, "access_token");
         Optional<Cookie> redirect_uri_cookie = CookieUtil.getCookie(request, REDIRECT_URL);
 
@@ -137,7 +136,8 @@ public class AuthController {
 //        CookieUtil.deleteCookie(request,response,"access_token",domain);
         CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
 
-//        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+        log.info(request.toString());
+
         redirectStrategy.sendRedirect(request,response,target_url);
 //        return new ResponseTemplate(new AuthResponse.getAccessToken_targetUrl(access_token_cookie.get().getValue()));
     }
@@ -146,6 +146,14 @@ public class AuthController {
     public ResponseEntity<AuthResponse.getAccessToken> getCookie(HttpServletRequest request,
                             @CookieValue(value = "access_token") Cookie cookie) {
         log.info("/getCookie/access-token 실행");
+        log.info(request.toString());
+        Optional<Cookie> access_token_optional = CookieUtil.getCookie(request, "access_token");
+        log.info(access_token_optional.toString());
+
+        if(!access_token_optional.isEmpty()){
+            log.info(access_token_optional.get().getValue());
+        }
+
         if(cookie==null){
             throw new CustomException(ErrorCode.EMPTY);
         }
