@@ -18,13 +18,6 @@ public class UserController {
 
     private final UserService userService;
 
-//    @GetMapping("")
-//    public ResponseTemplate<String> getUser() {
-////        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//
-//        return new ResponseTemplate("과정만 보자");
-//    }
-
     @GetMapping("/info")
     public ResponseTemplate<UserResponse.getUserInfo> getAdminInfo(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
         User findUser = userService.getUserByPrincipal(userPrincipal);

@@ -71,3 +71,5 @@ build/
 .DS_Store
 
 application.yml
+
+/src/main/java/com/example/amusetravelproejct/controller/TestController.java
