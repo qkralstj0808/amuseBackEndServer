@@ -85,7 +85,7 @@ public class AuthController {
                 "client_id=447573425784-oi306n0uhisvg77bakmfkqubd44bij74.apps.googleusercontent.com&" +
                 "scope=email%20profile&" +
                 "state=rPkQWbQIDvCa2zXns_gu31N80ysXtEsNaa_QMp6yeqE%3D&" +
-                "redirect_uri=http://amuseapi.wheelgo.net/login/oauth2/code/google";
+                "redirect_uri=https://devapi.wheelgo.net/login/oauth2/code/google";
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "YOUR_GOOGLE_API_KEY");
