@@ -49,7 +49,7 @@ public enum ErrorCode {
     ADMINID_EXIST(HttpStatus.FOUND,"아이디가 존재합니다"),
     ADMINID_NOT_EXIST(HttpStatus.FOUND,"아이디가 존재하지 않습니다"),
     PASSWORD_INCORRECT(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS,"비밀번호가 일치하지 않습니다"),
-    EMPTY(HttpStatus.BAD_GATEWAY,"값이 비었습니다");
+    EMPTY(HttpStatus.NO_CONTENT,"값이 비었습니다");
 
     private final HttpStatus httpStatus;
     private final String message;

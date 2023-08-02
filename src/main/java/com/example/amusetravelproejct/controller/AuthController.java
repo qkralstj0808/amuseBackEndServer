@@ -25,9 +25,7 @@ import com.example.amusetravelproejct.service.UserService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,6 +37,7 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -76,6 +75,29 @@ public class AuthController {
     private final static String REDIRECT_URL = "target_url";
     private final static String ACCESS_TOKEN = "__jwtk__";
     private final RedirectStrategy redirectStrategy;
+
+
+    @GetMapping("/google-login")
+    public ResponseEntity<?> handleGoogleLogin() {
+        // Google 로그인 API로 요청 전달
+        // (예시를 위해 간단하게 GET 요청으로 표현했지만, 실제로는 인증과정 등이 포함되어야 합니다.)
+        String googleLoginApiUrl = "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&" +
+                "client_id=447573425784-oi306n0uhisvg77bakmfkqubd44bij74.apps.googleusercontent.com&" +
+                "scope=email%20profile&" +
+                "state=rPkQWbQIDvCa2zXns_gu31N80ysXtEsNaa_QMp6yeqE%3D&" +
+                "redirect_uri=http://localhost:8075/login/oauth2/code/google";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "YOUR_GOOGLE_API_KEY");
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                googleLoginApiUrl,
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                String.class
+        );
+        return response;
+    }
+
 
 
     @CrossOrigin(originPatterns = "*", allowCredentials = "true")
@@ -133,7 +155,7 @@ public class AuthController {
         CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,request.getServerName());
         CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,domain);
 
-//        CookieUtil.deleteCookie(request,response,"access_token",domain);
+        CookieUtil.deleteCookie(request,response,"access_token",domain);
         CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
 
         log.info(request.toString());
