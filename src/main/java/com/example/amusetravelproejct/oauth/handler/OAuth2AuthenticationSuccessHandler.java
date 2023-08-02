@@ -62,9 +62,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         clearAuthenticationAttributes(request, response);
 
         log.info("response : " + response);
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
-//        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
     @Transactional
@@ -198,10 +197,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         CookieUtil.addCookie(response,"access_token",accessToken.getToken(),cookieMaxAge/60,request.getServerName());
 
-        return UriComponentsBuilder.fromUriString("/api/v1/auth/token/success")
+        if(targetUrl.contains("localhost")){
+            return UriComponentsBuilder.fromUriString(targetUrl)
+                .queryParam("access-token",accessToken.getToken())
+                    .build().toUriString();
+        }else{
+            return UriComponentsBuilder.fromUriString("/api/v1/auth/token/success")
 //                .queryParam("targetUrl",targetUrl)
 //                .queryParam("access-token",accessToken.getToken())
-                .build().toUriString();
+                    .build().toUriString();
+        }
+
 
 //        return UriComponentsBuilder.fromUriString(targetUrl)
 ////                .queryParam("targetUrl",targetUrl)
