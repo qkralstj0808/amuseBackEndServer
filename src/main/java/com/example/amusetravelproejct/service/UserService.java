@@ -178,9 +178,17 @@ public class UserService {
     public ResponseTemplate<UserResponse.getUserInfo> createUserInfo(User findUser, UserRequest.createUserInfo request) {
         findUser.setPhoneNumber(request.getPhone_number());
         userRepository.save(findUser);
-        return new ResponseTemplate(new UserResponse.getUserInfo(findUser.getUserId(),findUser.getUsername(),
-                findUser.getProfileImageUrl(),findUser.getEmail(),findUser.getGrade(),findUser.getPhoneNumber()));
+        return new ResponseTemplate(new UserResponse.getUserInfo(
+                findUser.getUserId(),
+                findUser.getUsername(),
+                findUser.getProfileImageUrl(),
+                findUser.getEmail(),
+                findUser.getGrade(),
+                findUser.getPhoneNumber(),
+                findUser.getAdvertisementTrue(),
+                findUser.getOver14AgeTrue()));
     }
+    
 
     @Transactional
     public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> createUserInfoBeforeLogin(User findUser, UserRequest.createUserInfoBeforeLogin request) {
