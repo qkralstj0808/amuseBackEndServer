@@ -81,7 +81,6 @@ public class MainPageResponse {
         private Integer duration;
         private Integer likeNum;
         private Long startPrice;
-
     }
 
     @Data

@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.repository.customImpl;
 
+import static com.example.amusetravelproejct.domain.QMainPage.mainPage;
 import static com.example.amusetravelproejct.domain.QPageComponent.pageComponent;
 
 import com.example.amusetravelproejct.domain.*;
@@ -25,6 +26,20 @@ public class MainPageRepositoryImpl implements MainPageRepositoryCustom {
                 .groupBy(pageComponent)
                 .fetch();
     }
-//    return null;
 
+    @Override
+    public List<Long> findTileIds(Long page_component_id) {
+        return jpaQueryFactory.select(mainPage.tile.id )
+                .from(mainPage)
+                .where(mainPage.pageComponent.id.eq(page_component_id))
+                .groupBy(mainPage.tile)
+                .fetch();
+    }
+
+    @Override
+    public List<MainPage> findMainPageByComponent_idAndTyle_id(Long page_component_id, Long tile_id) {
+        return jpaQueryFactory.selectFrom(mainPage)
+                .where(mainPage.pageComponent.id.eq(page_component_id).and(mainPage.tile.id.eq(tile_id)))
+                .fetch();
+    }
 }
