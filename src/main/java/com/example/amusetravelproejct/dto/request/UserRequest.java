@@ -1,6 +1,7 @@
 package com.example.amusetravelproejct.dto.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,9 +17,14 @@ public class UserRequest {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class getUserInfoBeforeLogin {
+    @Builder
+    public static class createUserInfoBeforeLogin {
         private String phone_number;
-        private Boolean advertisement_true;
-        private Boolean over_14_age_true;
+
+        @Builder.Default()
+        private Boolean advertisement_true = false;
+
+        @Builder.Default()
+        private Boolean over_14_age_true = false;
     }
 }
