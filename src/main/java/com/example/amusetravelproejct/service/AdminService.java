@@ -4,8 +4,6 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.Admin;
-import com.example.amusetravelproejct.domain.User;
-import com.example.amusetravelproejct.dto.request.AdminRequest;
 import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
 import com.example.amusetravelproejct.repository.AdminRepository;

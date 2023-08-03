@@ -6,18 +6,14 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.dto.request.MyPageRequest;
-import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
-import com.example.amusetravelproejct.dto.response.DetailPageResponse;
 import com.example.amusetravelproejct.dto.response.MyPageResponse;
 import com.example.amusetravelproejct.repository.ItemRepository;
 import com.example.amusetravelproejct.repository.ItemReviewImgRepository;
 import com.example.amusetravelproejct.repository.ItemReviewRepository;
-import com.example.amusetravelproejct.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
 import java.util.List;

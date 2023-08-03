@@ -4,7 +4,6 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.Admin;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
 import com.example.amusetravelproejct.dto.request.AuthRequest;
-import com.example.amusetravelproejct.dto.response.AuthResponse;
 import com.example.amusetravelproejct.repository.AdminRepository;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import lombok.AllArgsConstructor;
