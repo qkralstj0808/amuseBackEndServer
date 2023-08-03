@@ -36,11 +36,18 @@ public class UserController {
     }
 
     @PostMapping("/login/info")
-    public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> getUserInfoBeforeLogin(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                                                     @RequestBody UserRequest.getUserInfoBeforeLogin request) throws Exception{
+    public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> createUserInfoBeforeLogin(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                                     @RequestBody UserRequest.createUserInfoBeforeLogin request) throws Exception{
         User findUser = userService.getUserByPrincipal(userPrincipal);
 
-        return userService.getUserInfoBeforeLogin(findUser,request);
+        return userService.createUserInfoBeforeLogin(findUser,request);
+    }
+
+    @GetMapping("/login/info")
+    public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> getUserInfoBeforeLogin(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
+        User findUser = userService.getUserByPrincipal(userPrincipal);
+
+        return userService.getUserInfoBeforeLogin(findUser);
     }
 
 

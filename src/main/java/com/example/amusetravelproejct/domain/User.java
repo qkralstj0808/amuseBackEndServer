@@ -5,10 +5,7 @@ import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.oauth.entity.ProviderType;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -25,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
+@Builder
 @EntityListeners(value = {AuditingEntityListener.class})
 public class User extends BaseEntity{
     @Id
@@ -89,8 +87,11 @@ public class User extends BaseEntity{
     private Boolean emailReceptionTrue;
     private Boolean messageReceptionTrue;
 
-    private Boolean advertisementTrue;
-    private Boolean over14AgeTrue;
+    @Builder.Default()
+    private Boolean advertisementTrue = false;
+
+    @Builder.Default()
+    private Boolean over14AgeTrue = false;
     @Enumerated(EnumType.STRING)
     private Grade grade;                    // user 등급 (브론즈,실버)...
 

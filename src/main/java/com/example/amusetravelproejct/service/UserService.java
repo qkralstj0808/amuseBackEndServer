@@ -183,12 +183,24 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> getUserInfoBeforeLogin(User findUser, UserRequest.getUserInfoBeforeLogin request) {
+    public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> createUserInfoBeforeLogin(User findUser, UserRequest.createUserInfoBeforeLogin request) {
 
         findUser.setPhoneNumber(request.getPhone_number());
         findUser.setAdvertisementTrue(request.getAdvertisement_true());
         findUser.setOver14AgeTrue(request.getOver_14_age_true());
         userRepository.save(findUser);
+        return new ResponseTemplate(new UserResponse.getUserInfoBeforeLogin(
+                findUser.getUserId(),
+                findUser.getUsername(),
+                findUser.getProfileImageUrl(),
+                findUser.getEmail(),
+                findUser.getGrade(),
+                findUser.getPhoneNumber(),
+                findUser.getAdvertisementTrue(),
+                findUser.getOver14AgeTrue()));
+    }
+
+    public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> getUserInfoBeforeLogin(User findUser) {
         return new ResponseTemplate(new UserResponse.getUserInfoBeforeLogin(
                 findUser.getUserId(),
                 findUser.getUsername(),
