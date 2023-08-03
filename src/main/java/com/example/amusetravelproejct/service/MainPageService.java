@@ -200,46 +200,110 @@ public class MainPageService {
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
         );
 
-        return new ResponseTemplate(new MainPageResponse.getCategoryPage(
+
+        List<MainPageResponse.PageComponentInfo> pageComponentInfoList = new ArrayList<MainPageResponse.PageComponentInfo>();
+
+        // 한 카테고리에 들어가는 component 개수
+        for (int i = 0; i < category.getCategoryPageComponents().size(); i++) {
+            log.info("category.getCategoryPageComponents().size() : " + category.getCategoryPageComponents().size());
+            CategoryPageComponent categoryPageComponent = category.getCategoryPageComponents().get(i);
+            PageComponent pageComponent = categoryPageComponent.getPageComponent();
+
+            // 각 component 별로
+            if (pageComponent.getType().equals("타일")) {
+
+                log.info("타일입니다");
+                List<Long> tileIds = mainPageRepository.findTileIds(pageComponent.getId());
+                log.info(String.valueOf(tileIds.size()));
+                for (int k = 0; k < tileIds.size(); k++) {
+                    log.info(String.valueOf(tileIds.get(k)));
+                    List<MainPage> mainPage_by_tile_id = mainPageRepository.findMainPageByComponent_idAndTyle_id(pageComponent.getId(), tileIds.get(k));
+                    String tile_name = mainPage_by_tile_id.get(k).getTile().getTileName();
+                    List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<MainPageResponse.ItemInfo>();
+                    for (int q = 0; q < mainPage_by_tile_id.size(); q++) {
+                        MainPage mainPage = mainPage_by_tile_id.get(q);
+                        Item item = mainPage_by_tile_id.get(q).getItem();
+                        MainPageResponse.ItemInfo itemInfo = new MainPageResponse.ItemInfo(
+                                item.getId(),
+                                item.getItemCode(),
+                                item.getItemHashTags().stream().map(
+                                        itemHashTag -> new MainPageResponse.HashTag(
+                                                itemHashTag.getHashTag()
+                                        )
+                                ).collect(Collectors.toList()),
+                                item.getItemImg_list().size() != 0 ? item.getItemImg_list().get(0).getImgUrl() : null,
+                                item.getTitle(),
+                                item.getCountry(),
+                                item.getCity(),
+                                item.getDuration(),
+                                item.getLike_num(),
+                                item.getStartPrice()
+                        );
+                        itemInfoList.add(itemInfo);
+                    }
+                    MainPageResponse.PageComponentInfo pageComponentInfo = new MainPageResponse.PageComponentInfo(
+                            pageComponent.getId(),
+                            pageComponent.getType(),
+                            tile_name,
+                            pageComponent.getPcBannerUrl(),
+                            pageComponent.getPcBannerLink(),
+                            pageComponent.getMobileBannerUrl(),
+                            pageComponent.getMobileBannerLink(),
+                            pageComponent.getContent(),
+                            itemInfoList
+                    );
+                    pageComponentInfoList.add(pageComponentInfo);
+                }
+            } else {
+                List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<>();
+                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
+                    Item item = pageComponent.getMainPages().get(k).getItem();
+                    MainPageResponse.ItemInfo itemInfo = new MainPageResponse.ItemInfo(
+                            item.getId(),
+                            item.getItemCode(),
+                            item.getItemHashTags().stream().map(
+                                    itemHashTag -> new MainPageResponse.HashTag(
+                                            itemHashTag.getHashTag()
+                                    )
+                            ).collect(Collectors.toList()),
+                            item.getItemImg_list().size() != 0 ? item.getItemImg_list().get(0).getImgUrl() : null,
+                            item.getTitle(),
+                            item.getCountry(),
+                            item.getCity(),
+                            item.getDuration(),
+                            item.getLike_num(),
+                            item.getStartPrice()
+                    );
+                    itemInfoList.add(itemInfo);
+                }
+                MainPageResponse.PageComponentInfo pageComponentInfo = new MainPageResponse.PageComponentInfo(
+                        pageComponent.getId(),
+                        pageComponent.getType(),
+                        pageComponent.getTitle(),
+                        pageComponent.getPcBannerUrl(),
+                        pageComponent.getPcBannerLink(),
+                        pageComponent.getMobileBannerUrl(),
+                        pageComponent.getMobileBannerLink(),
+                        pageComponent.getContent(),
+                        itemInfoList
+                );
+                pageComponentInfoList.add(pageComponentInfo);
+            }
+        }
+
+        MainPageResponse.getCategoryPage getCategory = new MainPageResponse.getCategoryPage(
                 category.getId(),
                 category.getCategory_name(),
                 category.getImgUrl(),
                 category.getSequence(),
                 category.getMainDescription(),
                 category.getSubDescription(),
-                category.getCategoryPageComponents().stream().map(
-                        CategoryPageComponent::getPageComponent).map(
-                        pageComponent -> new MainPageResponse.PageComponentInfo(
-                            pageComponent.getId(),
-                                pageComponent.getType(),
-                                pageComponent.getTitle(),
-                                pageComponent.getPcBannerUrl(),
-                                pageComponent.getPcBannerLink(),
-                                pageComponent.getMobileBannerUrl(),
-                                pageComponent.getMobileBannerLink(),
-                                pageComponent.getContent(),
-                                pageComponent.getMainPages().stream().map(
-                                        mainPage -> mainPage.getItem()).map(
-                                                item -> new MainPageResponse.ItemInfo(
-                                                     item.getId(),
-                                                     item.getItemCode(),
-                                                     item.getItemHashTags().stream().map(
-                                                             itemHashTag -> new MainPageResponse.HashTag(
-                                                                     itemHashTag.getHashTag()
-                                                             )
-                                                     ).collect(Collectors.toList()),
-                                                        item.getItemImg_list().size() != 0 ?  item.getItemImg_list().get(0).getImgUrl() : null,
-                                                        item.getTitle(),
-                                                        item.getCountry(),
-                                                        item.getCity(),
-                                                        item.getDuration(),
-                                                        item.getLike_num(),
-                                                        item.getStartPrice()
-                                                )
-                                ).collect(Collectors.toList())
-                        )
-                ).collect(Collectors.toList())
-        ));
+                pageComponentInfoList
+        );
+
+
+        return new ResponseTemplate(getCategory);
     }
+
 }
 
