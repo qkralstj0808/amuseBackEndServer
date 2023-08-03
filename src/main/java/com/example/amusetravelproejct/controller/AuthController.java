@@ -426,15 +426,17 @@ public class AuthController {
         if (!token.validate()) {
             throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
+//
+//        // expired access token 인지 확인
+//        if(token.getExpiredTokenClaims() == null){
+//            throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN);
+//        }
+//
+//        Claims claims = token.getExpiredTokenClaims();
 
-        // expired access token 인지 확인
-        if(token.getExpiredTokenClaims() == null){
-            throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN);
-        }
 
-        Claims claims = token.getExpiredTokenClaims();
-
-        String userId = claims.getSubject();
+        Claims tokenClaims = token.getTokenClaims();
+        String userId = tokenClaims.getSubject();
         User user = userRepository.findByUserId(userId);
 //        Optional<Admin> byAdminId = adminRepository.findByAdminId(userId);
 //        Admin admin;
@@ -445,7 +447,7 @@ public class AuthController {
 //        }
 
 //        log.info("userId : " + userId);
-        RoleType roleType = RoleType.of(claims.get("role", String.class));
+        RoleType roleType = RoleType.of(tokenClaims.get("role", String.class));
 
         // userId refresh token 으로 DB 확인
         UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
