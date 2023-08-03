@@ -127,15 +127,15 @@ public class AdminPageRequest {
         private Long id;
         private String title;
         private String type;
-        private String createdBy;
-        private String updatedBy;
+//        private String createdBy;
+//        private String updatedBy;
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class registerListComponent extends registerComponent{
-        private List<String> itemCode;
+        private List<Long> item_db_id;
     }
 
     @Data

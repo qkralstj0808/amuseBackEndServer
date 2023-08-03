@@ -26,7 +26,6 @@ import java.util.*;
 @RequestMapping("/test/api")
 @Slf4j
 public class AdminPageController {
-
     private final CategoryService categoryService;
     private final ItemService itemService;
     private final AdminService adminService;
@@ -34,7 +33,6 @@ public class AdminPageController {
     private final AdvertisementService advertisementService;
     private final PageComponentService pageComponentService;
     private final UserService userService;
-
     private final PageService pageService;
     private final AmazonS3 amazonS3Client;
     ObjectMapper objectMapper = new ObjectMapper();
@@ -116,12 +114,12 @@ public class AdminPageController {
         }
 
     }
-    @GetMapping("/product/{itemCode}")
-    public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("itemCode") String itemCode){
+    @GetMapping("/product/{item_db_id}")
+    public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("item_db_id") Long item_db_id){
         //TODO
         // productRegisterDto 데이터 선 처리
 
-        return new ResponseTemplate<>(itemService.processGetItemDetail(itemCode));
+        return new ResponseTemplate<>(itemService.processGetItemDetail(item_db_id));
     }
 
     @GetMapping("/product/delete")
@@ -236,76 +234,78 @@ public class AdminPageController {
         return new ResponseTemplate<>(categoryService.processGetCategoryDetail(id));
     }
 
-
     @Transactional
     @PostMapping("/component/register/list")
-    public ResponseTemplate<?> reqComponentRegisterList(@RequestBody AdminPageRequest.registerListComponent registerListComponentDto){
+    public ResponseTemplate<?> reqComponentRegisterList(@RequestBody AdminPageRequest.registerListComponent registerListComponentDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
         UtilMethod utilMethod =  new UtilMethod(amazonS3Client);
 
+        Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         //TODO
         // 유저 데이터 선 처리
         log.info(registerListComponentDto.toString());
-        return new ResponseTemplate<>(pageComponentService.registerListComponent(registerListComponentDto));
+        return new ResponseTemplate<>(pageComponentService.registerListComponent(registerListComponentDto,findAdmin));
 
     }
     @Transactional
     @PostMapping("/component/edit/list")
-    public ResponseTemplate<?> reqComponentEditList(@RequestBody AdminPageRequest.registerListComponent registerListComponentDto){
+    public ResponseTemplate<?> reqComponentEditList(@RequestBody AdminPageRequest.registerListComponent registerListComponentDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
         UtilMethod utilMethod =  new UtilMethod(amazonS3Client);
-
+        Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         //TODO
         // 유저 데이터 선 처리
         log.info(registerListComponentDto.toString());
-        return new ResponseTemplate<>(pageComponentService.registerListComponent(registerListComponentDto));
+        return new ResponseTemplate<>(pageComponentService.registerListComponent(registerListComponentDto,findAdmin));
 
     }
 
     @Transactional
     @PostMapping("/component/register/banner")
-    public ResponseTemplate<?> reqComponentRegisterBanner(@RequestBody AdminPageRequest.registerBannerComponent registerBannerComponentDto){
+    public ResponseTemplate<?> reqComponentRegisterBanner(@RequestBody AdminPageRequest.registerBannerComponent registerBannerComponentDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
-
+        Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         //TODO
         // 유저 데이터 선 처리
         log.info(registerBannerComponentDto.toString());
 
-        return new ResponseTemplate<>(pageComponentService.registerBannerComponent(registerBannerComponentDto,utilMethod));
+        return new ResponseTemplate<>(pageComponentService.registerBannerComponent(registerBannerComponentDto,utilMethod,findAdmin));
     }
 
     @Transactional
     @PostMapping("/component/edit/banner")
-    public ResponseTemplate<?> reqComponentEditBanner(@RequestBody AdminPageRequest.registerBannerComponent registerBannerComponentDto){
+    public ResponseTemplate<?> reqComponentEditBanner(@RequestBody AdminPageRequest.registerBannerComponent registerBannerComponentDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
-
+        Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         //TODO
         // 유저 데이터 선 처리
         log.info(registerBannerComponentDto.toString());
 
-        return new ResponseTemplate<>(pageComponentService.registerBannerComponent(registerBannerComponentDto,utilMethod));
+        return new ResponseTemplate<>(pageComponentService.registerBannerComponent(registerBannerComponentDto,utilMethod,findAdmin));
     }
 
     @Transactional
     @PostMapping("/component/register/tile")
-    public ResponseTemplate<?> reqComponentRegisterTile(@RequestBody AdminPageRequest.registerTileComponent registerTileComponentDto){
+    public ResponseTemplate<?> reqComponentRegisterTile(@RequestBody AdminPageRequest.registerTileComponent registerTileComponentDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+        Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
 
         //TODO
         // 유저 데이터 선 처리
         log.info(registerTileComponentDto.toString());
 
-        return new ResponseTemplate<>(pageComponentService.registerTileComponent(registerTileComponentDto,utilMethod));
+        return new ResponseTemplate<>(pageComponentService.registerTileComponent(registerTileComponentDto,utilMethod,findAdmin));
     }
 
     @Transactional
     @PostMapping("/component/edit/tile")
-    public ResponseTemplate<?> reqComponentEditTile(@RequestBody AdminPageRequest.registerTileComponent registerTileComponentDto){
+    public ResponseTemplate<?> reqComponentEditTile(@RequestBody AdminPageRequest.registerTileComponent registerTileComponentDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
         UtilMethod utilMethod = new UtilMethod(amazonS3Client);
+        Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
 
         //TODO
         // 유저 데이터 선 처리
         log.info(registerTileComponentDto.toString());
 
-        return new ResponseTemplate<>(pageComponentService.registerTileComponent(registerTileComponentDto,utilMethod));
+        return new ResponseTemplate<>(pageComponentService.registerTileComponent(registerTileComponentDto,utilMethod,findAdmin));
     }
 
 

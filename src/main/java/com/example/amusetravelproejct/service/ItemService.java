@@ -678,8 +678,8 @@ public class ItemService {
         itemRepository.delete(item);
     }
 
-    public ProductRegisterDto processGetItemDetail(String itemCode) {
-        Item item = itemRepository.findByItemCode(itemCode).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+    public ProductRegisterDto processGetItemDetail(Long item_db_id) {
+        Item item = itemRepository.findById(item_db_id).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         ProductRegisterDto productRegisterDto = new ProductRegisterDto();
         productRegisterDto.setId(item.getId());
