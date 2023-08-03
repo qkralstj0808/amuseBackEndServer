@@ -20,4 +20,18 @@ public class UserResponse {
         private Grade grade;
         private String phone_number;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getUserInfoBeforeLogin{
+        private String id;
+        private String name;
+        private String img_url;
+        private String email;
+        private Grade grade;
+        private String phone_number;
+        private Boolean advertisementTrue;
+        private Boolean over14AgeTrue;
+    }
 }
