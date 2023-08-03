@@ -5,6 +5,7 @@ import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.Admin;
 import com.example.amusetravelproejct.domain.User;
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
 import com.example.amusetravelproejct.dto.response.AuthResponse;
@@ -437,16 +438,15 @@ public class AuthController {
 
         Claims tokenClaims = token.getTokenClaims();
         String userId = tokenClaims.getSubject();
-        User user = userRepository.findByUserId(userId);
-//        Optional<Admin> byAdminId = adminRepository.findByAdminId(userId);
-//        Admin admin;
-//        if(byAdminId.isEmpty()){
-//            admin = null;
-//        }else{
-//            admin = byAdminId.get();
-//        }
+        Grade grade;
 
-//        log.info("userId : " + userId);
+        // admin일 때
+        if(tokenClaims.get("grade") == null){
+            grade = null;
+        }else{      // user 일 때
+            grade = Grade.valueOf(tokenClaims.get("grade").toString());
+        }
+
         RoleType roleType = RoleType.of(tokenClaims.get("role", String.class));
 
         // userId refresh token 으로 DB 확인
@@ -458,17 +458,12 @@ public class AuthController {
         String db_refreshToken = userRefreshToken.getRefreshToken();
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(db_refreshToken);
 
-//        log.info("userRefreshToken : " + userRefreshToken);
-
-        if (userRefreshToken == null) {
-            return null;
-        }
-
         Date now = new Date();
         AuthToken newAccessToken = tokenProvider.createAuthToken(
                 userId,
                 roleType.getCode(),
-                user == null ? null : user.getGrade() ,
+//                user == null ? null : user.getGrade() ,
+                grade,
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
 
