@@ -19,6 +19,8 @@ public class UserResponse {
         private String email;
         private Grade grade;
         private String phone_number;
+        private Boolean advertisementTrue;
+        private Boolean over14AgeTrue;
     }
 
     @Data

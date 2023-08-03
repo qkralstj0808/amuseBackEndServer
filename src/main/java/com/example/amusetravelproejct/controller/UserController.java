@@ -31,8 +31,15 @@ public class UserController {
     public ResponseTemplate<UserResponse.getUserInfo> getUserInfo(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
         User findUser = userService.getUserByPrincipal(userPrincipal);
 
-        return new ResponseTemplate(new UserResponse.getUserInfo(findUser.getUserId(),findUser.getUsername(),
-                findUser.getProfileImageUrl(),findUser.getEmail(),findUser.getGrade(),findUser.getPhoneNumber()));
+        return new ResponseTemplate(new UserResponse.getUserInfoBeforeLogin(
+                findUser.getUserId(),
+                findUser.getUsername(),
+                findUser.getProfileImageUrl(),
+                findUser.getEmail(),
+                findUser.getGrade(),
+                findUser.getPhoneNumber(),
+                findUser.getAdvertisementTrue(),
+                findUser.getOver14AgeTrue()));
     }
 
     @PostMapping("/login/info")
