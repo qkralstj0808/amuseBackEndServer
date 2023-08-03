@@ -223,7 +223,7 @@ public class PageService {
                                 pageComponent.getMobileBannerUrl(),
                                 pageComponent.getMobileBannerLink(),
                                 pageComponent.getContent(),
-                                pageComponent.getAdmin().getName(),
+                                pageComponent.getAdmin()== null ? null : pageComponent.getAdmin().getAdminId(),
                                 pageComponent.getUpdateAdmin() == null ? null : pageComponent.getUpdateAdmin().getName()
                         )
                 ).collect(Collectors.toList())));
@@ -243,7 +243,7 @@ public class PageService {
                         category.getMainDescription(),
                         category.getSubDescription(),
                         category.getCreatedDate(),
-                        category.getAdmin().getName(),
+                        category.getAdmin()== null ? null : category.getAdmin().getAdminId(),
                         category.getModifiedDate(),
                         category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getName(),
                         category.getCategoryPageComponents().stream().map(
