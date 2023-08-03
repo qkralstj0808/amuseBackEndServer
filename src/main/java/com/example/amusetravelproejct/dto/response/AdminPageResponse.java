@@ -270,7 +270,7 @@ public class AdminPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class registerListComponent extends respRegisterComponent {
-        private List<String> itemCode;
+        private List<Long> item_db_id;
         private LocalDateTime updatedAt;
         private String updatedBy;
     }
