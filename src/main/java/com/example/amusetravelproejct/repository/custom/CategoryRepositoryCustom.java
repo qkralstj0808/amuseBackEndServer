@@ -11,4 +11,5 @@ public interface CategoryRepositoryCustom {
     List<Category> findgreaterSequence(Long sequence);
 
     List<Category> findAllByDisable(Boolean disable);
+    List<Category> findAllByDisableSortBySequence(Boolean disable);
 }
