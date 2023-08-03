@@ -114,12 +114,12 @@ public class AdminPageController {
         }
 
     }
-    @GetMapping("/product/{itemCode}")
-    public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("itemCode") String itemCode){
+    @GetMapping("/product/{item_db_id}")
+    public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("item_db_id") Long item_db_id){
         //TODO
         // productRegisterDto 데이터 선 처리
 
-        return new ResponseTemplate<>(itemService.processGetItemDetail(itemCode));
+        return new ResponseTemplate<>(itemService.processGetItemDetail(item_db_id));
     }
 
     @GetMapping("/product/delete")
