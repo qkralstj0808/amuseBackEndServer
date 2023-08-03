@@ -2,7 +2,6 @@ package com.example.amusetravelproejct.service;
 
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
-import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.MainPage;
 import com.example.amusetravelproejct.domain.PageComponent;

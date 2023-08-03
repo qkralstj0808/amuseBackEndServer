@@ -3,10 +3,7 @@ package com.example.amusetravelproejct.service;
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
-import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
 import com.example.amusetravelproejct.domain.*;
-import com.example.amusetravelproejct.dto.request.AdminPageRequest;
-import com.example.amusetravelproejct.dto.request.MainPageRequest;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j

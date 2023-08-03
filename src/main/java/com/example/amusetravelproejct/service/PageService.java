@@ -6,9 +6,7 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
-import com.example.amusetravelproejct.dto.request.AdminRequest;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
-import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.repository.AdminRepository;
 import com.example.amusetravelproejct.repository.CategoryPageComponentRepository;
 import com.example.amusetravelproejct.repository.CategoryRepository;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

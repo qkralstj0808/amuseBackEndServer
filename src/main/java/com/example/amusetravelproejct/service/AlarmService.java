@@ -2,7 +2,6 @@ package com.example.amusetravelproejct.service;
 
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
-import com.example.amusetravelproejct.domain.Advertisement;
 import com.example.amusetravelproejct.domain.Alarm;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service

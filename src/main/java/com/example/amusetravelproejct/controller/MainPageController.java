@@ -3,8 +3,6 @@ package com.example.amusetravelproejct.controller;
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
-import com.example.amusetravelproejct.config.resTemplate.ResponseTemplateStatus;
-import com.example.amusetravelproejct.dto.request.MainPageRequest;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.service.MainPageService;
 import lombok.RequiredArgsConstructor;

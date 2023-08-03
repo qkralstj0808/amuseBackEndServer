@@ -10,14 +10,11 @@ import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
 import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
-import com.example.amusetravelproejct.repository.*;
-import com.example.amusetravelproejct.repository.ItemRepository;
 import com.example.amusetravelproejct.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 

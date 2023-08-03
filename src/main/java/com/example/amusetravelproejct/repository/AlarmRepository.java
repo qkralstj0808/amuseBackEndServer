@@ -1,6 +1,5 @@
 package com.example.amusetravelproejct.repository;
 
-import com.example.amusetravelproejct.domain.Advertisement;
 import com.example.amusetravelproejct.domain.Alarm;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
