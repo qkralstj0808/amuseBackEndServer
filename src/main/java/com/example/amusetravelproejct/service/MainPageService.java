@@ -34,7 +34,7 @@ public class MainPageService {
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
 
-        List<Category> categories = categoryRepository.findAllByDisable(false);
+        List<Category> categories = categoryRepository.findAllByDisableSortBySequence(false);
 
         return new ResponseTemplate(new MainPageResponse.getCategory(categories.stream().map(
                 category -> new MainPageResponse.CategoryInfo(category.getId(),category.getSequence(),category.getCategory_name(),category.getImgUrl(),
