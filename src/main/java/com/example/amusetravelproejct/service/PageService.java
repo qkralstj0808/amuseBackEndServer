@@ -173,7 +173,9 @@ public class PageService {
                 findCategory.getId(),findCategory.getDisable(),findCategory.getCategory_name(),findCategory.getImgUrl(),
                 findCategory.getSequence(),findCategory.getMainDescription(),
                 findCategory.getSubDescription(),findCategory.getCreatedDate(),
-                findCategory.getAdmin().getName(),findCategory.getModifiedDate(),findCategory.getUpdateAdmin().getName(),
+                findCategory.getAdmin() == null ? null : findCategory.getAdmin().getAdminId(),
+                findCategory.getModifiedDate(),
+                findCategory.getUpdateAdmin() == null ? null : findCategory.getUpdateAdmin().getAdminId(),
                 findCategory.getCategoryPageComponents().stream().map(
                         CategoryPageComponent::getPageComponent).map(
                         pageComponent -> new AdminPageResponse.PageComponentInfo(
@@ -185,8 +187,8 @@ public class PageService {
                                 pageComponent.getMobileBannerUrl(),
                                 pageComponent.getMobileBannerLink(),
                                 pageComponent.getContent(),
-                                pageComponent.getAdmin().getName(),
-                                pageComponent.getUpdateAdmin() != null ? pageComponent.getUpdateAdmin().getName() : null
+                                pageComponent.getAdmin() != null ? pageComponent.getAdmin().getAdminId() : null,
+                                pageComponent.getUpdateAdmin() != null ? pageComponent.getUpdateAdmin().getAdminId() : null
                         )
                 ).collect(Collectors.toList())
                 ));
@@ -197,9 +199,6 @@ public class PageService {
         Category findCategory = categoryRepository.findById(page_id).orElseThrow(
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
         );
-
-        log.info(findCategory.getAdmin().getName());
-        log.info(findCategory.getUpdateAdmin().getName());
 
         List<CategoryPageComponent> categoryPageComponents = findCategory.getCategoryPageComponents();
 
@@ -212,7 +211,9 @@ public class PageService {
                 findCategory.getId(),findCategory.getDisable(),findCategory.getCategory_name(),findCategory.getImgUrl(),
                 findCategory.getSequence(),findCategory.getMainDescription(),
                 findCategory.getSubDescription(),findCategory.getCreatedDate(),
-                findCategory.getAdmin().getName(),findCategory.getModifiedDate(),findCategory.getUpdateAdmin().getName(),
+                findCategory.getAdmin() == null ? null : findCategory.getAdmin().getAdminId(),
+                findCategory.getModifiedDate(),
+                findCategory.getUpdateAdmin() == null ? null : findCategory.getUpdateAdmin().getAdminId(),
                 pageComponents.stream().map(
                         pageComponent -> new AdminPageResponse.PageComponentInfo(
                                 pageComponent.getId(),
@@ -224,7 +225,7 @@ public class PageService {
                                 pageComponent.getMobileBannerLink(),
                                 pageComponent.getContent(),
                                 pageComponent.getAdmin()== null ? null : pageComponent.getAdmin().getAdminId(),
-                                pageComponent.getUpdateAdmin() == null ? null : pageComponent.getUpdateAdmin().getName()
+                                pageComponent.getUpdateAdmin() == null ? null : pageComponent.getUpdateAdmin().getAdminId()
                         )
                 ).collect(Collectors.toList())));
     }
@@ -245,7 +246,7 @@ public class PageService {
                         category.getCreatedDate(),
                         category.getAdmin()== null ? null : category.getAdmin().getAdminId(),
                         category.getModifiedDate(),
-                        category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getName(),
+                        category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getAdminId(),
                         category.getCategoryPageComponents().stream().map(
                                 categoryPageComponent -> new AdminPageResponse.PageComponentId(categoryPageComponent.getPageComponent().getId())
                         ).collect(Collectors.toList())
