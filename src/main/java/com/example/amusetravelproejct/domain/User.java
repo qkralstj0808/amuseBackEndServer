@@ -84,6 +84,8 @@ public class User extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    private String phoneNumber;
+
     private Boolean emailReceptionTrue;
     private Boolean messageReceptionTrue;
     @Enumerated(EnumType.STRING)

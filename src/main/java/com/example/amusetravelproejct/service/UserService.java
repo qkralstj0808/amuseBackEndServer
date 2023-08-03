@@ -10,7 +10,9 @@ import com.example.amusetravelproejct.domain.Guide;
 
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.dto.request.AdminRequest;
+import com.example.amusetravelproejct.dto.request.UserRequest;
 import com.example.amusetravelproejct.dto.response.AdminResponse;
+import com.example.amusetravelproejct.dto.response.UserResponse;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
 
 import com.example.amusetravelproejct.repository.AdminRepository;
@@ -181,5 +183,13 @@ public class UserService {
         });
         AdminResponse.ListGuide listGuide = new AdminResponse.ListGuide(pageCount,guideInfos);
         return listGuide;
+    }
+
+    @Transactional
+    public ResponseTemplate<UserResponse.getUserInfo> createUserInfo(User findUser, UserRequest.createUserInfo request) {
+        findUser.setPhoneNumber(request.getPhone_number());
+        userRepository.save(findUser);
+        return new ResponseTemplate(new UserResponse.getUserInfo(findUser.getUserId(),findUser.getUsername(),
+                findUser.getProfileImageUrl(),findUser.getEmail(),findUser.getGrade(),findUser.getPhoneNumber()));
     }
 }
