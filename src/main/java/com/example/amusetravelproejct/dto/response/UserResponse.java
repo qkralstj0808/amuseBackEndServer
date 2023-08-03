@@ -18,6 +18,6 @@ public class UserResponse {
         private String img_url;
         private String email;
         private Grade grade;
-
+        private String phone_number;
     }
 }

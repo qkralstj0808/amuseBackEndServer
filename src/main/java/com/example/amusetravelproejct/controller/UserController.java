@@ -3,6 +3,7 @@ package com.example.amusetravelproejct.controller;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.Admin;
 import com.example.amusetravelproejct.domain.User;
+import com.example.amusetravelproejct.dto.request.UserRequest;
 import com.example.amusetravelproejct.dto.response.UserResponse;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
 import com.example.amusetravelproejct.service.UserService;
@@ -18,12 +19,22 @@ public class UserController {
 
     private final UserService userService;
 
+    @PostMapping("/info")
+    public ResponseTemplate<UserResponse.getUserInfo> createUserInfo(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                                     @RequestBody UserRequest.createUserInfo request) throws Exception{
+        User findUser = userService.getUserByPrincipal(userPrincipal);
+
+        return userService.createUserInfo(findUser,request);
+
+
+    }
+
     @GetMapping("/info")
-    public ResponseTemplate<UserResponse.getUserInfo> getAdminInfo(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
+    public ResponseTemplate<UserResponse.getUserInfo> getUserInfo(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
         User findUser = userService.getUserByPrincipal(userPrincipal);
 
         return new ResponseTemplate(new UserResponse.getUserInfo(findUser.getUserId(),findUser.getUsername(),
-                findUser.getProfileImageUrl(),findUser.getEmail(),findUser.getGrade()));
+                findUser.getProfileImageUrl(),findUser.getEmail(),findUser.getGrade(),findUser.getPhoneNumber()));
     }
 
 
