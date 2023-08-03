@@ -56,7 +56,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String targetUrl = determineTargetUrl(request, response, authentication);
 
-        clearAuthenticationAttributes(request, response);
+        if(!targetUrl.contains("localhost")){
+            clearAuthenticationAttributes(request, response);
+        }
 
         log.info("response : " + response);
 
