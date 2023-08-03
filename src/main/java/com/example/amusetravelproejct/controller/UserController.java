@@ -35,5 +35,15 @@ public class UserController {
                 findUser.getProfileImageUrl(),findUser.getEmail(),findUser.getGrade(),findUser.getPhoneNumber()));
     }
 
+    @PostMapping("/login/info")
+    public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> getUserInfoBeforeLogin(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                                     @RequestBody UserRequest.getUserInfoBeforeLogin request) throws Exception{
+        User findUser = userService.getUserByPrincipal(userPrincipal);
+
+        return userService.getUserInfoBeforeLogin(findUser,request);
+    }
+
+
+
 
 }

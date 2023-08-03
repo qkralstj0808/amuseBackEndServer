@@ -88,6 +88,9 @@ public class User extends BaseEntity{
 
     private Boolean emailReceptionTrue;
     private Boolean messageReceptionTrue;
+
+    private Boolean advertisementTrue;
+    private Boolean over14AgeTrue;
     @Enumerated(EnumType.STRING)
     private Grade grade;                    // user 등급 (브론즈,실버)...
 
