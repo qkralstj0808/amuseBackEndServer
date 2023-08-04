@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @AllArgsConstructor
 @Slf4j
@@ -33,6 +35,15 @@ public class UtilMethod {
         // 반환
         if (base64Img == "") {
             return null;
+        }
+
+        Pattern pattern = Pattern.compile("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$");
+        Matcher matcher = pattern.matcher(base64Img);
+
+        // base64 문자열이 아닌 경우
+        if(matcher.find()){
+            log.info("base64 문자열이 아닙니다");
+            return base64Img;
         }
 
         String base64 = base64Img.split(",")[1];
