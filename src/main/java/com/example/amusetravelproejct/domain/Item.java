@@ -24,7 +24,7 @@ import static javax.persistence.FetchType.LAZY;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Where(clause = "display = true")
+//@Where(clause = "display = true")
 public class Item extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

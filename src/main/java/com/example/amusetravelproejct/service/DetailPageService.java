@@ -31,12 +31,12 @@ public class DetailPageService {
         return userRepository.findByUserId(user_id);
     }
 
-    private Item findItemById(Long item_id){
-        return itemRepository.findById(item_id).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+    private Item findItemByIdAndDisplayTrue(Long item_id){
+        return itemRepository.findByIdAndDisplayTrue(item_id).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
     }
 
     public ResponseTemplate<DetailPageResponse.getTitle> getTitle(Long item_id) {
-        Item findItem = findItemById(item_id);
+        Item findItem = findItemByIdAndDisplayTrue(item_id);
 
         return new ResponseTemplate<>(new DetailPageResponse.getTitle(findItem.getItemCode(),findItem.getCountry(),
                 findItem.getCity(), findItem.getTitle(), findItem.getRated(),findItem.getReview_count(),findItem.getDuration()));
@@ -45,7 +45,7 @@ public class DetailPageService {
 
     public ResponseTemplate<DetailPageResponse.getIcon> getIcon(Long item_id) {
 
-        Item findItem = findItemById(item_id);
+        Item findItem = findItemByIdAndDisplayTrue(item_id);
 
         return new ResponseTemplate<>(new DetailPageResponse.getIcon(findItem.getItemIcon_list().stream().map(
                 itemIcon -> new DetailPageResponse.IconInfo(itemIcon.getIcon().getIconImgUrl(),itemIcon.getText())
@@ -55,7 +55,7 @@ public class DetailPageService {
 
 
     public ResponseTemplate<DetailPageResponse.getPicture> getPicture(Long item_id) {
-        Item findItem = findItemById(item_id);
+        Item findItem = findItemByIdAndDisplayTrue(item_id);
 
         return new ResponseTemplate<>(new DetailPageResponse.getPicture(findItem.getItemImg_list().stream().map(itemImg ->
         itemImg.getImgUrl()).collect(Collectors.toList())));
@@ -63,7 +63,7 @@ public class DetailPageService {
 
 
     public ResponseTemplate<DetailPageResponse.getTicket> getTicket(Long item_id) {
-        Item findItem = findItemById(item_id);
+        Item findItem = findItemByIdAndDisplayTrue(item_id);
 
         List<ItemTicket> itemTickets = findItem.getItemTickets();
 
@@ -80,14 +80,14 @@ public class DetailPageService {
 
 
     public ResponseTemplate<DetailPageResponse.getContent> getContent(Long item_id) {
-        Item findItem = findItemById(item_id);
+        Item findItem = findItemByIdAndDisplayTrue(item_id);
 
         return new ResponseTemplate<>(new DetailPageResponse.getContent(findItem.getContent_1()));
     }
 
 
     public ResponseTemplate<DetailPageResponse.getManager> getManager(Long item_id) {
-        Item findItem = findItemById(item_id);
+        Item findItem = findItemByIdAndDisplayTrue(item_id);
 
         Guide guide = findItem.getGuide();
 
@@ -122,7 +122,7 @@ public class DetailPageService {
 
 
     public ResponseTemplate<DetailPageResponse.getOtherContent> getOtherContent(Long item_id) {
-        Item findItem = findItemById(item_id);
+        Item findItem = findItemByIdAndDisplayTrue(item_id);
 
         return new ResponseTemplate<>(new DetailPageResponse.getOtherContent(findItem.getContent_2()));
     }
@@ -130,7 +130,7 @@ public class DetailPageService {
     @Transactional
     public ResponseTemplate<DetailPageResponse.setLike> setLikePlus(Long item_id,String user_id) {
         User findUser = findUserById(user_id);
-        Item findItem = findItemById(item_id);
+        Item findItem = findItemByIdAndDisplayTrue(item_id);
 
         // 이미 좋아요를 누른 상품인지 아닌지 확인
         if(getUserLikeItem(findItem,findUser) != null){
@@ -152,7 +152,7 @@ public class DetailPageService {
     @Transactional
     public ResponseTemplate<DetailPageResponse.setLike> setLikeMinus(Long item_id, String user_id) {
         User findUser = findUserById(user_id);
-        Item findItem = findItemById(item_id);
+        Item findItem = findItemByIdAndDisplayTrue(item_id);
 
         LikeItem likeItem = getUserLikeItem(findItem, findUser);
 

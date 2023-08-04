@@ -183,12 +183,14 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
         if(contain_words == null){
             List<Item> itemList = jpaQueryFactory.selectFrom(item)
+                    .where(item.display.eq(true))
                     .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .fetch();
 
             Long total = jpaQueryFactory.select(item.count())
+                    .where(item.display.eq(true))
                     .from(item)
                     .fetchOne();
 
@@ -197,12 +199,14 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
         List<Long> hashTagQuery = jpaQueryFactory.select(item.id)
                 .from(item)
+                .where(item.display.eq(true))
                 .join(item.itemHashTags, itemHashTag)
                 .where(containHashTag(contain_words))
                 .fetch();
 
         List<Long> titleQuery = jpaQueryFactory.select(item.id)
                 .from(item)
+                .where(item.display.eq(true))
                 .join(item.itemHashTags, itemHashTag)
                 .where(notContainHashTag(contain_words).and(list_containTitle(contain_words)))
                 .fetch();
@@ -210,6 +214,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
         List<Long> contentQuery = jpaQueryFactory.select(item.id)
                 .from(item)
+                .where(item.display.eq(true))
                 .join(item.itemHashTags, itemHashTag)
                 .where(notContainHashTag(contain_words).and(list_notContainTitle(contain_words)).and(list_containContent1_or_Content2(contain_words)))
                 .fetch();
@@ -221,7 +226,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
 
         List<Item> itemList = jpaQueryFactory.selectFrom(item)
-                .where(IdisNotNull())
+                .where(IdisNotNull().and(item.display.eq(true)))
                 .orderBy(new CaseBuilder()
                         .when(item.id.in(hashTagQuery)).then(0)
                         .when(item.id.in(titleQuery)).then(1)

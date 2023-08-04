@@ -221,7 +221,7 @@ public class MainPageService {
 
                 for (int k = 0; k < tileIds.size(); k++) {
                     log.info(String.valueOf(tileIds.get(k)));
-                    List<MainPage> mainPage_by_tile_id = mainPageRepository.findMainPageByComponent_idAndTyle_id(pageComponent.getId(), tileIds.get(k));
+                    List<MainPage> mainPage_by_tile_id = mainPageRepository.findMainPageByComponent_idAndTyle_idAndDisplayTrue(pageComponent.getId(), tileIds.get(k));
                     List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<MainPageResponse.ItemInfo>();
 
                     for (int q = 0; q < mainPage_by_tile_id.size(); q++) {
@@ -269,8 +269,13 @@ public class MainPageService {
             // 리스트
             } else if (pageComponent.getType().equals("리스트")){
                 List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<>();
-                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
-                    Item item = pageComponent.getMainPages().get(k).getItem();
+
+                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplay(pageComponent.getId(), true);
+//                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
+//                    Item item = pageComponent.getMainPages().get(k).getItem();
+                for (int k = 0; k < mainPageList.size(); k++) {
+                    Item item = mainPageList.get(k).getItem();
+
                     MainPageResponse.ItemInfo itemInfo = new MainPageResponse.ItemInfo(
                             item.getId(),
                             item.getItemCode(),
@@ -300,8 +305,12 @@ public class MainPageService {
             // 배너
             }else{
                 List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<>();
-                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
-                    Item item = pageComponent.getMainPages().get(k).getItem();
+
+                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplay(pageComponent.getId(), true);
+//                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
+//                    Item item = pageComponent.getMainPages().get(k).getItem();
+                for (int k = 0; k < mainPageList.size(); k++) {
+                    Item item = mainPageList.get(k).getItem();
                     MainPageResponse.ItemInfo itemInfo = new MainPageResponse.ItemInfo(
                             item.getId(),
                             item.getItemCode(),

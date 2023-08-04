@@ -12,5 +12,5 @@ public interface MainPageRepositoryCustom {
 
     List<Long> findTileIds(Long page_component_id);
 
-    List<MainPage> findMainPageByComponent_idAndTyle_id(Long page_component_id,Long tile_id);
+    List<MainPage> findMainPageByComponent_idAndTyle_idAndDisplayTrue(Long page_component_id,Long tile_id);
 }

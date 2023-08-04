@@ -37,9 +37,9 @@ public class MainPageRepositoryImpl implements MainPageRepositoryCustom {
     }
 
     @Override
-    public List<MainPage> findMainPageByComponent_idAndTyle_id(Long page_component_id, Long tile_id) {
+    public List<MainPage> findMainPageByComponent_idAndTyle_idAndDisplayTrue(Long page_component_id, Long tile_id) {
         return jpaQueryFactory.selectFrom(mainPage)
-                .where(mainPage.pageComponent.id.eq(page_component_id).and(mainPage.tile.id.eq(tile_id)))
+                .where(mainPage.pageComponent.id.eq(page_component_id).and(mainPage.tile.id.eq(tile_id)).and(mainPage.item.display.eq(true)))
                 .fetch();
     }
 }
