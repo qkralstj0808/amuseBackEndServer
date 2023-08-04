@@ -75,7 +75,8 @@ public class User extends BaseEntity{
 //    private Admin admin;
 
     @Column(name = "POINT")     //유저가 지닌 포인트
-    private Long point = 0L;
+    @ColumnDefault("0")
+    private Long point;
 
     private LocalDate birthday;
 
@@ -87,13 +88,13 @@ public class User extends BaseEntity{
     private Boolean emailReceptionTrue;
     private Boolean messageReceptionTrue;
 
-    @Builder.Default()
-    @ColumnDefault("0")
-    private Boolean advertisementTrue = false;
 
-    @Builder.Default()
     @ColumnDefault("0")
-    private Boolean over14AgeTrue = false;
+    private Boolean advertisementTrue ;
+
+
+    @ColumnDefault("0")
+    private Boolean over14AgeTrue;
     @Enumerated(EnumType.STRING)
     private Grade grade;                    // user 등급 (브론즈,실버)...
 

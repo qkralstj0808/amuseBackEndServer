@@ -41,17 +41,16 @@ public class Item extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String content_2;           // html을 String으로 바꾼 내용 2번째 취소 내용
 
-    @Builder.Default()
-    private Double rated = 0.;               // 모든 리뷰들 평점의 평균
+    @ColumnDefault("0")
+    private Double rated;               // 모든 리뷰들 평점의 평균
 
-    @Builder.Default()
-    private Integer review_count = 0;
+    @ColumnDefault("0")
+    private Integer review_count;
     private Long startPrice;            // 관리자가 정하는 시작 가격
     private Integer duration;           // 기간 (2박 3일 에서 3)
 
-    @Builder.Default() //default 0
     @ColumnDefault("0")
-    private Integer like_num = 0;           // 좋아요 수
+    private Integer like_num;           // 좋아요 수
 
     private Date startDate;             // 상품 게시 날짜 (없어도 됨)
     private Date endDate;               // 상품 내리는 날짜 (없어도 됨)
@@ -61,8 +60,8 @@ public class Item extends BaseEntity {
 
     private Long grade;                // 등급 (일반, 프리미엄, VIP)
 
-    @Builder.Default()
-    private Integer viewCount = 0;          // 조회수
+    @ColumnDefault("0")
+    private Integer viewCount;          // 조회수
     private DisplayStatus displayStatus; // 상품 노출 여부
 
 
