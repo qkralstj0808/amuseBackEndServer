@@ -214,10 +214,11 @@ public class MainPageService {
             // 타일
             if (pageComponent.getType().equals("타일")) {
 
-                log.info("타일입니다");
+                // 해당 카테고리에 속한 타일의 종류를 반환
                 List<Long> tileIds = mainPageRepository.findTileIds(pageComponent.getId());
                 log.info(String.valueOf(tileIds.size()));
                 List<MainPageResponse.TileInfo> tileInfoList = new ArrayList<>();
+
                 for (int k = 0; k < tileIds.size(); k++) {
                     log.info(String.valueOf(tileIds.get(k)));
                     List<MainPage> mainPage_by_tile_id = mainPageRepository.findMainPageByComponent_idAndTyle_id(pageComponent.getId(), tileIds.get(k));
@@ -260,6 +261,7 @@ public class MainPageService {
                         pageComponent.getId(),
                         pageComponent.getType(),
                         pageComponent.getTitle(),
+                        tileIds.size(),
                         tileInfoList
                 );
                 pageComponentInfoList.add(pageTileInfo);
@@ -340,6 +342,7 @@ public class MainPageService {
                 category.getSequence(),
                 category.getMainDescription(),
                 category.getSubDescription(),
+                category.getCategoryPageComponents().size(),
                 pageComponentInfoList
         );
 
