@@ -6,6 +6,7 @@ import com.example.amusetravelproejct.oauth.entity.ProviderType;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -41,7 +42,7 @@ public class User extends BaseEntity{
 
     @JsonIgnore
     @Column(name = "PASSWORD", length = 128)
-    @NotNull
+//    @NotNull
     @Size(max = 128)
     private String password;
 
@@ -57,7 +58,6 @@ public class User extends BaseEntity{
     private String emailVerifiedYn;
 
     @Column(name = "PROFILE_IMAGE_URL", length = 512)
-    @NotNull
     @Size(max = 512)
     private String profileImageUrl;
 
@@ -88,9 +88,11 @@ public class User extends BaseEntity{
     private Boolean messageReceptionTrue;
 
     @Builder.Default()
+    @ColumnDefault("0")
     private Boolean advertisementTrue = false;
 
     @Builder.Default()
+    @ColumnDefault("0")
     private Boolean over14AgeTrue = false;
     @Enumerated(EnumType.STRING)
     private Grade grade;                    // user 등급 (브론즈,실버)...
@@ -110,7 +112,7 @@ public class User extends BaseEntity{
     private List<ItemReview> itemReviews = new ArrayList<>();
 
     // user와 payment_info는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user")
     private List<PaymentInfo> paymentInfos = new ArrayList<>();
 
     // user와 user_alarm는 1:N 관계

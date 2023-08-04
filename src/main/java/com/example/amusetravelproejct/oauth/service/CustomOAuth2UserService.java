@@ -90,17 +90,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             log.info("데이터베이스에 없는 유저라서 create한다.");
             savedUser = createUser(userInfo, providerType);
         }
+
+        log.info("CustomOAuth2UserService createUser 다 끝났음");
         log.info("user의 roleType : "+savedUser.getRoleType().toString());
         return UserPrincipal.create(savedUser,authorities, user.getAttributes());
     }
 
     private User createUser(OAuth2UserInfo userInfo, ProviderType providerType) {
+        log.info("CustomOAuth2UserService createUser");
         User user = new User(
                 userInfo.getId(),
                 userInfo.getName(),
                 userInfo.getEmail(),
                 "Y",
-                userInfo.getImageUrl(),
+                userInfo.getImageUrl() != null ? userInfo.getImageUrl() : null,
                 providerType,
                 RoleType.USER
         );
