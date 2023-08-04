@@ -70,6 +70,8 @@ public class AuthController {
     private final static String ACCESS_TOKEN = "__jwtk__";
     private final RedirectStrategy redirectStrategy;
 
+    private final Long ADMIN_ACCESS_TOKEN_EXPIRE = 3600000 * 3L;
+
     @CrossOrigin(originPatterns = "*", allowCredentials = "true")
     @GetMapping("/token/success")
 //    public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(
@@ -230,7 +232,7 @@ public class AuthController {
                 adminId,
                 ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
                 null,
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+                new Date(now.getTime() + ADMIN_ACCESS_TOKEN_EXPIRE)
         );
 
         /*
@@ -332,7 +334,7 @@ public class AuthController {
                 adminId,
                 ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
                 null,
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+                new Date(now.getTime() + ADMIN_ACCESS_TOKEN_EXPIRE)
         );
 
         /*
@@ -450,13 +452,25 @@ public class AuthController {
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(db_refreshToken);
 
         Date now = new Date();
-        AuthToken newAccessToken = tokenProvider.createAuthToken(
-                userId,
-                roleType.getCode(),
+        AuthToken newAccessToken = null;
+        if(roleType.equals(RoleType.ADMIN)){
+            newAccessToken = tokenProvider.createAuthToken(
+                    userId,
+                    roleType.getCode(),
 //                user == null ? null : user.getGrade() ,
-                grade,
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
-        );
+                    grade,
+                    new Date(now.getTime() + ADMIN_ACCESS_TOKEN_EXPIRE)
+            );
+        }else{
+            newAccessToken = tokenProvider.createAuthToken(
+                    userId,
+                    roleType.getCode(),
+//                user == null ? null : user.getGrade() ,
+                    grade,
+                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+            );
+        }
+
 
         long validTime = authRefreshToken.getTokenClaims().getExpiration().getTime() - now.getTime();
 
