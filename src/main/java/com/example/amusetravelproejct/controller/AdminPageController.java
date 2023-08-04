@@ -153,9 +153,9 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(itemService.processGetAllDisplayItems(limit,sqlPage,displayStatus));
     }
-    @PostMapping("/change/item/{item-db-id}/displayStatus")
-    public ResponseTemplate<String> changeDisplayStatus(@RequestBody AdminPageRequest.changeDisplayStatus request ,@PathVariable("item-db-id") Long item_db){
-        itemService.changeItemStatus(request,item_db);
+    @PostMapping("/change/item/{itemCode}/displayStatus")
+    public ResponseTemplate<String> changeDisplayStatus(@RequestBody AdminPageRequest.changeDisplayStatus request ,@PathVariable("itemCode") String itemCode){
+        itemService.changeItemStatus(request,itemCode);
 
         return new ResponseTemplate<>("상품 상태가 변경되었습니다.");
     }
@@ -319,8 +319,6 @@ public class AdminPageController {
         return new ResponseTemplate<>(pageComponentService.getComponentDetail(id));
     }
 
-
-
     @GetMapping("/component/delete/{id}")
     public ResponseTemplate<?> reqMainPageDelete(@PathVariable("id") Long id){
 
@@ -330,7 +328,6 @@ public class AdminPageController {
         pageComponentService.processDeleteMainPageComponent(id);
         return new ResponseTemplate<>("삭제 완료");
     }
-
 
     @PostMapping("/create/guide")
     public ResponseTemplate<AdminResponse.GuideInfo> createGuide(@RequestBody AdminRequest.guide request){
@@ -369,7 +366,6 @@ public class AdminPageController {
     public ResponseTemplate<?> listIcon(){
         return new ResponseTemplate<>(itemService.getIconList());
     }
-
 
     @PostMapping("page/register")
     public ResponseTemplate<String> createPage(
