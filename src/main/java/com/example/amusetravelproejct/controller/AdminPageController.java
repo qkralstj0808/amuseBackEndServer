@@ -153,9 +153,9 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(itemService.processGetAllDisplayItems(limit,sqlPage,displayStatus));
     }
-    @GetMapping("/change/displayStatus")
-    public ResponseTemplate<String> changeDisplayStatus(@RequestParam("status") String displayStatus, @RequestParam("itemCode") String itemCode){
-        itemService.changeItemStatus(displayStatus,itemCode);
+    @PostMapping("/change/item/{item-db-id}/displayStatus")
+    public ResponseTemplate<String> changeDisplayStatus(@RequestBody AdminPageRequest.changeDisplayStatus request ,@PathVariable("item-db-id") Long item_db){
+        itemService.changeItemStatus(request,item_db);
 
         return new ResponseTemplate<>("상품 상태가 변경되었습니다.");
     }

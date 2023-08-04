@@ -861,16 +861,18 @@ public class ItemService {
         return new ResponseTemplate(new ItemResponse.getAllItemId(allItemId.stream().collect(Collectors.toList())));
     }
 
-
-    public void changeItemStatus(String displayStatus,String itemCode){
-        Item item = itemRepository.findByItemCode(itemCode).orElseThrow(
+@Transactional
+    public void changeItemStatus(AdminPageRequest.changeDisplayStatus request,Long item_db_id){
+        Item item = itemRepository.findById(item_db_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
-        if (DisplayStatus.DISPLAY.name().equals(displayStatus)){
+
+        if (request.getDisplay_true()){
             item.setDisplayStatus(DisplayStatus.DISPLAY);
         } else{
             item.setDisplayStatus(DisplayStatus.HIDDEN);
         }
+
         itemRepository.save(item);
     }
 
