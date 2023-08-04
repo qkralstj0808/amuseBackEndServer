@@ -10,8 +10,6 @@ import org.springframework.util.Base64Utils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,20 +35,25 @@ public class UtilMethod {
             return null;
         }
 
-        Pattern pattern = Pattern.compile("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$");
-        Matcher matcher = pattern.matcher(base64Img);
+        String[] split = base64Img.split(",");
 
-        // base64 문자열이 아닌 경우
-        if(matcher.find()){
-            log.info("base64 문자열이 아닙니다");
+        if(split.length < 2){
+            log.info("base64로 인코딩 안된 문자열입니다.");
+            log.info(split.toString());
             return base64Img;
+        }else{
+            log.info("base64 맞다");
         }
 
         String base64 = base64Img.split(",")[1];
+        log.info("base64 : " + base64);
         String type = base64Img.split(";")[0].split(":")[1];
+        log.info("type : " + type);
         byte[] imageBytes = Base64Utils.decodeFromString(base64);
+        log.info("imageBytes : " + imageBytes.length);
         InputStream inputStream = new ByteArrayInputStream(imageBytes);
 
+        log.info("inputStream : " + inputStream.toString());
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(type);
         metadata.setContentLength(imageBytes.length);

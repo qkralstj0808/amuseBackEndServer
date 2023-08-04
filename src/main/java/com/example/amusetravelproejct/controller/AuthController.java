@@ -419,10 +419,10 @@ public class AuthController {
             throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
 //
-//        // expired access token 인지 확인
-//        if(token.getExpiredTokenClaims() == null){
-//            throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN);
-//        }
+//        // expired access token 인지 확인 expired token이 아니면 그냥 반환
+        if(token.getExpiredTokenClaims() == null){
+            return new ResponseTemplate(new AuthResponse.getNewAccessToken(token));
+        }
 //
 //        Claims claims = token.getExpiredTokenClaims();
 
