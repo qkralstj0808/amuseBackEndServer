@@ -862,8 +862,8 @@ public class ItemService {
     }
 
 @Transactional
-    public void changeItemStatus(AdminPageRequest.changeDisplayStatus request,Long item_db_id){
-        Item item = itemRepository.findById(item_db_id).orElseThrow(
+    public void changeItemStatus(AdminPageRequest.changeDisplayStatus request,String itemCode){
+        Item item = itemRepository.findByItemCode(itemCode).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 

@@ -6,6 +6,7 @@ import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ import static javax.persistence.FetchType.LAZY;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+//@Where(clause = "display_status = 1")
 public class Item extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,6 +64,7 @@ public class Item extends BaseEntity {
 
     @ColumnDefault("0")
     private Integer viewCount;          // 조회수
+
     private DisplayStatus displayStatus; // 상품 노출 여부
 
 
