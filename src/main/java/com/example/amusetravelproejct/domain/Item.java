@@ -24,7 +24,7 @@ import static javax.persistence.FetchType.LAZY;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-//@Where(clause = "display_status = 1")
+@Where(clause = "display = true")
 public class Item extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,7 +65,11 @@ public class Item extends BaseEntity {
     @ColumnDefault("0")
     private Integer viewCount;          // 조회수
 
-    private DisplayStatus displayStatus; // 상품 노출 여부
+
+//    @Enumerated(EnumType.STRING)
+//    private DisplayStatus displayStatus; // 상품 노출 여부
+
+    private Boolean display;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
