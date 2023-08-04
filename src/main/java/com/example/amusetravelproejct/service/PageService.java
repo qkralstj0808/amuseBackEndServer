@@ -90,11 +90,6 @@ public class PageService {
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
         );
 
-//        Admin admin = adminRepository.findByAdminId(findUser.getUserId()).orElseThrow(
-//                () -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)
-//        );
-
-
         if(request.getDisable() == null){
             request.setDisable(false);
         }
@@ -119,32 +114,42 @@ public class PageService {
             findCategory.setSequence(request.getSequence());
         }
 
+        // admin 수정
         findCategory.setUpdateAdmin(admin);
         findCategory.setDisable(request.getDisable());
 
+        // 카테고리 이름 수정
         if(request.getName() != null){
             findCategory.setCategory_name(request.getName());
         }
 
-
+        // 카테고리 메인 내용 수정
         if (request.getMainDescription() != null){
             findCategory.setMainDescription(request.getMainDescription());
         }
 
+        // 카테고리 sub 내용 수정
         if (request.getSubDescription() != null){
             findCategory.setSubDescription(request.getSubDescription());
         }
 
+        // 카테고리 이미지 수정
         if (request.getBase64Data() != null && request.getFileName() != null){
+            log.info("fildName : " + request.getFileName());
+            log.info("getBase64Data : " + request.getBase64Data());
             findCategory.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(), request.getFileName()));
         }
 
+        // 카테고리에서 수정한 component 담을 list wjddml
         List<Long> newPageComponentId = new ArrayList<>();
 
+        // 기존 카테고리에 포함된 component 불러온다.
         List<CategoryPageComponent> categoryPageComponents = findCategory.getCategoryPageComponents();
 
+        // 수정할 component가 있다면
         if(request.getPageComponentInfos() != null && request.getPageComponentInfos().size() != 0){
             categoryPageComponents.clear();
+
 
             List<AdminPageRequest.PageComponentInfo> pageComponentInfos = request.getPageComponentInfos();
 
