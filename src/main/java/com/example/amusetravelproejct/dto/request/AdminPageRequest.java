@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.dto.request;
 
+import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -204,6 +205,14 @@ public class AdminPageRequest {
         private String subDescription;
         private String updatedBy;
         private List<PageComponentInfo> pageComponentInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class changeDisplayStatus {
+
+        private Boolean display_true;
     }
 
 
