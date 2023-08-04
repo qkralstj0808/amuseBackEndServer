@@ -3,6 +3,7 @@ package com.example.amusetravelproejct.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+//@Where(clause = "item.display = true")
 public class MainPage {
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
