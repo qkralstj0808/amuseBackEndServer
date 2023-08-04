@@ -134,7 +134,7 @@ public class PageService {
         }
 
         // 카테고리 이미지 수정
-        if (request.getBase64Data() != null && request.getFileName() != null){
+        if (request.getBase64Data() != null && request.getFileName() != null && !request.getFileName().equals("")){
             log.info("fildName : " + request.getFileName());
             log.info("getBase64Data : " + request.getBase64Data());
             findCategory.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(), request.getFileName()));
