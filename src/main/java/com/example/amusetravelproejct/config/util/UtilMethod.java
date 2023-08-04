@@ -46,10 +46,14 @@ public class UtilMethod {
         }
 
         String base64 = base64Img.split(",")[1];
+        log.info("base64 : " + base64);
         String type = base64Img.split(";")[0].split(":")[1];
+        log.info("type : " + type);
         byte[] imageBytes = Base64Utils.decodeFromString(base64);
+        log.info("imageBytes : " + imageBytes.length);
         InputStream inputStream = new ByteArrayInputStream(imageBytes);
 
+        log.info("inputStream : " + inputStream.toString());
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(type);
         metadata.setContentLength(imageBytes.length);
