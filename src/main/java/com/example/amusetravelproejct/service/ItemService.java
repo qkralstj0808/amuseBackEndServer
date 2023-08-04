@@ -154,7 +154,8 @@ public class ItemService {
         }
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-        item.setDisplayStatus(DisplayStatus.DISPLAY);
+//        item.setDisplayStatus(DisplayStatus.DISPLAY);
+        item.setDisplay(true);
         return item;
     }
 
@@ -244,8 +245,10 @@ public class ItemService {
         }
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-        item.setDisplayStatus(DisplayStatus.DISPLAY);
+//        item.setDisplayStatus(DisplayStatus.DISPLAY);
+        item.setDisplay(true);
         return item;
+
     }
 
 
@@ -868,9 +871,11 @@ public class ItemService {
         );
 
         if (request.getDisplay_true()){
-            item.setDisplayStatus(DisplayStatus.DISPLAY);
+//            item.setDisplayStatus(DisplayStatus.DISPLAY);
+            item.setDisplay(true);
         } else{
-            item.setDisplayStatus(DisplayStatus.HIDDEN);
+//            item.setDisplayStatus(DisplayStatus.HIDDEN);
+            item.setDisplay(false);
         }
 
         itemRepository.save(item);
@@ -881,9 +886,9 @@ public class ItemService {
         Pageable pageable = PageRequest.of(Math.toIntExact(sqlPage), Math.toIntExact(limit), Sort.by("id").ascending());
         Page<Item> allDisplayItems = null;
         if (status.equals("DISPLAY")){
-            allDisplayItems = itemRepository.findAllByDisplayStatus(DisplayStatus.DISPLAY, pageable);
+            allDisplayItems = itemRepository.findAllByDisplay(true, pageable);
         } else{
-            allDisplayItems = itemRepository.findAllByDisplayStatus(DisplayStatus.HIDDEN, pageable);
+            allDisplayItems = itemRepository.findAllByDisplay(false, pageable);
         }
         AdminPageResponse.getItemByDisplayStatus getItemByDisplayStatus = new AdminPageResponse.getItemByDisplayStatus();
         List<AdminPageResponse.getItemsByDisplayStat> itemsByDisplayStats = new ArrayList<>();
