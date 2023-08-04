@@ -1,36 +1,27 @@
 package com.example.amusetravelproejct.service;
-
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
-
-import com.example.amusetravelproejct.domain.Admin;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.Guide;
-
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.dto.request.AdminRequest;
+import com.example.amusetravelproejct.dto.request.UserRequest;
 import com.example.amusetravelproejct.dto.response.AdminResponse;
+import com.example.amusetravelproejct.dto.response.UserResponse;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
-
 import com.example.amusetravelproejct.repository.AdminRepository;
-
 import com.example.amusetravelproejct.repository.GuideRepository;
-
 import com.example.amusetravelproejct.repository.UserRepository;
-import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -181,5 +172,51 @@ public class UserService {
         });
         AdminResponse.ListGuide listGuide = new AdminResponse.ListGuide(pageCount,guideInfos);
         return listGuide;
+    }
+
+    @Transactional
+    public ResponseTemplate<UserResponse.getUserInfo> createUserInfo(User findUser, UserRequest.createUserInfo request) {
+        findUser.setPhoneNumber(request.getPhone_number());
+        userRepository.save(findUser);
+        return new ResponseTemplate(new UserResponse.getUserInfo(
+                findUser.getUserId(),
+                findUser.getUsername(),
+                findUser.getProfileImageUrl(),
+                findUser.getEmail(),
+                findUser.getGrade(),
+                findUser.getPhoneNumber(),
+                findUser.getAdvertisementTrue(),
+                findUser.getOver14AgeTrue()));
+    }
+    
+
+    @Transactional
+    public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> createUserInfoBeforeLogin(User findUser, UserRequest.createUserInfoBeforeLogin request) {
+
+        findUser.setPhoneNumber(request.getPhone_number());
+        findUser.setAdvertisementTrue(request.getAdvertisement_true());
+        findUser.setOver14AgeTrue(request.getOver_14_age_true());
+        userRepository.save(findUser);
+        return new ResponseTemplate(new UserResponse.getUserInfoBeforeLogin(
+                findUser.getUserId(),
+                findUser.getUsername(),
+                findUser.getProfileImageUrl(),
+                findUser.getEmail(),
+                findUser.getGrade(),
+                findUser.getPhoneNumber(),
+                findUser.getAdvertisementTrue(),
+                findUser.getOver14AgeTrue()));
+    }
+
+    public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> getUserInfoBeforeLogin(User findUser) {
+        return new ResponseTemplate(new UserResponse.getUserInfoBeforeLogin(
+                findUser.getUserId(),
+                findUser.getUsername(),
+                findUser.getProfileImageUrl(),
+                findUser.getEmail(),
+                findUser.getGrade(),
+                findUser.getPhoneNumber(),
+                findUser.getAdvertisementTrue(),
+                findUser.getOver14AgeTrue()));
     }
 }

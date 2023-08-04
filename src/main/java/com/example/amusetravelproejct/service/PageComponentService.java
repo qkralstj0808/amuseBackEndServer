@@ -2,8 +2,8 @@ package com.example.amusetravelproejct.service;
 
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
-import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
+import com.example.amusetravelproejct.domain.Admin;
 import com.example.amusetravelproejct.domain.MainPage;
 import com.example.amusetravelproejct.domain.PageComponent;
 import com.example.amusetravelproejct.domain.Tile;
@@ -30,9 +30,13 @@ public class PageComponentService {
     private final MainPageRepository mainPageRepository;
     private final TileRepository tileRepository;
 
-    public AdminPageResponse.registerListComponent registerListComponent (AdminPageRequest.registerListComponent registerListComponent){
+    public AdminPageResponse.registerListComponent registerListComponent (AdminPageRequest.registerListComponent registerListComponent, Admin findAdmin){
         PageComponent pageComponent = registerListComponent.getId() == null ? new PageComponent() : pageComponentRepository.findById(registerListComponent.getId()).orElseThrow(() -> new CustomException(ErrorCode.PAGE_COMPONENT_NOT_FOUND));
-        pageComponent.setAdmin(adminRepository.findByAdminId(registerListComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+
+        if(registerListComponent.getId() == null){
+            pageComponent.setAdmin(findAdmin);
+        }
+
         pageComponent.setTitle(registerListComponent.getTitle());
         pageComponent.setType(registerListComponent.getType());
 
@@ -42,24 +46,24 @@ public class PageComponentService {
                 mainPage.setItem(null);
             });
             pageComponent.getMainPages().clear();
-            pageComponent.setUpdateAdmin(adminRepository.findByAdminId(registerListComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+            pageComponent.setUpdateAdmin(findAdmin);
         }
 
-        registerListComponent.getItemCode().forEach(itemCode -> {
+        registerListComponent.getItem_db_id().forEach(item_db_id -> {
             MainPage mainPage = new MainPage();
             mainPage.setPageComponent(pageComponent);
-            mainPage.setItem(itemRepository.findByItemCode(itemCode).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND)));
+            mainPage.setItem(itemRepository.findById(item_db_id) .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND)));
 
             mainPageRepository.save(mainPage);
         });
-        pageComponentRepository.save(pageComponent);
+        pageComponentRepository.saveAndFlush(pageComponent);
         AdminPageResponse.registerListComponent registerListComponentDto = new AdminPageResponse.registerListComponent();
         registerListComponentDto.setId(pageComponent.getId());
         registerListComponentDto.setTitle(pageComponent.getTitle());
         registerListComponentDto.setType(pageComponent.getType());
         registerListComponentDto.setCreatedAt(pageComponent.getCreatedDate());
         registerListComponentDto.setCreatedBy(pageComponent.getAdmin().getAdminId());
-        registerListComponentDto.setItemCode(registerListComponent.getItemCode());
+        registerListComponentDto.setItem_db_id(registerListComponent.getItem_db_id());
 
         if (registerListComponent.getId() != null){
             registerListComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getAdminId());
@@ -68,15 +72,15 @@ public class PageComponentService {
         return registerListComponentDto;
     }
 
-    public AdminPageResponse.registerBannerComponent registerBannerComponent (AdminPageRequest.registerBannerComponent registerBannerComponent,UtilMethod utilMethod){
+    public AdminPageResponse.registerBannerComponent registerBannerComponent (AdminPageRequest.registerBannerComponent registerBannerComponent,UtilMethod utilMethod,Admin findAdmin){
         PageComponent pageComponent = registerBannerComponent.getId() == null ? new PageComponent() : pageComponentRepository.findById(registerBannerComponent.getId()).orElseThrow(() -> new CustomException(ErrorCode.PAGE_COMPONENT_NOT_FOUND));
-        pageComponent.setAdmin(adminRepository.findByAdminId(registerBannerComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+        pageComponent.setAdmin(findAdmin);
         pageComponent.setTitle(registerBannerComponent.getTitle());
         pageComponent.setType(registerBannerComponent.getType());
         pageComponent.setContent(registerBannerComponent.getContent());
 
         if (registerBannerComponent.getId() != null){
-            pageComponent.setUpdateAdmin(adminRepository.findByAdminId(registerBannerComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+            pageComponent.setUpdateAdmin(findAdmin);
         }
 
         if (registerBannerComponent.getPcBannerBase64() != null){
@@ -110,10 +114,10 @@ public class PageComponentService {
         return registerBannerComponentDto;
     }
 
-    public AdminPageResponse.registerTileComponent registerTileComponent (AdminPageRequest.registerTileComponent registerTileComponent,UtilMethod utilMethod){
+    public AdminPageResponse.registerTileComponent registerTileComponent (AdminPageRequest.registerTileComponent registerTileComponent,UtilMethod utilMethod,Admin findAdmin){
         PageComponent pageComponent = registerTileComponent.getId() == null ? new PageComponent() : pageComponentRepository.findById(registerTileComponent.getId()).orElseThrow(() -> new CustomException(ErrorCode.PAGE_COMPONENT_NOT_FOUND));
         List<AdminPageResponse.getMainItem> tileRespDto = new ArrayList<>();
-        pageComponent.setAdmin(adminRepository.findByAdminId(registerTileComponent.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+        pageComponent.setAdmin(findAdmin);
         pageComponent.setTitle(registerTileComponent.getTitle());
         pageComponent.setType(registerTileComponent.getType());
         pageComponentRepository.save(pageComponent);
@@ -125,7 +129,7 @@ public class PageComponentService {
                 mainPage.setTile(null);
             });
             pageComponent.getMainPages().clear();
-            pageComponent.setUpdateAdmin(adminRepository.findByAdminId(registerTileComponent.getUpdatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+            pageComponent.setUpdateAdmin(findAdmin);
         }
 
         registerTileComponent.getTile().forEach(tileDto -> {

@@ -41,6 +41,14 @@ public class CategoryRepositoryImpl implements CategoryRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<Category> findAllByDisableSortBySequence(Boolean disable) {
+        return jpaQueryFactory.selectFrom(category)
+                .where(IdisNotNull(),eqDisable(disable))
+                .orderBy(category.sequence.asc())
+                .fetch();
+    }
+
     private BooleanExpression IdisNotNull() {
         return category.id.isNotNull();
     }

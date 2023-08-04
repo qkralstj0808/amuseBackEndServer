@@ -4,7 +4,7 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.Admin;
-import com.example.amusetravelproejct.domain.User;
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
 import com.example.amusetravelproejct.dto.response.AuthResponse;
@@ -25,20 +25,14 @@ import com.example.amusetravelproejct.service.UserService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.impl.BHttpConnectionBase;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -46,9 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Optional;
 
@@ -426,26 +418,27 @@ public class AuthController {
         if (!token.validate()) {
             throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
+//
+//        // expired access token 인지 확인
+//        if(token.getExpiredTokenClaims() == null){
+//            throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN);
+//        }
+//
+//        Claims claims = token.getExpiredTokenClaims();
 
-        // expired access token 인지 확인
-        if(token.getExpiredTokenClaims() == null){
-            throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN);
+
+        Claims tokenClaims = token.getTokenClaims();
+        String userId = tokenClaims.getSubject();
+        Grade grade;
+
+        // admin일 때
+        if(tokenClaims.get("grade") == null){
+            grade = null;
+        }else{      // user 일 때
+            grade = Grade.valueOf(tokenClaims.get("grade").toString());
         }
 
-        Claims claims = token.getExpiredTokenClaims();
-
-        String userId = claims.getSubject();
-        User user = userRepository.findByUserId(userId);
-//        Optional<Admin> byAdminId = adminRepository.findByAdminId(userId);
-//        Admin admin;
-//        if(byAdminId.isEmpty()){
-//            admin = null;
-//        }else{
-//            admin = byAdminId.get();
-//        }
-
-//        log.info("userId : " + userId);
-        RoleType roleType = RoleType.of(claims.get("role", String.class));
+        RoleType roleType = RoleType.of(tokenClaims.get("role", String.class));
 
         // userId refresh token 으로 DB 확인
         UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
@@ -456,17 +449,12 @@ public class AuthController {
         String db_refreshToken = userRefreshToken.getRefreshToken();
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(db_refreshToken);
 
-//        log.info("userRefreshToken : " + userRefreshToken);
-
-        if (userRefreshToken == null) {
-            return null;
-        }
-
         Date now = new Date();
         AuthToken newAccessToken = tokenProvider.createAuthToken(
                 userId,
                 roleType.getCode(),
-                user == null ? null : user.getGrade() ,
+//                user == null ? null : user.getGrade() ,
+                grade,
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
 
@@ -492,7 +480,5 @@ public class AuthController {
 
         return new ResponseTemplate(new AuthResponse.getNewAccessToken(newAccessToken));
     }
-
-
 
 }

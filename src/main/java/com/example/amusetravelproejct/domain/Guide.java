@@ -25,7 +25,7 @@ public class Guide extends BaseEntity{
     @Column(columnDefinition = "TEXT")
     private String introduce;
 
-    @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "guide")
     private List<Item> item_list = new ArrayList<>();
 
 

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface MainPageRepository extends JpaRepository<MainPage, Long>{
+public interface MainPageRepository extends JpaRepository<MainPage, Long>, MainPageRepositoryCustom {
     List<MainPage> findByPageComponent(PageComponent mainPageComponent);
     List<MainPage> findByTile(Tile tile);
 

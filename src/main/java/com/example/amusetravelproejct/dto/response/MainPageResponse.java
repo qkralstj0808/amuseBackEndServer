@@ -81,7 +81,6 @@ public class MainPageResponse {
         private Integer duration;
         private Integer likeNum;
         private Long startPrice;
-
     }
 
     @Data
@@ -101,13 +100,14 @@ public class MainPageResponse {
         private Long sequence;
         private String mainDescription;
         private String subDescription;
-        private List<PageComponentInfo> pageComponentInfos;
+        private Integer pageCount;
+        private List<?> pageComponentInfos;
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class PageComponentInfo {
+    public static class PageBannerInfo {
         private Long page_component_id;
         private String type;
         private String title;
@@ -118,5 +118,38 @@ public class MainPageResponse {
         private String content;
         private List<ItemInfo> itemInfos;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PageListInfo {
+        private Long page_component_id;
+        private String type;
+        private String title;
+        private List<ItemInfo> itemInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PageTileInfo {
+        private Long page_component_id;
+        private String type;
+        private String title;
+        private Integer tileCount;
+        private List<TileInfo> tileList;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TileInfo {
+        private Long tile_id;
+        private String tile_name;
+        private String tile_images;
+        private List<ItemInfo> itemInfos;
+    }
+
+
 
 }

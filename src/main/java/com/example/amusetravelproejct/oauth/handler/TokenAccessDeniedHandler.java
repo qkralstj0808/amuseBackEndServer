@@ -1,7 +1,5 @@
 package com.example.amusetravelproejct.oauth.handler;
 
-import com.example.amusetravelproejct.config.resTemplate.CustomException;
-import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;

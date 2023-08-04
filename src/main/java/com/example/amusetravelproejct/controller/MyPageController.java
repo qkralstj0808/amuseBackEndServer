@@ -1,14 +1,11 @@
 package com.example.amusetravelproejct.controller;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.example.amusetravelproejct.config.resTemplate.CustomException;
-import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.dto.request.MyPageRequest;
 import com.example.amusetravelproejct.dto.response.MyPageResponse;
-import com.example.amusetravelproejct.repository.UserRepository;
 import com.example.amusetravelproejct.service.MyPageService;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
 import com.example.amusetravelproejct.service.UserService;

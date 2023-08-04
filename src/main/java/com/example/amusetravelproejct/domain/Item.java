@@ -4,10 +4,7 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -22,7 +19,10 @@ import static javax.persistence.FetchType.LAZY;
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+//@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Item extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,13 +41,18 @@ public class Item extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String content_2;           // html을 String으로 바꾼 내용 2번째 취소 내용
 
-    private Double rated;               // 모든 리뷰들 평점의 평균
-    private Integer review_count;
+    @Builder.Default()
+    private Double rated = 0.;               // 모든 리뷰들 평점의 평균
+
+    @Builder.Default()
+    private Integer review_count = 0;
     private Long startPrice;            // 관리자가 정하는 시작 가격
     private Integer duration;           // 기간 (2박 3일 에서 3)
 
-    @ColumnDefault("0") //default 0
-    private Integer like_num;           // 좋아요 수
+    @Builder.Default() //default 0
+    @ColumnDefault("0")
+    private Integer like_num = 0;           // 좋아요 수
+
     private Date startDate;             // 상품 게시 날짜 (없어도 됨)
     private Date endDate;               // 상품 내리는 날짜 (없어도 됨)
 
@@ -55,7 +60,9 @@ public class Item extends BaseEntity {
     private String adminContent;
 
     private Long grade;                // 등급 (일반, 프리미엄, VIP)
-    private Integer viewCount;          // 조회수
+
+    @Builder.Default()
+    private Integer viewCount = 0;          // 조회수
     private DisplayStatus displayStatus; // 상품 노출 여부
 
 
