@@ -126,6 +126,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     roleType.getCode(),
                     Grade.BRONZE,
                     new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+                    log.info("appProperties.getAuth().getTokenExpiry() : " + appProperties.getAuth().getTokenExpiry());
 
         }else{
             accessToken = tokenProvider.createAuthToken(
@@ -133,6 +134,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     roleType.getCode(),
                     findUser.getGrade(),
                     new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+            log.info("appProperties.getAuth().getTokenExpiry() : " + appProperties.getAuth().getTokenExpiry());
         }
 
 

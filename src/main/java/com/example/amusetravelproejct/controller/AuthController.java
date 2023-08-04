@@ -70,7 +70,7 @@ public class AuthController {
     private final static String ACCESS_TOKEN = "__jwtk__";
     private final RedirectStrategy redirectStrategy;
 
-    private final Long ADMIN_ACCESS_TOKEN_EXPIRE = 3600000 * 3L;
+    private final long ADMIN_ACCESS_TOKEN_EXPIRE = 3600000 * 3;
 
     @CrossOrigin(originPatterns = "*", allowCredentials = "true")
     @GetMapping("/token/success")
