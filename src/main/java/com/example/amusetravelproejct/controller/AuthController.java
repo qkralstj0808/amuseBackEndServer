@@ -337,6 +337,8 @@ public class AuthController {
                 new Date(now.getTime() + ADMIN_ACCESS_TOKEN_EXPIRE)
         );
 
+        log.info("access_token : " + accessToken);
+
         /*
             refresh token 생성
          */
