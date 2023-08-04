@@ -42,6 +42,7 @@ public class UtilMethod {
 
         // base64 문자열이 아닌 경우
         if(matcher.find()){
+            log.info("base64 문자열이 아닙니다");
             return base64Img;
         }
 
