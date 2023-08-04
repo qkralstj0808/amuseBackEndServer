@@ -100,6 +100,7 @@ public class MainPageResponse {
         private Long sequence;
         private String mainDescription;
         private String subDescription;
+        private Integer pageCount;
         private List<?> pageComponentInfos;
     }
 
@@ -125,11 +126,6 @@ public class MainPageResponse {
         private Long page_component_id;
         private String type;
         private String title;
-//        private String PcBannerUrl;
-//        private String PcBannerLink;
-//        private String MobileBannerUrl;
-//        private String MobileBannerLink;
-//        private String content;
         private List<ItemInfo> itemInfos;
     }
 
@@ -140,6 +136,7 @@ public class MainPageResponse {
         private Long page_component_id;
         private String type;
         private String title;
+        private Integer tileCount;
         private List<TileInfo> tileList;
     }
 
@@ -149,12 +146,7 @@ public class MainPageResponse {
     public static class TileInfo {
         private Long tile_id;
         private String tile_name;
-        //        private String PcBannerUrl;
-//        private String PcBannerLink;
-//        private String MobileBannerUrl;
-//        private String MobileBannerLink;
         private String tile_images;
-//        private String content;
         private List<ItemInfo> itemInfos;
     }
 
