@@ -50,6 +50,7 @@ public class Item extends BaseEntity {
     private Integer duration;           // 기간 (2박 3일 에서 3)
 
     @Builder.Default() //default 0
+    @ColumnDefault("0")
     private Integer like_num = 0;           // 좋아요 수
 
     private Date startDate;             // 상품 게시 날짜 (없어도 됨)
