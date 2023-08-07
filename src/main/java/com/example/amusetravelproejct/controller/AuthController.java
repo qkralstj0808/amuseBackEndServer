@@ -123,8 +123,8 @@ public class AuthController {
             domain =  parts[len - 2] + "." + parts[len - 1];
         }
         log.info("domain" + ": " + domain);
-        CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,request.getServerName());
-        CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,domain);
+        CookieUtil.addCookie(response,"__jwtk__",access_token,60,request.getServerName());
+        CookieUtil.addCookie(response,"__jwtk__",access_token,60,domain);
 
         CookieUtil.deleteCookie(request,response,"access_token",domain);
         CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
