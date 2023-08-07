@@ -49,13 +49,19 @@ public class PageComponentService {
             pageComponent.setUpdateAdmin(findAdmin);
         }
 
-        registerListComponent.getItem_db_id().forEach(item_db_id -> {
-            MainPage mainPage = new MainPage();
-            mainPage.setPageComponent(pageComponent);
-            mainPage.setItem(itemRepository.findById(item_db_id) .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND)));
+        if(registerListComponent.getItem_db_id() == null){
 
-            mainPageRepository.save(mainPage);
-        });
+        }else{
+            registerListComponent.getItem_db_id().forEach(item_db_id -> {
+                MainPage mainPage = new MainPage();
+                mainPage.setPageComponent(pageComponent);
+                mainPage.setItem(itemRepository.findById(item_db_id) .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND)));
+
+                mainPageRepository.save(mainPage);
+            });
+        }
+
+
         pageComponentRepository.saveAndFlush(pageComponent);
         AdminPageResponse.registerListComponent registerListComponentDto = new AdminPageResponse.registerListComponent();
         registerListComponentDto.setId(pageComponent.getId());
