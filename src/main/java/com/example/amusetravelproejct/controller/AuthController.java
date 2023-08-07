@@ -152,6 +152,19 @@ public class AuthController {
         return new ResponseEntity<>(new AuthResponse.getAccessToken(access_token_optional.get().getValue()),HttpStatus.OK);
     }
 
+    @GetMapping("/delete/cookie/access-token")
+    public ResponseTemplate<String> deleteCookie(HttpServletRequest request,HttpServletResponse response){
+//                            @CookieValue(value = "access_token") Cookie cookie) {
+
+        if(!CookieUtil.getCookie(request,"__jwtk__").isEmpty()){
+            CookieUtil.deleteCookie(request,response,"__jwtk__");
+        }else{
+            throw new CustomException(ErrorCode.EMPTY);
+        }
+
+        return new ResponseTemplate<>("쿠키 삭제 성공");
+    }
+
     @GetMapping("/session/access-token")
     public ResponseTemplate<AuthResponse.getAccessToken> getTokenSuccess(HttpServletRequest request){
 
