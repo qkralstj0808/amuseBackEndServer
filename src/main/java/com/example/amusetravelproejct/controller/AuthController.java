@@ -64,7 +64,7 @@ public class AuthController {
 
     private final static long THREE_DAYS_MSEC = 259200000;
 
-    private final static int COOKIE_MAX_AGE = 10080000;
+    private final static int COOKIE_MAX_AGE = 3600;
     private final static String REFRESH_TOKEN = "refresh_token";
     private final static String REDIRECT_URL = "target_url";
     private final static String ACCESS_TOKEN = "__jwtk__";
