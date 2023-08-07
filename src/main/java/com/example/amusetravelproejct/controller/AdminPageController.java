@@ -105,7 +105,10 @@ public class AdminPageController {
 
         itemService.processItemTicket(productRegisterDto,item);
         itemService.processItemImg(productRegisterDto,utilMethod,item);
-        itemService.processItemCourse(productRegisterDto,utilMethod,item);
+
+        if(productRegisterDto.getCourse() != null && productRegisterDto.getCourse().size() != 0){
+            itemService.processItemCourse(productRegisterDto,utilMethod,item);
+        }
 
         if (productRegisterDto.getOption().equals("create")){
             return new ResponseTemplate<>("상품 생성 완료");

@@ -538,18 +538,23 @@ public class ItemService {
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
             itemCourse.setDay(Math.toIntExact(productRegisterDto.getCourse().get(i).getDay()));
 
-            if(productRegisterDto.getCourse().get(i).getLocation().getLatitude().isEmpty()){
+            // 코드 위도 경도 설정
+            if(productRegisterDto.getCourse().get(i).getLocation() == null){
                 itemCourse.setLatitude(null);
-            }else{
-                itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
-            }
-
-            if(productRegisterDto.getCourse().get(i).getLocation().getLongitude().isEmpty()){
                 itemCourse.setLongitude(null);
             }else{
-                itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
-            }
+                if(productRegisterDto.getCourse().get(i).getLocation().getLatitude().isEmpty()){
+                    itemCourse.setLatitude(null);
+                }else{
+                    itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
+                }
 
+                if(productRegisterDto.getCourse().get(i).getLocation().getLongitude().isEmpty()){
+                    itemCourse.setLongitude(null);
+                }else{
+                    itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
+                }
+            }
 
             itemCourseRepository.save(itemCourse);
         }
