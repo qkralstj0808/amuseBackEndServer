@@ -90,7 +90,7 @@ public class CookieUtil {
 
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         cookie.setDomain(domain);
         cookie.setSecure(false);
