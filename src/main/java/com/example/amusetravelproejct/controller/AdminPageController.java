@@ -115,7 +115,6 @@ public class AdminPageController {
         } else{
             return new ResponseTemplate<>("상품 수정 완료");
         }
-
     }
     @GetMapping("/product/{item_db_id}")
     public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("item_db_id") Long item_db_id){
@@ -411,8 +410,5 @@ public class AdminPageController {
             @PathVariable("page-id") Long page_id){
         return pageService.deletePage(page_id);
     }
-
-
-
 
 }

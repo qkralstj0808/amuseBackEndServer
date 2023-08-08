@@ -112,6 +112,9 @@ public class ItemService {
         item.setContent_2(productRegisterDto.getExtraInfo());
         item.setAdmin(getAdminByAdminId(productRegisterDto.getAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
+        item.setStartPoint(productRegisterDto.getStartPoint());
+        item.setRunningTime(productRegisterDto.getRunningTime());
+        item.setActivityIntensity(productRegisterDto.getActivityIntensity());
 
         // 가이드 추가
         Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
@@ -203,6 +206,18 @@ public class ItemService {
 
         item.setUpdateAdmin(getAdminByAdminId(productRegisterDto.getUpdateAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
+
+        if(productRegisterDto.getStartPoint() != null){
+            item.setStartPoint(productRegisterDto.getStartPoint());
+        }
+
+        if(productRegisterDto.getRunningTime() != null){
+            item.setRunningTime(productRegisterDto.getRunningTime());
+        }
+
+        if(productRegisterDto.getActivityIntensity() != null){
+            item.setActivityIntensity(productRegisterDto.getActivityIntensity());
+        }
 
         // 가이드 업데이트
         Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(

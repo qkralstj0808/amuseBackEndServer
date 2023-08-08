@@ -39,7 +39,8 @@ public class DetailPageService {
         Item findItem = findItemByIdAndDisplayTrue(item_id);
 
         return new ResponseTemplate<>(new DetailPageResponse.getTitle(findItem.getItemCode(),findItem.getCountry(),
-                findItem.getCity(), findItem.getTitle(), findItem.getRated(),findItem.getReview_count(),findItem.getDuration()));
+                findItem.getCity(), findItem.getTitle(), findItem.getRated(),findItem.getReview_count(),findItem.getDuration(),
+                findItem.getStartPoint(),findItem.getRunningTime(),findItem.getActivityIntensity()));
     }
 
 

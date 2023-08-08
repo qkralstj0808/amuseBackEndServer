@@ -87,6 +87,11 @@ public class Item extends BaseEntity {
 
     private String guide_comment;
 
+    // 상세페이지에 보여주는 시작점, 진행시간, 활동강도
+    private String startPoint;
+    private String runningTime;
+    private String activityIntensity;
+
     // item와 category는 N:1 관계 ManyToOne
 
     // item와 ItemImg 1:N 관계
