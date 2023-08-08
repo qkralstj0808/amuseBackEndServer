@@ -4,6 +4,7 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.*;
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,8 @@ public class MainPageService {
 
     public final PageComponentRepository pageComponentRepository;
     public final MainPageRepository mainPageRepository;
+
+    public final TargetUserRepository targetUserRepository;
 
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
@@ -194,7 +197,7 @@ public class MainPageService {
         return null;
     }
 
-    public ResponseTemplate<MainPageResponse.getCategoryPage> getCategoryPage(Long category_id) {
+    public ResponseTemplate<MainPageResponse.getCategoryPage> getCategoryPage(Long category_id, Grade grade) {
 
         Category category = categoryRepository.findById(category_id).orElseThrow(
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
@@ -221,7 +224,7 @@ public class MainPageService {
 
                 for (int k = 0; k < tileIds.size(); k++) {
                     log.info(String.valueOf(tileIds.get(k)));
-                    List<MainPage> mainPage_by_tile_id = mainPageRepository.findMainPageByComponent_idAndTyle_idAndDisplayTrue(pageComponent.getId(), tileIds.get(k));
+                    List<MainPage> mainPage_by_tile_id = mainPageRepository.findMainPageByComponent_idAndTyle_idAndDisplayTrueAndGrade(pageComponent.getId(), tileIds.get(k),grade);
                     List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<MainPageResponse.ItemInfo>();
 
                     for (int q = 0; q < mainPage_by_tile_id.size(); q++) {
@@ -270,7 +273,7 @@ public class MainPageService {
             } else if (pageComponent.getType().equals("리스트")){
                 List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<>();
 
-                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplay(pageComponent.getId(), true);
+                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplayWithGrade(pageComponent.getId(), true,grade);
 //                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
 //                    Item item = pageComponent.getMainPages().get(k).getItem();
                 for (int k = 0; k < mainPageList.size(); k++) {
@@ -306,7 +309,7 @@ public class MainPageService {
             }else{
                 List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<>();
 
-                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplay(pageComponent.getId(), true);
+                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplayWithGrade(pageComponent.getId(), true,grade);
 //                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
 //                    Item item = pageComponent.getMainPages().get(k).getItem();
                 for (int k = 0; k < mainPageList.size(); k++) {
@@ -357,6 +360,33 @@ public class MainPageService {
 
 
         return new ResponseTemplate(getCategory);
+    }
+
+    public ResponseTemplate<MainPageResponse.getItem> getMyItem(User findUser) {
+        List<TargetUser> targetUsers = targetUserRepository.findByUserId(findUser.getId());
+
+        return new ResponseTemplate(new MainPageResponse.getItem(targetUsers.stream().map(
+                targetUser -> returnItemInfo(targetUser.getItem())
+        ).collect(Collectors.toList())));
+    }
+
+    private MainPageResponse.ItemInfo returnItemInfo(Item item){
+        return new MainPageResponse.ItemInfo(
+                item.getId(),
+                item.getItemCode(),
+                item.getItemHashTags().stream().map(
+                        itemHashTag -> new MainPageResponse.HashTag(
+                                itemHashTag.getHashTag()
+                        )
+                ).collect(Collectors.toList()),
+                item.getItemImg_list().size() != 0 ? item.getItemImg_list().get(0).getImgUrl() : null,
+                item.getTitle(),
+                item.getCountry(),
+                item.getCity(),
+                item.getDuration(),
+                item.getLike_num(),
+                item.getStartPrice()
+        );
     }
 
 }
