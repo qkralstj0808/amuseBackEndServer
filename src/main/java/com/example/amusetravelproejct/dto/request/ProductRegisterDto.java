@@ -33,6 +33,9 @@ public class ProductRegisterDto {
 //    private Long guide_db_id;
     private String guide_comment;
     private accessData accessAuthority;
+    private String startPoint;
+    private String runningTime;
+    private String activityIntensity;
 
 
     @Data
