@@ -211,6 +211,7 @@ public class AdminPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getItemsByDisplayStat{
+        private Long item_db_id;
         private String itemCode;
         private String title;
         private String imgUrl;

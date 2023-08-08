@@ -916,6 +916,7 @@ public class ItemService {
 
         allDisplayItems.getContent().forEach(item ->{
             AdminPageResponse.getItemsByDisplayStat itemsByDisplayStat = new AdminPageResponse.getItemsByDisplayStat();
+            itemsByDisplayStat.setItem_db_id(item.getId());
             itemsByDisplayStat.setItemCode(item.getItemCode());
             itemsByDisplayStat.setTitle(item.getTitle());
             if (item.getItemImg_list().isEmpty()){
