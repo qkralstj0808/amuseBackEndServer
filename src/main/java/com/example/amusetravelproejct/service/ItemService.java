@@ -7,6 +7,7 @@ import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 
 import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
@@ -112,6 +113,9 @@ public class ItemService {
         item.setContent_2(productRegisterDto.getExtraInfo());
         item.setAdmin(getAdminByAdminId(productRegisterDto.getAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
+        item.setStartPoint(productRegisterDto.getStartPoint());
+        item.setRunningTime(productRegisterDto.getRunningTime());
+        item.setActivityIntensity(productRegisterDto.getActivityIntensity());
 
         // 가이드 추가
         Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
@@ -135,26 +139,30 @@ public class ItemService {
         item.setDuration(Math.toIntExact(duration));
 
 
-        if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-            item.setGrade(null);
-        }else{
-            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        if(productRegisterDto.getAccessAuthority() != null){
+            if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
+                item.setGrade(Grade.BRONZE);
+            }else{
+                item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+            }
+
+            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null) {
+                List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
+                users.forEach(email -> {
+                    User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                    TargetUser targetUser = new TargetUser();
+
+                    targetUser.setItem(item);
+                    targetUser.setUser(user);
+                    targetUserRepository.save(targetUser);
+                });
+            }
         }
 
-        if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null) {
-            List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
-            users.forEach(email -> {
-                User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                TargetUser targetUser = new TargetUser();
-
-                targetUser.setItem(item);
-                targetUser.setUser(user);
-                targetUserRepository.save(targetUser);
-            });
-        }
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-        item.setDisplayStatus(DisplayStatus.DISPLAY);
+//        item.setDisplayStatus(DisplayStatus.DISPLAY);
+        item.setDisplay(true);
         return item;
     }
 
@@ -203,6 +211,18 @@ public class ItemService {
         item.setUpdateAdmin(getAdminByAdminId(productRegisterDto.getUpdateAdmin()).get());
         item.setStartPrice(productRegisterDto.getStartPrice());
 
+        if(productRegisterDto.getStartPoint() != null){
+            item.setStartPoint(productRegisterDto.getStartPoint());
+        }
+
+        if(productRegisterDto.getRunningTime() != null){
+            item.setRunningTime(productRegisterDto.getRunningTime());
+        }
+
+        if(productRegisterDto.getActivityIntensity() != null){
+            item.setActivityIntensity(productRegisterDto.getActivityIntensity());
+        }
+
         // 가이드 업데이트
         Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
@@ -226,26 +246,32 @@ public class ItemService {
 
 
         item.getTargetUsers().clear();
-        if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-            item.setGrade(null);
-        }else{
-            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
-        }
-        if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
-            List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
-            users.forEach(email -> {
-                User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                TargetUser targetUser = new TargetUser();
 
-                targetUser.setItem(item);
-                targetUser.setUser(user);
-                targetUserRepository.save(targetUser);
-            });
+        if(productRegisterDto.getAccessAuthority() != null){
+            if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
+                item.setGrade(Grade.BRONZE);
+            }else{
+                item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+            }
+            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
+                List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
+                users.forEach(email -> {
+                    User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                    TargetUser targetUser = new TargetUser();
+
+                    targetUser.setItem(item);
+                    targetUser.setUser(user);
+                    targetUserRepository.save(targetUser);
+                });
+            }
         }
+
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-        item.setDisplayStatus(DisplayStatus.DISPLAY);
+//        item.setDisplayStatus(DisplayStatus.DISPLAY);
+        item.setDisplay(true);
         return item;
+
     }
 
 
@@ -535,18 +561,23 @@ public class ItemService {
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
             itemCourse.setDay(Math.toIntExact(productRegisterDto.getCourse().get(i).getDay()));
 
-            if(productRegisterDto.getCourse().get(i).getLocation().getLatitude().isEmpty()){
+            // 코드 위도 경도 설정
+            if(productRegisterDto.getCourse().get(i).getLocation() == null){
                 itemCourse.setLatitude(null);
-            }else{
-                itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
-            }
-
-            if(productRegisterDto.getCourse().get(i).getLocation().getLongitude().isEmpty()){
                 itemCourse.setLongitude(null);
             }else{
-                itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
-            }
+                if(productRegisterDto.getCourse().get(i).getLocation().getLatitude().isEmpty()){
+                    itemCourse.setLatitude(null);
+                }else{
+                    itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
+                }
 
+                if(productRegisterDto.getCourse().get(i).getLocation().getLongitude().isEmpty()){
+                    itemCourse.setLongitude(null);
+                }else{
+                    itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
+                }
+            }
 
             itemCourseRepository.save(itemCourse);
         }
@@ -713,7 +744,7 @@ public class ItemService {
         List<String> userEmail = new ArrayList<>();
 
         if (item.getGrade() != null){
-            accessData.setAccessibleTier(UtilMethod.outGrad[Math.toIntExact(item.getGrade())]);
+            accessData.setAccessibleTier(item.getGrade().toString());
         }
 
         if (item.getTargetUsers() != null){
@@ -795,7 +826,7 @@ public class ItemService {
         List<TargetUser> users = item.getTargetUsers();
 
         if (!users.isEmpty()){
-            accessAuthority.setAccessibleTier(UtilMethod.outGrad[Math.toIntExact(item.getGrade())]);
+            accessAuthority.setAccessibleTier(item.getGrade().toString());
             List<String> targetUsers = new ArrayList<>();
             users.forEach(targetUser -> {
                 targetUsers.add(targetUser.getUser().getEmail());
@@ -861,16 +892,20 @@ public class ItemService {
         return new ResponseTemplate(new ItemResponse.getAllItemId(allItemId.stream().collect(Collectors.toList())));
     }
 
-
-    public void changeItemStatus(String displayStatus,String itemCode){
+@Transactional
+    public void changeItemStatus(AdminPageRequest.changeDisplayStatus request,String itemCode){
         Item item = itemRepository.findByItemCode(itemCode).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
-        if (DisplayStatus.DISPLAY.name().equals(displayStatus)){
-            item.setDisplayStatus(DisplayStatus.DISPLAY);
+
+        if (request.getDisplay_true()){
+//            item.setDisplayStatus(DisplayStatus.DISPLAY);
+            item.setDisplay(true);
         } else{
-            item.setDisplayStatus(DisplayStatus.HIDDEN);
+//            item.setDisplayStatus(DisplayStatus.HIDDEN);
+            item.setDisplay(false);
         }
+
         itemRepository.save(item);
     }
 
@@ -879,9 +914,9 @@ public class ItemService {
         Pageable pageable = PageRequest.of(Math.toIntExact(sqlPage), Math.toIntExact(limit), Sort.by("id").ascending());
         Page<Item> allDisplayItems = null;
         if (status.equals("DISPLAY")){
-            allDisplayItems = itemRepository.findAllByDisplayStatus(DisplayStatus.DISPLAY, pageable);
+            allDisplayItems = itemRepository.findAllByDisplay(true, pageable);
         } else{
-            allDisplayItems = itemRepository.findAllByDisplayStatus(DisplayStatus.HIDDEN, pageable);
+            allDisplayItems = itemRepository.findAllByDisplay(false, pageable);
         }
         AdminPageResponse.getItemByDisplayStatus getItemByDisplayStatus = new AdminPageResponse.getItemByDisplayStatus();
         List<AdminPageResponse.getItemsByDisplayStat> itemsByDisplayStats = new ArrayList<>();
@@ -889,6 +924,7 @@ public class ItemService {
 
         allDisplayItems.getContent().forEach(item ->{
             AdminPageResponse.getItemsByDisplayStat itemsByDisplayStat = new AdminPageResponse.getItemsByDisplayStat();
+            itemsByDisplayStat.setItem_db_id(item.getId());
             itemsByDisplayStat.setItemCode(item.getItemCode());
             itemsByDisplayStat.setTitle(item.getTitle());
             if (item.getItemImg_list().isEmpty()){

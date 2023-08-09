@@ -13,7 +13,10 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long>, ItemRepositoryCustom, QuerydslPredicateExecutor<Item> {
 
+    Optional<Item> findById(Long id);
     Optional<Item> findByItemCode(String itemCode);
-    Page<Item> findAllByDisplayStatus(DisplayStatus displayStatus, Pageable pageable);
+    Page<Item> findAllByDisplay(Boolean display, Pageable pageable);
+
+    Optional<Item> findByIdAndDisplayTrue(Long id);
 
 }

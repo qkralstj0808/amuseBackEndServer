@@ -64,11 +64,13 @@ public class AuthController {
 
     private final static long THREE_DAYS_MSEC = 259200000;
 
-    private final static int COOKIE_MAX_AGE = 10080000;
+    private final static int COOKIE_MAX_AGE = 3600;
     private final static String REFRESH_TOKEN = "refresh_token";
     private final static String REDIRECT_URL = "target_url";
     private final static String ACCESS_TOKEN = "__jwtk__";
     private final RedirectStrategy redirectStrategy;
+
+    private final long ADMIN_ACCESS_TOKEN_EXPIRE = 3600000 * 3;
 
     @CrossOrigin(originPatterns = "*", allowCredentials = "true")
     @GetMapping("/token/success")
@@ -121,8 +123,8 @@ public class AuthController {
             domain =  parts[len - 2] + "." + parts[len - 1];
         }
         log.info("domain" + ": " + domain);
-        CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,request.getServerName());
-        CookieUtil.addCookie(response,"__jwtk__",access_token,COOKIE_MAX_AGE,domain);
+        CookieUtil.addCookie(response,"__jwtk__",access_token,60,request.getServerName());
+        CookieUtil.addCookie(response,"__jwtk__",access_token,60,domain);
 
         CookieUtil.deleteCookie(request,response,"access_token",domain);
         CookieUtil.deleteCookie(request,response,REDIRECT_URL,domain);
@@ -148,6 +150,19 @@ public class AuthController {
         }
 
         return new ResponseEntity<>(new AuthResponse.getAccessToken(access_token_optional.get().getValue()),HttpStatus.OK);
+    }
+
+    @GetMapping("/delete/cookie/access-token")
+    public ResponseTemplate<String> deleteCookie(HttpServletRequest request,HttpServletResponse response){
+//                            @CookieValue(value = "access_token") Cookie cookie) {
+
+        if(!CookieUtil.getCookie(request,"__jwtk__").isEmpty()){
+            CookieUtil.deleteCookie(request,response,"__jwtk__");
+        }else{
+            throw new CustomException(ErrorCode.EMPTY);
+        }
+
+        return new ResponseTemplate<>("쿠키 삭제 성공");
     }
 
     @GetMapping("/session/access-token")
@@ -230,7 +245,7 @@ public class AuthController {
                 adminId,
                 ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
                 null,
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+                new Date(now.getTime() + ADMIN_ACCESS_TOKEN_EXPIRE)
         );
 
         /*
@@ -332,8 +347,10 @@ public class AuthController {
                 adminId,
                 ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode(),
                 null,
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+                new Date(now.getTime() + ADMIN_ACCESS_TOKEN_EXPIRE)
         );
+
+        log.info("access_token : " + accessToken.getToken());
 
         /*
             refresh token 생성
@@ -362,6 +379,7 @@ public class AuthController {
          */
         int cookieMaxAge = (int) refreshTokenExpiry / 60;
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.deleteCookie(request, response, ACCESS_TOKEN);
         CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
         CookieUtil.addCookie(response,ACCESS_TOKEN,accessToken.getToken(),cookieMaxAge);
 
@@ -419,10 +437,10 @@ public class AuthController {
             throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
 //
-//        // expired access token 인지 확인
-//        if(token.getExpiredTokenClaims() == null){
-//            throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN);
-//        }
+//        // expired access token 인지 확인 expired token이 아니면 그냥 반환
+        if(token.getExpiredTokenClaims() == null){
+            return new ResponseTemplate(new AuthResponse.getNewAccessToken(token));
+        }
 //
 //        Claims claims = token.getExpiredTokenClaims();
 
@@ -450,13 +468,25 @@ public class AuthController {
         AuthToken authRefreshToken = tokenProvider.convertAuthToken(db_refreshToken);
 
         Date now = new Date();
-        AuthToken newAccessToken = tokenProvider.createAuthToken(
-                userId,
-                roleType.getCode(),
+        AuthToken newAccessToken = null;
+        if(roleType.equals(RoleType.ADMIN)){
+            newAccessToken = tokenProvider.createAuthToken(
+                    userId,
+                    roleType.getCode(),
 //                user == null ? null : user.getGrade() ,
-                grade,
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
-        );
+                    grade,
+                    new Date(now.getTime() + ADMIN_ACCESS_TOKEN_EXPIRE)
+            );
+        }else{
+            newAccessToken = tokenProvider.createAuthToken(
+                    userId,
+                    roleType.getCode(),
+//                user == null ? null : user.getGrade() ,
+                    grade,
+                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+            );
+        }
+
 
         long validTime = authRefreshToken.getTokenClaims().getExpiration().getTime() - now.getTime();
 

@@ -12,4 +12,8 @@ public interface MainPageRepository extends JpaRepository<MainPage, Long>, MainP
     List<MainPage> findByPageComponent(PageComponent mainPageComponent);
     List<MainPage> findByTile(Tile tile);
 
+    List<MainPage> findMainPageByTileId(Long tile_id);
+
+    List<MainPage> findMainPageByPageComponentIdAndItemDisplay(Long pageComponent_id, Boolean item_display);
+
 }

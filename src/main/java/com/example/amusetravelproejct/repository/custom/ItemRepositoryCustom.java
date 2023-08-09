@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ItemRepositoryCustom {
-    Long findItem(Long item_id);
+    Long findItemId(Long item_id);
 
     List<Item> find10ItemByCondition(String country,String city,
                                      String title,

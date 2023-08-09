@@ -105,19 +105,22 @@ public class AdminPageController {
 
         itemService.processItemTicket(productRegisterDto,item);
         itemService.processItemImg(productRegisterDto,utilMethod,item);
-        itemService.processItemCourse(productRegisterDto,utilMethod,item);
+
+        if(productRegisterDto.getCourse() != null && productRegisterDto.getCourse().size() != 0){
+            itemService.processItemCourse(productRegisterDto,utilMethod,item);
+        }
 
         if (productRegisterDto.getOption().equals("create")){
             return new ResponseTemplate<>("상품 생성 완료");
         } else{
             return new ResponseTemplate<>("상품 수정 완료");
         }
-
     }
-    @GetMapping("/product/{item_db_id}")
-    public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("item_db_id") Long item_db_id){
+    @GetMapping("/product/{item-db-id}")
+    public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("item-db-id") Long item_db_id){
         //TODO
         // productRegisterDto 데이터 선 처리
+        log.info("item_db_id : " + item_db_id);
 
         return new ResponseTemplate<>(itemService.processGetItemDetail(item_db_id));
     }
@@ -153,9 +156,9 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(itemService.processGetAllDisplayItems(limit,sqlPage,displayStatus));
     }
-    @GetMapping("/change/displayStatus")
-    public ResponseTemplate<String> changeDisplayStatus(@RequestParam("status") String displayStatus, @RequestParam("itemCode") String itemCode){
-        itemService.changeItemStatus(displayStatus,itemCode);
+    @PostMapping("/change/item/{itemCode}/displayStatus")
+    public ResponseTemplate<String> changeDisplayStatus(@RequestBody AdminPageRequest.changeDisplayStatus request ,@PathVariable("itemCode") String itemCode){
+        itemService.changeItemStatus(request,itemCode);
 
         return new ResponseTemplate<>("상품 상태가 변경되었습니다.");
     }
@@ -319,8 +322,6 @@ public class AdminPageController {
         return new ResponseTemplate<>(pageComponentService.getComponentDetail(id));
     }
 
-
-
     @GetMapping("/component/delete/{id}")
     public ResponseTemplate<?> reqMainPageDelete(@PathVariable("id") Long id){
 
@@ -330,7 +331,6 @@ public class AdminPageController {
         pageComponentService.processDeleteMainPageComponent(id);
         return new ResponseTemplate<>("삭제 완료");
     }
-
 
     @PostMapping("/create/guide")
     public ResponseTemplate<AdminResponse.GuideInfo> createGuide(@RequestBody AdminRequest.guide request){
@@ -369,7 +369,6 @@ public class AdminPageController {
     public ResponseTemplate<?> listIcon(){
         return new ResponseTemplate<>(itemService.getIconList());
     }
-
 
     @PostMapping("page/register")
     public ResponseTemplate<String> createPage(
@@ -412,8 +411,5 @@ public class AdminPageController {
             @PathVariable("page-id") Long page_id){
         return pageService.deletePage(page_id);
     }
-
-
-
 
 }
