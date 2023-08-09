@@ -159,7 +159,7 @@ public class ItemService {
 
         if(productRegisterDto.getAccessAuthority() != null){
             if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-                item.setGrade(Grade.BRONZE);
+                item.setGrade(Grade.Bronze);
             }else{
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }
@@ -179,7 +179,7 @@ public class ItemService {
                 });
             }
         }else{
-            item.setGrade(Grade.BRONZE);
+            item.setGrade(Grade.Bronze);
         }
 
         if(productRegisterDto.getStartDate() != null){
@@ -292,16 +292,15 @@ public class ItemService {
             item.setDuration(null);
         }
 
-
-
         item.getTargetUsers().clear();
 
         if(productRegisterDto.getAccessAuthority() != null){
             if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-                item.setGrade(Grade.BRONZE);
+                item.setGrade(Grade.Bronze);
             }else{
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }
+
             if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
                 List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
                 users.forEach(email -> {
@@ -318,8 +317,17 @@ public class ItemService {
             }
         }
 
-        item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
-        item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        if(productRegisterDto.getStartDate() != null){
+            item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
+        }else{
+            item.setStartDate(null);
+        }
+
+        if(productRegisterDto.getEndDate() != null){
+            item.setStartDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        }else{
+            item.setStartDate(null);
+        }
 //        item.setDisplayStatus(DisplayStatus.DISPLAY);
         item.setDisplay(true);
         return item;
@@ -618,13 +626,13 @@ public class ItemService {
                 itemCourse.setLatitude(null);
                 itemCourse.setLongitude(null);
             }else{
-                if(productRegisterDto.getCourse().get(i).getLocation().getLatitude().isEmpty()){
+                if(productRegisterDto.getCourse().get(i).getLocation().getLatitude() == null){
                     itemCourse.setLatitude(null);
                 }else{
                     itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
                 }
 
-                if(productRegisterDto.getCourse().get(i).getLocation().getLongitude().isEmpty()){
+                if(productRegisterDto.getCourse().get(i).getLocation().getLongitude() == null){
                     itemCourse.setLongitude(null);
                 }else{
                     itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));

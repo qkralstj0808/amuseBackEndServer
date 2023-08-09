@@ -94,7 +94,7 @@ public class MainPageController {
     @GetMapping("/main/category/{category-id}/page")
     public ResponseTemplate<MainPageResponse.getCategoryPage> getCategoryPage(
             @PathVariable("category-id") Long category_id,@AuthenticationPrincipal UserPrincipal userPrincipal){
-        Grade grade = Grade.BRONZE;
+        Grade grade = Grade.Bronze;
         if(!(userPrincipal == null)){
             User findUser = userService.getUserByPrincipal(userPrincipal);
             grade = findUser.getGrade();
