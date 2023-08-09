@@ -324,6 +324,7 @@ public class ItemService {
 
         log.info("productRegisterDto.getEndDate() : " + productRegisterDto.getEndDate());
         log.info(String.valueOf(productRegisterDto.getEndDate() != null));
+
         if(productRegisterDto.getEndDate() != null && !productRegisterDto.getEndDate().equals("")){
             item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         }else{
@@ -891,9 +892,9 @@ public class ItemService {
         productRegisterDto.setExtraInfo(item.getContent_2());
         productRegisterDto.setAdmin(item.getAdmin().getAdminId());
         productRegisterDto.setUpdateAdmin(item.getUpdateAdmin() == null ? null : item.getUpdateAdmin().getAdminId());
-        productRegisterDto.setStartDate(String.valueOf(item.getStartDate()));
-        productRegisterDto.setEndDate(String.valueOf(item.getEndDate()));
-        productRegisterDto.setDuration(String.valueOf(item.getDuration()));
+        productRegisterDto.setStartDate(item.getStartDate() == null ? null : String.valueOf(item.getStartDate()));
+        productRegisterDto.setEndDate(item.getEndDate() == null ? null : String.valueOf(item.getEndDate()));
+        productRegisterDto.setDuration(item.getDuration() == null ? null : String.valueOf(item.getDuration()));
 
         ProductRegisterDto.accessData accessAuthority = new ProductRegisterDto.accessData();
         List<TargetUser> users = item.getTargetUsers();
