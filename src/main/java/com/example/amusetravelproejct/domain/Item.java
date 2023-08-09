@@ -60,7 +60,7 @@ public class Item extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String adminContent;
 
-    private Long grade;                // 등급 (일반, 프리미엄, VIP)
+    private Grade grade;                // 등급 (일반, 프리미엄, VIP)
 
     @ColumnDefault("0")
     private Integer viewCount;          // 조회수

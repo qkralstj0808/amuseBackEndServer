@@ -7,6 +7,7 @@ import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 
 import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
@@ -138,23 +139,26 @@ public class ItemService {
         item.setDuration(Math.toIntExact(duration));
 
 
-        if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-            item.setGrade(null);
-        }else{
-            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+        if(productRegisterDto.getAccessAuthority() != null){
+            if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
+                item.setGrade(null);
+            }else{
+                item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+            }
+
+            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null) {
+                List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
+                users.forEach(email -> {
+                    User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                    TargetUser targetUser = new TargetUser();
+
+                    targetUser.setItem(item);
+                    targetUser.setUser(user);
+                    targetUserRepository.save(targetUser);
+                });
+            }
         }
 
-        if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null) {
-            List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
-            users.forEach(email -> {
-                User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                TargetUser targetUser = new TargetUser();
-
-                targetUser.setItem(item);
-                targetUser.setUser(user);
-                targetUserRepository.save(targetUser);
-            });
-        }
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
 //        item.setDisplayStatus(DisplayStatus.DISPLAY);
@@ -242,22 +246,26 @@ public class ItemService {
 
 
         item.getTargetUsers().clear();
-        if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-            item.setGrade(null);
-        }else{
-            item.setGrade((long) Arrays.asList(UtilMethod.outGrad).indexOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
-        }
-        if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
-            List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
-            users.forEach(email -> {
-                User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                TargetUser targetUser = new TargetUser();
 
-                targetUser.setItem(item);
-                targetUser.setUser(user);
-                targetUserRepository.save(targetUser);
-            });
+        if(productRegisterDto.getAccessAuthority() != null){
+            if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
+                item.setGrade(null);
+            }else{
+                item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
+            }
+            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
+                List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
+                users.forEach(email -> {
+                    User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                    TargetUser targetUser = new TargetUser();
+
+                    targetUser.setItem(item);
+                    targetUser.setUser(user);
+                    targetUserRepository.save(targetUser);
+                });
+            }
         }
+
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
 //        item.setDisplayStatus(DisplayStatus.DISPLAY);
@@ -736,7 +744,7 @@ public class ItemService {
         List<String> userEmail = new ArrayList<>();
 
         if (item.getGrade() != null){
-            accessData.setAccessibleTier(UtilMethod.outGrad[Math.toIntExact(item.getGrade())]);
+            accessData.setAccessibleTier(item.getGrade().toString());
         }
 
         if (item.getTargetUsers() != null){
@@ -818,7 +826,7 @@ public class ItemService {
         List<TargetUser> users = item.getTargetUsers();
 
         if (!users.isEmpty()){
-            accessAuthority.setAccessibleTier(UtilMethod.outGrad[Math.toIntExact(item.getGrade())]);
+            accessAuthority.setAccessibleTier(item.getGrade().toString());
             List<String> targetUsers = new ArrayList<>();
             users.forEach(targetUser -> {
                 targetUsers.add(targetUser.getUser().getEmail());
