@@ -41,4 +41,11 @@ public class MyPageController {
 
         return myPageService.setReview(findUser,item_id,request,utilMethod);
     }
+
+    @GetMapping("/item/review")
+    public ResponseTemplate<MyPageResponse.getReview> getReview(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
+        User findUser = userService.getUserByPrincipal(userPrincipal);
+
+        return myPageService.getReview(findUser);
+    }
 }

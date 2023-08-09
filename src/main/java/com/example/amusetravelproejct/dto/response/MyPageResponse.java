@@ -38,6 +38,26 @@ public class MyPageResponse {
         private List<ImageInfo> images;
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getReview {
+        private List<ReviewInfo> reviewInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ReviewInfo {
+        private Long item_id;
+        private String user_name;
+        private Float rating;
+        private String review_content;
+        private List<ImageInfo> images;
+    }
+
+
+
 
     @Data
     @Getter
