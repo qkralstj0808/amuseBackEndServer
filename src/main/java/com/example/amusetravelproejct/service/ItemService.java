@@ -831,9 +831,8 @@ public class ItemService {
 
         ProductRegisterDto.accessData accessAuthority = new ProductRegisterDto.accessData();
         List<TargetUser> users = item.getTargetUsers();
-
+        accessAuthority.setAccessibleTier(item.getGrade().toString());
         if (!users.isEmpty()){
-            accessAuthority.setAccessibleTier(item.getGrade().toString());
             List<String> targetUsers = new ArrayList<>();
             users.forEach(targetUser -> {
                 targetUsers.add(targetUser.getUser().getEmail());
