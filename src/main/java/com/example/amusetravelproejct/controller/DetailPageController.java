@@ -92,7 +92,6 @@ public class DetailPageController {
         Item item = itemRepository.findById(item_id).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         ResponseTemplate<DetailPageResponse.getReview> review = detailPageService.getReview(item);
-
         return review;
     }
 

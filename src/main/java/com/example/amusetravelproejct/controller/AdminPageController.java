@@ -47,7 +47,7 @@ public class AdminPageController {
         // 유저 데이터 선 처리
 
 
-        AdminPageResponse.advertisementRegister  advertisement = advertisementService.processAdvertisementRegister(adminAdvertisementRegisterDto,utilMethod);
+        AdminPageResponse.advertisementRegister  advertisement = advertisementService.processAdvertisementRegister(adminAdvertisementRegisterDto,utilMethod,findAdmin);
         return new ResponseTemplate<>(advertisement);
     }
 
@@ -101,7 +101,7 @@ public class AdminPageController {
         productRegisterDto.setUpdateAdmin(findAdmin.getAdminId());
 
         log.info(productRegisterDto.toString());
-        Item item = productRegisterDto.getOption().equals("create") ? itemService.processCreate(productRegisterDto) : itemService.processUpdate(productRegisterDto);
+        Item item = productRegisterDto.getOption().equals("create") ? itemService.processCreate(productRegisterDto,findAdmin) : itemService.processUpdate(productRegisterDto,findAdmin);
 
         itemService.processItemTicket(productRegisterDto,item);
         itemService.processItemImg(productRegisterDto,utilMethod,item);
