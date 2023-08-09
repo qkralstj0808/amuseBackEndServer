@@ -141,7 +141,7 @@ public class ItemService {
 
         if(productRegisterDto.getAccessAuthority() != null){
             if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-                item.setGrade(null);
+                item.setGrade(Grade.BRONZE);
             }else{
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }
@@ -249,7 +249,7 @@ public class ItemService {
 
         if(productRegisterDto.getAccessAuthority() != null){
             if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-                item.setGrade(null);
+                item.setGrade(Grade.BRONZE);
             }else{
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }

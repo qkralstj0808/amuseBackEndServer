@@ -34,7 +34,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
     }
 
     @Override
-    public Long findItem(Long item_id) {
+    public Long findItemId(Long item_id) {
         return jpaQueryFactory
                 .select(item.id)
                 .from(item)

@@ -104,7 +104,7 @@ public class DetailPageService {
 
 
     public ResponseTemplate<DetailPageResponse.getCourseContent> getCourseContent(Long item_id) {
-        Long findItem_id = itemRepository.findItem(item_id);
+        Long findItem_id = itemRepository.findItemId(item_id);
 
         if(findItem_id == null){
             return new ResponseTemplate(ResponseTemplateStatus.ITEM_NOT_FOUND);
