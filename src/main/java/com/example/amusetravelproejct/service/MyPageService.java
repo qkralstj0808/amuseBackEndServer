@@ -101,4 +101,20 @@ public class MyPageService {
         return itemReviewImgList;
     }
 
+    public ResponseTemplate<MyPageResponse.getReview> getReview(User findUser) {
+        List<ItemReview> itemReviews = itemReviewRepository.findByUserId(findUser.getId());
+
+        return new ResponseTemplate(new MyPageResponse.getReview(itemReviews.stream().map(
+                itemReview -> new MyPageResponse.ReviewInfo(
+                        itemReview.getItem().getId(),
+                        itemReview.getUser().getUsername(),
+                        itemReview.getRating(),
+                        itemReview.getContent(),
+                        itemReview.getItemReviewImgs().stream().map(
+                                itemReviewImg -> new MyPageResponse.ImageInfo(itemReviewImg.getImgUrl())
+                        ).collect(Collectors.toList())
+                )
+        ).collect(Collectors.toList())
+        ));
+    }
 }
