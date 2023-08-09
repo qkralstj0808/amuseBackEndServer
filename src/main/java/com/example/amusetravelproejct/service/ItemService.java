@@ -296,7 +296,7 @@ public class ItemService {
 
         if(productRegisterDto.getAccessAuthority() != null){
             log.info("productRegisterDto.getAccessAuthority().getAccessibleTier() : " + productRegisterDto.getAccessAuthority().getAccessibleTier());
-            if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
+            if (productRegisterDto.getAccessAuthority().getAccessibleTier().equals("")){
                 item.setGrade(Grade.Bronze);
             }else{
 
