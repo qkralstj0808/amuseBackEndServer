@@ -183,7 +183,7 @@ public class AdvertisementService {
             advertisementList.setTitle(advertisement.getTitle());
             advertisementList.setStartDate(advertisement.getStartDate());
             advertisementList.setEndDate(advertisement.getEndDate());
-            advertisementList.setAdCategory(advertisement.getCategory().split(","));
+            advertisementList.setAdCategory(advertisement.getCategory() == null ? null : advertisement.getCategory().split(","));
             advertisementList.setCreatedAt(advertisement.getCreatedAt());
             advertisementList.setCreatedBy(advertisement.getAdmin() == null ? null : advertisement.getAdmin().getAdminId());
             advertisementList.setUpdatedAt(advertisement.getUpdateAdmin() == null ? null : advertisement.getModifiedAt());
@@ -212,7 +212,7 @@ public class AdvertisementService {
         advertisementEdit.setTitle(advertisement.getTitle());
         advertisementEdit.setStartDate(advertisement.getStartDate() == null ? null : advertisement.getStartDate().toString());
         advertisementEdit.setEndDate(advertisement.getEndDate() == null ? null : advertisement.getEndDate().toString());
-        advertisementEdit.setAdCategory(advertisement.getCategory().split(","));
+        advertisementEdit.setAdCategory(advertisement.getCategory() == null ? null : advertisement.getCategory().split(","));
         advertisementEdit.setAdContent(advertisement.getContent());
         advertisementEdit.setCreatedAt(advertisement.getCreatedAt() == null ? null : advertisement.getCreatedAt().toString());
         advertisementEdit.setCreatedBy(advertisement.getAdmin().getAdminId());

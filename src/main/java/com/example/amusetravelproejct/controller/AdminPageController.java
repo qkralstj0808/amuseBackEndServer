@@ -228,6 +228,7 @@ public class AdminPageController {
     public ResponseTemplate<List<String>> reqCategoryList(){
         return new ResponseTemplate<>(categoryService.processGetCategoryList());
     }
+
     @GetMapping("/category/sequence")
     public ResponseTemplate<List<AdminPageResponse.categorySequence>> reqCategorySequence(){
 
