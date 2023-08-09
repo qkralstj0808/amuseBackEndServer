@@ -322,6 +322,7 @@ public class ItemService {
             item.setStartDate(null);
         }
 
+        log.info("productRegisterDto.getEndDate() : " + productRegisterDto.getEndDate());
         if(productRegisterDto.getEndDate() != null && !productRegisterDto.getEndDate().equals("")){
             item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         }else{
@@ -597,15 +598,26 @@ public class ItemService {
             if(productRegisterDto.getCourse().get(i).getId() == null || productRegisterDto.getOption().equals("create")){
                 itemCourse = new ItemCourse();
             }else{
-                itemCourse = itemCourseRepository.findById(productRegisterDto.getCourse().get(i).getId()).get();
+                Optional<ItemCourse> byId = itemCourseRepository.findById(productRegisterDto.getCourse().get(i).getId());
+                if(!byId.isPresent()){
+                    itemCourse = new ItemCourse();
+                }else{
+                    itemCourse = itemCourseRepository.findById(productRegisterDto.getCourse().get(i).getId()).orElseThrow(
+                            () -> new CustomException(ErrorCode.COURSE_NOT_FOUND)
+                    );
+                }
+
             }
 
             String url = "";
-            if (productRegisterDto.getCourse().get(i).getImage().getBase64Data() != null){
-                url = utilMethod.getImgUrl(productRegisterDto.getCourse().get(i).getImage().getBase64Data(),
-                        productRegisterDto.getCourse().get(i).getImage().getFileName());
-                itemCourse.setImageUrl(url);
+            if(productRegisterDto.getCourse().get(i).getImage() != null){
+                if (productRegisterDto.getCourse().get(i).getImage().getBase64Data() != null){
+                    url = utilMethod.getImgUrl(productRegisterDto.getCourse().get(i).getImage().getBase64Data(),
+                            productRegisterDto.getCourse().get(i).getImage().getFileName());
+                    itemCourse.setImageUrl(url);
+                }
             }
+
             itemCourse.setItem(item);
             itemCourse.setTitle(productRegisterDto.getCourse().get(i).getTitle());
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
