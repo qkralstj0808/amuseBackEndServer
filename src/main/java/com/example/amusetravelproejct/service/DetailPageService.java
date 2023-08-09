@@ -185,47 +185,37 @@ public class DetailPageService {
 
         List<ItemReview> findItemReviews = findItem.getItemReviews();
 
-        Integer reviewCount = findItemReviews.size();
-
-        Double sum_rating = 0.;
-        Double rate = 0.;
+        int reviewCount = findItemReviews.size();
+        Double rate = findItem.getRated();
 
         List<String> itemReviewImgList = new ArrayList<>();
 
+        // 상품에 리뷰가 있다면
         if(reviewCount != 0){
             for(int i = 0 ; i < reviewCount ; i++){
-                sum_rating += (double)findItemReviews.get(i).getRating();
                 if(findItemReviews.get(i).getItemReviewImgs().size() != 0){
                     for(int j = 0 ; j < findItemReviews.get(i).getItemReviewImgs().size();j++){
                         itemReviewImgList.add(findItemReviews.get(i).getItemReviewImgs().get(j).getImgUrl());
                     }
                 }
             }
-            rate = sum_rating/reviewCount;
-        }else{
-            rate = 0.;
-            itemReviewImgList = null;
-            if(findItemReviews.size() != 0){
-                return  new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,null,findItemReviews.stream().map(
-                        itemReview -> new DetailPageResponse.ReviewInfo(itemReview.getUser().getUsername(),
-                                itemReview.getContent(),itemReview.getRating(),itemReview.getCreatedDate(),null)).collect(Collectors.toList())));
-            }else{
-                return  new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,null,null));
-            }
 
+            return new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,
+                    itemReviewImgList.stream().map(
+                            imgString -> new DetailPageResponse.ReviewImage(imgString)
+                    ).collect(Collectors.toList()),
+                    findItemReviews.stream().map(
+                            itemReview -> new DetailPageResponse.ReviewInfo(itemReview.getUser().getUsername(),
+                                    itemReview.getContent(),itemReview.getRating(),itemReview.getCreatedDate(),itemReview.getItemReviewImgs().stream().map(
+                                    itemReviewImg -> new DetailPageResponse.ReviewImage(itemReviewImg.getImgUrl())
+                            ).collect(Collectors.toList()))
+                    ).collect(Collectors.toList())));
 
+        }else{  // 상품에 리뷰가 없다면
+            return  new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,null,null));
         }
 
-        return new ResponseTemplate(new DetailPageResponse.getReview(rate,reviewCount,
-                itemReviewImgList.stream().map(
-                        imgString -> new DetailPageResponse.ReviewImage(imgString)
-                ).collect(Collectors.toList()),
-                findItemReviews.stream().map(
-                        itemReview -> new DetailPageResponse.ReviewInfo(itemReview.getUser().getUsername(),
-                                itemReview.getContent(),itemReview.getRating(),itemReview.getCreatedDate(),itemReview.getItemReviewImgs().stream().map(
-                                        itemReviewImg -> new DetailPageResponse.ReviewImage(itemReviewImg.getImgUrl())
-                        ).collect(Collectors.toList()))
-                ).collect(Collectors.toList())));
+
     }
 
     @Transactional
