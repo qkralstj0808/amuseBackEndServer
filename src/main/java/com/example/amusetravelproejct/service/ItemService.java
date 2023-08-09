@@ -185,9 +185,9 @@ public class ItemService {
         }
 
         if(productRegisterDto.getEndDate() != null && !productRegisterDto.getEndDate().equals("")){
-            item.setStartDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+            item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         }else{
-            item.setStartDate(null);
+            item.setEndDate(null);
         }
 
         item.setDisplay(true);
@@ -323,9 +323,9 @@ public class ItemService {
         }
 
         if(productRegisterDto.getEndDate() != null && !productRegisterDto.getEndDate().equals("")){
-            item.setStartDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+            item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         }else{
-            item.setStartDate(null);
+            item.setEndDate(null);
         }
 //        item.setDisplayStatus(DisplayStatus.DISPLAY);
         item.setDisplay(true);
@@ -956,6 +956,10 @@ public class ItemService {
         Item item = itemRepository.findById(item_db_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
+
+        if(request.getDisplay_true() == null){
+            item.setDisplay(false);
+        }
 
         if (request.getDisplay_true()){
 //            item.setDisplayStatus(DisplayStatus.DISPLAY);
