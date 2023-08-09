@@ -116,10 +116,11 @@ public class AdminPageController {
             return new ResponseTemplate<>("상품 수정 완료");
         }
     }
-    @GetMapping("/product/{item_db_id}")
-    public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("item_db_id") Long item_db_id){
+    @GetMapping("/product/{item-db-id}")
+    public ResponseTemplate<ProductRegisterDto> reqProductDetail(@PathVariable("item-db-id") Long item_db_id){
         //TODO
         // productRegisterDto 데이터 선 처리
+        log.info("item_db_id : " + item_db_id);
 
         return new ResponseTemplate<>(itemService.processGetItemDetail(item_db_id));
     }
