@@ -295,9 +295,11 @@ public class ItemService {
         item.getTargetUsers().clear();
 
         if(productRegisterDto.getAccessAuthority() != null){
+            log.info("productRegisterDto.getAccessAuthority().getAccessibleTier() : " + productRegisterDto.getAccessAuthority().getAccessibleTier());
             if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
                 item.setGrade(Grade.Bronze);
             }else{
+
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }
 
