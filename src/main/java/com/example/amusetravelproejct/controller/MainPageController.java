@@ -99,7 +99,7 @@ public class MainPageController {
             User findUser = userService.getUserByPrincipal(userPrincipal);
             grade = findUser.getGrade();
         }
-
+        log.info("grade : " + grade);
         log.info("grade" + grade.ordinal());
         return mainPageService.getCategoryPage(category_id,grade);
     }

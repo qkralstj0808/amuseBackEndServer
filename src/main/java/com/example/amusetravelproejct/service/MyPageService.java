@@ -62,7 +62,18 @@ public class MyPageService {
         itemReview.setRating(request.getRate());
         List<ItemReviewImg> itemReviewImgList = processItemImg(request, utilMethod, itemReview);
         itemReview.setItemReviewImgs(itemReviewImgList);
+
+        Double before_rated = findItem.getRated();
+        Integer before_review_count = findItem.getReview_count();
+
+        Integer current_review_count = before_review_count + 1;
+        Double current_rated = (before_rated*before_review_count + request.getRate())/current_review_count;
+
+        findItem.setReview_count(current_review_count);
+        findItem.setRated(current_rated);
+
         itemReviewRepository.save(itemReview);
+        itemRepository.save(findItem);
 
         return new ResponseTemplate(new MyPageResponse.setReview(findUser.getUsername(),request.getRate(),
                 request.getReview_content(),itemReviewImgList.stream().map(

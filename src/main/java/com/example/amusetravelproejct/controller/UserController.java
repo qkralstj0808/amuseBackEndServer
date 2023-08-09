@@ -57,7 +57,4 @@ public class UserController {
         return userService.getUserInfoBeforeLogin(findUser);
     }
 
-
-
-
 }
