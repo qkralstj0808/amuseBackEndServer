@@ -157,6 +157,8 @@ public class ItemService {
                     targetUserRepository.save(targetUser);
                 });
             }
+        }else{
+            item.setGrade(Grade.BRONZE);
         }
 
         item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
