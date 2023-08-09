@@ -14,6 +14,7 @@ import com.example.amusetravelproejct.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -125,7 +126,7 @@ public class AdminPageController {
         return new ResponseTemplate<>(itemService.processGetItemDetail(item_db_id));
     }
 
-    @GetMapping("/product/delete")
+    @DeleteMapping("/product/delete")
     public ResponseTemplate<String> reqProductDelete(@RequestParam("id") Long item_db_id){
         //TODO
         // productRegisterDto 데이터 선 처리
