@@ -10,6 +10,7 @@ import org.springframework.util.Base64Utils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,6 +58,10 @@ public class UtilMethod {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(type);
         metadata.setContentLength(imageBytes.length);
+        if(fileName == null){
+            fileName = String.valueOf(System.currentTimeMillis() / 1000);
+            log.info("fileName : " + fileName);
+        }
         String key = "images/" + fileName;
         amazonS3Client.putObject(bucketName, key, inputStream, metadata);
         String s3Url = amazonS3Client.getUrl(bucketName, key).toString();

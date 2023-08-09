@@ -69,7 +69,7 @@ public class ItemService {
 
     //Item
     @Transactional
-    public Item processCreate(ProductRegisterDto productRegisterDto) throws ParseException {
+    public Item processCreate(ProductRegisterDto productRegisterDto,Admin admin) throws ParseException {
         Item item;
         itemRepository.findByItemCode(productRegisterDto.getProductId()).ifPresent(data -> {
             throw new CustomException(ErrorCode.ITEM_ALREADY_EXIST);
@@ -92,52 +92,70 @@ public class ItemService {
         item.setItemCode(productRegisterDto.getProductId());
         item.setTitle(productRegisterDto.getTitle());
         List<String> hashTags = productRegisterDto.getCategory();
-        hashTags.forEach(data -> {
-            TempHashTag tempHashTag = new TempHashTag();
-            if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
-                tempHashTag.setHashTag(data);
-                tempHashTagRepository.save(tempHashTag);
-            } else {
-                tempHashTag = tempHashTagRepository.findByHashTag(data).get();
-            }
-            ItemHashTag itemHashTag = new ItemHashTag();
-            itemHashTag.setItem(item);
-            itemHashTag.setHashTag(data);
-            itemHashTag.setTempHashTag(tempHashTag);
-            itemHashTagRepository.save(itemHashTag);
-        });
 
-        item.setCountry(productRegisterDto.getLocation().getCountry());
-        item.setCity(productRegisterDto.getLocation().getCity());
+        if(hashTags != null){
+            hashTags.forEach(data -> {
+                TempHashTag tempHashTag = new TempHashTag();
+                if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
+                    tempHashTag.setHashTag(data);
+                    tempHashTagRepository.save(tempHashTag);
+                } else {
+                    tempHashTag = tempHashTagRepository.findByHashTag(data).get();
+                }
+                ItemHashTag itemHashTag = new ItemHashTag();
+                itemHashTag.setItem(item);
+                itemHashTag.setHashTag(data);
+                itemHashTag.setTempHashTag(tempHashTag);
+                itemHashTagRepository.save(itemHashTag);
+            });
+        }
+
+        if(productRegisterDto.getLocation() != null){
+            item.setCountry(productRegisterDto.getLocation().getCountry());
+            item.setCity(productRegisterDto.getLocation().getCity());
+        }else{
+            item.setCountry(null);
+            item.setCity(null);
+        }
+
         item.setContent_1(productRegisterDto.getMainInfo());
         item.setContent_2(productRegisterDto.getExtraInfo());
-        item.setAdmin(getAdminByAdminId(productRegisterDto.getAdmin()).get());
+        item.setAdmin(admin);
         item.setStartPrice(productRegisterDto.getStartPrice());
         item.setStartPoint(productRegisterDto.getStartPoint());
         item.setRunningTime(productRegisterDto.getRunningTime());
         item.setActivityIntensity(productRegisterDto.getActivityIntensity());
 
-        // 가이드 추가
-        Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
-        );
+        if(productRegisterDto.getGuide_code() != null){
+            Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
+                    () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+            );
 
 //        Guide guide1 = guideRepository.findById(productRegisterDto.getGuide_db_id()).orElseThrow(
 //                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
 //        );
 
-        item.setGuide(guide);
-        item.setGuide_comment(productRegisterDto.getGuide_comment());
+            item.setGuide(guide);
+            item.setGuide_comment(productRegisterDto.getGuide_comment());
+        }else{
+            item.setGuide(null);
+            item.setGuide_comment(null);
+        }
+        // 가이드 추가
+
 
         Long duration = 0L;
 
-        if (productRegisterDto.getDuration().length() < 4){
-            duration = Long.valueOf(productRegisterDto.getDuration());
-        } else{
-            duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+        if(productRegisterDto.getDuration() != null){
+            if (productRegisterDto.getDuration().length() < 4){
+                duration = Long.valueOf(productRegisterDto.getDuration());
+            } else{
+                duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+            }
+            item.setDuration(Math.toIntExact(duration));
+        }else{
+            item.setDuration(null);
         }
-        item.setDuration(Math.toIntExact(duration));
-
 
         if(productRegisterDto.getAccessAuthority() != null){
             if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
@@ -149,27 +167,39 @@ public class ItemService {
             if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null) {
                 List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
                 users.forEach(email -> {
-                    User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                    TargetUser targetUser = new TargetUser();
-
-                    targetUser.setItem(item);
-                    targetUser.setUser(user);
-                    targetUserRepository.save(targetUser);
+                    List<User> userList = userRepository.findByEmail(email);
+                    if(userList.size() != 0){
+                        userList.forEach(user -> {
+                            TargetUser targetUser = new TargetUser();
+                            targetUser.setItem(item);
+                            targetUser.setUser(user);
+                            targetUserRepository.save(targetUser);
+                        });
+                    }
                 });
             }
         }else{
             item.setGrade(Grade.BRONZE);
         }
 
-        item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
-        item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-//        item.setDisplayStatus(DisplayStatus.DISPLAY);
+        if(productRegisterDto.getStartDate() != null){
+            item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
+        }else{
+            item.setStartDate(null);
+        }
+
+        if(productRegisterDto.getEndDate() != null){
+            item.setStartDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        }else{
+            item.setStartDate(null);
+        }
+
         item.setDisplay(true);
         return item;
     }
 
     @Transactional
-    public Item processUpdate(ProductRegisterDto productRegisterDto) throws ParseException {
+    public Item processUpdate(ProductRegisterDto productRegisterDto,Admin admin) throws ParseException {
         Item item = itemRepository.findById(productRegisterDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         item.setItemCode(productRegisterDto.getProductId());
         item.setTitle(productRegisterDto.getTitle());
@@ -187,64 +217,81 @@ public class ItemService {
 
 
         item.getItemHashTags().clear();
-        hashTags.forEach(data -> {
-            TempHashTag tempHashTag = new TempHashTag();
-            if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
-                tempHashTag.setHashTag(data);
-                tempHashTagRepository.save(tempHashTag);
-            } else {
-                tempHashTag = tempHashTagRepository.findByHashTag(data).get();
-            }
-            ItemHashTag itemHashTag = new ItemHashTag();
-            itemHashTag.setItem(item);
-            itemHashTag.setHashTag(data);
-            itemHashTag.setTempHashTag(tempHashTag);
-            itemHashTagRepository.save(itemHashTag);
-        });
+        if(hashTags != null){
+            hashTags.forEach(data -> {
+                TempHashTag tempHashTag = new TempHashTag();
+                if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
+                    tempHashTag.setHashTag(data);
+                    tempHashTagRepository.save(tempHashTag);
+                } else {
+                    tempHashTag = tempHashTagRepository.findByHashTag(data).get();
+                }
+                ItemHashTag itemHashTag = new ItemHashTag();
+                itemHashTag.setItem(item);
+                itemHashTag.setHashTag(data);
+                itemHashTag.setTempHashTag(tempHashTag);
+                itemHashTagRepository.save(itemHashTag);
+            });
+        }
 
-
-        item.setCountry(productRegisterDto.getLocation().getCountry());
-        item.setCity(productRegisterDto.getLocation().getCity());
+        if(productRegisterDto.getLocation() != null){
+            item.setCountry(productRegisterDto.getLocation().getCountry());
+            item.setCity(productRegisterDto.getLocation().getCity());
+        }else{
+            item.setCountry(null);
+            item.setCity(null);
+        }
 
         item.setContent_1(productRegisterDto.getMainInfo());
         item.setContent_2(productRegisterDto.getExtraInfo());
-
-
-        item.setUpdateAdmin(getAdminByAdminId(productRegisterDto.getUpdateAdmin()).get());
+        item.setUpdateAdmin(admin);
         item.setStartPrice(productRegisterDto.getStartPrice());
+        item.setStartPoint(productRegisterDto.getStartPoint());
+        item.setRunningTime(productRegisterDto.getRunningTime());
+        item.setActivityIntensity(productRegisterDto.getActivityIntensity());
 
-        if(productRegisterDto.getStartPoint() != null){
-            item.setStartPoint(productRegisterDto.getStartPoint());
-        }
-
-        if(productRegisterDto.getRunningTime() != null){
-            item.setRunningTime(productRegisterDto.getRunningTime());
-        }
-
-        if(productRegisterDto.getActivityIntensity() != null){
-            item.setActivityIntensity(productRegisterDto.getActivityIntensity());
-        }
+//        if(productRegisterDto.getStartPoint() != null){
+//
+//        }
+//
+//        if(productRegisterDto.getRunningTime() != null){
+//
+//        }
+//
+//        if(productRegisterDto.getActivityIntensity() != null){
+//
+//        }
 
         // 가이드 업데이트
-        Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
-        );
+        if(productRegisterDto.getGuide_code() != null){
+            Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
+                    () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+            );
 
 //        Guide guide1 = guideRepository.findById(productRegisterDto.getGuide_db_id()).orElseThrow(
 //                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
 //        );
 
-        item.setGuide(guide);
-        item.setGuide_comment(productRegisterDto.getGuide_comment());
+            item.setGuide(guide);
+            item.setGuide_comment(productRegisterDto.getGuide_comment());
+        }else{
+            item.setGuide(null);
+            item.setGuide_comment(null);
+        }
 
         Long duration = 0L;
 
-        if (productRegisterDto.getDuration().length() < 4){
-            duration = Long.valueOf(productRegisterDto.getDuration());
-        } else{
-            duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+        if(productRegisterDto.getDuration() != null){
+            if (productRegisterDto.getDuration().length() < 4){
+                duration = Long.valueOf(productRegisterDto.getDuration());
+            } else{
+                duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+            }
+            item.setDuration(Math.toIntExact(duration));
+        }else{
+            item.setDuration(null);
         }
-        item.setDuration(Math.toIntExact(duration));
+
 
 
         item.getTargetUsers().clear();
@@ -258,12 +305,15 @@ public class ItemService {
             if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
                 List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
                 users.forEach(email -> {
-                    User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                    TargetUser targetUser = new TargetUser();
-
-                    targetUser.setItem(item);
-                    targetUser.setUser(user);
-                    targetUserRepository.save(targetUser);
+                    List<User> userList = userRepository.findByEmail(email);
+                    if(userList.size() != 0){
+                        userList.forEach(user -> {
+                            TargetUser targetUser = new TargetUser();
+                            targetUser.setItem(item);
+                            targetUser.setUser(user);
+                            targetUserRepository.save(targetUser);
+                        });
+                    }
                 });
             }
         }
