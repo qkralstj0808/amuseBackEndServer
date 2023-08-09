@@ -743,9 +743,10 @@ public class ItemService {
         ProductRegisterDto.accessData accessData = new ProductRegisterDto.accessData();
         List<String> userEmail = new ArrayList<>();
 
-        if (item.getGrade() != null){
-            accessData.setAccessibleTier(item.getGrade().toString());
-        }
+//        if (item.getGrade() != null){
+//
+//        }
+        accessData.setAccessibleTier(item.getGrade().toString());
 
         if (item.getTargetUsers() != null){
             item.getTargetUsers().forEach(user ->{
@@ -807,7 +808,13 @@ public class ItemService {
             courseDto.setTimeCost(itemCourse.getTimeCost());
             courseDto.setSequenceId(itemCourse.getSequenceId());
             courseDto.setDay(Long.valueOf(itemCourse.getDay()));
-            courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(itemCourse.getLatitude().toString(),itemCourse.getLongitude().toString()));
+
+            if(itemCourse.getLatitude() != null){
+                courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(itemCourse.getLatitude().toString(),itemCourse.getLongitude().toString()));
+            }else{
+                courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(null,null));
+            }
+
             ProductRegisterDto.CourseDto.CourseImageDto courseImageDto = new ProductRegisterDto.CourseDto.CourseImageDto();
             courseImageDto.setImgUrl(itemCourse.getImageUrl());
             courseDto.setImage(courseImageDto);
