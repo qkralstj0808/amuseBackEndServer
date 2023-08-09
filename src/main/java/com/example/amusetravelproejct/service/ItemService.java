@@ -159,7 +159,7 @@ public class ItemService {
 
         if(productRegisterDto.getAccessAuthority() != null){
             if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-                item.setGrade(Grade.BRONZE);
+                item.setGrade(Grade.Bronze);
             }else{
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }
@@ -179,7 +179,7 @@ public class ItemService {
                 });
             }
         }else{
-            item.setGrade(Grade.BRONZE);
+            item.setGrade(Grade.Bronze);
         }
 
         if(productRegisterDto.getStartDate() != null){
@@ -296,7 +296,7 @@ public class ItemService {
 
         if(productRegisterDto.getAccessAuthority() != null){
             if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-                item.setGrade(Grade.BRONZE);
+                item.setGrade(Grade.Bronze);
             }else{
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }

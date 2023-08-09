@@ -124,7 +124,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             accessToken = tokenProvider.createAuthToken(
                     userInfo.getId(),
                     roleType.getCode(),
-                    Grade.BRONZE,
+                    Grade.Bronze,
                     new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
                     log.info("appProperties.getAuth().getTokenExpiry() : " + appProperties.getAuth().getTokenExpiry());
 

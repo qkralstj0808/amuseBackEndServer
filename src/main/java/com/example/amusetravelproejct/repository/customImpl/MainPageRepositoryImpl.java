@@ -73,7 +73,7 @@ public class MainPageRepositoryImpl implements MainPageRepositoryCustom {
             return Expressions.TRUE;
         }
 
-        return mainPage.item.grade.between(Grade.BRONZE,grade);
+        return mainPage.item.grade.between(Grade.Bronze,grade);
     }
 
     private BooleanExpression ItemDisplay(Boolean display){
