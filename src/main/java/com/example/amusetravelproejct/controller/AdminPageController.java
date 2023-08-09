@@ -126,11 +126,11 @@ public class AdminPageController {
     }
 
     @GetMapping("/product/delete")
-    public ResponseTemplate<String> reqProductDelete(@RequestParam("itemCode") String itemCode){
+    public ResponseTemplate<String> reqProductDelete(@RequestParam("id") Long item_db_id){
         //TODO
         // productRegisterDto 데이터 선 처리
 
-        itemService.processDeleteItem(itemCode);
+        itemService.processDeleteItem(item_db_id);
         return new ResponseTemplate<>("상품 삭제 완료");
     }
 
@@ -156,9 +156,9 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(itemService.processGetAllDisplayItems(limit,sqlPage,displayStatus));
     }
-    @PostMapping("/change/item/{itemCode}/displayStatus")
-    public ResponseTemplate<String> changeDisplayStatus(@RequestBody AdminPageRequest.changeDisplayStatus request ,@PathVariable("itemCode") String itemCode){
-        itemService.changeItemStatus(request,itemCode);
+    @PostMapping("/change/item/{item-db-id}/displayStatus")
+    public ResponseTemplate<String> changeDisplayStatus(@RequestBody AdminPageRequest.changeDisplayStatus request ,@PathVariable("item-db-id") Long item_db_id){
+        itemService.changeItemStatus(request,item_db_id);
 
         return new ResponseTemplate<>("상품 상태가 변경되었습니다.");
     }

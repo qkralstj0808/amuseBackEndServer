@@ -58,7 +58,8 @@ public class UtilMethod {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(type);
         metadata.setContentLength(imageBytes.length);
-        if(fileName == null){
+
+        if(fileName == null || fileName.equals("")){
             fileName = String.valueOf(System.currentTimeMillis() / 1000);
             log.info("fileName : " + fileName);
         }
