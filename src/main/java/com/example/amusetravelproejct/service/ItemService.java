@@ -323,6 +323,7 @@ public class ItemService {
         }
 
         log.info("productRegisterDto.getEndDate() : " + productRegisterDto.getEndDate());
+        log.info(String.valueOf(productRegisterDto.getEndDate() != null));
         if(productRegisterDto.getEndDate() != null && !productRegisterDto.getEndDate().equals("")){
             item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         }else{
