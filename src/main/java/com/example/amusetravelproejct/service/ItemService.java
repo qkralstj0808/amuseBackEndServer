@@ -6,7 +6,6 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 
-import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
@@ -38,7 +37,6 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final AdminRepository adminRepository;
     private final ItemHashTagRepository itemHashTagRepository;
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
@@ -50,18 +48,16 @@ public class ItemService {
     private final TargetUserRepository targetUserRepository;
     private final IconRepository iconRepository;
     private final LikeItemRepository likeItemRepository;
-    private final ItemIconRepository itemIconRepository;
-    private final CategoryRepository categoryRepository;
 
     private final GuideRepository guideRepository;
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper;
 
-    static String bucketName = "amuse-img";
+//    static String bucketName = "amuse-img";
 
     //Admin
-    public Optional<Admin> getAdminByAdminId(String admin_id) {
-        return Optional.ofNullable(adminRepository.findByAdminId(admin_id).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
-    }
+//    public Optional<Admin> getAdminByAdminId(String admin_id) {
+//        return Optional.ofNullable(adminRepository.findByAdminId(admin_id).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+//    }
 
     public List<Icon> getIconList() {
         return iconRepository.findAll();
@@ -126,11 +122,11 @@ public class ItemService {
         item.setRunningTime(productRegisterDto.getRunningTime());
         item.setActivityIntensity(productRegisterDto.getActivityIntensity());
 
-        if(productRegisterDto.getGuide_code() != null){
+        log.info("productRegisterDto.getGuide_code() : " + productRegisterDto.getGuide_code());
+        if(productRegisterDto.getGuide_code() != null && !productRegisterDto.getGuide_code().equals("")){
             Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
                     () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
             );
-
 //        Guide guide1 = guideRepository.findById(productRegisterDto.getGuide_db_id()).orElseThrow(
 //                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
 //        );
@@ -144,11 +140,11 @@ public class ItemService {
         // 가이드 추가
 
 
-        Long duration = 0L;
+        long duration ;
 
-        if(productRegisterDto.getDuration() != null){
+        if(productRegisterDto.getDuration() != null && !productRegisterDto.getDuration().equals("")){
             if (productRegisterDto.getDuration().length() < 4){
-                duration = Long.valueOf(productRegisterDto.getDuration());
+                duration = Long.parseLong(productRegisterDto.getDuration());
             } else{
                 duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
             }
@@ -158,13 +154,13 @@ public class ItemService {
         }
 
         if(productRegisterDto.getAccessAuthority() != null){
-            if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
+            if (productRegisterDto.getAccessAuthority().getAccessibleTier().equals("")){
                 item.setGrade(Grade.Bronze);
             }else{
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }
 
-            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null) {
+            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null && !productRegisterDto.getAccessAuthority().getAccessibleUserList().isEmpty()) {
                 List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
                 users.forEach(email -> {
                     List<User> userList = userRepository.findByEmail(email);
@@ -182,13 +178,13 @@ public class ItemService {
             item.setGrade(Grade.Bronze);
         }
 
-        if(productRegisterDto.getStartDate() != null){
+        if(productRegisterDto.getStartDate() != null && !productRegisterDto.getStartDate().equals("")){
             item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         }else{
             item.setStartDate(null);
         }
 
-        if(productRegisterDto.getEndDate() != null){
+        if(productRegisterDto.getEndDate() != null && !productRegisterDto.getEndDate().equals("")){
             item.setStartDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         }else{
             item.setStartDate(null);
@@ -263,7 +259,8 @@ public class ItemService {
 //        }
 
         // 가이드 업데이트
-        if(productRegisterDto.getGuide_code() != null){
+        log.info("productRegisterDto.getGuide_code() : " + productRegisterDto.getGuide_code());
+        if(productRegisterDto.getGuide_code() != null && !productRegisterDto.getGuide_code().equals("")){
             Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
                     () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
             );
@@ -279,11 +276,11 @@ public class ItemService {
             item.setGuide_comment(null);
         }
 
-        Long duration = 0L;
+        long duration ;
 
-        if(productRegisterDto.getDuration() != null){
+        if(productRegisterDto.getDuration() != null && !productRegisterDto.getDuration().equals("")){
             if (productRegisterDto.getDuration().length() < 4){
-                duration = Long.valueOf(productRegisterDto.getDuration());
+                duration = Long.parseLong(productRegisterDto.getDuration());
             } else{
                 duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
             }
@@ -303,7 +300,7 @@ public class ItemService {
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }
 
-            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
+            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null && !productRegisterDto.getAccessAuthority().getAccessibleUserList().isEmpty() ) {
                 List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
                 users.forEach(email -> {
                     List<User> userList = userRepository.findByEmail(email);
@@ -319,13 +316,13 @@ public class ItemService {
             }
         }
 
-        if(productRegisterDto.getStartDate() != null){
+        if(productRegisterDto.getStartDate() != null && !productRegisterDto.getStartDate().equals("")){
             item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
         }else{
             item.setStartDate(null);
         }
 
-        if(productRegisterDto.getEndDate() != null){
+        if(productRegisterDto.getEndDate() != null && !productRegisterDto.getEndDate().equals("")){
             item.setStartDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
         }else{
             item.setStartDate(null);
@@ -344,12 +341,8 @@ public class ItemService {
         if (productRegisterDto.getOption().equals("update")){
             List<Long> ordId = new ArrayList<>();
             List<Long> inputId = new ArrayList<>();
-            item.getItemImg_list().forEach(itemImg -> {
-                ordId.add(itemImg.getId());
-            });
-            productRegisterDto.getMainImg().forEach(itemImg -> {
-                inputId.add(itemImg.getId());
-            });
+            item.getItemImg_list().forEach(itemImg -> ordId.add(itemImg.getId()));
+            productRegisterDto.getMainImg().forEach(itemImg -> inputId.add(itemImg.getId()));
 
             for (int i = 0; i < ordId.size(); i ++){
                 if (!inputId.contains(ordId.get(i))){
@@ -378,7 +371,9 @@ public class ItemService {
                 }
 
                 if (productRegisterDto.getMainImg().get(i).getBase64Data() !=null){
-                    ItemImg itemImg = imgRepository.findById(productRegisterDto.getMainImg().get(i).getId()).get();
+                    ItemImg itemImg = imgRepository.findById(productRegisterDto.getMainImg().get(i).getId()).orElseThrow(
+                            () -> new CustomException(ErrorCode.IMAGE_NOT_FOUND)
+                    );
                     String url = utilMethod.getImgUrl(productRegisterDto.getMainImg().get(i).getBase64Data(),
                             productRegisterDto.getMainImg().get(i).getFileName());
 
@@ -392,7 +387,7 @@ public class ItemService {
         }
     }
     //ItemTicket
-    public void processItemTicket(ProductRegisterDto productRegisterDto, Item item) throws ParseException {
+    public void processItemTicket(ProductRegisterDto productRegisterDto, Item item)  {
 
         /*
             1.데이터 입력 (start, end, price(지정값), weekdayPrices(요일값)
@@ -438,14 +433,14 @@ public class ItemService {
                     itemTicketPriceRecodeRepository.save(itemTicketPriceRecode);
 
                     try {
-                        startDateTemp = (Date) UtilMethod.date.parse(prices.getStartDate());
+                        startDateTemp = UtilMethod.date.parse(prices.getStartDate());
 
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
 
                     try {
-                        endDateTemp = (Date) UtilMethod.date.parse(prices.getEndDate());
+                        endDateTemp = UtilMethod.date.parse(prices.getEndDate());
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -459,20 +454,22 @@ public class ItemService {
                 });
                 int count = datePoint.size();
                 while (count-- != 0) {
-                    int index = datePoint.indexOf(datePoint.stream().min(Long::compareTo).get());
-                    HashMap<String, String> weekDayPrices = (HashMap<String, String>) objectMapper.convertValue(weekdayPrices.get(index), Map.class);
-                    Date startDateTemp = new Date(startDate.get(index).getTime());
-                    while (startDateTemp.getTime() <= endDate.get(index).getTime()) {
-                        if (dateSet.add(startDateTemp.getTime())) {
-                            ItemTicketPrice itemTicketPrice = new ItemTicketPrice();
-                            itemTicketPrice.setPrice(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])));
-                            itemTicketPrice.setStartDate(startDateTemp.toString());
-                            itemTicketPrice.setItemTicket(itemTicket);
-                            itemTicketPriceRepository.save(itemTicketPrice);
+                    if(datePoint.stream().min(Long::compareTo).isPresent()){
+                        int index = datePoint.indexOf(datePoint.stream().min(Long::compareTo).get());
+                        HashMap<String, String> weekDayPrices = (HashMap<String, String>) objectMapper.convertValue(weekdayPrices.get(index), Map.class);
+                        Date startDateTemp = new Date(startDate.get(index).getTime());
+                        while (startDateTemp.getTime() <= endDate.get(index).getTime()) {
+                            if (dateSet.add(startDateTemp.getTime())) {
+                                ItemTicketPrice itemTicketPrice = new ItemTicketPrice();
+                                itemTicketPrice.setPrice(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])));
+                                itemTicketPrice.setStartDate(startDateTemp.toString());
+                                itemTicketPrice.setItemTicket(itemTicket);
+                                itemTicketPriceRepository.save(itemTicketPrice);
+                            }
+                            startDateTemp.setTime(startDateTemp.getTime() + (1000 * 60 * 60 * 24));     //하루 더하기
                         }
-                        startDateTemp.setTime(startDateTemp.getTime() + (1000 * 60 * 60 * 24));     //하루 더하기
+                        datePoint.set(index, Long.MAX_VALUE);
                     }
-                    datePoint.set(index, Long.MAX_VALUE);
                 }
                 itemTicketRepository.save(itemTicket);
             }
@@ -483,20 +480,14 @@ public class ItemService {
             List<Long> inputTicketId = new ArrayList<>();
             List<Long> oldTicketId = new ArrayList<>();
 
-            productRegisterDto.getTicket().forEach(ticketDto -> {
-                inputTicketId.add(ticketDto.getId());
-            });
-            item.getItemTickets().forEach(itemTicket -> {
-                oldTicketId.add(itemTicket.getId());
-            });
+            productRegisterDto.getTicket().forEach(ticketDto -> inputTicketId.add(ticketDto.getId()));
+            item.getItemTickets().forEach(itemTicket -> oldTicketId.add(itemTicket.getId()));
 
 
             item.getItemTickets().forEach(itemTicket -> {
                 if (!inputTicketId.contains(itemTicket.getId())){
                     itemTicket.getItemTicketPrices().clear();
-                    itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> {
-                        itemTicketPriceRecode.setItemTicket(null);
-                    });
+                    itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> itemTicketPriceRecode.setItemTicket(null));
                     itemTicket.setItem(null);
 
                 }
@@ -540,14 +531,14 @@ public class ItemService {
                     itemTicketPriceRecodeRepository.save(itemTicketPriceRecode);
 
                     try {
-                        startDateTemp = (Date) UtilMethod.date.parse(prices.getStartDate());
+                        startDateTemp = UtilMethod.date.parse(prices.getStartDate());
 
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
 
                     try {
-                        endDateTemp = (Date) UtilMethod.date.parse(prices.getEndDate());
+                        endDateTemp = UtilMethod.date.parse(prices.getEndDate());
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -746,8 +737,8 @@ public class ItemService {
     }
 
     @Transactional
-    public void processDeleteItem(String itemCode) {
-        Item item = itemRepository.findByItemCode(itemCode).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+    public void processDeleteItem(Long item_db_id) {
+        Item item = itemRepository.findById(item_db_id).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         item.getItemImg_list().clear();
         item.getItemHashTags().clear();
@@ -957,12 +948,12 @@ public class ItemService {
     }
     public ResponseTemplate<ItemResponse.getAllItemId> getAllItemId() {
         List<Long> allItemId = itemRepository.findAllItemId();
-        return new ResponseTemplate(new ItemResponse.getAllItemId(allItemId.stream().collect(Collectors.toList())));
+        return new ResponseTemplate(new ItemResponse.getAllItemId(new ArrayList<>(allItemId)));
     }
 
 @Transactional
-    public void changeItemStatus(AdminPageRequest.changeDisplayStatus request,String itemCode){
-        Item item = itemRepository.findByItemCode(itemCode).orElseThrow(
+    public void changeItemStatus(AdminPageRequest.changeDisplayStatus request,Long item_db_id){
+        Item item = itemRepository.findById(item_db_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
 
@@ -1011,8 +1002,6 @@ public class ItemService {
 
 
     public Object getPageCount(int limit) {
-        int pageSize = limit;
-        int totalPage = (int) Math.ceil(itemRepository.count() / (double) pageSize);
-        return totalPage;
+        return (int) Math.ceil(itemRepository.count() / (double) limit);
     }
 }

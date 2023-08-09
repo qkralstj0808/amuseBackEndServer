@@ -36,13 +36,13 @@ public class AdvertisementService {
         advertisement.setTitle(adminAdvertisementRegisterDto.getTitle());
         advertisement.setContent(adminAdvertisementRegisterDto.getAdContent());
 
-        if(adminAdvertisementRegisterDto.getStartDate() != null){
+        if(adminAdvertisementRegisterDto.getStartDate() != null && !adminAdvertisementRegisterDto.getStartDate().equals("")){
             advertisement.setStartDate(Date.valueOf(adminAdvertisementRegisterDto.getStartDate()));
         }else{
             advertisement.setStartDate(null);
         }
 
-        if(adminAdvertisementRegisterDto.getEndDate() != null){
+        if(adminAdvertisementRegisterDto.getEndDate() != null && !adminAdvertisementRegisterDto.getEndDate().equals("")){
             advertisement.setEndDate(Date.valueOf(adminAdvertisementRegisterDto.getEndDate()));
         }else{
             advertisement.setEndDate(null);
@@ -52,12 +52,15 @@ public class AdvertisementService {
 
         String category = "";
 
-        if(adminAdvertisementRegisterDto.getAdCategory() == null || adminAdvertisementRegisterDto.getAdCategory().length == 0){
-            advertisement.setCategory(null);
-        }else{
+        log.info("adminAdvertisementRegisterDto.getAdCategory().length : " + adminAdvertisementRegisterDto.getAdCategory().length);
+
+        if(adminAdvertisementRegisterDto.getAdCategory() != null ){
             for (String s : adminAdvertisementRegisterDto.getAdCategory()) {
                 category += s + ",";
             }
+            advertisement.setCategory(category);
+        }else{
+            advertisement.setCategory(null);
         }
 
         advertisement.setCategory(category);
@@ -83,7 +86,7 @@ public class AdvertisementService {
         advertisementRegister.setTitle(advertisement.getTitle());
         advertisementRegister.setStartDate(advertisement.getStartDate() == null ? null :  advertisement.getStartDate().toString());
         advertisementRegister.setEndDate(advertisement.getEndDate() == null ? null :  advertisement.getEndDate().toString());
-        advertisementRegister.setAdCategory(advertisement.getCategory().split(","));
+        advertisementRegister.setAdCategory(advertisement.getCategory() == null ? null : advertisement.getCategory().split(","));
         advertisementRegister.setAdContent(advertisement.getContent());
         advertisementRegister.setCreatedBy(advertisement.getAdmin() == null ? null :  advertisement.getAdmin().getAdminId());
         advertisementRegister.setPcBannerUrl(advertisement.getPcBannerUrl());
@@ -99,17 +102,19 @@ public class AdvertisementService {
         Advertisement advertisement = AdvertisementRepository.findById(advertisementEditDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.ADVERTISEMENT_NOT_FOUND));
         advertisement.setTitle(advertisementEditDto.getTitle());
 
-        if(advertisementEditDto.getStartDate() != null){
+        if(advertisementEditDto.getStartDate() != null && !advertisementEditDto.getStartDate().equals("")){
             advertisement.setStartDate(Date.valueOf(advertisementEditDto.getStartDate()));
+        }else{
+            advertisement.setStartDate(null);
         }
 
-        if(advertisementEditDto.getEndDate() != null){
+        if(advertisementEditDto.getEndDate() != null && !advertisementEditDto.getEndDate().equals("")){
             advertisement.setEndDate(Date.valueOf(advertisementEditDto.getEndDate()));
+        }else{
+            advertisement.setEndDate(null);
         }
 
-        if(advertisementEditDto.getAdContent() != null){
-            advertisement.setContent(advertisementEditDto.getAdContent());
-        }
+        advertisement.setContent(advertisementEditDto.getAdContent());
 
 
         String category = "";
@@ -119,6 +124,8 @@ public class AdvertisementService {
                 category += s + ",";
             }
             advertisement.setCategory(category);
+        }else{
+            advertisement.setCategory(null);
         }
 
 
@@ -147,7 +154,7 @@ public class AdvertisementService {
         advertisementEdit.setTitle(advertisement.getTitle());
         advertisementEdit.setStartDate(advertisement.getStartDate() == null ? null :  advertisement.getStartDate().toString());
         advertisementEdit.setEndDate(advertisement.getEndDate() == null ? null :  advertisement.getEndDate().toString());
-        advertisementEdit.setAdCategory(advertisement.getCategory().split(","));
+        advertisementEdit.setAdCategory(advertisement.getCategory() == null ? null : advertisement.getCategory().split(","));
         advertisementEdit.setAdContent(advertisement.getContent());
         advertisementEdit.setCreatedAt(advertisement.getCreatedAt() == null ? null : advertisement.getCreatedAt().toString());
         advertisementEdit.setCreatedBy(advertisement.getAdmin() == null ? null : advertisement.getAdmin().getAdminId());
