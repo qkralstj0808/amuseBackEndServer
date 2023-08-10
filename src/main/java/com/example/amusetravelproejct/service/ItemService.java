@@ -911,6 +911,8 @@ public class ItemService {
         productRegisterDto.setAccessAuthority(accessAuthority);
         productRegisterDto.setStartPrice(item.getStartPrice());
         productRegisterDto.setOption("update"); //create
+        productRegisterDto.setGuide_code(item.getGuide().getCode());
+        productRegisterDto.setGuide_comment(item.getGuide_comment());
 
 
 
