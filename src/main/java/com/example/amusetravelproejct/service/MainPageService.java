@@ -203,7 +203,6 @@ public class MainPageService {
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
         );
 
-
         List<Object> pageComponentInfoList = new ArrayList<>();
 
         // 한 카테고리에 들어가는 component 개수
@@ -216,7 +215,6 @@ public class MainPageService {
 
             // 타일
             if (pageComponent.getType().equals("타일")) {
-
                 // 해당 카테고리에 속한 타일의 종류를 반환
                 List<Long> tileIds = mainPageRepository.findTileIds(pageComponent.getId());
                 log.info(String.valueOf(tileIds.size()));
@@ -273,7 +271,7 @@ public class MainPageService {
             } else if (pageComponent.getType().equals("리스트")){
                 List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<>();
 
-                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplayWithGrade(pageComponent.getId(), true,grade);
+                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplayWithGradeForList(category.getCategory_name(),pageComponent.getId(), true,grade);
 //                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
 //                    Item item = pageComponent.getMainPages().get(k).getItem();
                 for (int k = 0; k < mainPageList.size(); k++) {
@@ -309,7 +307,7 @@ public class MainPageService {
             }else{
                 List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<>();
 
-                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplayWithGrade(pageComponent.getId(), true,grade);
+                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplayWithGradeForTile(pageComponent.getId(), true,grade);
 //                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
 //                    Item item = pageComponent.getMainPages().get(k).getItem();
                 for (int k = 0; k < mainPageList.size(); k++) {
