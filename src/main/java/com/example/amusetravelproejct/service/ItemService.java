@@ -358,19 +358,20 @@ public class ItemService {
 //            productRegisterDto.getMainImg().forEach(itemImg -> inputId.add(itemImg.getId()));
 
             // 삭제된 건 제거한다.
-            for (int i = 0; i < ordId.size(); i ++){
+            for (int i = ordId.size() -1 ; i >=0 ; i--){
                 if (!inputId.contains(ordId.get(i))){
+                    log.info("item.getItemImg_list().size() : " + item.getItemImg_list().size());
+                    log.info("i : " + i);
                     item.getItemImg_list().remove(i);
                 }
             }
-
-
-
 //            item.getItemImg_list().clear();
         }
 
 
         for (int i = 0; i < productRegisterDto.getMainImg().size(); i++) {
+
+            // 새로운 이미지일 때
             if(productRegisterDto.getMainImg().get(i).getId() == null){
                 ItemImg itemImg = new ItemImg();
                 String url = utilMethod.getImgUrl(productRegisterDto.getMainImg().get(i).getBase64Data(),
@@ -379,7 +380,9 @@ public class ItemService {
                 itemImg.setImgUrl(url);
                 itemImg.setItem(item);
                 imgRepository.save(itemImg);
-            }else{
+            }else{  // 기존 이미지일 때
+
+                // 기존 이미지인데 base64Data가 없다면 db에 저장되어 있다.
                 if (productRegisterDto.getMainImg().get(i).getBase64Data() == null && productRegisterDto.getOption().equals("create")){
 //                if (productRegisterDto.getMainImg().get(i).getBase64Data() == null){
                     ItemImg itemImg = new ItemImg();
@@ -388,6 +391,7 @@ public class ItemService {
                     imgRepository.save(itemImg);
                 }
 
+                // 기존 이미지인데 Base64Data가 있다면 해당 이미지는 s3에 저장이 안되어 있다는 것이므로
                 if (productRegisterDto.getMainImg().get(i).getBase64Data() !=null){
                     ItemImg itemImg = imgRepository.findById(productRegisterDto.getMainImg().get(i).getId()).orElseThrow(
                             () -> new CustomException(ErrorCode.IMAGE_NOT_FOUND)
