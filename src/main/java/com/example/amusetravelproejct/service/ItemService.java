@@ -344,16 +344,30 @@ public class ItemService {
         if (productRegisterDto.getOption().equals("update")){
             List<Long> ordId = new ArrayList<>();
             List<Long> inputId = new ArrayList<>();
-            item.getItemImg_list().forEach(itemImg -> ordId.add(itemImg.getId()));
-            productRegisterDto.getMainImg().forEach(itemImg -> inputId.add(itemImg.getId()));
 
+            // 기존 상품에 들어있는 이미지를 가지고 온다.
+            item.getItemImg_list().forEach(itemImg -> ordId.add(itemImg.getId()));
+
+            for(int i = 0 ; i < productRegisterDto.getMainImg().size() ; i++){
+                ProductRegisterDto.MainImageDto mainImageDto = productRegisterDto.getMainImg().get(i);
+                if(mainImageDto.getId() != null){
+                    inputId.add(mainImageDto.getId());
+                }
+            }
+
+//            productRegisterDto.getMainImg().forEach(itemImg -> inputId.add(itemImg.getId()));
+
+            // 삭제된 건 제거한다.
             for (int i = 0; i < ordId.size(); i ++){
                 if (!inputId.contains(ordId.get(i))){
                     item.getItemImg_list().remove(i);
                 }
             }
-        }
 
+
+
+//            item.getItemImg_list().clear();
+        }
 
 
         for (int i = 0; i < productRegisterDto.getMainImg().size(); i++) {
@@ -367,6 +381,7 @@ public class ItemService {
                 imgRepository.save(itemImg);
             }else{
                 if (productRegisterDto.getMainImg().get(i).getBase64Data() == null && productRegisterDto.getOption().equals("create")){
+//                if (productRegisterDto.getMainImg().get(i).getBase64Data() == null){
                     ItemImg itemImg = new ItemImg();
                     itemImg.setImgUrl(productRegisterDto.getMainImg().get(i).getImgUrl());
                     itemImg.setItem(item);
