@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Base64Util;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Base64Utils;
 
 import java.io.ByteArrayInputStream;
@@ -18,7 +19,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public class UtilMethod {
     private  AmazonS3 amazonS3Client;
-    static String bucketName = "amuseimg";
+
+//    @Value("${cloud.aws.s3.bucket}")
+    private static String bucketName = "amuseimg-deploy";
 
     public static SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
