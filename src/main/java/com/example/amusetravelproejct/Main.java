@@ -16,7 +16,6 @@ public class Main {
     @Bean
     public PageableHandlerMethodArgumentResolverCustomizer customize() {
         return p -> {
-
             p.setOneIndexedParameters(true);	// 1부터 시작
             p.setMaxPageSize(2);				// size=10
         };
