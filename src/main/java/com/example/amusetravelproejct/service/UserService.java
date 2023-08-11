@@ -5,23 +5,33 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.Guide;
 import com.example.amusetravelproejct.domain.User;
+import com.example.amusetravelproejct.domain.UserRefreshToken;
 import com.example.amusetravelproejct.dto.request.AdminRequest;
 import com.example.amusetravelproejct.dto.request.UserRequest;
 import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.dto.response.UserResponse;
+import com.example.amusetravelproejct.oauth.entity.ProviderType;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
 import com.example.amusetravelproejct.repository.AdminRepository;
 import com.example.amusetravelproejct.repository.GuideRepository;
+import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,10 +43,25 @@ public class UserService {
 
     private final AdminRepository adminRepository;
 
+    private final UserRefreshTokenRepository userRefreshTokenRepository;
+
     private final GuideRepository guideRepository;
+
+    @Value("${spring.security.oauth2.client.registration.naver.clientId}")
+    private String naverClientId;
+
+    @Value("${spring.security.oauth2.client.registration.naver.clientSecret}")
+    private String naverclientSecret;
+
+    private final String KAKAO_ADMIN_KEY = "6c0306342ad8c3e69157deac322bd553";
 
     public User getUser(String userId) {
         return userRepository.findByUserId(userId);
+    }
+
+    public User getUserById(Long user_db_id){
+        return userRepository.findById(user_db_id).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     public User getUserByPrincipal(UserPrincipal userPrincipal){
@@ -47,6 +72,42 @@ public class UserService {
         String user_id = userPrincipal.getUserId();
 
         return getUser(user_id);
+    }
+
+    public ResponseTemplate<UserResponse.getAllUserInfo> getAllUserInfo() {
+        List<User> allUser = userRepository.findAll();
+        return new ResponseTemplate(new UserResponse.getAllUserInfo(allUser.stream().map(
+                user -> new UserResponse.getUserInfo(
+                        user.getId(),
+                        user.getUserId(),
+                        user.getUsername(),
+                        user.getProfileImageUrl(),
+                        user.getEmail(),
+                        user.getGrade(),
+                        user.getPhoneNumber(),
+                        user.getAdvertisementTrue(),
+                        user.getOver14AgeTrue()
+                )
+        ).collect(Collectors.toList())
+        ));
+    }
+
+    @Transactional
+    public ResponseTemplate<UserResponse.getUserInfo> changeUserGrade(Long user_db_id,UserRequest.changeUserGrade request) {
+        User findUser = getUserById(user_db_id);
+        findUser.setGrade(request.getGrade());
+        userRepository.save(findUser);
+
+        return new ResponseTemplate(new UserResponse.getUserInfo(
+                findUser.getId(),
+                findUser.getUserId(),
+                findUser.getUsername(),
+                findUser.getProfileImageUrl(),
+                findUser.getEmail(),
+                findUser.getGrade(),
+                findUser.getPhoneNumber(),
+                findUser.getAdvertisementTrue(),
+                findUser.getOver14AgeTrue()));
     }
 
     public ResponseTemplate<AdminResponse.getUser> getUserByEmail(String email) {
@@ -179,6 +240,7 @@ public class UserService {
         findUser.setPhoneNumber(request.getPhone_number());
         userRepository.save(findUser);
         return new ResponseTemplate(new UserResponse.getUserInfo(
+                findUser.getId(),
                 findUser.getUserId(),
                 findUser.getUsername(),
                 findUser.getProfileImageUrl(),
@@ -219,4 +281,113 @@ public class UserService {
                 findUser.getAdvertisementTrue(),
                 findUser.getOver14AgeTrue()));
     }
+
+    @Transactional
+    public ResponseTemplate<String> withdrawSocialLogin(User user) {
+        String result;
+        if(user.getProviderType().equals(ProviderType.KAKAO)){
+            unlinkKaKao(user);
+        }else if(user.getProviderType().equals(ProviderType.GOOGLE)){
+            UserRefreshToken googleRefreshToken = unlinkGoogle(user);
+            userRefreshTokenRepository.delete(googleRefreshToken);
+        }else if(user.getProviderType().equals(ProviderType.NAVER)){
+            UserRefreshToken naverAccessToken = unlinkNaver(user);
+            userRefreshTokenRepository.delete(naverAccessToken);
+        }
+
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(user.getUserId());
+        userRefreshTokenRepository.delete(userRefreshToken);
+        userRepository.delete(user);
+        return new ResponseTemplate("탈퇴 성공");
+    }
+
+    private void unlinkKaKao(User user){
+        String url = "https://kapi.kakao.com/v1/user/unlink";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "KakaoAK " + KAKAO_ADMIN_KEY);
+
+        // 요청 본문 설정
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("target_id_type", "user_id");
+        body.add("target_id", user.getUserId());
+
+        // HTTP 요청을 보내기 위한 객체 생성
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+        RestTemplate restTemplate = new RestTemplate();
+
+        // POST 요청 보내기
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+
+        log.info(response.getBody());
+
+        if(response.getBody() == null) {
+            throw new CustomException(ErrorCode.UNLINKFAIL);
+        }
+
+    }
+
+    private UserRefreshToken unlinkGoogle(User user){
+        UserRefreshToken googleAccessToken = userRefreshTokenRepository.findByUserId(user.getUserId() + "SocialAccessToken");
+
+        String revokeEndpoint = "https://oauth2.googleapis.com/revoke?token=" + googleAccessToken.getRefreshToken();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(revokeEndpoint, HttpMethod.POST, entity, String.class);
+        log.info(response.getBody());
+
+        return googleAccessToken;
+    }
+
+    private UserRefreshToken unlinkNaver(User user){
+        UserRefreshToken naverAccessToken = userRefreshTokenRepository.findByUserId(user.getUserId() + "SocialAccessToken");
+
+        String url = "https://nid.naver.com/oauth2.0/token";
+        String clientId = naverClientId;
+        String clientSecret = naverclientSecret;
+        String accessToken =  getNaverAccessToken(naverAccessToken);
+
+        String requestBody = String.format("grant_type=delete&client_id=%s&client_secret=%s&access_token=%s&service_provider=NAVER",
+                clientId, clientSecret, accessToken);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/x-www-form-urlencoded");
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        log.info(response.getBody());
+
+        return naverAccessToken;
+
+    }
+
+    private String getNaverAccessToken(UserRefreshToken naverAccessToken){
+
+        String url = "https://nid.naver.com/oauth2.0/token";
+        String clientId = naverClientId;
+        String clientSecret = naverclientSecret;
+        String accessToken =  naverAccessToken.getRefreshToken();
+
+        String requestBody = String.format("grant_type=refresh_token&client_id=%s&client_secret=%s&refresh_token=%s",
+                clientId, clientSecret, accessToken);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/x-www-form-urlencoded");
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        log.info(response.getBody());
+        return naverAccessToken.getRefreshToken();
+    }
+
+
+
 }

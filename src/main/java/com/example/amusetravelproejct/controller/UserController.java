@@ -42,6 +42,18 @@ public class UserController {
                 findUser.getOver14AgeTrue()));
     }
 
+    @GetMapping("/all/info")
+    public ResponseTemplate<UserResponse.getAllUserInfo> getAllUserInfo(){
+        return userService.getAllUserInfo();
+    }
+
+    @PostMapping("/{user-db-id}/change/grade")
+    public ResponseTemplate<UserResponse.getUserInfo> changeUserGrade(@PathVariable("user-db-id") Long user_db_id,
+                                                                      @RequestBody UserRequest.changeUserGrade request){
+        return userService.changeUserGrade(user_db_id,request);
+    }
+
+
     @PostMapping("/login/info")
     public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> createUserInfoBeforeLogin(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                                                      @RequestBody UserRequest.createUserInfoBeforeLogin request) throws Exception{

@@ -13,6 +13,7 @@ public class UserResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getUserInfo {
+        private Long userDbId;
         private String id;
         private String name;
         private String img_url;
@@ -21,6 +22,13 @@ public class UserResponse {
         private String phone_number;
         private Boolean advertisementTrue;
         private Boolean over14AgeTrue;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getAllUserInfo {
+        private List<getUserInfo> userInfos;
     }
 
     @Data

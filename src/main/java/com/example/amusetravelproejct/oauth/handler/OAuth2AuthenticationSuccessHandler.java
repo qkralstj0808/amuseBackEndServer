@@ -70,6 +70,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 determineTargetUrl");
         log.info("authentication : " + authentication);
 
+
         String referer = request.getHeader("Referer");
 
         String targetUrl = null;
