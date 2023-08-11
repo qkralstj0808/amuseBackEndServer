@@ -29,4 +29,6 @@ public class CategoryPageComponent extends BaseEntity {
     @JoinColumn(name = "page_component_id")
     private PageComponent pageComponent;
 
+    private Long sequence;
+
 }

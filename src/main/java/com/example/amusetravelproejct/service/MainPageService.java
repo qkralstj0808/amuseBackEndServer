@@ -34,6 +34,8 @@ public class MainPageService {
 
     public final TargetUserRepository targetUserRepository;
 
+    private final CategoryPageComponentRepository categoryPageComponentRepository;
+
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
 
@@ -203,12 +205,14 @@ public class MainPageService {
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
         );
 
+        List<CategoryPageComponent> categoryPageComponentList = categoryPageComponentRepository.findByCategoryIdOrderBySequence(category_id);
+
         List<Object> pageComponentInfoList = new ArrayList<>();
 
         // 한 카테고리에 들어가는 component 개수
-        for (int i = 0; i < category.getCategoryPageComponents().size(); i++) {
-            log.info("category.getCategoryPageComponents().size() : " + category.getCategoryPageComponents().size());
-            CategoryPageComponent categoryPageComponent = category.getCategoryPageComponents().get(i);
+        for (int i = 0; i < categoryPageComponentList.size(); i++) {
+            log.info("category.getCategoryPageComponents().size() : " + categoryPageComponentList.size());
+            CategoryPageComponent categoryPageComponent = categoryPageComponentList.get(i);
             PageComponent pageComponent = categoryPageComponent.getPageComponent();
 
             // 각 component 별로
