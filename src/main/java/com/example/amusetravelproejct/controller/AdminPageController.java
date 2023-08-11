@@ -372,7 +372,7 @@ public class AdminPageController {
         return new ResponseTemplate<>(itemService.getIconList());
     }
 
-    @PostMapping("page/register")
+    @PostMapping("/page/register")
     public ResponseTemplate<String> createPage(
             @RequestBody AdminPageRequest.createPage request,
             @AuthenticationPrincipal UserPrincipal userPrincipal){
@@ -383,7 +383,7 @@ public class AdminPageController {
         return pageService.createPage(request,utilMethod,findAdmin);
     }
 
-    @PutMapping("page/edit/{page-id}")
+    @PutMapping("/page/edit/{page-id}")
     public ResponseTemplate<AdminPageResponse.updatePage> updatePage(
             @PathVariable("page-id") Long page_id,
             @RequestBody AdminPageRequest.updatePage request,

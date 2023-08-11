@@ -190,6 +190,7 @@ public class AdminPageRequest {
     @NoArgsConstructor
     public static class PageComponentInfo {
         private Long componentId;
+        private Long sequence;
     }
 
     @Data
