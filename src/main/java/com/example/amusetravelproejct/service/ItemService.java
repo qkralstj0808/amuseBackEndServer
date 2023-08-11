@@ -457,14 +457,24 @@ public class ItemService {
                     itemTicketPriceRecodeRepository.save(itemTicketPriceRecode);
 
                     try {
-                        startDateTemp = UtilMethod.date.parse(prices.getStartDate());
+                        if(prices.getStartDate() != null && !prices.getStartDate().equals("")){
+                            startDateTemp = UtilMethod.date.parse(prices.getStartDate());
+                        }else{
+                            startDateTemp = null;
+                        }
+
 
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
 
                     try {
-                        endDateTemp = UtilMethod.date.parse(prices.getEndDate());
+                        if(prices.getEndDate() != null && !prices.getEndDate().equals("")){
+                            endDateTemp = UtilMethod.date.parse(prices.getEndDate());
+                        }else{
+                            endDateTemp = null;
+                        }
+
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -698,7 +708,7 @@ public class ItemService {
             data.getItemHashTags().forEach(hashTag -> {
                 categoryNames.add(hashTag.getHashTag());
             });
-            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getAdminId(),data.getCreatedDate(),
+            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin() == null ? null : data.getAdmin().getAdminId(),data.getCreatedDate(),
                     data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getAdminId(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
         });
 
@@ -720,7 +730,7 @@ public class ItemService {
             data.getItemHashTags().forEach(hashTag -> {
                 categoryNames.add(hashTag.getHashTag());
             });
-            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getAdminId(),data.getCreatedDate(),
+            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin() == null ? null : data.getAdmin().getAdminId(),data.getCreatedDate(),
                     data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getAdminId(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
         });
 
@@ -763,8 +773,8 @@ public class ItemService {
             data.getItemHashTags().forEach(hashTag -> {
                 categoryNames.add(hashTag.getHashTag());
             });
-            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin().getAdminId(),data.getCreatedDate(),
-                    data.getUpdateAdmin() == null ?null : data.getUpdateAdmin().getAdminId(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
+            findItemByCategories.add(new AdminPageResponse.findItemByCategory(data.getItemCode(),data.getTitle(),categoryNames,data.getAdmin() == null ? null : data.getAdmin().getAdminId(),data.getCreatedDate(),
+                    data.getUpdateAdmin() == null ? null : data.getUpdateAdmin().getAdminId(),data.getUpdateAdmin() == null ? null : data.getModifiedDate()));
         });
 
         getItemByCategory.setData(findItemByCategories);
@@ -834,11 +844,11 @@ public class ItemService {
 //        if (item.getGrade() != null){
 //
 //        }
-        accessData.setAccessibleTier(item.getGrade().toString());
+        accessData.setAccessibleTier(item.getGrade() == null ? null : item.getGrade().name());
 
         if (item.getTargetUsers() != null){
             item.getTargetUsers().forEach(user ->{
-                userEmail.add(user.getUser().getEmail());
+                userEmail.add(user.getUser() == null ? null : user.getUser().getEmail());
             });
             accessData.setAccessibleUserList(userEmail);
         }
@@ -897,7 +907,7 @@ public class ItemService {
             courseDto.setSequenceId(itemCourse.getSequenceId());
             courseDto.setDay(Long.valueOf(itemCourse.getDay()));
 
-            if(itemCourse.getLatitude() != null){
+            if(itemCourse.getLatitude() != null && itemCourse.getLongitude() != null){
                 courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(itemCourse.getLatitude().toString(),itemCourse.getLongitude().toString()));
             }else{
                 courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(null,null));
@@ -911,7 +921,7 @@ public class ItemService {
 
         productRegisterDto.setCourse(courseDtos);
         productRegisterDto.setExtraInfo(item.getContent_2());
-        productRegisterDto.setAdmin(item.getAdmin().getAdminId());
+        productRegisterDto.setAdmin(item.getAdmin() == null ? null : item.getAdmin().getAdminId());
         productRegisterDto.setUpdateAdmin(item.getUpdateAdmin() == null ? null : item.getUpdateAdmin().getAdminId());
         productRegisterDto.setStartDate(item.getStartDate() == null ? null : String.valueOf(item.getStartDate()));
         productRegisterDto.setEndDate(item.getEndDate() == null ? null : String.valueOf(item.getEndDate()));
@@ -923,11 +933,13 @@ public class ItemService {
 
         ProductRegisterDto.accessData accessAuthority = new ProductRegisterDto.accessData();
         List<TargetUser> users = item.getTargetUsers();
-        accessAuthority.setAccessibleTier(item.getGrade().toString());
+        accessAuthority.setAccessibleTier(item.getGrade() == null ? null : item.getGrade().name());
         if (!users.isEmpty()){
             List<String> targetUsers = new ArrayList<>();
             users.forEach(targetUser -> {
-                targetUsers.add(targetUser.getUser().getEmail());
+                if(!(targetUser.getUser() == null)){
+                    targetUsers.add(targetUser.getUser() == null ? null : targetUser.getUser().getEmail());
+                }
             });
 
             accessAuthority.setAccessibleUserList(targetUsers);
@@ -936,10 +948,14 @@ public class ItemService {
         productRegisterDto.setAccessAuthority(accessAuthority);
         productRegisterDto.setStartPrice(item.getStartPrice());
         productRegisterDto.setOption("update"); //create
-        productRegisterDto.setGuide_code(item.getGuide().getCode());
-        productRegisterDto.setGuide_comment(item.getGuide_comment());
 
-
+        if(item.getGuide() == null){
+            productRegisterDto.setGuide_code(null);
+            productRegisterDto.setGuide_comment(null);
+        }else{
+            productRegisterDto.setGuide_code(item.getGuide().getCode());
+            productRegisterDto.setGuide_comment(item.getGuide_comment());
+        }
 
         return productRegisterDto;
     }
