@@ -70,6 +70,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 determineTargetUrl");
         log.info("authentication : " + authentication);
 
+
         String referer = request.getHeader("Referer");
 
         String targetUrl = null;
@@ -124,7 +125,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             accessToken = tokenProvider.createAuthToken(
                     userInfo.getId(),
                     roleType.getCode(),
-                    Grade.BRONZE,
+                    Grade.Bronze,
                     new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
                     log.info("appProperties.getAuth().getTokenExpiry() : " + appProperties.getAuth().getTokenExpiry());
 

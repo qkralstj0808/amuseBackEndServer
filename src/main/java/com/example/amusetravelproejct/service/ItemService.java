@@ -6,7 +6,6 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 
-import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
@@ -38,7 +37,6 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final AdminRepository adminRepository;
     private final ItemHashTagRepository itemHashTagRepository;
     private final ImgRepository imgRepository;
     private final ItemTicketRepository itemTicketRepository;
@@ -50,18 +48,16 @@ public class ItemService {
     private final TargetUserRepository targetUserRepository;
     private final IconRepository iconRepository;
     private final LikeItemRepository likeItemRepository;
-    private final ItemIconRepository itemIconRepository;
-    private final CategoryRepository categoryRepository;
 
     private final GuideRepository guideRepository;
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper;
 
-    static String bucketName = "amuse-img";
+//    static String bucketName = "amuse-img";
 
     //Admin
-    public Optional<Admin> getAdminByAdminId(String admin_id) {
-        return Optional.ofNullable(adminRepository.findByAdminId(admin_id).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
-    }
+//    public Optional<Admin> getAdminByAdminId(String admin_id) {
+//        return Optional.ofNullable(adminRepository.findByAdminId(admin_id).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
+//    }
 
     public List<Icon> getIconList() {
         return iconRepository.findAll();
@@ -69,7 +65,7 @@ public class ItemService {
 
     //Item
     @Transactional
-    public Item processCreate(ProductRegisterDto productRegisterDto) throws ParseException {
+    public Item processCreate(ProductRegisterDto productRegisterDto,Admin admin) throws ParseException {
         Item item;
         itemRepository.findByItemCode(productRegisterDto.getProductId()).ifPresent(data -> {
             throw new CustomException(ErrorCode.ITEM_ALREADY_EXIST);
@@ -92,82 +88,115 @@ public class ItemService {
         item.setItemCode(productRegisterDto.getProductId());
         item.setTitle(productRegisterDto.getTitle());
         List<String> hashTags = productRegisterDto.getCategory();
-        hashTags.forEach(data -> {
-            TempHashTag tempHashTag = new TempHashTag();
-            if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
-                tempHashTag.setHashTag(data);
-                tempHashTagRepository.save(tempHashTag);
-            } else {
-                tempHashTag = tempHashTagRepository.findByHashTag(data).get();
-            }
-            ItemHashTag itemHashTag = new ItemHashTag();
-            itemHashTag.setItem(item);
-            itemHashTag.setHashTag(data);
-            itemHashTag.setTempHashTag(tempHashTag);
-            itemHashTagRepository.save(itemHashTag);
-        });
 
-        item.setCountry(productRegisterDto.getLocation().getCountry());
-        item.setCity(productRegisterDto.getLocation().getCity());
+        if(hashTags != null){
+            hashTags.forEach(data -> {
+                TempHashTag tempHashTag = new TempHashTag();
+                if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
+                    tempHashTag.setHashTag(data);
+                    tempHashTagRepository.save(tempHashTag);
+                } else {
+                    tempHashTag = tempHashTagRepository.findByHashTag(data).get();
+                }
+                ItemHashTag itemHashTag = new ItemHashTag();
+                itemHashTag.setItem(item);
+                itemHashTag.setHashTag(data);
+                itemHashTag.setTempHashTag(tempHashTag);
+                itemHashTagRepository.save(itemHashTag);
+            });
+        }
+
+        if(productRegisterDto.getLocation() != null){
+            item.setCountry(productRegisterDto.getLocation().getCountry());
+            item.setCity(productRegisterDto.getLocation().getCity());
+        }else{
+            item.setCountry(null);
+            item.setCity(null);
+        }
+
         item.setContent_1(productRegisterDto.getMainInfo());
         item.setContent_2(productRegisterDto.getExtraInfo());
-        item.setAdmin(getAdminByAdminId(productRegisterDto.getAdmin()).get());
+        item.setAdmin(admin);
         item.setStartPrice(productRegisterDto.getStartPrice());
         item.setStartPoint(productRegisterDto.getStartPoint());
         item.setRunningTime(productRegisterDto.getRunningTime());
         item.setActivityIntensity(productRegisterDto.getActivityIntensity());
+        item.setLanguage(productRegisterDto.getLanguage());
 
-        // 가이드 추가
-        Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
-        );
-
+        log.info("productRegisterDto.getGuide_code() : " + productRegisterDto.getGuide_code());
+        if(productRegisterDto.getGuide_code() != null && !productRegisterDto.getGuide_code().equals("")){
+            Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
+                    () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+            );
 //        Guide guide1 = guideRepository.findById(productRegisterDto.getGuide_db_id()).orElseThrow(
 //                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
 //        );
 
-        item.setGuide(guide);
-        item.setGuide_comment(productRegisterDto.getGuide_comment());
-
-        Long duration = 0L;
-
-        if (productRegisterDto.getDuration().length() < 4){
-            duration = Long.valueOf(productRegisterDto.getDuration());
-        } else{
-            duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+            item.setGuide(guide);
+            item.setGuide_comment(productRegisterDto.getGuide_comment());
+        }else{
+            item.setGuide(null);
+            item.setGuide_comment(null);
         }
-        item.setDuration(Math.toIntExact(duration));
+        // 가이드 추가
 
+
+        long duration ;
+
+        if(productRegisterDto.getDuration() != null && !productRegisterDto.getDuration().equals("")){
+            if (productRegisterDto.getDuration().length() < 4){
+                duration = Long.parseLong(productRegisterDto.getDuration());
+            } else{
+                duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+            }
+            item.setDuration(Math.toIntExact(duration));
+        }else{
+            item.setDuration(null);
+        }
 
         if(productRegisterDto.getAccessAuthority() != null){
-            if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-                item.setGrade(Grade.BRONZE);
+            if (productRegisterDto.getAccessAuthority().getAccessibleTier().equals("")){
+                item.setGrade(Grade.Bronze);
             }else{
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }
 
-            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null) {
+            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() !=  null && !productRegisterDto.getAccessAuthority().getAccessibleUserList().isEmpty()) {
                 List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
                 users.forEach(email -> {
-                    User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                    TargetUser targetUser = new TargetUser();
-
-                    targetUser.setItem(item);
-                    targetUser.setUser(user);
-                    targetUserRepository.save(targetUser);
+                    List<User> userList = userRepository.findByEmail(email);
+                    if(userList.size() != 0){
+                        userList.forEach(user -> {
+                            TargetUser targetUser = new TargetUser();
+                            targetUser.setItem(item);
+                            targetUser.setUser(user);
+                            targetUserRepository.save(targetUser);
+                        });
+                    }
                 });
             }
+        }else{
+            item.setGrade(Grade.Bronze);
         }
 
-        item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
-        item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
-//        item.setDisplayStatus(DisplayStatus.DISPLAY);
+        if(productRegisterDto.getStartDate() != null && !productRegisterDto.getStartDate().equals("")){
+            item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
+        }else{
+            item.setStartDate(null);
+        }
+
+        if(productRegisterDto.getEndDate() != null && !productRegisterDto.getEndDate().equals("")){
+            item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        }else{
+            item.setEndDate(null);
+        }
+
         item.setDisplay(true);
         return item;
     }
 
     @Transactional
-    public Item processUpdate(ProductRegisterDto productRegisterDto) throws ParseException {
+    public Item processUpdate(ProductRegisterDto productRegisterDto,Admin admin) throws ParseException {
         Item item = itemRepository.findById(productRegisterDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         item.setItemCode(productRegisterDto.getProductId());
         item.setTitle(productRegisterDto.getTitle());
@@ -185,89 +214,124 @@ public class ItemService {
 
 
         item.getItemHashTags().clear();
-        hashTags.forEach(data -> {
-            TempHashTag tempHashTag = new TempHashTag();
-            if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
-                tempHashTag.setHashTag(data);
-                tempHashTagRepository.save(tempHashTag);
-            } else {
-                tempHashTag = tempHashTagRepository.findByHashTag(data).get();
-            }
-            ItemHashTag itemHashTag = new ItemHashTag();
-            itemHashTag.setItem(item);
-            itemHashTag.setHashTag(data);
-            itemHashTag.setTempHashTag(tempHashTag);
-            itemHashTagRepository.save(itemHashTag);
-        });
+        if(hashTags != null){
+            hashTags.forEach(data -> {
+                TempHashTag tempHashTag = new TempHashTag();
+                if (tempHashTagRepository.findByHashTag(data).isEmpty()) {
+                    tempHashTag.setHashTag(data);
+                    tempHashTagRepository.save(tempHashTag);
+                } else {
+                    tempHashTag = tempHashTagRepository.findByHashTag(data).get();
+                }
+                ItemHashTag itemHashTag = new ItemHashTag();
+                itemHashTag.setItem(item);
+                itemHashTag.setHashTag(data);
+                itemHashTag.setTempHashTag(tempHashTag);
+                itemHashTagRepository.save(itemHashTag);
+            });
+        }
 
-
-        item.setCountry(productRegisterDto.getLocation().getCountry());
-        item.setCity(productRegisterDto.getLocation().getCity());
+        if(productRegisterDto.getLocation() != null){
+            item.setCountry(productRegisterDto.getLocation().getCountry());
+            item.setCity(productRegisterDto.getLocation().getCity());
+        }else{
+            item.setCountry(null);
+            item.setCity(null);
+        }
 
         item.setContent_1(productRegisterDto.getMainInfo());
         item.setContent_2(productRegisterDto.getExtraInfo());
-
-
-        item.setUpdateAdmin(getAdminByAdminId(productRegisterDto.getUpdateAdmin()).get());
+        item.setUpdateAdmin(admin);
         item.setStartPrice(productRegisterDto.getStartPrice());
+        item.setStartPoint(productRegisterDto.getStartPoint());
+        item.setRunningTime(productRegisterDto.getRunningTime());
+        item.setActivityIntensity(productRegisterDto.getActivityIntensity());
+        item.setLanguage(productRegisterDto.getLanguage());
 
-        if(productRegisterDto.getStartPoint() != null){
-            item.setStartPoint(productRegisterDto.getStartPoint());
-        }
-
-        if(productRegisterDto.getRunningTime() != null){
-            item.setRunningTime(productRegisterDto.getRunningTime());
-        }
-
-        if(productRegisterDto.getActivityIntensity() != null){
-            item.setActivityIntensity(productRegisterDto.getActivityIntensity());
-        }
+//        if(productRegisterDto.getStartPoint() != null){
+//
+//        }
+//
+//        if(productRegisterDto.getRunningTime() != null){
+//
+//        }
+//
+//        if(productRegisterDto.getActivityIntensity() != null){
+//
+//        }
 
         // 가이드 업데이트
-        Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
-        );
+        log.info("productRegisterDto.getGuide_code() : " + productRegisterDto.getGuide_code());
+        if(productRegisterDto.getGuide_code() != null && !productRegisterDto.getGuide_code().equals("")){
+            Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
+                    () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
+            );
 
 //        Guide guide1 = guideRepository.findById(productRegisterDto.getGuide_db_id()).orElseThrow(
 //                () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
 //        );
 
-        item.setGuide(guide);
-        item.setGuide_comment(productRegisterDto.getGuide_comment());
-
-        Long duration = 0L;
-
-        if (productRegisterDto.getDuration().length() < 4){
-            duration = Long.valueOf(productRegisterDto.getDuration());
-        } else{
-            duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+            item.setGuide(guide);
+            item.setGuide_comment(productRegisterDto.getGuide_comment());
+        }else{
+            item.setGuide(null);
+            item.setGuide_comment(null);
         }
-        item.setDuration(Math.toIntExact(duration));
 
+        long duration ;
+
+        if(productRegisterDto.getDuration() != null && !productRegisterDto.getDuration().equals("")){
+            if (productRegisterDto.getDuration().length() < 4){
+                duration = Long.parseLong(productRegisterDto.getDuration());
+            } else{
+                duration = Long.parseLong(productRegisterDto.getDuration().split(" ")[1].split("일")[0]);
+            }
+            item.setDuration(Math.toIntExact(duration));
+        }else{
+            item.setDuration(null);
+        }
 
         item.getTargetUsers().clear();
 
         if(productRegisterDto.getAccessAuthority() != null){
-            if (productRegisterDto.getAccessAuthority().getAccessibleTier() == null){
-                item.setGrade(Grade.BRONZE);
+            log.info("productRegisterDto.getAccessAuthority().getAccessibleTier() : " + productRegisterDto.getAccessAuthority().getAccessibleTier());
+            if (productRegisterDto.getAccessAuthority().getAccessibleTier().equals("")){
+                item.setGrade(Grade.Bronze);
             }else{
+
                 item.setGrade(Grade.valueOf(productRegisterDto.getAccessAuthority().getAccessibleTier()));
             }
-            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null) {
+
+            if (productRegisterDto.getAccessAuthority().getAccessibleUserList() != null && !productRegisterDto.getAccessAuthority().getAccessibleUserList().isEmpty() ) {
                 List<String> users = productRegisterDto.getAccessAuthority().getAccessibleUserList();
                 users.forEach(email -> {
-                    User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                    TargetUser targetUser = new TargetUser();
-
-                    targetUser.setItem(item);
-                    targetUser.setUser(user);
-                    targetUserRepository.save(targetUser);
+                    List<User> userList = userRepository.findByEmail(email);
+                    if(userList.size() != 0){
+                        userList.forEach(user -> {
+                            TargetUser targetUser = new TargetUser();
+                            targetUser.setItem(item);
+                            targetUser.setUser(user);
+                            targetUserRepository.save(targetUser);
+                        });
+                    }
                 });
             }
         }
 
-        item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
-        item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        if(productRegisterDto.getStartDate() != null && !productRegisterDto.getStartDate().equals("")){
+            item.setStartDate(UtilMethod.date.parse(productRegisterDto.getStartDate()));
+        }else{
+            item.setStartDate(null);
+        }
+
+        log.info("productRegisterDto.getEndDate() : " + productRegisterDto.getEndDate());
+        log.info(String.valueOf(productRegisterDto.getEndDate() != null));
+
+        if(productRegisterDto.getEndDate() != null && !productRegisterDto.getEndDate().equals("")){
+            item.setEndDate(UtilMethod.date.parse(productRegisterDto.getEndDate()));
+        }else{
+            item.setEndDate(null);
+        }
 //        item.setDisplayStatus(DisplayStatus.DISPLAY);
         item.setDisplay(true);
         return item;
@@ -282,23 +346,34 @@ public class ItemService {
         if (productRegisterDto.getOption().equals("update")){
             List<Long> ordId = new ArrayList<>();
             List<Long> inputId = new ArrayList<>();
-            item.getItemImg_list().forEach(itemImg -> {
-                ordId.add(itemImg.getId());
-            });
-            productRegisterDto.getMainImg().forEach(itemImg -> {
-                inputId.add(itemImg.getId());
-            });
 
-            for (int i = 0; i < ordId.size(); i ++){
+            // 기존 상품에 들어있는 이미지를 가지고 온다.
+            item.getItemImg_list().forEach(itemImg -> ordId.add(itemImg.getId()));
+
+            for(int i = 0 ; i < productRegisterDto.getMainImg().size() ; i++){
+                ProductRegisterDto.MainImageDto mainImageDto = productRegisterDto.getMainImg().get(i);
+                if(mainImageDto.getId() != null){
+                    inputId.add(mainImageDto.getId());
+                }
+            }
+
+//            productRegisterDto.getMainImg().forEach(itemImg -> inputId.add(itemImg.getId()));
+
+            // 삭제된 건 제거한다.
+            for (int i = ordId.size() -1 ; i >=0 ; i--){
                 if (!inputId.contains(ordId.get(i))){
+                    log.info("item.getItemImg_list().size() : " + item.getItemImg_list().size());
+                    log.info("i : " + i);
                     item.getItemImg_list().remove(i);
                 }
             }
+//            item.getItemImg_list().clear();
         }
 
 
-
         for (int i = 0; i < productRegisterDto.getMainImg().size(); i++) {
+
+            // 새로운 이미지일 때
             if(productRegisterDto.getMainImg().get(i).getId() == null){
                 ItemImg itemImg = new ItemImg();
                 String url = utilMethod.getImgUrl(productRegisterDto.getMainImg().get(i).getBase64Data(),
@@ -307,16 +382,22 @@ public class ItemService {
                 itemImg.setImgUrl(url);
                 itemImg.setItem(item);
                 imgRepository.save(itemImg);
-            }else{
+            }else{  // 기존 이미지일 때
+
+                // 기존 이미지인데 base64Data가 없다면 db에 저장되어 있다.
                 if (productRegisterDto.getMainImg().get(i).getBase64Data() == null && productRegisterDto.getOption().equals("create")){
+//                if (productRegisterDto.getMainImg().get(i).getBase64Data() == null){
                     ItemImg itemImg = new ItemImg();
                     itemImg.setImgUrl(productRegisterDto.getMainImg().get(i).getImgUrl());
                     itemImg.setItem(item);
                     imgRepository.save(itemImg);
                 }
 
+                // 기존 이미지인데 Base64Data가 있다면 해당 이미지는 s3에 저장이 안되어 있다는 것이므로
                 if (productRegisterDto.getMainImg().get(i).getBase64Data() !=null){
-                    ItemImg itemImg = imgRepository.findById(productRegisterDto.getMainImg().get(i).getId()).get();
+                    ItemImg itemImg = imgRepository.findById(productRegisterDto.getMainImg().get(i).getId()).orElseThrow(
+                            () -> new CustomException(ErrorCode.IMAGE_NOT_FOUND)
+                    );
                     String url = utilMethod.getImgUrl(productRegisterDto.getMainImg().get(i).getBase64Data(),
                             productRegisterDto.getMainImg().get(i).getFileName());
 
@@ -330,7 +411,7 @@ public class ItemService {
         }
     }
     //ItemTicket
-    public void processItemTicket(ProductRegisterDto productRegisterDto, Item item) throws ParseException {
+    public void processItemTicket(ProductRegisterDto productRegisterDto, Item item)  {
 
         /*
             1.데이터 입력 (start, end, price(지정값), weekdayPrices(요일값)
@@ -376,14 +457,14 @@ public class ItemService {
                     itemTicketPriceRecodeRepository.save(itemTicketPriceRecode);
 
                     try {
-                        startDateTemp = (Date) UtilMethod.date.parse(prices.getStartDate());
+                        startDateTemp = UtilMethod.date.parse(prices.getStartDate());
 
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
 
                     try {
-                        endDateTemp = (Date) UtilMethod.date.parse(prices.getEndDate());
+                        endDateTemp = UtilMethod.date.parse(prices.getEndDate());
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -397,20 +478,22 @@ public class ItemService {
                 });
                 int count = datePoint.size();
                 while (count-- != 0) {
-                    int index = datePoint.indexOf(datePoint.stream().min(Long::compareTo).get());
-                    HashMap<String, String> weekDayPrices = (HashMap<String, String>) objectMapper.convertValue(weekdayPrices.get(index), Map.class);
-                    Date startDateTemp = new Date(startDate.get(index).getTime());
-                    while (startDateTemp.getTime() <= endDate.get(index).getTime()) {
-                        if (dateSet.add(startDateTemp.getTime())) {
-                            ItemTicketPrice itemTicketPrice = new ItemTicketPrice();
-                            itemTicketPrice.setPrice(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])));
-                            itemTicketPrice.setStartDate(startDateTemp.toString());
-                            itemTicketPrice.setItemTicket(itemTicket);
-                            itemTicketPriceRepository.save(itemTicketPrice);
+                    if(datePoint.stream().min(Long::compareTo).isPresent()){
+                        int index = datePoint.indexOf(datePoint.stream().min(Long::compareTo).get());
+                        HashMap<String, String> weekDayPrices = (HashMap<String, String>) objectMapper.convertValue(weekdayPrices.get(index), Map.class);
+                        Date startDateTemp = new Date(startDate.get(index).getTime());
+                        while (startDateTemp.getTime() <= endDate.get(index).getTime()) {
+                            if (dateSet.add(startDateTemp.getTime())) {
+                                ItemTicketPrice itemTicketPrice = new ItemTicketPrice();
+                                itemTicketPrice.setPrice(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])));
+                                itemTicketPrice.setStartDate(startDateTemp.toString());
+                                itemTicketPrice.setItemTicket(itemTicket);
+                                itemTicketPriceRepository.save(itemTicketPrice);
+                            }
+                            startDateTemp.setTime(startDateTemp.getTime() + (1000 * 60 * 60 * 24));     //하루 더하기
                         }
-                        startDateTemp.setTime(startDateTemp.getTime() + (1000 * 60 * 60 * 24));     //하루 더하기
+                        datePoint.set(index, Long.MAX_VALUE);
                     }
-                    datePoint.set(index, Long.MAX_VALUE);
                 }
                 itemTicketRepository.save(itemTicket);
             }
@@ -421,20 +504,14 @@ public class ItemService {
             List<Long> inputTicketId = new ArrayList<>();
             List<Long> oldTicketId = new ArrayList<>();
 
-            productRegisterDto.getTicket().forEach(ticketDto -> {
-                inputTicketId.add(ticketDto.getId());
-            });
-            item.getItemTickets().forEach(itemTicket -> {
-                oldTicketId.add(itemTicket.getId());
-            });
+            productRegisterDto.getTicket().forEach(ticketDto -> inputTicketId.add(ticketDto.getId()));
+            item.getItemTickets().forEach(itemTicket -> oldTicketId.add(itemTicket.getId()));
 
 
             item.getItemTickets().forEach(itemTicket -> {
                 if (!inputTicketId.contains(itemTicket.getId())){
                     itemTicket.getItemTicketPrices().clear();
-                    itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> {
-                        itemTicketPriceRecode.setItemTicket(null);
-                    });
+                    itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> itemTicketPriceRecode.setItemTicket(null));
                     itemTicket.setItem(null);
 
                 }
@@ -478,14 +555,14 @@ public class ItemService {
                     itemTicketPriceRecodeRepository.save(itemTicketPriceRecode);
 
                     try {
-                        startDateTemp = (Date) UtilMethod.date.parse(prices.getStartDate());
+                        startDateTemp = UtilMethod.date.parse(prices.getStartDate());
 
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
 
                     try {
-                        endDateTemp = (Date) UtilMethod.date.parse(prices.getEndDate());
+                        endDateTemp = UtilMethod.date.parse(prices.getEndDate());
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -544,15 +621,26 @@ public class ItemService {
             if(productRegisterDto.getCourse().get(i).getId() == null || productRegisterDto.getOption().equals("create")){
                 itemCourse = new ItemCourse();
             }else{
-                itemCourse = itemCourseRepository.findById(productRegisterDto.getCourse().get(i).getId()).get();
+                Optional<ItemCourse> byId = itemCourseRepository.findById(productRegisterDto.getCourse().get(i).getId());
+                if(!byId.isPresent()){
+                    itemCourse = new ItemCourse();
+                }else{
+                    itemCourse = itemCourseRepository.findById(productRegisterDto.getCourse().get(i).getId()).orElseThrow(
+                            () -> new CustomException(ErrorCode.COURSE_NOT_FOUND)
+                    );
+                }
+
             }
 
             String url = "";
-            if (productRegisterDto.getCourse().get(i).getImage().getBase64Data() != null){
-                url = utilMethod.getImgUrl(productRegisterDto.getCourse().get(i).getImage().getBase64Data(),
-                        productRegisterDto.getCourse().get(i).getImage().getFileName());
-                itemCourse.setImageUrl(url);
+            if(productRegisterDto.getCourse().get(i).getImage() != null){
+                if (productRegisterDto.getCourse().get(i).getImage().getBase64Data() != null){
+                    url = utilMethod.getImgUrl(productRegisterDto.getCourse().get(i).getImage().getBase64Data(),
+                            productRegisterDto.getCourse().get(i).getImage().getFileName());
+                    itemCourse.setImageUrl(url);
+                }
             }
+
             itemCourse.setItem(item);
             itemCourse.setTitle(productRegisterDto.getCourse().get(i).getTitle());
             itemCourse.setTimeCost(productRegisterDto.getCourse().get(i).getTimeCost());
@@ -566,13 +654,13 @@ public class ItemService {
                 itemCourse.setLatitude(null);
                 itemCourse.setLongitude(null);
             }else{
-                if(productRegisterDto.getCourse().get(i).getLocation().getLatitude().isEmpty()){
+                if(productRegisterDto.getCourse().get(i).getLocation().getLatitude() == null){
                     itemCourse.setLatitude(null);
                 }else{
                     itemCourse.setLatitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLatitude()));
                 }
 
-                if(productRegisterDto.getCourse().get(i).getLocation().getLongitude().isEmpty()){
+                if(productRegisterDto.getCourse().get(i).getLocation().getLongitude() == null){
                     itemCourse.setLongitude(null);
                 }else{
                     itemCourse.setLongitude(Double.valueOf(productRegisterDto.getCourse().get(i).getLocation().getLongitude()));
@@ -684,8 +772,8 @@ public class ItemService {
     }
 
     @Transactional
-    public void processDeleteItem(String itemCode) {
-        Item item = itemRepository.findByItemCode(itemCode).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+    public void processDeleteItem(Long item_db_id) {
+        Item item = itemRepository.findById(item_db_id).orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         item.getItemImg_list().clear();
         item.getItemHashTags().clear();
@@ -743,9 +831,10 @@ public class ItemService {
         ProductRegisterDto.accessData accessData = new ProductRegisterDto.accessData();
         List<String> userEmail = new ArrayList<>();
 
-        if (item.getGrade() != null){
-            accessData.setAccessibleTier(item.getGrade().toString());
-        }
+//        if (item.getGrade() != null){
+//
+//        }
+        accessData.setAccessibleTier(item.getGrade().toString());
 
         if (item.getTargetUsers() != null){
             item.getTargetUsers().forEach(user ->{
@@ -807,7 +896,13 @@ public class ItemService {
             courseDto.setTimeCost(itemCourse.getTimeCost());
             courseDto.setSequenceId(itemCourse.getSequenceId());
             courseDto.setDay(Long.valueOf(itemCourse.getDay()));
-            courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(itemCourse.getLatitude().toString(),itemCourse.getLongitude().toString()));
+
+            if(itemCourse.getLatitude() != null){
+                courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(itemCourse.getLatitude().toString(),itemCourse.getLongitude().toString()));
+            }else{
+                courseDto.setLocation(new ProductRegisterDto.CourseDto.LocationDto(null,null));
+            }
+
             ProductRegisterDto.CourseDto.CourseImageDto courseImageDto = new ProductRegisterDto.CourseDto.CourseImageDto();
             courseImageDto.setImgUrl(itemCourse.getImageUrl());
             courseDto.setImage(courseImageDto);
@@ -818,15 +913,18 @@ public class ItemService {
         productRegisterDto.setExtraInfo(item.getContent_2());
         productRegisterDto.setAdmin(item.getAdmin().getAdminId());
         productRegisterDto.setUpdateAdmin(item.getUpdateAdmin() == null ? null : item.getUpdateAdmin().getAdminId());
-        productRegisterDto.setStartDate(String.valueOf(item.getStartDate()));
-        productRegisterDto.setEndDate(String.valueOf(item.getEndDate()));
-        productRegisterDto.setDuration(String.valueOf(item.getDuration()));
+        productRegisterDto.setStartDate(item.getStartDate() == null ? null : String.valueOf(item.getStartDate()));
+        productRegisterDto.setEndDate(item.getEndDate() == null ? null : String.valueOf(item.getEndDate()));
+        productRegisterDto.setDuration(item.getDuration() == null ? null : String.valueOf(item.getDuration()));
+        productRegisterDto.setLanguage(item.getLanguage());
+        productRegisterDto.setStartPoint(item.getStartPoint());
+        productRegisterDto.setRunningTime(item.getRunningTime());
+        productRegisterDto.setActivityIntensity(item.getActivityIntensity());
 
         ProductRegisterDto.accessData accessAuthority = new ProductRegisterDto.accessData();
         List<TargetUser> users = item.getTargetUsers();
-
+        accessAuthority.setAccessibleTier(item.getGrade().toString());
         if (!users.isEmpty()){
-            accessAuthority.setAccessibleTier(item.getGrade().toString());
             List<String> targetUsers = new ArrayList<>();
             users.forEach(targetUser -> {
                 targetUsers.add(targetUser.getUser().getEmail());
@@ -838,6 +936,8 @@ public class ItemService {
         productRegisterDto.setAccessAuthority(accessAuthority);
         productRegisterDto.setStartPrice(item.getStartPrice());
         productRegisterDto.setOption("update"); //create
+        productRegisterDto.setGuide_code(item.getGuide().getCode());
+        productRegisterDto.setGuide_comment(item.getGuide_comment());
 
 
 
@@ -889,14 +989,18 @@ public class ItemService {
     }
     public ResponseTemplate<ItemResponse.getAllItemId> getAllItemId() {
         List<Long> allItemId = itemRepository.findAllItemId();
-        return new ResponseTemplate(new ItemResponse.getAllItemId(allItemId.stream().collect(Collectors.toList())));
+        return new ResponseTemplate(new ItemResponse.getAllItemId(new ArrayList<>(allItemId)));
     }
 
 @Transactional
-    public void changeItemStatus(AdminPageRequest.changeDisplayStatus request,String itemCode){
-        Item item = itemRepository.findByItemCode(itemCode).orElseThrow(
+    public void changeItemStatus(AdminPageRequest.changeDisplayStatus request,Long item_db_id){
+        Item item = itemRepository.findById(item_db_id).orElseThrow(
                 () -> new CustomException(ErrorCode.ITEM_NOT_FOUND)
         );
+
+        if(request.getDisplay_true() == null){
+            item.setDisplay(false);
+        }
 
         if (request.getDisplay_true()){
 //            item.setDisplayStatus(DisplayStatus.DISPLAY);
@@ -943,8 +1047,6 @@ public class ItemService {
 
 
     public Object getPageCount(int limit) {
-        int pageSize = limit;
-        int totalPage = (int) Math.ceil(itemRepository.count() / (double) pageSize);
-        return totalPage;
+        return (int) Math.ceil(itemRepository.count() / (double) limit);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Slf4j
 public class OAuth2AuthorizationRequestBasedOnCookieRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
@@ -20,8 +21,10 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
         log.info("\n\nOAuth2AuthorizationRequestBasedOnCookieRepository에서 loadAuthorizationRequest 메서드 실행");
-//        log.info("cookie(OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME) : " + CookieUtil.getCookie(request,OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
-//                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class)));
+        log.info("cookie(OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME) : " + CookieUtil.getCookie(request,OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
+                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class)));
+        Optional<OAuth2AuthorizationRequest> oAuth2AuthorizationRequest = CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
+                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class));
 
 //        log.info(CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
 //                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class))

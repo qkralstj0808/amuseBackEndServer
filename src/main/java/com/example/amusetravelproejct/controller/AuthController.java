@@ -4,6 +4,7 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.Admin;
+import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
@@ -29,6 +30,7 @@ import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.RedirectStrategy;
@@ -71,6 +73,13 @@ public class AuthController {
     private final RedirectStrategy redirectStrategy;
 
     private final long ADMIN_ACCESS_TOKEN_EXPIRE = 3600000 * 3;
+
+    @DeleteMapping("/user/withdraw")
+    public ResponseTemplate<String> withdrawSocialLogin(@AuthenticationPrincipal UserPrincipal userPrincipal){
+        User user = userService.getUserByPrincipal(userPrincipal);
+
+        return userService.withdrawSocialLogin(user);
+    }
 
     @CrossOrigin(originPatterns = "*", allowCredentials = "true")
     @GetMapping("/token/success")

@@ -14,6 +14,7 @@ import com.example.amusetravelproejct.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +48,7 @@ public class AdminPageController {
         // 유저 데이터 선 처리
 
 
-        AdminPageResponse.advertisementRegister  advertisement = advertisementService.processAdvertisementRegister(adminAdvertisementRegisterDto,utilMethod);
+        AdminPageResponse.advertisementRegister  advertisement = advertisementService.processAdvertisementRegister(adminAdvertisementRegisterDto,utilMethod,findAdmin);
         return new ResponseTemplate<>(advertisement);
     }
 
@@ -101,7 +102,7 @@ public class AdminPageController {
         productRegisterDto.setUpdateAdmin(findAdmin.getAdminId());
 
         log.info(productRegisterDto.toString());
-        Item item = productRegisterDto.getOption().equals("create") ? itemService.processCreate(productRegisterDto) : itemService.processUpdate(productRegisterDto);
+        Item item = productRegisterDto.getOption().equals("create") ? itemService.processCreate(productRegisterDto,findAdmin) : itemService.processUpdate(productRegisterDto,findAdmin);
 
         itemService.processItemTicket(productRegisterDto,item);
         itemService.processItemImg(productRegisterDto,utilMethod,item);
@@ -125,12 +126,12 @@ public class AdminPageController {
         return new ResponseTemplate<>(itemService.processGetItemDetail(item_db_id));
     }
 
-    @GetMapping("/product/delete")
-    public ResponseTemplate<String> reqProductDelete(@RequestParam("itemCode") String itemCode){
+    @DeleteMapping("/product/delete")
+    public ResponseTemplate<String> reqProductDelete(@RequestParam("id") Long item_db_id){
         //TODO
         // productRegisterDto 데이터 선 처리
 
-        itemService.processDeleteItem(itemCode);
+        itemService.processDeleteItem(item_db_id);
         return new ResponseTemplate<>("상품 삭제 완료");
     }
 
@@ -156,9 +157,9 @@ public class AdminPageController {
 
         return new ResponseTemplate<>(itemService.processGetAllDisplayItems(limit,sqlPage,displayStatus));
     }
-    @PostMapping("/change/item/{itemCode}/displayStatus")
-    public ResponseTemplate<String> changeDisplayStatus(@RequestBody AdminPageRequest.changeDisplayStatus request ,@PathVariable("itemCode") String itemCode){
-        itemService.changeItemStatus(request,itemCode);
+    @PostMapping("/change/item/{item-db-id}/displayStatus")
+    public ResponseTemplate<String> changeDisplayStatus(@RequestBody AdminPageRequest.changeDisplayStatus request ,@PathVariable("item-db-id") Long item_db_id){
+        itemService.changeItemStatus(request,item_db_id);
 
         return new ResponseTemplate<>("상품 상태가 변경되었습니다.");
     }
@@ -227,6 +228,7 @@ public class AdminPageController {
     public ResponseTemplate<List<String>> reqCategoryList(){
         return new ResponseTemplate<>(categoryService.processGetCategoryList());
     }
+
     @GetMapping("/category/sequence")
     public ResponseTemplate<List<AdminPageResponse.categorySequence>> reqCategorySequence(){
 
@@ -370,7 +372,7 @@ public class AdminPageController {
         return new ResponseTemplate<>(itemService.getIconList());
     }
 
-    @PostMapping("page/register")
+    @PostMapping("/page/register")
     public ResponseTemplate<String> createPage(
             @RequestBody AdminPageRequest.createPage request,
             @AuthenticationPrincipal UserPrincipal userPrincipal){
@@ -381,7 +383,7 @@ public class AdminPageController {
         return pageService.createPage(request,utilMethod,findAdmin);
     }
 
-    @PutMapping("page/edit/{page-id}")
+    @PutMapping("/page/edit/{page-id}")
     public ResponseTemplate<AdminPageResponse.updatePage> updatePage(
             @PathVariable("page-id") Long page_id,
             @RequestBody AdminPageRequest.updatePage request,

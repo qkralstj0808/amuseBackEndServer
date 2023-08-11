@@ -10,6 +10,7 @@ import com.example.amusetravelproejct.repository.AdminRepository;
 import com.example.amusetravelproejct.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -61,11 +62,13 @@ public class CategoryService {
     public List<AdminPageResponse.categorySequence> processGetCategorySequence() {
         List<AdminPageResponse.categorySequence> categorySequenceList = new ArrayList<>();
 
-        List<Category> categoryList = categoryRepository.findAll();
-
+        log.info("시작");
+        List<Category> categoryList = categoryRepository.findAll(Sort.by(Sort.Direction.ASC,"sequence"));
+        log.info("끝");
         for (Category category : categoryList) {
             categorySequenceList.add(new AdminPageResponse.categorySequence(category.getId(),category.getCategory_name(),category.getSequence(),category.getCreatedDate(),category.getAdmin().getAdminId(), category.getUpdateAdmin() == null ? null : category.getModifiedDate(), category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getAdminId()));
         }
+
         return categorySequenceList;
     }
 

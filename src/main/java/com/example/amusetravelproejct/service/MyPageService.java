@@ -60,12 +60,30 @@ public class MyPageService {
         itemReview.setUser(findUser);
         itemReview.setContent(request.getReview_content());
         itemReview.setRating(request.getRate());
-        List<ItemReviewImg> itemReviewImgList = processItemImg(request, utilMethod, itemReview);
+
+        List<ItemReviewImg> itemReviewImgList = new ArrayList<>();
+        if(request.getReview_imgs() == null || request.getReview_imgs().size() == 0){
+            itemReviewImgList = null;
+        }else{
+            itemReviewImgList = processItemImg(request, utilMethod, itemReview);
+        }
+
         itemReview.setItemReviewImgs(itemReviewImgList);
+
+        Double before_rated = findItem.getRated();
+        Integer before_review_count = findItem.getReview_count();
+
+        Integer current_review_count = before_review_count + 1;
+        Double current_rated = (before_rated*before_review_count + request.getRate())/current_review_count;
+
+        findItem.setReview_count(current_review_count);
+        findItem.setRated(current_rated);
+
         itemReviewRepository.save(itemReview);
+        itemRepository.save(findItem);
 
         return new ResponseTemplate(new MyPageResponse.setReview(findUser.getUsername(),request.getRate(),
-                request.getReview_content(),itemReviewImgList.stream().map(
+                request.getReview_content(),itemReviewImgList == null || itemReviewImgList.size() == 0 ? null :  itemReviewImgList.stream().map(
                         itemReviewImg -> new MyPageResponse.ImageInfo(itemReviewImg.getImgUrl())).collect(Collectors.toList())
         ));
     }
@@ -90,4 +108,20 @@ public class MyPageService {
         return itemReviewImgList;
     }
 
+    public ResponseTemplate<MyPageResponse.getReview> getReview(User findUser) {
+        List<ItemReview> itemReviews = itemReviewRepository.findByUserId(findUser.getId());
+
+        return new ResponseTemplate(new MyPageResponse.getReview(itemReviews.stream().map(
+                itemReview -> new MyPageResponse.ReviewInfo(
+                        itemReview.getItem().getId(),
+                        itemReview.getUser().getUsername(),
+                        itemReview.getRating(),
+                        itemReview.getContent(),
+                        itemReview.getItemReviewImgs().stream().map(
+                                itemReviewImg -> new MyPageResponse.ImageInfo(itemReviewImg.getImgUrl())
+                        ).collect(Collectors.toList())
+                )
+        ).collect(Collectors.toList())
+        ));
+    }
 }

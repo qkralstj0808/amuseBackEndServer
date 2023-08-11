@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,10 +60,13 @@ public class PageService {
         category.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(), request.getFileName()));
 
         List<Long> newPageComponentId = new ArrayList<>();
+        List<Long> sequenceList = new ArrayList<>();
+        HashMap<Long,Long> pageComponent_sequence = new HashMap<>();
         List<AdminPageRequest.PageComponentInfo> pageComponentInfos = request.getPageComponentInfos();
 
         for (AdminPageRequest.PageComponentInfo pageComponentInfo : pageComponentInfos) {
             newPageComponentId.add(pageComponentInfo.getComponentId());
+            pageComponent_sequence.put(pageComponentInfo.getComponentId(),pageComponentInfo.getSequence());
         }
 
         List<PageComponent> pageComponentList = pageComponentRepository.findListByPageComponentIdList(newPageComponentId);
@@ -73,6 +77,7 @@ public class PageService {
             CategoryPageComponent categoryPageComponent = new CategoryPageComponent();
             categoryPageComponent.setPageComponent(pageComponent);
             categoryPageComponent.setCategory(category);
+            categoryPageComponent.setSequence(pageComponent_sequence.get(pageComponent.getId()));
             categoryPageComponentArrayList.add(categoryPageComponent);
         }
         category.setCategoryPageComponents(categoryPageComponentArrayList);
@@ -150,11 +155,11 @@ public class PageService {
         if(request.getPageComponentInfos() != null && request.getPageComponentInfos().size() != 0){
             categoryPageComponents.clear();
 
-
             List<AdminPageRequest.PageComponentInfo> pageComponentInfos = request.getPageComponentInfos();
-
+            HashMap<Long,Long> pageComponent_sequence = new HashMap<>();
             for (AdminPageRequest.PageComponentInfo pageComponentInfo : pageComponentInfos) {
                 newPageComponentId.add(pageComponentInfo.getComponentId());
+                pageComponent_sequence.put(pageComponentInfo.getComponentId(),pageComponentInfo.getSequence());
             }
 
             List<PageComponent> pageComponentList = pageComponentRepository.findListByPageComponentIdList(newPageComponentId);
@@ -165,6 +170,7 @@ public class PageService {
                 CategoryPageComponent categoryPageComponent = new CategoryPageComponent();
                 categoryPageComponent.setPageComponent(pageComponent);
                 categoryPageComponent.setCategory(findCategory);
+                categoryPageComponent.setSequence(pageComponent_sequence.get(pageComponent.getId()));
                 categoryPageComponentArrayList.add(categoryPageComponent);
             }
 
@@ -205,7 +211,10 @@ public class PageService {
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
         );
 
-        List<CategoryPageComponent> categoryPageComponents = findCategory.getCategoryPageComponents();
+        List<CategoryPageComponent> categoryPageComponents = categoryPageComponentRepository.findByCategoryIdOrderBySequence(page_id);
+
+
+//        List<CategoryPageComponent> categoryPageComponents = findCategory.getCategoryPageComponents();
 
         List<PageComponent> pageComponents = new ArrayList<>();
         for(CategoryPageComponent categoryPageComponent :categoryPageComponents){
@@ -253,7 +262,7 @@ public class PageService {
                         category.getModifiedDate(),
                         category.getUpdateAdmin() == null ? null : category.getUpdateAdmin().getAdminId(),
                         category.getCategoryPageComponents().stream().map(
-                                categoryPageComponent -> new AdminPageResponse.PageComponentId(categoryPageComponent.getPageComponent().getId())
+                                categoryPageComponent -> new AdminPageResponse.PageComponentId(categoryPageComponent.getPageComponent().getId(),categoryPageComponent.getSequence())
                         ).collect(Collectors.toList())
                 )
         ));

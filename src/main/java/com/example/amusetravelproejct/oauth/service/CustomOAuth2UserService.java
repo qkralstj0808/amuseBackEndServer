@@ -1,8 +1,10 @@
 package com.example.amusetravelproejct.oauth.service;
 
 import com.example.amusetravelproejct.domain.User;
+import com.example.amusetravelproejct.domain.UserRefreshToken;
 import com.example.amusetravelproejct.oauth.exception.OAuthProviderMissMatchException;
 import com.example.amusetravelproejct.oauth.info.OAuth2UserInfoFactory;
+import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.repository.UserRepository;
 import com.example.amusetravelproejct.oauth.entity.ProviderType;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
@@ -19,6 +21,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,6 +34,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
 
+    private final UserRefreshTokenRepository userRefreshTokenRepository;
+
     // 소셜 로그인이 성공하면 해당 메서드가 바로 실행이 된다.
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -39,9 +44,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         try {
             log.info("\n\nCustomOauth2UserService에서 loadUser 함수가 실행이 되었다.");
             log.info(String.valueOf(userRequest.getClientRegistration()));
-            log.info(String.valueOf(userRequest.getAccessToken().getTokenValue()));
-            log.info(userRequest.getAdditionalParameters().toString());
+            log.info("소셜 로그인 access_token : " + String.valueOf(userRequest.getAccessToken().getTokenValue()));
+            log.info("소셜 로그인 access_token expired: " + String.valueOf(userRequest.getAccessToken().getExpiresAt()));
 
+
+//            log.info(userRequest.getAdditionalParameters().toString());
+//            log.info(userRequest.getAdditionalParameters().toString());
             return this.process(userRequest, user);
         } catch (AuthenticationException ex) {
             throw ex;
@@ -51,10 +59,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
     }
 
+
     private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
         log.info("\n\nCustomOAuth2UserService에서 process 메서드에 진입했습니다.");
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
+        log.info(user.getAttributes().toString());
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
         log.info("userInfo.getId() : " + userInfo.getId());
 
@@ -89,6 +99,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             log.info("CustomOAuth2UserService에 process 메서드 안에 있다.");
             log.info("데이터베이스에 없는 유저라서 create한다.");
             savedUser = createUser(userInfo, providerType);
+        }
+
+
+        if(savedUser.getProviderType().equals(ProviderType.NAVER) || savedUser.getProviderType().equals(ProviderType.GOOGLE)){
+            UserRefreshToken userNaverAccessToken = userRefreshTokenRepository.findByUserId(savedUser.getUserId() + "SocialAccessToken");
+
+            if(userNaverAccessToken == null){
+                userNaverAccessToken = new UserRefreshToken();
+                userNaverAccessToken.setUserId(savedUser.getUserId()+"SocialAccessToken");
+                userNaverAccessToken.setRefreshToken(userRequest.getAccessToken().getTokenValue());
+            }else{
+                userNaverAccessToken.setRefreshToken(userRequest.getAccessToken().getTokenValue());
+            }
+
+            userRefreshTokenRepository.save(userNaverAccessToken);
+
         }
 
         log.info("CustomOAuth2UserService createUser 다 끝났음");

@@ -94,12 +94,16 @@ public class MainPageController {
     @GetMapping("/main/category/{category-id}/page")
     public ResponseTemplate<MainPageResponse.getCategoryPage> getCategoryPage(
             @PathVariable("category-id") Long category_id,@AuthenticationPrincipal UserPrincipal userPrincipal){
-        Grade grade = Grade.BRONZE;
+        Grade grade = Grade.Bronze;
         if(!(userPrincipal == null)){
             User findUser = userService.getUserByPrincipal(userPrincipal);
             grade = findUser.getGrade();
         }
-
+        log.info("grade : " + grade);
+        log.info("Bronze.ordinal() : " + Grade.Bronze.ordinal());
+        log.info("Silver.ordinal() : " + Grade.Silver.ordinal());
+        log.info("Gold.ordinal() : " + Grade.Gold.ordinal());
+        log.info("Platinum.ordinal() : " + Grade.Platinum.ordinal());
         log.info("grade" + grade.ordinal());
         return mainPageService.getCategoryPage(category_id,grade);
     }

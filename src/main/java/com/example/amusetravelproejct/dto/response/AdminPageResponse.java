@@ -453,5 +453,6 @@ public class AdminPageResponse {
     @NoArgsConstructor
     public static class PageComponentId {
         private Long id;
+        private Long sequence;
     }
 }

@@ -139,7 +139,7 @@ public class User extends BaseEntity{
         this.profileImageUrl = profileImageUrl != null ? profileImageUrl : "";
         this.providerType = providerType;
         this.roleType = roleType;
-        this.grade = Grade.BRONZE;
+        this.grade = Grade.Bronze;
     }
 
     public void addLikeItem(LikeItem likeItem){

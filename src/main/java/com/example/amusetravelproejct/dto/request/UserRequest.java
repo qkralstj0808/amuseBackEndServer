@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.dto.request;
 
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,5 +27,12 @@ public class UserRequest {
 
         @Builder.Default()
         private Boolean over_14_age_true = false;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class changeUserGrade {
+        private Grade grade;
     }
 }

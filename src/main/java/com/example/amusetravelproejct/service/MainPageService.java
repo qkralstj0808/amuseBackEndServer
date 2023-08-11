@@ -34,6 +34,8 @@ public class MainPageService {
 
     public final TargetUserRepository targetUserRepository;
 
+    private final CategoryPageComponentRepository categoryPageComponentRepository;
+
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
 
@@ -203,20 +205,20 @@ public class MainPageService {
                 () -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND)
         );
 
+        List<CategoryPageComponent> categoryPageComponentList = categoryPageComponentRepository.findByCategoryIdOrderBySequence(category_id);
 
         List<Object> pageComponentInfoList = new ArrayList<>();
 
         // 한 카테고리에 들어가는 component 개수
-        for (int i = 0; i < category.getCategoryPageComponents().size(); i++) {
-            log.info("category.getCategoryPageComponents().size() : " + category.getCategoryPageComponents().size());
-            CategoryPageComponent categoryPageComponent = category.getCategoryPageComponents().get(i);
+        for (int i = 0; i < categoryPageComponentList.size(); i++) {
+            log.info("category.getCategoryPageComponents().size() : " + categoryPageComponentList.size());
+            CategoryPageComponent categoryPageComponent = categoryPageComponentList.get(i);
             PageComponent pageComponent = categoryPageComponent.getPageComponent();
 
             // 각 component 별로
 
             // 타일
             if (pageComponent.getType().equals("타일")) {
-
                 // 해당 카테고리에 속한 타일의 종류를 반환
                 List<Long> tileIds = mainPageRepository.findTileIds(pageComponent.getId());
                 log.info(String.valueOf(tileIds.size()));
@@ -224,7 +226,7 @@ public class MainPageService {
 
                 for (int k = 0; k < tileIds.size(); k++) {
                     log.info(String.valueOf(tileIds.get(k)));
-                    List<MainPage> mainPage_by_tile_id = mainPageRepository.findMainPageByComponent_idAndTyle_idAndDisplayTrueAndGrade(pageComponent.getId(), tileIds.get(k),grade);
+                    List<MainPage> mainPage_by_tile_id = mainPageRepository.findMainPageByComponent_idAndTyle_idAndDisplayTrueAndGradeForTile(pageComponent.getId(), tileIds.get(k),grade);
                     List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<MainPageResponse.ItemInfo>();
 
                     for (int q = 0; q < mainPage_by_tile_id.size(); q++) {
@@ -273,7 +275,7 @@ public class MainPageService {
             } else if (pageComponent.getType().equals("리스트")){
                 List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<>();
 
-                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplayWithGrade(pageComponent.getId(), true,grade);
+                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplayWithGradeForList(category.getCategory_name(),pageComponent.getId(), true,grade);
 //                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
 //                    Item item = pageComponent.getMainPages().get(k).getItem();
                 for (int k = 0; k < mainPageList.size(); k++) {
@@ -307,31 +309,33 @@ public class MainPageService {
 
             // 배너
             }else{
-                List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<>();
 
-                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplayWithGrade(pageComponent.getId(), true,grade);
-//                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
-//                    Item item = pageComponent.getMainPages().get(k).getItem();
-                for (int k = 0; k < mainPageList.size(); k++) {
-                    Item item = mainPageList.get(k).getItem();
-                    MainPageResponse.ItemInfo itemInfo = new MainPageResponse.ItemInfo(
-                            item.getId(),
-                            item.getItemCode(),
-                            item.getItemHashTags().stream().map(
-                                    itemHashTag -> new MainPageResponse.HashTag(
-                                            itemHashTag.getHashTag()
-                                    )
-                            ).collect(Collectors.toList()),
-                            item.getItemImg_list().size() != 0 ? item.getItemImg_list().get(0).getImgUrl() : null,
-                            item.getTitle(),
-                            item.getCountry(),
-                            item.getCity(),
-                            item.getDuration(),
-                            item.getLike_num(),
-                            item.getStartPrice()
-                    );
-                    itemInfoList.add(itemInfo);
-                }
+
+//                List<MainPageResponse.ItemInfo> itemInfoList = new ArrayList<>();
+//
+//                List<MainPage> mainPageList = mainPageRepository.findMainPageByPageComponentIdAndItemDisplayWithGradeForTile(pageComponent.getId(), true,grade);
+////                for (int k = 0; k < pageComponent.getMainPages().size(); k++) {
+////                    Item item = pageComponent.getMainPages().get(k).getItem();
+//                for (int k = 0; k < mainPageList.size(); k++) {
+//                    Item item = mainPageList.get(k).getItem();
+//                    MainPageResponse.ItemInfo itemInfo = new MainPageResponse.ItemInfo(
+//                            item.getId(),
+//                            item.getItemCode(),
+//                            item.getItemHashTags().stream().map(
+//                                    itemHashTag -> new MainPageResponse.HashTag(
+//                                            itemHashTag.getHashTag()
+//                                    )
+//                            ).collect(Collectors.toList()),
+//                            item.getItemImg_list().size() != 0 ? item.getItemImg_list().get(0).getImgUrl() : null,
+//                            item.getTitle(),
+//                            item.getCountry(),
+//                            item.getCity(),
+//                            item.getDuration(),
+//                            item.getLike_num(),
+//                            item.getStartPrice()
+//                    );
+//                    itemInfoList.add(itemInfo);
+//                }
                 MainPageResponse.PageBannerInfo pageComponentInfo = new MainPageResponse.PageBannerInfo(
                         pageComponent.getId(),
                         pageComponent.getType(),
@@ -340,8 +344,8 @@ public class MainPageService {
                         pageComponent.getPcBannerLink(),
                         pageComponent.getMobileBannerUrl(),
                         pageComponent.getMobileBannerLink(),
-                        pageComponent.getContent(),
-                        itemInfoList
+                        pageComponent.getContent()
+//                        itemInfoList
                 );
                 pageComponentInfoList.add(pageComponentInfo);
             }
