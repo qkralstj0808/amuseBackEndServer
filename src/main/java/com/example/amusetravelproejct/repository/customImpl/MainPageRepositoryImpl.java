@@ -69,6 +69,7 @@ public class MainPageRepositoryImpl implements MainPageRepositoryCustom {
                 .join(item).on(itemHashTag.item.eq(item))
                 .where(item.id.eq(mainPage.item.id));
 
+
         return jpaQueryFactory.selectFrom(mainPage)
                 .where(eqComponentId(pageComponent_id),ItemDisplay(true),BeteweenBronzeAndMyGradeItem(grade),subQuery.contains(category_name))
                 .fetch();
@@ -84,16 +85,15 @@ public class MainPageRepositoryImpl implements MainPageRepositoryCustom {
 
 
     private BooleanExpression BeteweenBronzeAndMyGradeItem(Grade grade) {
-        if(mainPage.item.grade == null){
-            return Expressions.TRUE;
-        }
-
-        if(StringUtils.isBlank(grade.toString())){
-            return Expressions.TRUE;
-        }
-
-        log.info("grade : " + grade);
-        return mainPage.item.grade.between(Grade.Bronze,grade);
+//        if(mainPage.item.grade == null){
+//            return Expressions.TRUE;
+//        }
+//
+//        if(StringUtils.isBlank(grade.toString())){
+//            return Expressions.TRUE;
+//        }
+//        log.info(mainPage.item.grade.);
+        return mainPage.item.grade.goe(Grade.Bronze).and(mainPage.item.grade.loe(grade));
     }
 
     private BooleanExpression ExitCategoryInItemHashTag(NumberPath<Long> item_id, String category_name) {

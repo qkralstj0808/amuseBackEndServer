@@ -60,7 +60,7 @@ public class Item extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String adminContent;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private Grade grade;                // 등급 (일반, 프리미엄, VIP)
 
     @ColumnDefault("0")
