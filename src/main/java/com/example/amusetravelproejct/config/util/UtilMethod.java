@@ -2,23 +2,27 @@ package com.example.amusetravelproejct.config.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Base64Util;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
+@Service
 public class UtilMethod {
-    private  AmazonS3 amazonS3Client;
-    static String bucketName = "amuseimg";
+    private  final AmazonS3 amazonS3Client;
+
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     public static SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -64,8 +68,10 @@ public class UtilMethod {
             log.info("fileName : " + fileName);
         }
         String key = "images/" + fileName;
-        amazonS3Client.putObject(bucketName, key, inputStream, metadata);
-        String s3Url = amazonS3Client.getUrl(bucketName, key).toString();
+
+        log.info("bucket : " + bucket);
+        amazonS3Client.putObject(bucket, key, inputStream, metadata);
+        String s3Url = amazonS3Client.getUrl(bucket, key).toString();
 
         return s3Url;
     }
