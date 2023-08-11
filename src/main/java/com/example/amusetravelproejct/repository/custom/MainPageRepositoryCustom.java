@@ -13,8 +13,8 @@ public interface MainPageRepositoryCustom {
 
     List<Long> findTileIds(Long page_component_id);
 
-    List<MainPage> findMainPageByComponent_idAndTyle_idAndDisplayTrueAndGrade(Long page_component_id, Long tile_id, Grade grade);
+    List<MainPage> findMainPageByComponent_idAndTyle_idAndDisplayTrueAndGradeForTile(Long page_component_id, Long tile_id, Grade grade);
 
-    List<MainPage> findMainPageByPageComponentIdAndItemDisplayWithGradeForTile(Long pageComponent_id, Boolean item_display,Grade grade);
+//    List<MainPage> findMainPageByPageComponentIdAndItemDisplayWithGradeForTile(Long pageComponent_id, Boolean item_display,Grade grade);
     List<MainPage> findMainPageByPageComponentIdAndItemDisplayWithGradeForList(String category_id,Long pageComponent_id, Boolean item_display,Grade grade);
 }

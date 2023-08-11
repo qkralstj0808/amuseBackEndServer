@@ -25,6 +25,7 @@ public class DetailPageResponse {
         private String startPoint;
         private String runningTime;
         private String activityIntensity;
+        private String language;
     }
 
     @Data

@@ -92,6 +92,7 @@ public class Item extends BaseEntity {
     private String startPoint;
     private String runningTime;
     private String activityIntensity;
+    private String language;
 
     // item와 category는 N:1 관계 ManyToOne
 
