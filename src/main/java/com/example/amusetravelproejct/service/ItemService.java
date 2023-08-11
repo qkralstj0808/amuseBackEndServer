@@ -121,6 +121,7 @@ public class ItemService {
         item.setStartPoint(productRegisterDto.getStartPoint());
         item.setRunningTime(productRegisterDto.getRunningTime());
         item.setActivityIntensity(productRegisterDto.getActivityIntensity());
+        item.setLanguage(productRegisterDto.getLanguage());
 
         log.info("productRegisterDto.getGuide_code() : " + productRegisterDto.getGuide_code());
         if(productRegisterDto.getGuide_code() != null && !productRegisterDto.getGuide_code().equals("")){
@@ -245,6 +246,7 @@ public class ItemService {
         item.setStartPoint(productRegisterDto.getStartPoint());
         item.setRunningTime(productRegisterDto.getRunningTime());
         item.setActivityIntensity(productRegisterDto.getActivityIntensity());
+        item.setLanguage(productRegisterDto.getLanguage());
 
 //        if(productRegisterDto.getStartPoint() != null){
 //
@@ -914,6 +916,10 @@ public class ItemService {
         productRegisterDto.setStartDate(item.getStartDate() == null ? null : String.valueOf(item.getStartDate()));
         productRegisterDto.setEndDate(item.getEndDate() == null ? null : String.valueOf(item.getEndDate()));
         productRegisterDto.setDuration(item.getDuration() == null ? null : String.valueOf(item.getDuration()));
+        productRegisterDto.setLanguage(item.getLanguage());
+        productRegisterDto.setStartPoint(item.getStartPoint());
+        productRegisterDto.setRunningTime(item.getRunningTime());
+        productRegisterDto.setActivityIntensity(item.getActivityIntensity());
 
         ProductRegisterDto.accessData accessAuthority = new ProductRegisterDto.accessData();
         List<TargetUser> users = item.getTargetUsers();

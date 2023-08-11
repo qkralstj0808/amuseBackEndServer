@@ -36,6 +36,7 @@ public class ProductRegisterDto {
     private String startPoint;
     private String runningTime;
     private String activityIntensity;
+    private String language;
 
 
     @Data

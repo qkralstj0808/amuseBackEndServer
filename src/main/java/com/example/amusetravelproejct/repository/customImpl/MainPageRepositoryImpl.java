@@ -15,8 +15,11 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 
+@Slf4j
 public class MainPageRepositoryImpl implements MainPageRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
@@ -46,18 +49,18 @@ public class MainPageRepositoryImpl implements MainPageRepositoryCustom {
     }
 
     @Override
-    public List<MainPage> findMainPageByComponent_idAndTyle_idAndDisplayTrueAndGrade(Long page_component_id, Long tile_id,Grade grade) {
+    public List<MainPage> findMainPageByComponent_idAndTyle_idAndDisplayTrueAndGradeForTile(Long page_component_id, Long tile_id,Grade grade) {
         return jpaQueryFactory.selectFrom(mainPage)
                 .where(eqComponentId(page_component_id),eqMainPageTileId(tile_id),BeteweenBronzeAndMyGradeItem(grade),ItemDisplay(true))
                 .fetch();
     }
 
-    @Override
-    public List<MainPage> findMainPageByPageComponentIdAndItemDisplayWithGradeForTile(Long pageComponent_id, Boolean item_display,Grade grade) {
-        return jpaQueryFactory.selectFrom(mainPage)
-                .where(eqComponentId(pageComponent_id),ItemDisplay(true),BeteweenBronzeAndMyGradeItem(grade))
-                .fetch();
-    }
+//    @Override
+//    public List<MainPage> findMainPageByPageComponentIdAndItemDisplayWithGradeForTile(Long pageComponent_id, Boolean item_display,Grade grade) {
+//        return jpaQueryFactory.selectFrom(mainPage)
+//                .where(eqComponentId(pageComponent_id),ItemDisplay(true),BeteweenBronzeAndMyGradeItem(grade))
+//                .fetch();
+//    }
 
     @Override
     public List<MainPage> findMainPageByPageComponentIdAndItemDisplayWithGradeForList(String category_name, Long pageComponent_id, Boolean item_display, Grade grade) {
@@ -89,6 +92,7 @@ public class MainPageRepositoryImpl implements MainPageRepositoryCustom {
             return Expressions.TRUE;
         }
 
+        log.info("grade : " + grade);
         return mainPage.item.grade.between(Grade.Bronze,grade);
     }
 

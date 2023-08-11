@@ -116,7 +116,7 @@ public class MainPageResponse {
         private String MobileBannerUrl;
         private String MobileBannerLink;
         private String content;
-        private List<ItemInfo> itemInfos;
+//        private List<ItemInfo> itemInfos;
     }
 
     @Data
