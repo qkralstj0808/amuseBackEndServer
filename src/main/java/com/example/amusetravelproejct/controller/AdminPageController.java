@@ -36,11 +36,12 @@ public class AdminPageController {
     private final UserService userService;
     private final PageService pageService;
     private final AmazonS3 amazonS3Client;
+
+    private final UtilMethod utilMethod;
     ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/ad/register")
     public ResponseTemplate<AdminPageResponse.advertisementRegister> reqAdvertisementRegister(@RequestBody AdminPageRequest.advertisementRegister adminAdvertisementRegisterDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         adminAdvertisementRegisterDto.setCreatedBy(findAdmin.getAdminId());
@@ -54,7 +55,6 @@ public class AdminPageController {
 
     @PostMapping("/ad/edit")
     public ResponseTemplate<AdminPageResponse.advertisementEdit> reqAdvertisementEdit(@RequestBody AdminPageRequest.advertisementEdit adminAdvertisementRegisterDbDto,@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
 
         adminAdvertisementRegisterDbDto.setUpdatedBy(findAdmin.getAdminId());
@@ -91,7 +91,6 @@ public class AdminPageController {
     @PostMapping("/product/insert")
     public ResponseTemplate<String> reqProductCreate(@RequestBody ProductRegisterDto productRegisterDto,
                                                      @AuthenticationPrincipal UserPrincipal userPrincipal) throws ParseException {
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         //TODO
         // productRegisterDto 데이터 선 처리
@@ -206,7 +205,6 @@ public class AdminPageController {
 
     @PostMapping("/category/register")
     public ResponseTemplate<AdminPageResponse.categoryRegister> reqCategoryRegister(@RequestBody AdminPageRequest.categoryRegister  categoryRegisterDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         categoryRegisterDto.setCreatedBy(findAdmin.getAdminId());
         //TODO
@@ -218,7 +216,6 @@ public class AdminPageController {
 
     @PostMapping("/category/edit")
     public ResponseTemplate<AdminPageResponse.categoryEdit> reqCategoryEdit(@RequestBody AdminPageRequest.categoryEdit categoryEditDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         categoryEditDto.setUpdatedBy(findAdmin.getAdminId());
         return new ResponseTemplate<>(categoryService.processEditCategory(categoryEditDto,adminService,utilMethod));
@@ -266,7 +263,6 @@ public class AdminPageController {
     @Transactional
     @PostMapping("/component/register/banner")
     public ResponseTemplate<?> reqComponentRegisterBanner(@RequestBody AdminPageRequest.registerBannerComponent registerBannerComponentDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         //TODO
         // 유저 데이터 선 처리
@@ -278,7 +274,6 @@ public class AdminPageController {
     @Transactional
     @PostMapping("/component/edit/banner")
     public ResponseTemplate<?> reqComponentEditBanner(@RequestBody AdminPageRequest.registerBannerComponent registerBannerComponentDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
         //TODO
         // 유저 데이터 선 처리
@@ -290,7 +285,6 @@ public class AdminPageController {
     @Transactional
     @PostMapping("/component/register/tile")
     public ResponseTemplate<?> reqComponentRegisterTile(@RequestBody AdminPageRequest.registerTileComponent registerTileComponentDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
 
         //TODO
@@ -303,7 +297,6 @@ public class AdminPageController {
     @Transactional
     @PostMapping("/component/edit/tile")
     public ResponseTemplate<?> reqComponentEditTile(@RequestBody AdminPageRequest.registerTileComponent registerTileComponentDto,@AuthenticationPrincipal UserPrincipal userPrincipal){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
 
         //TODO
@@ -336,7 +329,6 @@ public class AdminPageController {
 
     @PostMapping("/create/guide")
     public ResponseTemplate<AdminResponse.GuideInfo> createGuide(@RequestBody AdminRequest.guide request){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         return  new ResponseTemplate<>(userService.createGuide(request,utilMethod));
     }
@@ -349,7 +341,6 @@ public class AdminPageController {
 
     @PostMapping("/update/guide/{guide_db_id}")
     public ResponseTemplate<AdminResponse.GuideInfo> updateGuide(@PathVariable("guide_db_id") Long guide_db_id,@RequestBody AdminRequest.guide request){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         return  new ResponseTemplate<>(userService.updateGuide(request,guide_db_id,utilMethod));
     }
@@ -376,7 +367,6 @@ public class AdminPageController {
     public ResponseTemplate<String> createPage(
             @RequestBody AdminPageRequest.createPage request,
             @AuthenticationPrincipal UserPrincipal userPrincipal){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
 //        User findUser = userService.getUserByPrincipal(userPrincipal);
 
@@ -388,7 +378,6 @@ public class AdminPageController {
             @PathVariable("page-id") Long page_id,
             @RequestBody AdminPageRequest.updatePage request,
             @AuthenticationPrincipal UserPrincipal userPrincipal){
-        UtilMethod utilMethod = new UtilMethod(amazonS3Client);
 
         Admin findAdmin = adminService.getAdminPrincipal(userPrincipal);
 
