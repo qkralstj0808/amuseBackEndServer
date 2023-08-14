@@ -60,7 +60,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         log.info("response : " + response);
-
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
@@ -79,7 +78,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }else{
             Optional<String> redirectUri = CookieUtil.getCookie(request, OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME)
                     .map(Cookie::getValue);
-
 
             if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
                 throw new IllegalArgumentException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
@@ -164,38 +162,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         int cookieMaxAge = (int) refreshTokenExpiry / 60;
 
         CookieUtil.deleteCookie(request, response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN);
-//        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-
-//        String domain = null;
-//        if(!targetUrl.equals("/")){
-//            URL parsedUrl = null;
-//            try {
-//                parsedUrl = new URL(targetUrl);
-//            } catch (MalformedURLException e) {
-//                throw new RuntimeException(e);
-//            }
-//            domain = parsedUrl.getHost();
-//            String path = parsedUrl.getPath();
-//            System.out.println();
-//            System.out.println("domain : " + domain + path);
-//
-//            String[] parts = domain.split("\\.");
-//            int len = parts.length;
-//            if (len >= 2) {
-//                // 마지막 두 개의 요소를 연결하여 도메인을 구성
-//                domain =  parts[len - 2] + "." + parts[len - 1];
-//                domain = "." + domain;
-//            }
-//            log.info("domain" + ": " + domain);
-//        }else{
-//            domain = "wheelgo.net";
-//        }
-
         CookieUtil.deleteCookie(request,response,OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN);
 
-//        CookieUtil.addCookie(response, OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN, accessToken.getToken(), cookieMaxAge/60,request.getServerName());
         CookieUtil.addCookie(response,"target_url",targetUrl,cookieMaxAge/60,request.getServerName());
-
         CookieUtil.addCookie(response,"access_token",accessToken.getToken(),cookieMaxAge/60,request.getServerName());
 
         if(targetUrl.contains("localhost")){
@@ -208,12 +177,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 //                .queryParam("access-token",accessToken.getToken())
                     .build().toUriString();
         }
-
-
-//        return UriComponentsBuilder.fromUriString(targetUrl)
-////                .queryParam("targetUrl",targetUrl)
-////                .queryParam("access-token",accessToken.getToken())
-//                .build().toUriString();
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
