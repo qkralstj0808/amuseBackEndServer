@@ -52,7 +52,8 @@ public enum ErrorCode {
     EMPTY(HttpStatus.NO_CONTENT,"값이 비었습니다"),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND,"이미지를 찾지 못했습니다."),
     COURSE_NOT_FOUND( HttpStatus.NOT_FOUND,"코스를 찾을 수 없습니다."),
-    UNLINKFAIL(HttpStatus.FAILED_DEPENDENCY,"소셜로그인과 연동 해제에 실패했습니다." );
+    UNLINKFAIL(HttpStatus.FAILED_DEPENDENCY,"소셜로그인과 연동 해제에 실패했습니다." ),
+    OAUTHORIZEDCLIENT_NULL(HttpStatus.NOT_FOUND,"oauthorizedclient가 null이다." );
 
     private final HttpStatus httpStatus;
     private final String message;

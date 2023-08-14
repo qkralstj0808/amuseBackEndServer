@@ -100,22 +100,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             log.info("데이터베이스에 없는 유저라서 create한다.");
             savedUser = createUser(userInfo, providerType);
         }
-
-
-        if(savedUser.getProviderType().equals(ProviderType.NAVER) || savedUser.getProviderType().equals(ProviderType.GOOGLE)){
-            UserRefreshToken userNaverAccessToken = userRefreshTokenRepository.findByUserId(savedUser.getUserId() + "SocialAccessToken");
-
-            if(userNaverAccessToken == null){
-                userNaverAccessToken = new UserRefreshToken();
-                userNaverAccessToken.setUserId(savedUser.getUserId()+"SocialAccessToken");
-                userNaverAccessToken.setRefreshToken(userRequest.getAccessToken().getTokenValue());
-            }else{
-                userNaverAccessToken.setRefreshToken(userRequest.getAccessToken().getTokenValue());
-            }
-
-            userRefreshTokenRepository.save(userNaverAccessToken);
-
-        }
+//        if(savedUser.getProviderType().equals(ProviderType.NAVER) || savedUser.getProviderType().equals(ProviderType.GOOGLE)){
+//            UserRefreshToken userNaverAccessToken = userRefreshTokenRepository.findByUserId(savedUser.getUserId() + "SocialAccessToken");
+//
+//            if(userNaverAccessToken == null){
+//                userNaverAccessToken = new UserRefreshToken();
+//                userNaverAccessToken.setUserId(savedUser.getUserId()+"SocialAccessToken");
+//                userNaverAccessToken.setRefreshToken(userRequest.getAccessToken().getTokenValue());
+//            }else{
+//                userNaverAccessToken.setRefreshToken(userRequest.getAccessToken().getTokenValue());
+//            }
+//
+//            userRefreshTokenRepository.save(userNaverAccessToken);
+//
+//        }
 
         log.info("CustomOAuth2UserService createUser 다 끝났음");
         log.info("user의 roleType : "+savedUser.getRoleType().toString());
