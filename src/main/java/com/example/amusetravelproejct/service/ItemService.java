@@ -123,6 +123,7 @@ public class ItemService {
         item.setActivityIntensity(productRegisterDto.getActivityIntensity());
         item.setLanguage(productRegisterDto.getLanguage());
 
+
         log.info("productRegisterDto.getGuide_code() : " + productRegisterDto.getGuide_code());
         if(productRegisterDto.getGuide_code() != null && !productRegisterDto.getGuide_code().equals("")){
             Guide guide = guideRepository.findByCode(productRegisterDto.getGuide_code()).orElseThrow(
@@ -191,7 +192,12 @@ public class ItemService {
             item.setEndDate(null);
         }
 
+        // default 값
         item.setDisplay(true);
+        item.setLike_num(0);
+        item.setReview_count(0);
+        item.setViewCount(0);
+        item.setRated(0.);
         return item;
     }
 
@@ -332,8 +338,6 @@ public class ItemService {
         }else{
             item.setEndDate(null);
         }
-//        item.setDisplayStatus(DisplayStatus.DISPLAY);
-        item.setDisplay(true);
         return item;
 
     }
