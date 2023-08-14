@@ -53,7 +53,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 onAuthenticationSuccess");
         log.info("authentication.getAuthorities().toString() : " + authentication.getAuthorities().toString());
 
-
         String targetUrl = determineTargetUrl(request, response, authentication);
 
         if(!targetUrl.contains("localhost")){
