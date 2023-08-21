@@ -1067,7 +1067,8 @@ public class ItemService {
             if (item.getItemImg_list().isEmpty()){
                 itemsByDisplayStat.setImgUrl(null);
             } else{
-                itemsByDisplayStat.setImgUrl(item.getItemImg_list().get(0).getImgUrl());
+                ItemImg itemImg = itemImgRepository.findFirstByItemIdOrderBySequence(item.getId());
+                itemsByDisplayStat.setImgUrl(itemImg == null ? null : itemImg.getImgUrl());
             }
             itemsByDisplayStats.add(itemsByDisplayStat);
         });

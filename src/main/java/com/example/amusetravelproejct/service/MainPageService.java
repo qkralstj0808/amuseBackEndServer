@@ -36,6 +36,8 @@ public class MainPageService {
 
     private final CategoryPageComponentRepository categoryPageComponentRepository;
 
+    private final ItemImgRepository itemImgRepository;
+
 
     public ResponseTemplate<MainPageResponse.getCategory> getCategory() {
 
@@ -240,7 +242,7 @@ public class MainPageService {
                                                 itemHashTag.getHashTag()
                                         )
                                 ).collect(Collectors.toList()),
-                                item.getItemImg_list().size() != 0 ? item.getItemImg_list().get(0).getImgUrl() : null,
+                                item.getItemImg_list().size() != 0 ? itemImgRepository.findFirstByItemIdOrderBySequence(item.getId()).getImgUrl() : null,
                                 item.getTitle(),
                                 item.getCountry(),
                                 item.getCity(),
