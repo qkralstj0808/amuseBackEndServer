@@ -19,4 +19,5 @@ public interface ItemRepository extends JpaRepository<Item, Long>, ItemRepositor
 
     Optional<Item> findByIdAndDisplayTrue(Long id);
 
+    List<Item> findAllByDisplay(Boolean display);
 }

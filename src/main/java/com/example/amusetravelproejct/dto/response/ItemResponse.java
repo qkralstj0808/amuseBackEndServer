@@ -14,4 +14,37 @@ public class ItemResponse {
     public static class getAllItemId{
         private List<Long> item_ids;
     }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class getAllDisplayItem {
+        private List<ItemInfo> items;
+    }
+
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ItemInfo {
+        private Long item_db_id;
+        private String product_code;
+        private String imageUrl;
+        private String title;
+        private String country;
+        private String city;
+        private Integer duration;
+        private Integer likeNum;
+        private Long startPrice;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class HashTag {
+        private String hashtag;
+    }
+
 }
