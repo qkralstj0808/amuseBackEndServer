@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -242,7 +244,7 @@ public class MainPageService {
                                                 itemHashTag.getHashTag()
                                         )
                                 ).collect(Collectors.toList()),
-                                item.getItemImg_list().size() != 0 ? itemImgRepository.findFirstByItemIdOrderBySequence(item.getId()).getImgUrl() : null,
+                                item.getItemImg_list().size() != 0 ? itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item.getId(),item.getItemImg_list().size()).get(0).getImgUrl() : null,
                                 item.getTitle(),
                                 item.getCountry(),
                                 item.getCity(),
@@ -291,7 +293,7 @@ public class MainPageService {
                                             itemHashTag.getHashTag()
                                     )
                             ).collect(Collectors.toList()),
-                            item.getItemImg_list().size() != 0 ? item.getItemImg_list().get(0).getImgUrl() : null,
+                            item.getItemImg_list().size() != 0 ? itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item.getId(),item.getItemImg_list().size()).get(0).getImgUrl() : null,
                             item.getTitle(),
                             item.getCountry(),
                             item.getCity(),

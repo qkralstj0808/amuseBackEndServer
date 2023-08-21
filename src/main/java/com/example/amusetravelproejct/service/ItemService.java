@@ -24,9 +24,12 @@ import org.springframework.data.domain.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Order;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -872,7 +875,7 @@ public class ItemService {
 
         List<ProductRegisterDto.MainImageDto> mainImageDtos = new ArrayList<>();
 
-        List<ItemImg> itemImgs = itemImgRepository.findByItemIdOrderBySequence(item_db_id);
+        List<ItemImg> itemImgs = itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item_db_id,item.getItemImg_list().size());
         itemImgs.forEach(itemImg -> {
             ProductRegisterDto.MainImageDto mainImageDto = new ProductRegisterDto.MainImageDto();
             mainImageDto.setId(itemImg.getId());
@@ -1067,7 +1070,7 @@ public class ItemService {
             if (item.getItemImg_list().isEmpty()){
                 itemsByDisplayStat.setImgUrl(null);
             } else{
-                ItemImg itemImg = itemImgRepository.findFirstByItemIdOrderBySequence(item.getId());
+                ItemImg itemImg = itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item.getId(),item.getItemImg_list().size()).get(0);
                 itemsByDisplayStat.setImgUrl(itemImg == null ? null : itemImg.getImgUrl());
             }
             itemsByDisplayStats.add(itemsByDisplayStat);
