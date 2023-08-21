@@ -59,8 +59,8 @@ public class DetailPageService {
     public ResponseTemplate<DetailPageResponse.getPicture> getPicture(Long item_id) {
         Item findItem = findItemByIdAndDisplayTrue(item_id);
 
-
-        List<ItemImg> itemImgs = itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item_id,findItem.getItemImg_list().size());
+        ItemImg LastItem = itemImgRepository.findFirstByItemIdOrderBySequenceDesc(findItem.getId());
+        List<ItemImg> itemImgs = itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item_id,LastItem == null || LastItem.getSequence() == null ? findItem.getItemImg_list().size() : LastItem.getSequence()+1);
 //        return new ResponseTemplate<>(new DetailPageResponse.getPicture(itemImgs.stream().map(itemImg ->
 //        itemImg.getImgUrl()).collect(Collectors.toList())));
         return new ResponseTemplate<>(new DetailPageResponse.getPicture(itemImgs.stream().map(itemImg -> new DetailPageResponse.ImageInfo(

@@ -1070,7 +1070,8 @@ public class ItemService {
             if (item.getItemImg_list().isEmpty()){
                 itemsByDisplayStat.setImgUrl(null);
             } else{
-                ItemImg itemImg = itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item.getId(),item.getItemImg_list().size()).get(0);
+                ItemImg LastItem = itemImgRepository.findFirstByItemIdOrderBySequenceDesc(item.getId());
+                ItemImg itemImg = itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item.getId(),LastItem == null || LastItem.getSequence() == null ? item.getItemImg_list().size() : LastItem.getSequence()+1).get(0);
                 itemsByDisplayStat.setImgUrl(itemImg == null ? null : itemImg.getImgUrl());
             }
             itemsByDisplayStats.add(itemsByDisplayStat);

@@ -9,8 +9,10 @@ import java.util.List;
 
 public interface ItemImgRepository extends JpaRepository<ItemImg, Long> {
 
+    ItemImg findFirstByItemIdOrderBySequenceDesc(Long item_id);
+
     @Query("SELECT img FROM item_img img JOIN img.item item ON img.item.id = item.id where item.id = :item_id ORDER BY " +
-            "CASE WHEN img.sequence IS NULL THEN :last_sequence ELSE 0 END ,img.sequence ASC nulls last ")
+            "CASE WHEN img.sequence IS NULL THEN :last_sequence ELSE 0 END ,img.sequence ASC")
     List<ItemImg> findItemImgByItemIdSortBySequenceAndNullLast(Long item_id,Integer last_sequence);
 
 //    List<ItemImg> findByItemIdOrderBySequenceWithNullsLast(Long item_id);
