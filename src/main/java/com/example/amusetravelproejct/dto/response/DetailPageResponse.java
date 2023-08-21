@@ -47,7 +47,17 @@ public class DetailPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class getPicture {
-        private List<String> pictures;
+        private List<ImageInfo> pictures;
+//        private List<ImageInfo> imageInfos;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ImageInfo {
+        private Long id;
+        private String imgUrl;
+        private Integer sequence;
     }
 
     @Data
