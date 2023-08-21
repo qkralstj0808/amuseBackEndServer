@@ -31,6 +31,8 @@ public class Category extends BaseEntity{
 
     @ColumnDefault("false")
     private Boolean disable = false;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String imgUrl;
 
     @Column(columnDefinition = "LONGTEXT")
