@@ -1025,9 +1025,20 @@ public class ItemService {
         }
         return new ResponseTemplate<>(new MainPageResponse.getItemPage(itemInfo,total_page,current_page));
     }
-    public ResponseTemplate<ItemResponse.getAllItemId> getAllItemId() {
-        List<Long> allItemId = itemRepository.findAllItemId();
-        return new ResponseTemplate(new ItemResponse.getAllItemId(new ArrayList<>(allItemId)));
+    public ResponseTemplate<ItemResponse.getAllDisplayItem> getAllDisplayItem() {
+        List<Item> itemList = itemRepository.findAllByDisplay(true);
+
+        return new ResponseTemplate<>(new ItemResponse.getAllDisplayItem(itemList.stream().map(
+                item -> new ItemResponse.ItemInfo(item.getId(),
+                        item.getItemCode(),
+                        item.getItemImg_list() == null || item.getItemImg_list().size() == 0 ? null : item.getItemImg_list().get(0).getImgUrl(),
+                        item.getTitle(),
+                        item.getCountry(),
+                        item.getCity(),
+                        item.getDuration(),
+                        item.getLike_num(),
+                        item.getStartPrice())
+        ).collect(Collectors.toList())));
     }
 
 @Transactional

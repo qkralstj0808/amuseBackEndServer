@@ -113,9 +113,9 @@ public class ItemController {
     }
 
 
-    @GetMapping("/all")
-    public ResponseTemplate<ItemResponse.getAllItemId> getAllItemId(){
-        return itemService.getAllItemId();
+    @GetMapping("/all/display")
+    public ResponseTemplate<ItemResponse.getAllDisplayItem> getAllItemId(){
+        return itemService.getAllDisplayItem();
     }
 
 }
