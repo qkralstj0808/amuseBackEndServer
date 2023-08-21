@@ -58,6 +58,9 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
 
     implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.0' //메일알림용
+
+    // springboot 내부 정보 조회
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 test {
