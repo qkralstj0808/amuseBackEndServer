@@ -666,6 +666,8 @@ public class ItemService {
                     url = utilMethod.getImgUrl(productRegisterDto.getCourse().get(i).getImage().getBase64Data(),
                             productRegisterDto.getCourse().get(i).getImage().getFileName());
                     itemCourse.setImageUrl(url);
+                }else{
+                    itemCourse.setImageUrl(productRegisterDto.getCourse().get(i).getImage().getImgUrl());
                 }
             }
 
