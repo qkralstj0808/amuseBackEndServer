@@ -236,6 +236,7 @@ public class MainPageService {
                     for (int q = 0; q < mainPage_by_tile_id.size(); q++) {
                         MainPage mainPage = mainPage_by_tile_id.get(q);
                         Item item = mainPage_by_tile_id.get(q).getItem();
+                        ItemImg LastItem = itemImgRepository.findFirstByItemIdOrderBySequenceDesc(item.getId());
                         MainPageResponse.ItemInfo itemInfo = new MainPageResponse.ItemInfo(
                                 item.getId(),
                                 item.getItemCode(),
@@ -244,7 +245,7 @@ public class MainPageService {
                                                 itemHashTag.getHashTag()
                                         )
                                 ).collect(Collectors.toList()),
-                                item.getItemImg_list().size() != 0 ? itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item.getId(),item.getItemImg_list().size()).get(0).getImgUrl() : null,
+                                item.getItemImg_list().size() != 0 ? itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item.getId(),LastItem == null || LastItem.getSequence() == null ? item.getItemImg_list().size() : LastItem.getSequence() + 1).get(0).getImgUrl() : null,
                                 item.getTitle(),
                                 item.getCountry(),
                                 item.getCity(),
@@ -285,6 +286,7 @@ public class MainPageService {
                 for (int k = 0; k < mainPageList.size(); k++) {
                     Item item = mainPageList.get(k).getItem();
 
+                    ItemImg LastItem = itemImgRepository.findFirstByItemIdOrderBySequenceDesc(item.getId());
                     MainPageResponse.ItemInfo itemInfo = new MainPageResponse.ItemInfo(
                             item.getId(),
                             item.getItemCode(),
@@ -293,7 +295,7 @@ public class MainPageService {
                                             itemHashTag.getHashTag()
                                     )
                             ).collect(Collectors.toList()),
-                            item.getItemImg_list().size() != 0 ? itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item.getId(),item.getItemImg_list().size()).get(0).getImgUrl() : null,
+                            item.getItemImg_list().size() != 0 ? itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item.getId(),LastItem == null || LastItem.getSequence() == null ? item.getItemImg_list().size() : LastItem.getSequence() + 1).get(0).getImgUrl() : null,
                             item.getTitle(),
                             item.getCountry(),
                             item.getCity(),
