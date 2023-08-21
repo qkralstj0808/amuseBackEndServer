@@ -60,7 +60,7 @@ public class DetailPageService {
         Item findItem = findItemByIdAndDisplayTrue(item_id);
 
 
-        List<ItemImg> itemImgs = itemImgRepository.findByItemIdOrderBySequence(item_id);
+        List<ItemImg> itemImgs = itemImgRepository.findItemImgByItemIdSortBySequenceAndNullLast(item_id,findItem.getItemImg_list().size());
 //        return new ResponseTemplate<>(new DetailPageResponse.getPicture(itemImgs.stream().map(itemImg ->
 //        itemImg.getImgUrl()).collect(Collectors.toList())));
         return new ResponseTemplate<>(new DetailPageResponse.getPicture(itemImgs.stream().map(itemImg -> new DetailPageResponse.ImageInfo(
