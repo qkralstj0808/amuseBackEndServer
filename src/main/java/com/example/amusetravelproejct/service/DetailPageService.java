@@ -26,6 +26,7 @@ public class DetailPageService {
     private final UserRepository userRepository;
     private final LikeItemRepository likeItemRepository;
     private final ItemReviewRepository itemReviewRepository;
+    private final ItemImgRepository itemImgRepository;
 
     private User findUserById(String user_id){
         return userRepository.findByUserId(user_id);
@@ -58,8 +59,14 @@ public class DetailPageService {
     public ResponseTemplate<DetailPageResponse.getPicture> getPicture(Long item_id) {
         Item findItem = findItemByIdAndDisplayTrue(item_id);
 
-        return new ResponseTemplate<>(new DetailPageResponse.getPicture(findItem.getItemImg_list().stream().map(itemImg ->
-        itemImg.getImgUrl()).collect(Collectors.toList())));
+
+        List<ItemImg> itemImgs = itemImgRepository.findByItemIdOrderBySequence(item_id);
+//        return new ResponseTemplate<>(new DetailPageResponse.getPicture(itemImgs.stream().map(itemImg ->
+//        itemImg.getImgUrl()).collect(Collectors.toList())));
+        return new ResponseTemplate<>(new DetailPageResponse.getPicture(itemImgs.stream().map(itemImg -> new DetailPageResponse.ImageInfo(
+                itemImg.getId(),
+                itemImg.getImgUrl(),
+                itemImg.getSequence())).collect(Collectors.toList())));
     }
 
 

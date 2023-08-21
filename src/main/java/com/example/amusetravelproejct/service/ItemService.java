@@ -38,7 +38,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final ItemHashTagRepository itemHashTagRepository;
-    private final ImgRepository imgRepository;
+    private final ItemImgRepository itemImgRepository;
     private final ItemTicketRepository itemTicketRepository;
     private final ItemTicketPriceRepository itemTicketPriceRepository;
     private final ItemCourseRepository itemCourseRepository;
@@ -349,7 +349,7 @@ public class ItemService {
 
         if (productRegisterDto.getOption().equals("update")){
             List<Long> ordId = new ArrayList<>();
-            List<Long> inputId = new ArrayList<>();
+            HashMap<Long,ItemImg> inputItemHash = new HashMap<>();
 
             // 기존 상품에 들어있는 이미지를 가지고 온다.
             item.getItemImg_list().forEach(itemImg -> ordId.add(itemImg.getId()));
@@ -357,7 +357,12 @@ public class ItemService {
             for(int i = 0 ; i < productRegisterDto.getMainImg().size() ; i++){
                 ProductRegisterDto.MainImageDto mainImageDto = productRegisterDto.getMainImg().get(i);
                 if(mainImageDto.getId() != null){
-                    inputId.add(mainImageDto.getId());
+                    ItemImg itemImg = new ItemImg();
+                    itemImg.setId(mainImageDto.getId());
+                    itemImg.setItem(item);
+                    itemImg.setImgUrl(mainImageDto.getImgUrl());
+                    itemImg.setSequence(mainImageDto.getSequence());
+                    inputItemHash.put(mainImageDto.getId(),itemImg);
                 }
             }
 
@@ -365,10 +370,15 @@ public class ItemService {
 
             // 삭제된 건 제거한다.
             for (int i = ordId.size() -1 ; i >=0 ; i--){
-                if (!inputId.contains(ordId.get(i))){
+                if (!inputItemHash.containsKey(ordId.get(i))){
                     log.info("item.getItemImg_list().size() : " + item.getItemImg_list().size());
                     log.info("i : " + i);
                     item.getItemImg_list().remove(i);
+                }else{
+                    ItemImg itemImg = item.getItemImg_list().get(i);
+                    ItemImg newItemImg = inputItemHash.get(itemImg.getId());
+                    itemImg.setImgUrl(newItemImg.getImgUrl());
+                    itemImg.setSequence(newItemImg.getSequence());
                 }
             }
 //            item.getItemImg_list().clear();
@@ -385,7 +395,8 @@ public class ItemService {
 
                 itemImg.setImgUrl(url);
                 itemImg.setItem(item);
-                imgRepository.save(itemImg);
+                itemImg.setSequence(productRegisterDto.getMainImg().get(i).getSequence());
+                itemImgRepository.save(itemImg);
             }else{  // 기존 이미지일 때
 
                 // 기존 이미지인데 base64Data가 없다면 db에 저장되어 있다.
@@ -394,12 +405,13 @@ public class ItemService {
                     ItemImg itemImg = new ItemImg();
                     itemImg.setImgUrl(productRegisterDto.getMainImg().get(i).getImgUrl());
                     itemImg.setItem(item);
-                    imgRepository.save(itemImg);
+                    itemImg.setSequence(productRegisterDto.getMainImg().get(i).getSequence());
+                    itemImgRepository.save(itemImg);
                 }
 
                 // 기존 이미지인데 Base64Data가 있다면 해당 이미지는 s3에 저장이 안되어 있다는 것이므로
                 if (productRegisterDto.getMainImg().get(i).getBase64Data() !=null){
-                    ItemImg itemImg = imgRepository.findById(productRegisterDto.getMainImg().get(i).getId()).orElseThrow(
+                    ItemImg itemImg = itemImgRepository.findById(productRegisterDto.getMainImg().get(i).getId()).orElseThrow(
                             () -> new CustomException(ErrorCode.IMAGE_NOT_FOUND)
                     );
                     String url = utilMethod.getImgUrl(productRegisterDto.getMainImg().get(i).getBase64Data(),
@@ -407,11 +419,10 @@ public class ItemService {
 
                     itemImg.setImgUrl(url);
                     itemImg.setItem(item);
-                    imgRepository.save(itemImg);
+                    itemImg.setSequence(productRegisterDto.getMainImg().get(i).getSequence());
+                    itemImgRepository.save(itemImg);
                 }
             }
-
-
         }
     }
     //ItemTicket
@@ -861,10 +872,12 @@ public class ItemService {
 
         List<ProductRegisterDto.MainImageDto> mainImageDtos = new ArrayList<>();
 
-        item.getItemImg_list().forEach(itemImg -> {
+        List<ItemImg> itemImgs = itemImgRepository.findByItemIdOrderBySequence(item_db_id);
+        itemImgs.forEach(itemImg -> {
             ProductRegisterDto.MainImageDto mainImageDto = new ProductRegisterDto.MainImageDto();
             mainImageDto.setId(itemImg.getId());
             mainImageDto.setImgUrl(itemImg.getImgUrl());
+            mainImageDto.setSequence(itemImg.getSequence());
             mainImageDtos.add(mainImageDto);
         });
         productRegisterDto.setMainImg(mainImageDtos);

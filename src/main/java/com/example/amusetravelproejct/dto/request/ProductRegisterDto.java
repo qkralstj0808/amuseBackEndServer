@@ -76,6 +76,7 @@ public class ProductRegisterDto {
         private String fileName;
         private String base64Data;
         private String imgUrl;
+        private Integer sequence;
         // Getter, Setter, Constructor 생략
     }
     @Getter
