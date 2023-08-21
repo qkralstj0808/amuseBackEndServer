@@ -13,6 +13,8 @@ public class ItemReviewImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String imgUrl;
 
     // item_estimation과 estimation_img는 1:N 관계
