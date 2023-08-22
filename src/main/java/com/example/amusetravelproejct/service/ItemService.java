@@ -633,12 +633,10 @@ public class ItemService {
                 inputCourseId.add(courseDto.getId());
             });
 
-
             item.getItemCourses().forEach(courseId -> {
                 if (!inputCourseId.contains(courseId.getId())) {
                     ItemCourse itemCourse = itemCourseRepository.findById(courseId.getId()).orElseThrow(() -> new RuntimeException("존재하지 않는 코스입니다."));
                     itemCourse.setItem(null);
-
                 }
             });
         }
