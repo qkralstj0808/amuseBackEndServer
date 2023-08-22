@@ -69,4 +69,11 @@ public class UserController {
         return userService.getUserInfoBeforeLogin(findUser);
     }
 
+    @DeleteMapping("/withdraw")
+    public ResponseTemplate<String> withdrawSocialLogin(@AuthenticationPrincipal UserPrincipal userPrincipal){
+        User user = userService.getUserByPrincipal(userPrincipal);
+        userService.withdrawReservation(user);
+        return new ResponseTemplate<>("삭제 성공");
+    }
+
 }

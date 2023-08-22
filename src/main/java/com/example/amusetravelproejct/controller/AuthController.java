@@ -74,15 +74,6 @@ public class AuthController {
 
     private final long ADMIN_ACCESS_TOKEN_EXPIRE = 3600000 * 3;
 
-
-
-    @DeleteMapping("/user/withdraw")
-    public ResponseTemplate<String> withdrawSocialLogin(@AuthenticationPrincipal UserPrincipal userPrincipal){
-        User user = userService.getUserByPrincipal(userPrincipal);
-
-        return userService.withdrawSocialLogin(user);
-    }
-
     @CrossOrigin(originPatterns = "*", allowCredentials = "true")
     @GetMapping("/token/success")
 //    public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(

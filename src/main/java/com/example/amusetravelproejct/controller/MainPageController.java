@@ -95,7 +95,7 @@ public class MainPageController {
     public ResponseTemplate<MainPageResponse.getCategoryPage> getCategoryPage(
             @PathVariable("category-id") Long category_id,@AuthenticationPrincipal UserPrincipal userPrincipal){
         Grade grade = Grade.Bronze;
-        if(!(userPrincipal == null)){
+        if(userPrincipal != null){
             User findUser = userService.getUserByPrincipal(userPrincipal);
             grade = findUser.getGrade();
         }
