@@ -6,16 +6,14 @@ import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.Guide;
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
+import com.example.amusetravelproejct.domain.WithdrawalReservation;
 import com.example.amusetravelproejct.dto.request.AdminRequest;
 import com.example.amusetravelproejct.dto.request.UserRequest;
 import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.dto.response.UserResponse;
 import com.example.amusetravelproejct.oauth.entity.ProviderType;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
-import com.example.amusetravelproejct.repository.AdminRepository;
-import com.example.amusetravelproejct.repository.GuideRepository;
-import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
-import com.example.amusetravelproejct.repository.UserRepository;
+import com.example.amusetravelproejct.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +29,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +49,8 @@ public class UserService {
     private final GuideRepository guideRepository;
 
     private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
+
+    private final WithdrawalReservationRepository withdrawalReservationRepository;
 
     @Value("${spring.security.oauth2.client.registration.naver.clientId}")
     private String naverClientId;
@@ -286,7 +288,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseTemplate<String> withdrawSocialLogin(User user) {
+    public void withdrawSocialLogin(User user) {
         String result;
 
         if(user.getProviderType().equals(ProviderType.KAKAO)){
@@ -300,7 +302,6 @@ public class UserService {
         UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(user.getUserId());
         userRefreshTokenRepository.delete(userRefreshToken);
         userRepository.delete(user);
-        return new ResponseTemplate("탈퇴 성공");
     }
 
     private void unlinkKaKao(User user){
@@ -382,4 +383,12 @@ public class UserService {
         log.info("naver 연동 해제의 결과는 : " + response.getBody());
     }
 
+    @Transactional
+    public void withdrawReservation(User user) {
+        WithdrawalReservation withdrawalReservation = WithdrawalReservation.builder()
+                .user(user)
+                .withdrawalTime(LocalDateTime.now().plus(7, ChronoUnit.DAYS))
+                .build();
+        withdrawalReservationRepository.save(withdrawalReservation);
+    }
 }
