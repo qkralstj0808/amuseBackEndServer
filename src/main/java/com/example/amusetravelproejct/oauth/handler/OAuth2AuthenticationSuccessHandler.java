@@ -2,6 +2,7 @@ package com.example.amusetravelproejct.oauth.handler;
 
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
+import com.example.amusetravelproejct.domain.WithdrawalReservation;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
@@ -14,6 +15,7 @@ import com.example.amusetravelproejct.oauth.token.AuthToken;
 import com.example.amusetravelproejct.oauth.token.AuthTokenProvider;
 import com.example.amusetravelproejct.config.util.CookieUtil;
 import com.example.amusetravelproejct.repository.UserRepository;
+import com.example.amusetravelproejct.repository.WithdrawalReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -46,6 +48,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 
+    private final WithdrawalReservationRepository withdrawalReservationRepository;
+
     private final UserRepository userRepository;
 
     @Override
@@ -67,7 +71,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 determineTargetUrl");
         log.info("authentication : " + authentication);
-
 
         String referer = request.getHeader("Referer");
 
@@ -116,48 +119,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         User findUser = userRepository.findByUserId(user_id);
 
-        AuthToken accessToken = null;
+        // 탈퇴 예약이 되어 있다면 취소한다.
+        deleteWithdrawReservation(findUser);
 
-        if(findUser == null){
-            accessToken = tokenProvider.createAuthToken(
-                    userInfo.getId(),
-                    roleType.getCode(),
-                    Grade.Bronze,
-                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
-                    log.info("appProperties.getAuth().getTokenExpiry() : " + appProperties.getAuth().getTokenExpiry());
+        // access 토큰 생성
+        AuthToken accessToken = createAccessToken(findUser, userInfo, roleType);
 
-        }else{
-            accessToken = tokenProvider.createAuthToken(
-                    userInfo.getId(),
-                    roleType.getCode(),
-                    findUser.getGrade(),
-                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
-            log.info("appProperties.getAuth().getTokenExpiry() : " + appProperties.getAuth().getTokenExpiry());
-        }
-
-
-        log.info("accesstoken : " + accessToken.getToken());
-        log.info("accesstoken : " + accessToken.getTokenClaims().get("grade"));
-
-        // refresh 토큰 설정
         long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
-        AuthToken refreshToken = tokenProvider.createAuthToken(
-                appProperties.getAuth().getTokenSecret(),
-                new Date(now.getTime() + refreshTokenExpiry)
-        );
-        log.info("refreshToken : " + refreshToken.getToken());
-
-        // refresh token db에 저장.
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userInfo.getId());
-
-        if (userRefreshToken != null) {
-            userRefreshToken.setRefreshToken(refreshToken.getToken());
-        } else {
-            userRefreshToken = new UserRefreshToken(userInfo.getId(), refreshToken.getToken());
-        }
-
-        userRefreshTokenRepository.saveAndFlush(userRefreshToken);
+        // refresh 토큰 설정
+        createRefreshToken(userInfo,refreshTokenExpiry);
 
         int cookieMaxAge = (int) refreshTokenExpiry / 60;
 
@@ -179,6 +150,64 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
     }
 
+    @Transactional
+    public void deleteWithdrawReservation(User findUser){
+        if(findUser != null){
+            log.info("finduser가 null이 아닙니다");
+            WithdrawalReservation withdrawalReservation = withdrawalReservationRepository.findByUserId(findUser.getId());
+            if(withdrawalReservation != null){
+                log.info("삭제하겠습니다");
+                withdrawalReservationRepository.deleteByUserId(findUser.getId());
+            }
+        }
+    }
+
+    public AuthToken createAccessToken(User findUser,OAuth2UserInfo userInfo, RoleType roleType){
+        Date now = new Date();
+        AuthToken accessToken = null;
+        if(findUser == null){
+            accessToken = tokenProvider.createAuthToken(
+                    userInfo.getId(),
+                    roleType.getCode(),
+                    Grade.Bronze,
+                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+            log.info("appProperties.getAuth().getTokenExpiry() : " + appProperties.getAuth().getTokenExpiry());
+
+        }else{
+            accessToken = tokenProvider.createAuthToken(
+                    userInfo.getId(),
+                    roleType.getCode(),
+                    findUser.getGrade(),
+                    new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+            log.info("appProperties.getAuth().getTokenExpiry() : " + appProperties.getAuth().getTokenExpiry());
+        }
+
+        return accessToken;
+    }
+
+    @Transactional
+    public void createRefreshToken(OAuth2UserInfo userInfo,long refreshTokenExpiry ){
+        Date now = new Date();
+
+        AuthToken refreshToken = tokenProvider.createAuthToken(
+                appProperties.getAuth().getTokenSecret(),
+                new Date(now.getTime() + refreshTokenExpiry)
+        );
+        log.info("refreshToken : " + refreshToken.getToken());
+
+        // refresh token db에 저장.
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userInfo.getId());
+
+        if (userRefreshToken != null) {
+            userRefreshToken.setRefreshToken(refreshToken.getToken());
+        } else {
+            userRefreshToken = new UserRefreshToken(userInfo.getId(), refreshToken.getToken());
+        }
+
+        userRefreshTokenRepository.save(userRefreshToken);
+    }
+
+
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
         super.clearAuthenticationAttributes(request);
         log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 clearAuthenticationAttributes");
@@ -199,6 +228,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
         return false;
     }
+
+
 
     private boolean isAuthorizedRedirectUri(String uri) {
         log.info("\n\nOAuth2AuthenticationSuccessHandler 에서 isAuthorizedRedirectUri 진입");

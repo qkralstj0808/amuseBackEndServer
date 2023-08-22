@@ -385,10 +385,15 @@ public class UserService {
 
     @Transactional
     public void withdrawReservation(User user) {
-        WithdrawalReservation withdrawalReservation = WithdrawalReservation.builder()
-                .user(user)
-                .withdrawalTime(LocalDateTime.now().plus(7, ChronoUnit.DAYS))
-                .build();
-        withdrawalReservationRepository.save(withdrawalReservation);
+        WithdrawalReservation findWithdrawalReservation = withdrawalReservationRepository.findByUserId(user.getId());
+
+        if(findWithdrawalReservation == null){
+            WithdrawalReservation withdrawalReservation = WithdrawalReservation.builder()
+                    .user(user)
+                    .withdrawalTime(LocalDateTime.now().plus(7, ChronoUnit.DAYS))
+                    .build();
+            withdrawalReservationRepository.save(withdrawalReservation);
+        }
+
     }
 }
