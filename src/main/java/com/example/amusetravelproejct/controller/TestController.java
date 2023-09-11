@@ -16,6 +16,6 @@ public class TestController {
     @GetMapping("")
     public ResponseTemplate<String> getAllItemId(){
 
-        return new ResponseTemplate<>("test1");
+        return new ResponseTemplate<>("test2");
     }
 }
