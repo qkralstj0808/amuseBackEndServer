@@ -136,7 +136,15 @@ public class AdminPageRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class registerListComponent extends registerComponent{
-        private List<Long> item_db_id;
+        private List<ItemIdAndSequence> itemDbIdAndSequenceList;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ItemIdAndSequence{
+        private Long itemDbId;
+        private Integer sequence;
     }
 
     @Data

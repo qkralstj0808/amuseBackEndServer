@@ -271,9 +271,17 @@ public class AdminPageResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class registerListComponent extends respRegisterComponent {
-        private List<Long> item_db_id;
+        private List<AdminPageRequest.ItemIdAndSequence> item_db_id;
         private LocalDateTime updatedAt;
         private String updatedBy;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ItemIdAndSequence{
+        private Long itemDbId;
+        private Integer sequence;
     }
 
     @Data

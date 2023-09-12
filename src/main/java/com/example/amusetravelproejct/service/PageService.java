@@ -47,9 +47,6 @@ public class PageService {
         if(findCategory != null){
             throw new CustomException(ErrorCode.CATEGORY_EXIT);
         }
-//        Admin admin = adminRepository.findByAdminId(findUser.getUserId()).orElseThrow(
-//                () -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)
-//        );
 
 
         category.setCategory_name(request.getName());

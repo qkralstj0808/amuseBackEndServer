@@ -49,14 +49,12 @@ public class PageComponentService {
             pageComponent.setUpdateAdmin(findAdmin);
         }
 
-        if(registerListComponent.getItem_db_id() == null){
-
-        }else{
-            registerListComponent.getItem_db_id().forEach(item_db_id -> {
+        if(registerListComponent.getItemDbIdAndSequenceList() != null){
+            registerListComponent.getItemDbIdAndSequenceList().forEach(itemIdAndSequence -> {
                 MainPage mainPage = new MainPage();
                 mainPage.setPageComponent(pageComponent);
-                mainPage.setItem(itemRepository.findById(item_db_id) .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND)));
-
+                mainPage.setItem(itemRepository.findById(itemIdAndSequence.getItemDbId()) .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND)));
+                mainPage.setSequence(itemIdAndSequence.getSequence());
                 mainPageRepository.save(mainPage);
             });
         }
@@ -69,7 +67,7 @@ public class PageComponentService {
         registerListComponentDto.setType(pageComponent.getType());
         registerListComponentDto.setCreatedAt(pageComponent.getCreatedDate());
         registerListComponentDto.setCreatedBy(pageComponent.getAdmin().getAdminId());
-        registerListComponentDto.setItem_db_id(registerListComponent.getItem_db_id());
+        registerListComponentDto.setItem_db_id(registerListComponent.getItemDbIdAndSequenceList());
 
         if (registerListComponent.getId() != null){
             registerListComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin().getAdminId());
@@ -227,24 +225,30 @@ public class PageComponentService {
             getListComponentDto.setUpdatedAt(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getModifiedDate());
             getListComponentDto.setUpdatedBy(pageComponent.getUpdateAdmin() == null ? null : pageComponent.getUpdateAdmin().getAdminId());
             List<AdminPageResponse.getMainPageItem> mainPageItemDto = new ArrayList<>();
-            pageComponent.getMainPages().forEach(mainPage -> {
-                AdminPageResponse.getMainPageItem mainPageItem = new AdminPageResponse.getMainPageItem();
-                mainPageItem.setItem_db_id(mainPage.getItem().getId());
-                mainPageItem.setProduct_code(mainPage.getItem().getItemCode());
-                mainPageItem.setStartPrice(mainPage.getItem().getStartPrice());
-                mainPageItem.setTitle(mainPage.getItem().getTitle());
 
-                List<String> category = new ArrayList<>();
-                mainPage.getItem().getItemHashTags().forEach(itemHashTag -> {
-                    category.add(itemHashTag.getHashTag());
+            List<MainPage> mainPageList = mainPageRepository.findByPageComponentIdOrderBySequence(pageComponent.getId());
+
+            if(mainPageList != null) {
+                mainPageList.forEach(mainPage -> {
+                    AdminPageResponse.getMainPageItem mainPageItem = new AdminPageResponse.getMainPageItem();
+                    mainPageItem.setItem_db_id(mainPage.getItem().getId());
+                    mainPageItem.setProduct_code(mainPage.getItem().getItemCode());
+                    mainPageItem.setStartPrice(mainPage.getItem().getStartPrice());
+                    mainPageItem.setTitle(mainPage.getItem().getTitle());
+
+                    List<String> category = new ArrayList<>();
+                    mainPage.getItem().getItemHashTags().forEach(itemHashTag -> {
+                        category.add(itemHashTag.getHashTag());
+                    });
+                    mainPageItem.setCategory(category);
+                    mainPageItem.setCreateAt(mainPage.getItem().getCreatedDate());
+                    mainPageItem.setCreateBy(mainPage.getItem().getAdmin().getAdminId());
+                    mainPageItem.setUpdateAt(mainPage.getItem().getUpdateAdmin() == null ? null : mainPage.getItem().getModifiedDate());
+                    mainPageItem.setUpdateBy(mainPage.getItem().getUpdateAdmin() == null ? null : mainPage.getItem().getUpdateAdmin().getAdminId());
+                    mainPageItemDto.add(mainPageItem);
                 });
-                mainPageItem.setCategory(category);
-                mainPageItem.setCreateAt(mainPage.getItem().getCreatedDate());
-                mainPageItem.setCreateBy(mainPage.getItem().getAdmin().getAdminId());
-                mainPageItem.setUpdateAt(mainPage.getItem().getUpdateAdmin() == null ? null : mainPage.getItem().getModifiedDate());
-                mainPageItem.setUpdateBy(mainPage.getItem().getUpdateAdmin() == null ? null : mainPage.getItem().getUpdateAdmin().getAdminId());
-                mainPageItemDto.add(mainPageItem);
-            });
+            }
+
             getListComponentDto.setProductList(mainPageItemDto);
             return getListComponentDto;
         } else if(pageComponent.getType().equals("배너")){

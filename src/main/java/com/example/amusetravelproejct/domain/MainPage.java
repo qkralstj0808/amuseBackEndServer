@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 //@Where(clause = "item.display = true")
-public class MainPage {
+public class MainPage extends BaseEntity{
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private Long id;
@@ -27,4 +27,6 @@ public class MainPage {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tile_id")
     private Tile tile;
+
+    private Integer sequence;
 }

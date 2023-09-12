@@ -16,4 +16,6 @@ public interface MainPageRepository extends JpaRepository<MainPage, Long>, MainP
 
     List<MainPage> findMainPageByPageComponentIdAndItemDisplay(Long pageComponent_id, Boolean item_display);
 
+    List<MainPage> findByPageComponentIdOrderBySequence(Long pageComponent_id);
+
 }
