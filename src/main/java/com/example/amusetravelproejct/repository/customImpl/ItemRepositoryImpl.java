@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.amusetravelproejct.domain.QItem.item;
 import static com.example.amusetravelproejct.domain.QItemHashTag.itemHashTag;
@@ -197,26 +198,23 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
             return new PageImpl<>(itemList, pageable, total);
         }
 
-        List<Long> hashTagQuery = jpaQueryFactory.select(item.id)
+        List<Long> hashTagQuery = jpaQueryFactory.select(item.id).distinct()
                 .from(item)
-                .where(item.display.eq(true))
                 .join(item.itemHashTags, itemHashTag)
-                .where(containHashTag(contain_words))
+                .where(containHashTag(contain_words).and(item.display.eq(true)))
                 .fetch();
 
-        List<Long> titleQuery = jpaQueryFactory.select(item.id)
+        List<Long> titleQuery = jpaQueryFactory.select(item.id).distinct()
                 .from(item)
-                .where(item.display.eq(true))
                 .join(item.itemHashTags, itemHashTag)
-                .where(notContainHashTag(contain_words).and(list_containTitle(contain_words)))
+                .where(notContainHashTag(contain_words).and(list_containTitle(contain_words)).and(item.display.eq(true)))
                 .fetch();
 
 
-        List<Long> contentQuery = jpaQueryFactory.select(item.id)
+        List<Long> contentQuery = jpaQueryFactory.select(item.id).distinct()
                 .from(item)
-                .where(item.display.eq(true))
                 .join(item.itemHashTags, itemHashTag)
-                .where(notContainHashTag(contain_words).and(list_notContainTitle(contain_words)).and(list_containContent1_or_Content2(contain_words)))
+                .where(notContainHashTag(contain_words).and(list_notContainTitle(contain_words)).and(list_containContent1_or_Content2(contain_words)).and(item.display.eq(true)))
                 .fetch();
 
         if(hashTagQuery.size() == 0 && titleQuery.size() == 0 && contentQuery.size() == 0){
@@ -224,24 +222,22 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
             return new PageImpl<>(itemList, pageable, 0);
         }
 
-
-        List<Item> itemList = jpaQueryFactory.selectFrom(item)
-                .where(IdisNotNull().and(item.display.eq(true)))
-                .orderBy(new CaseBuilder()
-                        .when(item.id.in(hashTagQuery)).then(0)
-                        .when(item.id.in(titleQuery)).then(1)
-                        .when(item.id.in(contentQuery)).then(2)
-                        .otherwise(3)
-                        .asc())
-                .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
         List<Long> combinedQuery = new ArrayList<>();
         combinedQuery.addAll(hashTagQuery);
         combinedQuery.addAll(titleQuery);
         combinedQuery.addAll(contentQuery);
+
+        List<Item> itemList = jpaQueryFactory.selectFrom(item)
+                .where(IdisNotNull().and(item.id.in(combinedQuery)))
+                .orderBy(new CaseBuilder()
+                        .when(item.id.in(hashTagQuery)).then(0)
+                        .when(item.id.in(titleQuery)).then(1)
+                        .when(item.id.in(contentQuery)).then(2)
+                        .otherwise(3).asc())
+                .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
         log.info("pageable.getOffset : " + pageable.getOffset());
         log.info("pageable.getPageSize : " + pageable.getPageSize());
@@ -320,6 +316,10 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
             }else{
                 booleanExpression = booleanExpression.or(containContent1(contain_word));
             }
+        }
+
+        if(booleanExpression == null){
+            return Expressions.FALSE;
         }
 
         return booleanExpression;
