@@ -3,15 +3,15 @@ import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
-import com.example.amusetravelproejct.domain.Guide;
-import com.example.amusetravelproejct.domain.User;
-import com.example.amusetravelproejct.domain.UserRefreshToken;
-import com.example.amusetravelproejct.domain.WithdrawalReservation;
+import com.example.amusetravelproejct.domain.*;
+import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AdminRequest;
+import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.dto.request.UserRequest;
 import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.dto.response.UserResponse;
 import com.example.amusetravelproejct.oauth.entity.ProviderType;
+import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
 import com.example.amusetravelproejct.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,8 @@ public class UserService {
     private final AdminRepository adminRepository;
 
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+
+    private final UserRefreshTokenService userRefreshTokenService;
 
     private final GuideRepository guideRepository;
 
@@ -288,9 +291,13 @@ public class UserService {
     }
 
     @Transactional
-    public void withdrawSocialLogin(User user) {
-        String result;
+    public void withdrawLocalLogin(User user) {
+        userRefreshTokenService.deleteRefreshToken(user.getUserId());
+        userRepository.delete(user);
+    }
 
+    @Transactional
+    public void withdrawSocialLogin(User user) {
         if(user.getProviderType().equals(ProviderType.KAKAO)){
             unlinkKaKao(user);
         }else if(user.getProviderType().equals(ProviderType.GOOGLE)){
@@ -299,8 +306,7 @@ public class UserService {
             unlinkNaver(user);
         }
 
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(user.getUserId());
-        userRefreshTokenRepository.delete(userRefreshToken);
+        userRefreshTokenService.deleteRefreshToken(user.getUserId());
         userRepository.delete(user);
     }
 
@@ -396,4 +402,28 @@ public class UserService {
         }
 
     }
+
+    @Transactional
+    public User createUser(String userId, String db_password) {
+        User user = new User();
+        user.setUserId(userId);
+        user.setPassword(db_password);
+        user.setProviderType(ProviderType.LOCAL);
+        user.setGrade(Grade.Bronze);
+        user.setRoleType(RoleType.USER);
+
+        userRepository.save(user);
+        return user;
+    }
+
+    @Transactional
+    public ResponseTemplate<String> changeUserPassword(User findUser, AuthRequest.changePassword request) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String db_password = encoder.encode(request.getPassword_for_change());
+
+        findUser.setPassword(db_password);
+        userRepository.save(findUser);
+        return new ResponseTemplate("비밀 번호 변경 완료");
+    }
+
 }
