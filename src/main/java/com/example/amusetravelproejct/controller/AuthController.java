@@ -9,7 +9,6 @@ import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
 import com.example.amusetravelproejct.dto.response.AuthResponse;
-import com.example.amusetravelproejct.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.example.amusetravelproejct.repository.AdminRepository;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
 import com.example.amusetravelproejct.config.properties.AppProperties;
@@ -31,16 +30,13 @@ import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -80,7 +76,6 @@ public class AuthController {
 
     @CrossOrigin(originPatterns = "*", allowCredentials = "true")
     @GetMapping("/token/success")
-//    public ResponseTemplate<AuthResponse.getAccessToken_targetUrl> getTokenSuccess(
     public void getTokenSuccess(
             HttpServletRequest request,
             HttpServletResponse response) throws IOException {
@@ -191,14 +186,13 @@ public class AuthController {
         String password = authRequest.getPassword();
 
         Optional<Admin> adminId_optional = adminRepository.findByAdminId(adminId);
-        Admin admin;
 
         // db에 없으면 새로 생성
         if(adminId_optional.isEmpty()){
             log.info("db에 없음");
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String db_password = encoder.encode(password);
-            admin = adminService.createAdmin(adminId, db_password);
+            adminService.createAdmin(adminId, db_password);
         }else{
             throw new CustomException(ErrorCode.ID_EXIST);
         }
@@ -267,8 +261,6 @@ public class AuthController {
 
     @PostMapping("/admin/password/change")
     public ResponseTemplate<String> changeAdminPassword(
-            HttpServletRequest request,
-            HttpServletResponse response,
             @RequestBody AuthRequest.changePassword authRequest
     ){
         Optional<Admin> adminByAdminId = adminService.getAdminByAdminId(authRequest.getId());
@@ -389,8 +381,6 @@ public class AuthController {
 
     @PostMapping("/user/password/change")
     public ResponseTemplate<String> changeUserPassword(
-            HttpServletRequest request,
-            HttpServletResponse response,
             @RequestBody AuthRequest.changePassword authRequest
     ){
         User findUser = userRepository.findByUserId(authRequest.getId());

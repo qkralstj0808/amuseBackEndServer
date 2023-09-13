@@ -30,7 +30,7 @@ public class AdminService {
     }
 
    @Transactional
-    public Admin createAdmin(String adminId, String password){
+    public void createAdmin(String adminId, String password){
         Admin admin = new Admin();
         admin.setAdminId(adminId);
         admin.setPassword(password);
