@@ -36,7 +36,6 @@ public class AdminService {
         admin.setPassword(password);
 
         adminRepository.save(admin);
-        return admin;
     }
 
     public Admin getAdminPrincipal(UserPrincipal userPrincipal){
