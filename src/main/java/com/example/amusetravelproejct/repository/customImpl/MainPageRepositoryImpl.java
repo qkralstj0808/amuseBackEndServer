@@ -72,6 +72,7 @@ public class MainPageRepositoryImpl implements MainPageRepositoryCustom {
 
         return jpaQueryFactory.selectFrom(mainPage)
                 .where(eqComponentId(pageComponent_id),ItemDisplay(true),BeteweenBronzeAndMyGradeItem(grade),subQuery.contains(category_name))
+                .orderBy(mainPage.sequence.asc())
                 .fetch();
     }
 
