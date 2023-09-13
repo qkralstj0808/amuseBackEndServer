@@ -2,6 +2,7 @@ package com.example.amusetravelproejct.service;
 
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.WithdrawalReservation;
+import com.example.amusetravelproejct.oauth.entity.ProviderType;
 import com.example.amusetravelproejct.repository.WithdrawalReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,12 @@ public class WithdrawalReservationService {
             // 탈퇴 처리 로직 구현 (소셜 로그인 정보 삭제 등)
             // withdrawalReservationRepository.delete(reservation); // 예약 정보 삭제
             User user = reservation.getUser();
-            userService.withdrawSocialLogin(user);
+
+            if(user.getProviderType().equals(ProviderType.LOCAL)){
+                userService.withdrawLocalLogin(user);
+            }else{
+                userService.withdrawSocialLogin(user);
+            }
         }
 
     }

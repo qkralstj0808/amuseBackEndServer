@@ -36,7 +36,6 @@ public class User extends BaseEntity{
     private String userId;
 
     @Column(name = "USERNAME", length = 100)
-    @NotNull
     @Size(max = 100)
     private String username;
 
@@ -48,12 +47,10 @@ public class User extends BaseEntity{
 
     // 이메일을 중복해서 사용할 수 있도록 왜냐하면 Kakao로 로그인 사용자가 google 이메일을 쓸 경우 google로 다시 회원가입을 못하는 경우가 생긴다.
     @Column(name = "EMAIL", length = 512)
-    @NotNull
     @Size(max = 512)
     private String email;
 
     @Column(name = "EMAIL_VERIFIED_YN", length = 1)
-    @NotNull
     @Size(min = 1, max = 1)
     private String emailVerifiedYn;
 

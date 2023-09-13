@@ -82,6 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 //                    .antMatchers("/api/**/users/**").hasAnyAuthority(RoleType.USER.getCode())
+                    .antMatchers("/api/**/auth/admin/**").permitAll()
                     .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
                     .anyRequest().permitAll()   // 위에 언급한 url 말고 나머지는 authenticated 된 사용자만 이용할 수 있도록 한다.
 
