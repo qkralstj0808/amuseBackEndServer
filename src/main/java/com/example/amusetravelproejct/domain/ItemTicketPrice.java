@@ -1,16 +1,19 @@
 package com.example.amusetravelproejct.domain;
 
 import com.example.amusetravelproejct.domain.person_enum.WEEKDAY;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Entity(name = "item_ticket_price")
+
 @Getter
-@Setter
+@NoArgsConstructor
+@Entity(name = "item_ticket_price")
 public class ItemTicketPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +26,10 @@ public class ItemTicketPrice {
     @JoinColumn(name = "itemTicket")
     private ItemTicket itemTicket;
 
+    @Builder
+    public ItemTicketPrice(String startDate, Long price, ItemTicket itemTicket) {
+        this.startDate = startDate;
+        this.price = price;
+        this.itemTicket = itemTicket;
+    }
 }
