@@ -19,6 +19,8 @@ public class ItemTicket {
     @Column(columnDefinition = "LONGTEXT")
     private String content;
 
+    private Long sequenceNum;
+
     // item_ticket과 iteminfo는 N:1 관계 ManyToOne
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")

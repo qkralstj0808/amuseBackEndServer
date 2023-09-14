@@ -446,6 +446,7 @@ public class ItemService {
                 itemTicket.setItem(item);
                 itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
                 itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
+                itemTicket.setSequenceNum(productRegisterDto.getTicket().get(i).getSequenceNum());
 
                 List<Date> startDate = new ArrayList<>();
                 List<Date> endDate = new ArrayList<>();
@@ -552,6 +553,7 @@ public class ItemService {
                 ItemTicket itemTicket = new ItemTicket();
                 itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
                 itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
+                itemTicket.setSequenceNum(productRegisterDto.getTicket().get(i).getSequenceNum());
                 itemTicket.setItem(item);
 
                 List<Date> startDate = new ArrayList<>();

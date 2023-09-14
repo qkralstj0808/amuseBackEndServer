@@ -74,6 +74,7 @@ public class DetailPageResponse {
         private Long id;
         private String title;
         private String content;
+        private Long sequenceNum;
         private List<TicketPrice> priceList;
     }
 
