@@ -43,10 +43,6 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
 
-    private final AdminRepository adminRepository;
-
-    private final UserRefreshTokenRepository userRefreshTokenRepository;
-
     private final UserRefreshTokenService userRefreshTokenService;
 
     private final GuideRepository guideRepository;

@@ -22,8 +22,7 @@ public class WithdrawalReservationService {
 
     private final UserService userService;
 
-//    @Scheduled(cron = "0 0 0 * * *") // 매일 0시 0분 0초에 한번 실행
-    @Scheduled(cron = "0 * * * * *") // 매 분 0초에 실행
+    @Scheduled(cron = "0 0 0 * * *") // 매일 0시 0분 0초에 한번 실행
     public void processWithdrawalReservations() {
         LocalDateTime currentTime = LocalDateTime.now();
         log.info("schedule 시작 현재 시간은 " + currentTime );
