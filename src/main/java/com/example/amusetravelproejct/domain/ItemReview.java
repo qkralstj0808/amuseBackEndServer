@@ -15,6 +15,8 @@ import java.util.List;
 @Setter
 @EntityListeners(value = {AuditingEntityListener.class})
 public class ItemReview extends BaseEntity {
+
+    // 구매 목록 추가
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

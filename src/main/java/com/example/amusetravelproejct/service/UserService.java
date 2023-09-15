@@ -43,10 +43,6 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
 
-    private final AdminRepository adminRepository;
-
-    private final UserRefreshTokenRepository userRefreshTokenRepository;
-
     private final UserRefreshTokenService userRefreshTokenService;
 
     private final GuideRepository guideRepository;
@@ -61,7 +57,8 @@ public class UserService {
     @Value("${spring.security.oauth2.client.registration.naver.clientSecret}")
     private String naverclientSecret;
 
-    private final String KAKAO_ADMIN_KEY = "6c0306342ad8c3e69157deac322bd553";
+    @Value("${kakao.api.key}")
+    private String KAKAO_ADMIN_KEY;
 
     public User getUser(String userId) {
         return userRepository.findByUserId(userId);
@@ -311,6 +308,8 @@ public class UserService {
     }
 
     private void unlinkKaKao(User user){
+
+        log.info("KAKAO_ADMIN_KEY" + KAKAO_ADMIN_KEY);
         String url = "https://kapi.kakao.com/v1/user/unlink";
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "KakaoAK " + KAKAO_ADMIN_KEY);

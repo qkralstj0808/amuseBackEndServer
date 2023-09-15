@@ -22,6 +22,7 @@ public class DetailPageResponse {
         private Double rated;
         private Integer review_count;
         private Integer duration;
+        private Long startPrice;
         private String startPoint;
         private String runningTime;
         private String activityIntensity;
