@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.dto.response;
 
+import com.example.amusetravelproejct.domain.person_enum.Gender;
 import com.example.amusetravelproejct.oauth.entity.ProviderType;
 import com.example.amusetravelproejct.oauth.entity.RoleType;
 import com.example.amusetravelproejct.oauth.token.AuthToken;
@@ -44,5 +45,15 @@ public class AuthResponse {
     @NoArgsConstructor
     public static class changePassword {
         private String massage;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class emailAuth {
+        private String email;
+        private String name;
+        private Integer birthday;
+        private Gender gender; //MAN or WOMAN
     }
 }

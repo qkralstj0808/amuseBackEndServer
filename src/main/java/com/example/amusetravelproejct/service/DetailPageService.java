@@ -106,7 +106,7 @@ public class DetailPageService {
         }
 
         return new ResponseTemplate(new DetailPageResponse.getManager(guide.getId(),guide.getCode(),
-                guide.getName(),guide.getEmile(),guide.getImgUrl(),guide.getIntroduce(),findItem.getGuide_comment()));
+                guide.getName(),guide.getEmail(),guide.getImgUrl(),guide.getIntroduce(),findItem.getGuide_comment()));
     }
 
 

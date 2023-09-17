@@ -15,7 +15,8 @@ public class VerificationController {
 
     private final EmailService emailService;
 
-    @PostMapping("/email")
+    // 이메일 인증 요청 버튼에 사용
+    @PostMapping("/email/request")
     @ResponseBody
     public ResponseTemplate<String> mailConfirm(@RequestBody EmailRequest.Email request) throws Exception {
         String code = emailService.sendSimpleMessage(request.getEmail());
