@@ -8,6 +8,7 @@ import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
+import com.example.amusetravelproejct.dto.request.EmailRequest;
 import com.example.amusetravelproejct.dto.response.AuthResponse;
 import com.example.amusetravelproejct.repository.AdminRepository;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
@@ -178,7 +179,7 @@ public class AuthController {
     public ResponseTemplate<AuthResponse.getAccessToken> adminSignup(
             HttpServletRequest request,
             HttpServletResponse response,
-            @RequestBody AuthRequest.Id_Password authRequest
+            @RequestBody AuthRequest.adminSignUp authRequest
     ) {
         System.out.println("\n\nAuthController에서 /login api 진입");
 
@@ -299,10 +300,10 @@ public class AuthController {
     public ResponseTemplate<AuthResponse.getAccessToken> userSignup(
             HttpServletRequest request,
             HttpServletResponse response,
-            @RequestBody AuthRequest.Id_Password authRequest
+            @RequestBody AuthRequest.userSignUp authRequest
     ) {
 
-        String userId = authRequest.getId();
+        String userId = authRequest.getEmail();
         String password = authRequest.getPassword();
 
         User user = userRepository.findByUserId(userId);
@@ -312,7 +313,7 @@ public class AuthController {
             log.info("db에 없음");
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String db_password = encoder.encode(password);
-            user = userService.createUser(userId, db_password);
+            user = userService.createUser(authRequest,db_password);
         }else{
             throw new CustomException(ErrorCode.ID_EXIST);
         }
@@ -389,6 +390,12 @@ public class AuthController {
         }
 
         return userService.changeUserPassword(findUser,authRequest);
+    }
+
+    @PostMapping("/email")
+    @ResponseBody
+    public ResponseTemplate<AuthResponse.emailAuth> emailAuth(@RequestBody AuthRequest.emailAuth request) throws Exception {
+        return new ResponseTemplate<>(new AuthResponse.emailAuth(request.getEmail(),request.getName(),request.getBirthday(),request.getGender()));
     }
 
     @GetMapping("/refresh")

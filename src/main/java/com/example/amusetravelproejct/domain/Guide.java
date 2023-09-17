@@ -18,7 +18,7 @@ public class Guide extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String emile;
+    private String email;
     private String imgUrl;
     @Column(unique = true)
     private String code;

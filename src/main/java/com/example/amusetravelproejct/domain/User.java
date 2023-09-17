@@ -75,7 +75,7 @@ public class User extends BaseEntity{
     @ColumnDefault("0")
     private Long point;
 
-    private LocalDate birthday;
+    private String birthday;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -94,8 +94,6 @@ public class User extends BaseEntity{
     private Boolean over14AgeTrue;
     @Enumerated(EnumType.STRING)
     private Grade grade;                    // user 등급 (브론즈,실버)...
-
-    private String auth;
 
     // user와 like_item는 1:N 관계
     @OneToMany(mappedBy = "user", cascade =CascadeType.ALL,orphanRemoval = true)

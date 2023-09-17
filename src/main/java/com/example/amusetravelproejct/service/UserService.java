@@ -188,11 +188,11 @@ public class UserService {
         guide.setCode(request.getGuideCode());
         guide.setName(request.getName());
         guide.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(),request.getFileName()));
-        guide.setEmile(request.getEmail());
+        guide.setEmail(request.getEmail());
         guide.setIntroduce(request.getIntroduce());
         guideRepository.save(guide);
 
-        return new AdminResponse.GuideInfo(guide.getId(), guide.getCode(), guide.getName(),guide.getEmile(), guide.getImgUrl(),guide.getIntroduce());
+        return new AdminResponse.GuideInfo(guide.getId(), guide.getCode(), guide.getName(),guide.getEmail(), guide.getImgUrl(),guide.getIntroduce());
     }
     @Transactional(readOnly = false)
     public AdminResponse.GuideInfo updateGuide(AdminRequest.guide request,Long guide_db_id,UtilMethod utilMethod){
@@ -203,11 +203,11 @@ public class UserService {
         if (request.getFileName() != null){
             guide.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(),request.getFileName()));
         }
-        guide.setEmile(request.getEmail());
+        guide.setEmail(request.getEmail());
         guide.setIntroduce(request.getIntroduce());
         guideRepository.save(guide);
 
-        return new AdminResponse.GuideInfo(guide.getId(), guide.getCode(), guide.getName(),guide.getEmile(), guide.getImgUrl(),guide.getIntroduce());
+        return new AdminResponse.GuideInfo(guide.getId(), guide.getCode(), guide.getName(),guide.getEmail(), guide.getImgUrl(),guide.getIntroduce());
     }
 
     public AdminResponse.GuideInfo readGuide(Long guide_db_id) {
@@ -215,7 +215,7 @@ public class UserService {
                 () -> new CustomException(ErrorCode.NOT_FOUND_GUIDE)
         );
 
-        return new AdminResponse.GuideInfo(guide.getId(),guide.getCode(),guide.getName(),guide.getEmile(),guide.getImgUrl(),guide.getIntroduce());
+        return new AdminResponse.GuideInfo(guide.getId(),guide.getCode(),guide.getName(),guide.getEmail(),guide.getImgUrl(),guide.getIntroduce());
     }
     @Transactional(readOnly = false)
 
@@ -232,7 +232,7 @@ public class UserService {
         Page<Guide> guides = guideRepository.findAll(pageable);
         Long pageCount = (long) guides.getTotalPages();
         guides.forEach(data ->{
-            guideInfos.add(new AdminResponse.GuideInfo(data.getId(),data.getCode(), data.getName(),data.getEmile(),data.getImgUrl(), data.getIntroduce()));
+            guideInfos.add(new AdminResponse.GuideInfo(data.getId(),data.getCode(), data.getName(),data.getEmail(),data.getImgUrl(), data.getIntroduce()));
 
             log.info(data.getCode());
         });
@@ -403,13 +403,19 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(String userId, String db_password) {
+    public User createUser(AuthRequest.userSignUp request,String password) {
         User user = new User();
-        user.setUserId(userId);
-        user.setPassword(db_password);
+        user.setUserId(request.getEmail());
+        user.setEmail(request.getEmail());
+        user.setPassword(password);
         user.setProviderType(ProviderType.LOCAL);
         user.setGrade(Grade.Bronze);
         user.setRoleType(RoleType.USER);
+        user.setGender(request.getGender());
+        user.setUsername(request.getName());
+        user.setBirthday(request.getBirthday());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setEmailVerifiedYn("y");
 
         userRepository.save(user);
         return user;
@@ -425,4 +431,14 @@ public class UserService {
         return new ResponseTemplate("비밀 번호 변경 완료");
     }
 
+//    @Transactional
+//    public void createEmailUser(AuthRequest.emailAuth request) {
+//        User user = new User();
+//        user.setEmail(request.getEmail());
+//        user.setUsername(request.getName());
+//        user.setBirthday(request.getBirthday());
+//        user.setGender(request.getGender());
+//        user.setEmailVerifiedYn("Y");
+//        userRepository.save(user);
+//    }
 }
