@@ -174,7 +174,7 @@ public class AuthController {
     }
 
 
-    @PostMapping("/admin/signup")
+    @PostMapping("/signup")
     public ResponseTemplate<AuthResponse.getAccessToken> adminSignup(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -222,7 +222,7 @@ public class AuthController {
 
 
 
-    @GetMapping("/admin/login")
+    @GetMapping("/login")
     public ResponseTemplate<AuthResponse.getAccessToken> adminLogin(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -259,7 +259,7 @@ public class AuthController {
 //        return null;
     }
 
-    @PostMapping("/admin/password/change")
+    @PostMapping("/password/change")
     public ResponseTemplate<String> changeAdminPassword(
             @RequestBody AuthRequest.changePassword authRequest
     ){
