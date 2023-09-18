@@ -273,7 +273,7 @@ public class AuthController {
         return adminService.changeAdminPassword(findAdmin,authRequest);
     }
 
-    @DeleteMapping("/admin/withdraw")
+    @DeleteMapping("/withdraw")
     public ResponseTemplate<String> AdminWithdraw(
             HttpServletRequest request,
             HttpServletResponse response,
