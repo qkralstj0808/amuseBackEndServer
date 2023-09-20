@@ -2,11 +2,13 @@ package com.example.amusetravelproejct.domain;
 
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
-import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.AdditionalReservationInfo;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.PaymentCancelPolicyInfo;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.PaymentMethodInfo;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.TermsOfServiceInfo;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -128,10 +130,32 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemIcon> itemIcons = new ArrayList<>();
 
+    // 결제 창 관련 정보들
+
+    // 추가 예약 정보
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "res_info")
+    private AdditionalReservationInfo additionalReservationInfo;
+
+    // 결제 취소 정책
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cancel_policy_info")
+    private PaymentCancelPolicyInfo paymentCancelPolicyInfo;
+
+    // 결제 방법
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_info")
+    private PaymentMethodInfo paymentMethodInfo;
+
+    // 이용 약관
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "terms_of_service_info")
+    private TermsOfServiceInfo termsOfServiceInfo;
 
 
     // 로직
-    public void plus_like(){
+    public void plus_like() {
+
         this.like_num++;
     }
 
