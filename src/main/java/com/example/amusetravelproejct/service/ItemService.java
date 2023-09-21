@@ -6,6 +6,10 @@ import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.config.util.UtilMethod;
 import com.example.amusetravelproejct.domain.*;
 
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.AdditionalReservationInfo;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.PaymentCancelPolicyInfo;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.PaymentMethodInfo;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.TermsOfServiceInfo;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
@@ -14,6 +18,10 @@ import com.example.amusetravelproejct.dto.response.AdminPageResponse;
 import com.example.amusetravelproejct.dto.response.ItemResponse;
 import com.example.amusetravelproejct.dto.response.MainPageResponse;
 import com.example.amusetravelproejct.repository.*;
+import com.example.amusetravelproejct.repository.itemAdditionalInfo.AdditionalReservationInfoRepository;
+import com.example.amusetravelproejct.repository.itemAdditionalInfo.PaymentCancelPolicyInfoRepository;
+import com.example.amusetravelproejct.repository.itemAdditionalInfo.PaymentMethodInfoRepository;
+import com.example.amusetravelproejct.repository.itemAdditionalInfo.TermsOfServiceInoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
@@ -53,6 +61,11 @@ public class ItemService {
     private final LikeItemRepository likeItemRepository;
 
     private final GuideRepository guideRepository;
+
+    private final AdditionalReservationInfoRepository additionalReservationInfoRepository;
+    private final PaymentCancelPolicyInfoRepository paymentCancelPolicyInfoRepository;
+    private final PaymentMethodInfoRepository paymentMethodInfoRepository;
+    private final TermsOfServiceInoRepository termsOfServiceInoRepository;
     ObjectMapper objectMapper;
 
 //    static String bucketName = "amuse-img";
@@ -1097,5 +1110,53 @@ public class ItemService {
 
     public Object getPageCount(int limit) {
         return (int) Math.ceil(itemRepository.count() / (double) limit);
+    }
+
+    @Transactional
+    public void processAdditionalInfo(ProductRegisterDto productRegisterDto, Item item) {
+
+        if (productRegisterDto.getReservationInfo().getId() == null) {
+            AdditionalReservationInfo additionalReservationInfo = AdditionalReservationInfo.createFromDto(productRegisterDto.getReservationInfo());
+            item.changeAdditionalReservationInfo(additionalReservationInfo);
+            additionalReservationInfoRepository.save(additionalReservationInfo);
+        }else{
+            AdditionalReservationInfo additionalReservationInfo = additionalReservationInfoRepository.findById(productRegisterDto.getReservationInfo().getId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_INFO_NOT_FOUND));
+
+            item.changeAdditionalReservationInfo(additionalReservationInfo);
+        }
+
+        if (productRegisterDto.getCancelPolicyInfo().getId() == null) {
+            PaymentCancelPolicyInfo paymentCancelPolicyInfo = PaymentCancelPolicyInfo.createFromDto(productRegisterDto.getCancelPolicyInfo());
+            item.changePaymentCancelPolicyInfo(paymentCancelPolicyInfo);
+            paymentCancelPolicyInfoRepository.save(paymentCancelPolicyInfo);
+        }else{
+            PaymentCancelPolicyInfo paymentCancelPolicyInfo = paymentCancelPolicyInfoRepository.findById(productRegisterDto.getCancelPolicyInfo().getId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.CANCEL_POLICY_INFO_NOT_FOUND));
+
+            item.changePaymentCancelPolicyInfo(paymentCancelPolicyInfo);
+        }
+
+        if (productRegisterDto.getPaymentMethodInfo().getId() == null) {
+            PaymentMethodInfo paymentMethodInfo = PaymentMethodInfo.createFromDto(productRegisterDto.getPaymentMethodInfo());
+            item.changePaymentMethodInfo(paymentMethodInfo);
+            paymentMethodInfoRepository.save(paymentMethodInfo);
+        }else{
+            PaymentMethodInfo paymentMethodInfo = paymentMethodInfoRepository.findById(productRegisterDto.getPaymentMethodInfo().getId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_METHOD_INFO_NOT_FOUND));
+
+            item.changePaymentMethodInfo(paymentMethodInfo);
+        }
+
+        if (productRegisterDto.getTermsOfServiceInfo().getId() == null) {
+            TermsOfServiceInfo termsOfServiceInfo = TermsOfServiceInfo.createFromDto(productRegisterDto.getTermsOfServiceInfo());
+            item.changeTermsOfServiceInfo(termsOfServiceInfo);
+            termsOfServiceInoRepository.save(termsOfServiceInfo);
+        }else{
+            TermsOfServiceInfo termsOfServiceInfo = termsOfServiceInoRepository.findById(productRegisterDto.getTermsOfServiceInfo().getId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.TERMS_OF_SERVICE_INFO_NOT_FOUND));
+
+            item.changeTermsOfServiceInfo(termsOfServiceInfo);
+        }
     }
 }

@@ -169,4 +169,36 @@ public class Item extends BaseEntity {
         }
     }
 
+    // 연관관계 편의 메소드 : 양방향 셋팅
+    public void changeAdditionalReservationInfo(AdditionalReservationInfo additionalReservationInfo) {
+        this.additionalReservationInfo = additionalReservationInfo;
+        if (additionalReservationInfo != null) {
+            additionalReservationInfo.getItems().add(this);
+        }
+
+    }
+
+    public void changePaymentCancelPolicyInfo(PaymentCancelPolicyInfo paymentCancelPolicyInfo) {
+        this.paymentCancelPolicyInfo = paymentCancelPolicyInfo;
+        if (paymentCancelPolicyInfo != null) {
+            paymentCancelPolicyInfo.getItems().add(this);
+        }
+    }
+
+    public void changePaymentMethodInfo(PaymentMethodInfo paymentMethodInfo) {
+        this.paymentMethodInfo = paymentMethodInfo;
+        if (paymentMethodInfo != null) {
+            paymentMethodInfo.getItems().add(this);
+        }
+
+
+    }
+
+    public void changeTermsOfServiceInfo(TermsOfServiceInfo termsOfServiceInfo) {
+        this.termsOfServiceInfo = termsOfServiceInfo;
+        if (termsOfServiceInfo != null) {
+            termsOfServiceInfo.getItems().add(this);
+        }
+
+    }
 }

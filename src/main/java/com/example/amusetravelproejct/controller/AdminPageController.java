@@ -7,6 +7,7 @@ import com.example.amusetravelproejct.domain.*;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.request.AdminRequest;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
+import com.example.amusetravelproejct.dto.response.AdditionalInfoResponse;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
 import com.example.amusetravelproejct.dto.response.AdminResponse;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
@@ -14,7 +15,6 @@ import com.example.amusetravelproejct.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +35,7 @@ public class AdminPageController {
     private final PageComponentService pageComponentService;
     private final UserService userService;
     private final PageService pageService;
+
     private final AmazonS3 amazonS3Client;
 
     private final UtilMethod utilMethod;
@@ -101,10 +102,12 @@ public class AdminPageController {
         productRegisterDto.setUpdateAdmin(findAdmin.getAdminId());
 
         log.info(productRegisterDto.toString());
+
         Item item = productRegisterDto.getOption().equals("create") ? itemService.processCreate(productRegisterDto,findAdmin) : itemService.processUpdate(productRegisterDto,findAdmin);
 
         itemService.processItemTicket(productRegisterDto,item);
         itemService.processItemImg(productRegisterDto,utilMethod,item);
+        itemService.processAdditionalInfo(productRegisterDto, item);
 
         if(productRegisterDto.getCourse() != null && productRegisterDto.getCourse().size() != 0){
             itemService.processItemCourse(productRegisterDto,utilMethod,item);
