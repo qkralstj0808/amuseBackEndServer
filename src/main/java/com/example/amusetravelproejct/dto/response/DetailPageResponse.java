@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.dto.response;
 
+import com.example.amusetravelproejct.domain.person_enum.ItemType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ public class DetailPageResponse {
     @NoArgsConstructor
     public static class getTitle {
         private String itemCode;
+        private ItemType itemType;
         private String country;
         private String city;
         private String title;

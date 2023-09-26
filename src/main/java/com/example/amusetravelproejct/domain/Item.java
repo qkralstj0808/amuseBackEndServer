@@ -7,6 +7,7 @@ import com.example.amusetravelproejct.domain.itemAdditionalInfo.PaymentCancelPol
 import com.example.amusetravelproejct.domain.itemAdditionalInfo.PaymentMethodInfo;
 import com.example.amusetravelproejct.domain.itemAdditionalInfo.TermsOfServiceInfo;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
+import com.example.amusetravelproejct.domain.person_enum.ItemType;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -68,9 +69,8 @@ public class Item extends BaseEntity {
     @ColumnDefault("0")
     private Integer viewCount;          // 조회수
 
-
-//    @Enumerated(EnumType.STRING)
-//    private DisplayStatus displayStatus; // 상품 노출 여부
+    @Enumerated(EnumType.STRING)
+    private ItemType itemType;
 
     private Boolean display;
 
