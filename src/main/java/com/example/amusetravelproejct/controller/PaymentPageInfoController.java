@@ -77,7 +77,7 @@ public class PaymentPageInfoController {
         return additionalInfoService.getTermsOfServiceInfo(termsOfServiceInfoId);
     }
 
-    @PostMapping("/reservation-info/{reservation-info-id}")
+    @PutMapping("/reservation-info/{reservation-info-id}")
     public ResponseTemplate<String> updateReservationInfo(
             @PathVariable("reservation-info-id") Long reservationInfoId,
             @RequestBody ProductRegisterDto.ReservationInfoUpdateDto reservationInfoUpdateDto
@@ -85,7 +85,7 @@ public class PaymentPageInfoController {
         return additionalInfoService.updateReservationInfo(reservationInfoId, reservationInfoUpdateDto);
     }
 
-    @PostMapping("/cancel-policy-info/{cancel-policy-info-id}")
+    @PutMapping("/cancel-policy-info/{cancel-policy-info-id}")
     public ResponseTemplate<String> updateCancelPolicyInfo(
             @PathVariable("cancel-policy-info-id") Long cancelPolicyInfoId,
             @RequestBody ProductRegisterDto.CancelPolicyInfoUpdateDto cancelPolicyInfoUpdateDto
@@ -93,7 +93,7 @@ public class PaymentPageInfoController {
         return additionalInfoService.updateCancelPolicyInfo(cancelPolicyInfoId, cancelPolicyInfoUpdateDto);
     }
 
-    @PostMapping("/payment-method-info/{payment-method-info-id}")
+    @PutMapping("/payment-method-info/{payment-method-info-id}")
     public ResponseTemplate<String> updatePaymentMethodInfo(
             @PathVariable("payment-method-info-id") Long paymentMethodInfoId,
             @RequestBody ProductRegisterDto.PaymentMethodInfoUpdateDto paymentMethodInfoUpdateDto
@@ -101,7 +101,7 @@ public class PaymentPageInfoController {
         return additionalInfoService.updatePaymentMethodInfo(paymentMethodInfoId, paymentMethodInfoUpdateDto);
     }
 
-    @PostMapping("/terms-of-service-info/{terms-of-service-info-id}")
+    @PutMapping("/terms-of-service-info/{terms-of-service-info-id}")
     public ResponseTemplate<String> updateTermsOfServiceInfo(
             @PathVariable("terms-of-service-info-id") Long termsOfServiceInfoId,
             @RequestBody ProductRegisterDto.TermsOfServiceInfoUpdateDto termsOfServiceInfoUpdateDto
