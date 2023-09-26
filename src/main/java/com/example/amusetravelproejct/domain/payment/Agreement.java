@@ -1,7 +1,7 @@
 package com.example.amusetravelproejct.domain.payment;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.example.amusetravelproejct.domain.BaseEntity;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -9,8 +9,10 @@ import javax.persistence.*;
 @Entity(name = "agreement")
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
-@RequiredArgsConstructor
-public class Agreement {
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class Agreement extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

@@ -73,7 +73,7 @@ public class User extends BaseEntity{
 
     @Column(name = "POINT")     //유저가 지닌 포인트
     @ColumnDefault("0")
-    private Long point;
+    private Integer point;
 
     private String birthday;
 
