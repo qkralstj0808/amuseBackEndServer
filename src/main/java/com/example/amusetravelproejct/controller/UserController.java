@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    public ResponseTemplate<UserResponse.getUserInfo> getUserInfo(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
+    public ResponseTemplate<UserResponse.getUserInfo> getUserInfo(@AuthenticationPrincipal UserPrincipal userPrincipal){
         User findUser = userService.getUserByPrincipal(userPrincipal);
 
         return new ResponseTemplate(new UserResponse.getUserInfoBeforeLogin(
