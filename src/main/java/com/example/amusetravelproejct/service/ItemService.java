@@ -49,22 +49,10 @@ public class ItemService {
     private final ItemTicketPriceRecodeRepository itemTicketPriceRecodeRepository;
     private final UserRepository userRepository;
     private final TargetUserRepository targetUserRepository;
-    private final IconRepository iconRepository;
     private final LikeItemRepository likeItemRepository;
 
     private final GuideRepository guideRepository;
     ObjectMapper objectMapper;
-
-//    static String bucketName = "amuse-img";
-
-    //Admin
-//    public Optional<Admin> getAdminByAdminId(String admin_id) {
-//        return Optional.ofNullable(adminRepository.findByAdminId(admin_id).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
-//    }
-
-    public List<Icon> getIconList() {
-        return iconRepository.findAll();
-    }
 
     //Item
     @Transactional
@@ -75,18 +63,6 @@ public class ItemService {
         });
         item = new Item();
         itemRepository.save(item);
-
-
-        // 프론트 미구현
-//        productRegisterDto.getItemIcon().forEach(data -> {
-//            ItemIcon itemIcon = new ItemIcon();
-//            itemIcon.setItem(item);
-//            itemIcon.setText(data.getText());
-//            itemIcon.setIcon(iconRepository.findById(data.getIconId()).get());
-//            itemIconRepository.save(itemIcon);
-//        });
-
-
 
         item.setItemCode(productRegisterDto.getProductId());
         item.setTitle(productRegisterDto.getTitle());
@@ -829,7 +805,6 @@ public class ItemService {
         item.getItemImg_list().clear();
         item.getItemHashTags().clear();
         item.getTargetUsers().clear();
-        item.getItemIcon_list().clear();
         likeItemRepository.deleteByItem(item);
         item.getItemCourses().forEach(itemCourse -> {
             itemCourse.setItem(null);
