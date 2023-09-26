@@ -1,11 +1,10 @@
 package com.example.amusetravelproejct.domain.payment;
 
+import com.example.amusetravelproejct.domain.BaseEntity;
 import com.example.amusetravelproejct.domain.Item;
 import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.person_enum.PayStatus;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -14,8 +13,10 @@ import java.time.LocalDate;
 @Entity(name = "mainPayment")
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
-@RequiredArgsConstructor
-public class MainPayment {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class MainPayment extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

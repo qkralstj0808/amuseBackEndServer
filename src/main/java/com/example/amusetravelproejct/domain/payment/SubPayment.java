@@ -1,11 +1,11 @@
 package com.example.amusetravelproejct.domain.payment;
 
+import com.example.amusetravelproejct.domain.BaseEntity;
 import com.example.amusetravelproejct.domain.person_enum.CardType;
 import com.example.amusetravelproejct.domain.person_enum.PayStatus;
 import com.example.amusetravelproejct.domain.person_enum.PayType;
 import com.example.amusetravelproejct.domain.person_enum.ReservationType;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -15,8 +15,10 @@ import java.util.List;
 @Entity(name = "subPayment")
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
-@RequiredArgsConstructor
-public class SubPayment {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class SubPayment extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +29,7 @@ public class SubPayment {
 
     private String reservationNumber; // 예약번호
 
-    private  Long pointDiscount; // 포인트 할인 정도
+    private  Long discountRate; // 할인 정도
 
     @Enumerated(value = EnumType.STRING)
     private PayType payType; // 결제 방법
