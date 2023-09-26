@@ -47,17 +47,6 @@ public class DetailPageService {
     }
 
 
-    public ResponseTemplate<DetailPageResponse.getIcon> getIcon(Long item_id) {
-
-        Item findItem = findItemByIdAndDisplayTrue(item_id);
-
-        return new ResponseTemplate<>(new DetailPageResponse.getIcon(findItem.getItemIcon_list().stream().map(
-                itemIcon -> new DetailPageResponse.IconInfo(itemIcon.getIcon().getIconImgUrl(),itemIcon.getText())
-        ).collect(Collectors.toList())));
-
-    }
-
-
     public ResponseTemplate<DetailPageResponse.getPicture> getPicture(Long item_id) {
         Item findItem = findItemByIdAndDisplayTrue(item_id);
 

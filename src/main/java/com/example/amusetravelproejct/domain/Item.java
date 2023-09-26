@@ -100,9 +100,6 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemImg> itemImg_list = new ArrayList<>();
 
-    // item에는 여러개 아이콘 가능
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemIcon> itemIcon_list = new ArrayList<>();
 
     // item에는 여러개 티켓이 있다.
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -124,10 +121,6 @@ public class Item extends BaseEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TargetUser> targetUsers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemIcon> itemIcons = new ArrayList<>();
-
 
 
     // 로직
