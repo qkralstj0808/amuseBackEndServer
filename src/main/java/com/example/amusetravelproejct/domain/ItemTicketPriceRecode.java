@@ -1,6 +1,7 @@
 package com.example.amusetravelproejct.domain;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +11,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
 @EntityListeners(value = {AuditingEntityListener.class})
 @NoArgsConstructor
 public class ItemTicketPriceRecode  extends BaseEntity{
@@ -34,4 +34,23 @@ public class ItemTicketPriceRecode  extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "itemTicket")
     private ItemTicket itemTicket;
+
+    @Builder
+    public ItemTicketPriceRecode(Long quantity, String startDate, String endDate, String mon, String tue, String wed, String thu, String fri, String sat, String sun, ItemTicket itemTicket) {
+        this.quantity = quantity;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.mon = mon;
+        this.tue = tue;
+        this.wed = wed;
+        this.thu = thu;
+        this.fri = fri;
+        this.sat = sat;
+        this.sun = sun;
+        this.itemTicket = itemTicket;
+    }
+
+    public void updateItemTicket(ItemTicket itemTicket){
+        this.itemTicket = itemTicket;
+    }
 }

@@ -102,9 +102,6 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemImg> itemImg_list = new ArrayList<>();
 
-    // item에는 여러개 아이콘 가능
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemIcon> itemIcon_list = new ArrayList<>();
 
     // item에는 여러개 티켓이 있다.
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -127,9 +124,6 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TargetUser> targetUsers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemIcon> itemIcons = new ArrayList<>();
-
     // 결제 창 관련 정보들
 
     // 추가 예약 정보
@@ -151,7 +145,6 @@ public class Item extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "terms_of_service_info")
     private TermsOfServiceInfo termsOfServiceInfo;
-
 
     // 로직
     public void plus_like() {

@@ -57,7 +57,6 @@ public class ItemService {
     private final ItemTicketPriceRecodeRepository itemTicketPriceRecodeRepository;
     private final UserRepository userRepository;
     private final TargetUserRepository targetUserRepository;
-    private final IconRepository iconRepository;
     private final LikeItemRepository likeItemRepository;
 
     private final GuideRepository guideRepository;
@@ -68,17 +67,6 @@ public class ItemService {
     private final TermsOfServiceInoRepository termsOfServiceInoRepository;
     ObjectMapper objectMapper;
 
-//    static String bucketName = "amuse-img";
-
-    //Admin
-//    public Optional<Admin> getAdminByAdminId(String admin_id) {
-//        return Optional.ofNullable(adminRepository.findByAdminId(admin_id).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND)));
-//    }
-
-    public List<Icon> getIconList() {
-        return iconRepository.findAll();
-    }
-
     //Item
     @Transactional
     public Item processCreate(ProductRegisterDto productRegisterDto,Admin admin) throws ParseException {
@@ -88,18 +76,6 @@ public class ItemService {
         });
         item = new Item();
         itemRepository.save(item);
-
-
-        // 프론트 미구현
-//        productRegisterDto.getItemIcon().forEach(data -> {
-//            ItemIcon itemIcon = new ItemIcon();
-//            itemIcon.setItem(item);
-//            itemIcon.setText(data.getText());
-//            itemIcon.setIcon(iconRepository.findById(data.getIconId()).get());
-//            itemIconRepository.save(itemIcon);
-//        });
-
-
 
         item.setItemCode(productRegisterDto.getProductId());
         item.setTitle(productRegisterDto.getTitle());
@@ -443,6 +419,7 @@ public class ItemService {
     }
     //ItemTicket
     public void processItemTicket(ProductRegisterDto productRegisterDto, Item item)  {
+        log.info("ItemService.processItemTicket");
 
         /*
             1.데이터 입력 (start, end, price(지정값), weekdayPrices(요일값)
@@ -454,11 +431,17 @@ public class ItemService {
                     1. 요일별 입력 (0이면 입력 X)
          */
         if (productRegisterDto.getOption().equals("create")){
+            log.info("ItemService.processItemTicket-create");
+
             for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
-                ItemTicket itemTicket = new ItemTicket();
-                itemTicket.setItem(item);
-                itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
-                itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
+                ProductRegisterDto.TicketDto ticketDto = productRegisterDto.getTicket().get(i);
+
+                ItemTicket itemTicket = ItemTicket.builder()
+                        .item(item)
+                        .title(ticketDto.getTitle())
+                        .content(ticketDto.getContent())
+                        .sequenceNum(ticketDto.getSequenceNum())
+                        .build();
 
                 List<Date> startDate = new ArrayList<>();
                 List<Date> endDate = new ArrayList<>();
@@ -470,21 +453,24 @@ public class ItemService {
                 //가격 관련 데이터 받기
                 productRegisterDto.getTicket().get(i).getPriceList().forEach(prices -> {
                     weekdayPrices.add(prices.getWeekdayPrices());
-                    ItemTicketPriceRecode itemTicketPriceRecode = new ItemTicketPriceRecode();
+
+                    ItemTicketPriceRecode itemTicketPriceRecode = ItemTicketPriceRecode.builder()
+                            .quantity(prices.getQuantity())
+                            .startDate(prices.getStartDate())
+                            .endDate(prices.getEndDate())
+                            .itemTicket(itemTicket)
+                            .mon(prices.getWeekdayPrices().getMon())
+                            .tue(prices.getWeekdayPrices().getTue())
+                            .wed(prices.getWeekdayPrices().getWed())
+                            .thu(prices.getWeekdayPrices().getThu())
+                            .fri(prices.getWeekdayPrices().getFri())
+                            .sat(prices.getWeekdayPrices().getSat())
+                            .sun(prices.getWeekdayPrices().getSun())
+                            .build();
+
                     Date startDateTemp;
                     Date endDateTemp;
 
-                    itemTicketPriceRecode.setQuantity(prices.getQuantity());
-                    itemTicketPriceRecode.setStartDate(prices.getStartDate());
-                    itemTicketPriceRecode.setEndDate(prices.getEndDate());
-                    itemTicketPriceRecode.setItemTicket(itemTicket);
-                    itemTicketPriceRecode.setMon(prices.getWeekdayPrices().getMon());
-                    itemTicketPriceRecode.setTue(prices.getWeekdayPrices().getTue());
-                    itemTicketPriceRecode.setWed(prices.getWeekdayPrices().getWed());
-                    itemTicketPriceRecode.setThu(prices.getWeekdayPrices().getThu());
-                    itemTicketPriceRecode.setFri(prices.getWeekdayPrices().getFri());
-                    itemTicketPriceRecode.setSat(prices.getWeekdayPrices().getSat());
-                    itemTicketPriceRecode.setSun(prices.getWeekdayPrices().getSun());
                     itemTicketPriceRecodeRepository.save(itemTicketPriceRecode);
 
                     try {
@@ -493,8 +479,6 @@ public class ItemService {
                         }else{
                             startDateTemp = null;
                         }
-
-
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -505,7 +489,6 @@ public class ItemService {
                         }else{
                             endDateTemp = null;
                         }
-
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
@@ -525,10 +508,12 @@ public class ItemService {
                         Date startDateTemp = new Date(startDate.get(index).getTime());
                         while (startDateTemp.getTime() <= endDate.get(index).getTime()) {
                             if (dateSet.add(startDateTemp.getTime())) {
-                                ItemTicketPrice itemTicketPrice = new ItemTicketPrice();
-                                itemTicketPrice.setPrice(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])));
-                                itemTicketPrice.setStartDate(startDateTemp.toString());
-                                itemTicketPrice.setItemTicket(itemTicket);
+                                ItemTicketPrice itemTicketPrice = ItemTicketPrice.builder()
+                                        .price(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])))
+                                        .startDate(startDateTemp.toString())
+                                        .itemTicket(itemTicket)
+                                        .build();
+
                                 itemTicketPriceRepository.save(itemTicketPrice);
                             }
                             startDateTemp.setTime(startDateTemp.getTime() + (1000 * 60 * 60 * 24));     //하루 더하기
@@ -540,6 +525,7 @@ public class ItemService {
             }
         } else {
 
+            log.info("ItemService.processItemTicket-update");
             //1. 입력된 티켓의 id를 저장
 
             List<Long> inputTicketId = new ArrayList<>();
@@ -552,20 +538,24 @@ public class ItemService {
             item.getItemTickets().forEach(itemTicket -> {
                 if (!inputTicketId.contains(itemTicket.getId())){
                     itemTicket.getItemTicketPrices().clear();
-                    itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> itemTicketPriceRecode.setItemTicket(null));
-                    itemTicket.setItem(null);
+                    itemTicket.getItemTicketPriceRecodes().forEach(itemTicketPriceRecode -> itemTicketPriceRecode.updateItemTicket(null));
+                    itemTicket.updateItem(null);
 
                 }
             });
 
+            log.info("ItemService.processItemTicket-update-1");
             for (int i = 0; i < productRegisterDto.getTicket().size(); i++) {
-                if (productRegisterDto.getTicket().get(i).getId() !=null){
+                ProductRegisterDto.TicketDto ticketDto = productRegisterDto.getTicket().get(i);
+                if (ticketDto.getId() !=null){
                     continue;
                 }
-                ItemTicket itemTicket = new ItemTicket();
-                itemTicket.setTitle(productRegisterDto.getTicket().get(i).getTitle());
-                itemTicket.setContent(productRegisterDto.getTicket().get(i).getContent());
-                itemTicket.setItem(item);
+                ItemTicket itemTicket = ItemTicket.builder()
+                        .item(item)
+                        .title(ticketDto.getTitle())
+                        .content(ticketDto.getContent())
+                        .sequenceNum(ticketDto.getSequenceNum())
+                        .build();
 
                 List<Date> startDate = new ArrayList<>();
                 List<Date> endDate = new ArrayList<>();
@@ -573,26 +563,32 @@ public class ItemService {
 
                 List<ProductRegisterDto.TicketDto.PriceListDto.WeekdayPrices> weekdayPrices = new ArrayList<>();
                 Set<Long> dateSet = new HashSet<>();
+                log.info("ItemService.processItemTicket-update-1-1");
                 //가격 관련 데이터 받기
                 productRegisterDto.getTicket().get(i).getPriceList().forEach(prices -> {
                     weekdayPrices.add(prices.getWeekdayPrices());
 
-                    ItemTicketPriceRecode itemTicketPriceRecode = prices.getId() == null ? new ItemTicketPriceRecode() : itemTicketPriceRecodeRepository.findById(prices.getId()).orElseThrow(() -> new RuntimeException("존재하지 않는 가격정보입니다."));
+                    // 삼항연산자
+                    ItemTicketPriceRecode itemTicketPriceRecode = prices.getId() == null
+                            ? ItemTicketPriceRecode.builder()
+                                .quantity(prices.getQuantity())
+                                .startDate(prices.getStartDate())
+                                .endDate(prices.getEndDate())
+                                .itemTicket(itemTicket)
+                                .mon(prices.getWeekdayPrices().getMon())
+                                .tue(prices.getWeekdayPrices().getTue())
+                                .wed(prices.getWeekdayPrices().getWed())
+                                .thu(prices.getWeekdayPrices().getThu())
+                                .fri(prices.getWeekdayPrices().getFri())
+                                .sat(prices.getWeekdayPrices().getSat())
+                                .sun(prices.getWeekdayPrices().getSun())
+                                .build()
+                            : itemTicketPriceRecodeRepository.findById(prices.getId()).orElseThrow(() -> new RuntimeException("존재하지 않는 가격정보입니다."));
 
                     Date startDateTemp;
                     Date endDateTemp;
 
-                    itemTicketPriceRecode.setStartDate(prices.getStartDate());
-                    itemTicketPriceRecode.setEndDate(prices.getEndDate());
-                    itemTicketPriceRecode.setItemTicket(itemTicket);
-                    itemTicketPriceRecode.setQuantity(prices.getQuantity());
-                    itemTicketPriceRecode.setMon(prices.getWeekdayPrices().getMon());
-                    itemTicketPriceRecode.setTue(prices.getWeekdayPrices().getTue());
-                    itemTicketPriceRecode.setWed(prices.getWeekdayPrices().getWed());
-                    itemTicketPriceRecode.setThu(prices.getWeekdayPrices().getThu());
-                    itemTicketPriceRecode.setFri(prices.getWeekdayPrices().getFri());
-                    itemTicketPriceRecode.setSat(prices.getWeekdayPrices().getSat());
-                    itemTicketPriceRecode.setSun(prices.getWeekdayPrices().getSun());
+
                     itemTicketPriceRecodeRepository.save(itemTicketPriceRecode);
 
                     try {
@@ -613,7 +609,7 @@ public class ItemService {
                     datePoint.add(endDateTemp.getTime() - startDateTemp.getTime());
 
                 });
-
+                log.info("ItemService.processItemTicket-update-2");
                 int count = datePoint.size();
                 while (count-- != 0) {
                     int index = datePoint.indexOf(datePoint.stream().min(Long::compareTo).get());
@@ -621,16 +617,19 @@ public class ItemService {
                     Date startDateTemp = new Date(startDate.get(index).getTime());
                     while (startDateTemp.getTime() <= endDate.get(index).getTime()) {
                         if (dateSet.add(startDateTemp.getTime())) {
-                            ItemTicketPrice itemTicketPrice = new ItemTicketPrice();
-                            itemTicketPrice.setPrice(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])));
-                            itemTicketPrice.setStartDate(startDateTemp.toString());
-                            itemTicketPrice.setItemTicket(itemTicket);
+                            ItemTicketPrice itemTicketPrice = ItemTicketPrice.builder()
+                                    .price(Long.valueOf(weekDayPrices.get(UtilMethod.day[startDateTemp.getDay()])))
+                                    .startDate(startDateTemp.toString())
+                                    .itemTicket(itemTicket)
+                                    .build();
+
                             itemTicketPriceRepository.save(itemTicketPrice);
                         }
                         startDateTemp.setTime(startDateTemp.getTime() + (1000 * 60 * 60 * 24));     //하루 더하기
                     }
                     datePoint.set(index, Long.MAX_VALUE);
                 }
+                log.info("save: itemTicket");
                 itemTicketRepository.save(itemTicket);
             }
         }
@@ -819,13 +818,12 @@ public class ItemService {
         item.getItemImg_list().clear();
         item.getItemHashTags().clear();
         item.getTargetUsers().clear();
-        item.getItemIcon_list().clear();
         likeItemRepository.deleteByItem(item);
         item.getItemCourses().forEach(itemCourse -> {
             itemCourse.setItem(null);
         });
         item.getItemTickets().forEach(itemTicket -> {
-            itemTicket.setItem(null);
+            itemTicket.updateItem(null);
         });
         item.getMainPages().forEach(mainPage -> {
             mainPage.setItem(null);

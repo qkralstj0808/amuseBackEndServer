@@ -1,9 +1,7 @@
 package com.example.amusetravelproejct.dto.response;
 
 import com.example.amusetravelproejct.domain.Item;
-import com.example.amusetravelproejct.domain.ItemIcon;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
-import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import lombok.*;
 
 import java.sql.Date;
@@ -11,18 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class AdminPageResponse {
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Getter
-    @Setter
-    @ToString
-    public static class itemInfo{
-        ProductRegisterDto item;
-        List<ItemIcon> itemIcons;
-    }
-
-
 
     @Data
     @AllArgsConstructor
@@ -402,23 +388,6 @@ public class AdminPageResponse {
         private String createBy;
         private String updateBy;
     }
-
-//    @Data
-//    @AllArgsConstructor
-//    @NoArgsConstructor
-//    public static class ItemInfo {
-//        private Long id;
-//        private Long type;
-//        private Long title;
-//        private String PcBannerUrl;
-//        private String PcBannerLink;
-//        private String MobileBannerUrl;
-//        private String MobileBannerLink;
-//        private String content;
-//        private String createBy;
-//        private String updateBy;
-////        private List<ItemInfo> itemInfos;
-//    }
 
     @Data
     @AllArgsConstructor

@@ -1,15 +1,16 @@
 package com.example.amusetravelproejct.domain;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name = "item_ticket")
 @Getter
-@Setter
+@NoArgsConstructor
+@Entity(name = "item_ticket")
 public class ItemTicket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +19,8 @@ public class ItemTicket {
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String content;
+
+    private Long sequenceNum;
 
     // item_ticket과 iteminfo는 N:1 관계 ManyToOne
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,4 +34,17 @@ public class ItemTicket {
     @OneToMany(mappedBy = "itemTicket",orphanRemoval=true , cascade = CascadeType.ALL)
     private List<ItemTicketPriceRecode> itemTicketPriceRecodes = new ArrayList<>();
 
+    @Builder
+    public ItemTicket(String title, String content, Long sequenceNum, Item item, List<ItemTicketPrice> itemTicketPrices, List<ItemTicketPriceRecode> itemTicketPriceRecodes) {
+        this.title = title;
+        this.content = content;
+        this.sequenceNum = sequenceNum;
+        this.item = item;
+        this.itemTicketPrices = itemTicketPrices;
+        this.itemTicketPriceRecodes = itemTicketPriceRecodes;
+    }
+
+    public void updateItem(Item item) {
+        this.item = item;
+    }
 }

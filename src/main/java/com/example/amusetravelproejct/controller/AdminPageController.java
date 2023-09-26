@@ -361,11 +361,6 @@ public class AdminPageController {
         return new ResponseTemplate<>(userService.listGuide(page,limit));
     }
 
-    @GetMapping("/icon/list")
-    public ResponseTemplate<?> listIcon(){
-        return new ResponseTemplate<>(itemService.getIconList());
-    }
-
     @PostMapping("/page/register")
     public ResponseTemplate<String> createPage(
             @RequestBody AdminPageRequest.createPage request,

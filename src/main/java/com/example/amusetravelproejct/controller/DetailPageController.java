@@ -30,11 +30,6 @@ public class DetailPageController {
 
     }
 
-    @GetMapping("/icon-info")
-    public ResponseTemplate<DetailPageResponse.getIcon> getIcon(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
-        return detailPageService.getIcon(item_id);
-    }
-
     @GetMapping("/picture")
     public ResponseTemplate<DetailPageResponse.getPicture> getPicture(@PathVariable("id")  Long item_id) throws IOException, ResponseException {
         return detailPageService.getPicture(item_id);
