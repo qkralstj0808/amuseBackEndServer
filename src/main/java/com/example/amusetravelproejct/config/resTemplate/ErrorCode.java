@@ -35,6 +35,8 @@ public enum ErrorCode {
     SEQUENCE_ERROR_SET(HttpStatus.BAD_REQUEST,"해당 순서는 잘못된 설정입니다." ),
     NOT_FOUND_GUIDE(HttpStatus.NOT_FOUND,"해당 가이드는 찾을 수 없습니다."),
     ITEM_ALREADY_EXIST(HttpStatus.BAD_REQUEST,"해당 상품코드는 이미 존재 합니다"),
+
+    DUPLICATE_TICKET_NUMBER(HttpStatus.BAD_REQUEST, "티켓 넘버가 중복됩니다."),
     PAGE_COMPONENT_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 컴포넌트는 존재 하지 않습니다."),
 
     RESERVATION_INFO_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 추가 예약 정보 메시지를 찾을 수 없습니다." ),

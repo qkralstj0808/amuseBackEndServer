@@ -421,6 +421,10 @@ public class ItemService {
     public void processItemTicket(ProductRegisterDto productRegisterDto, Item item)  {
         log.info("ItemService.processItemTicket");
 
+
+        checkDuplicateTicketNumbers(productRegisterDto.getTicket());
+        List<Integer> numList = new ArrayList<>();
+        Set<Integer> numSet = new HashSet<>();
         /*
             1.데이터 입력 (start, end, price(지정값), weekdayPrices(요일값)
             2.우선순위 생성
@@ -634,6 +638,23 @@ public class ItemService {
             }
         }
     }
+
+    private void checkDuplicateTicketNumbers(List<ProductRegisterDto.TicketDto> tickets) {
+        List<Long> numList = new ArrayList<>();
+        for (ProductRegisterDto.TicketDto ticketDto : tickets) {
+            Long sequenceNum = ticketDto.getSequenceNum();
+            if (sequenceNum != null) {
+                numList.add(sequenceNum);
+            }
+        }
+        Set<Long> numSet = new HashSet<>(numList);
+
+        if(numSet.size()!= numList.size()){
+            throw new CustomException(ErrorCode.DUPLICATE_TICKET_NUMBER);
+        }
+
+    }
+
     //ItemCourse
     public void processItemCourse(ProductRegisterDto productRegisterDto, UtilMethod utilMethod, Item item) {
         // 1. 기존에 있던 코스의 id중 입력된 코스의 id가 없는 id를 제거
