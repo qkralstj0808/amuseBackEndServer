@@ -1,6 +1,10 @@
 package com.example.amusetravelproejct.repository;
 
 import com.example.amusetravelproejct.domain.Item;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.AdditionalReservationInfo;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.PaymentCancelPolicyInfo;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.PaymentMethodInfo;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.TermsOfServiceInfo;
 import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
 import com.example.amusetravelproejct.repository.custom.ItemRepositoryCustom;
 import org.springframework.data.domain.Page;
@@ -20,4 +24,12 @@ public interface ItemRepository extends JpaRepository<Item, Long>, ItemRepositor
     Optional<Item> findByIdAndDisplayTrue(Long id);
 
     List<Item> findAllByDisplay(Boolean display);
+
+    List<Item> findAllByAdditionalReservationInfo(AdditionalReservationInfo additionalReservationInfo);
+
+    List<Item> findAllByPaymentCancelPolicyInfo(PaymentCancelPolicyInfo paymentCancelPolicyInfo);
+
+    List<Item> findAllByPaymentMethodInfo(PaymentMethodInfo paymentMethodInfo);
+
+    List<Item> findAllByTermsOfServiceInfo(TermsOfServiceInfo termsOfServiceInfo);
 }

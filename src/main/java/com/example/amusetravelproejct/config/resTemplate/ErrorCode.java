@@ -37,7 +37,13 @@ public enum ErrorCode {
     ITEM_ALREADY_EXIST(HttpStatus.BAD_REQUEST,"해당 상품코드는 이미 존재 합니다"),
     PAGE_COMPONENT_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 컴포넌트는 존재 하지 않습니다."),
 
+    RESERVATION_INFO_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 추가 예약 정보 메시지를 찾을 수 없습니다." ),
 
+    CANCEL_POLICY_INFO_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 취소 정책 메시지를 찾을 수 없습니다." ),
+
+    PAYMENT_METHOD_INFO_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 결제 방법 메시지를 찾을 수 없습니다." ),
+
+    TERMS_OF_SERVICE_INFO_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 약관동의 메시지를 찾을 수 없습니다." ),
     // paging 관련 오류
     OUT_BOUND_PAGE(HttpStatus.CONFLICT, "페이지 범위를 벗어났습니다. 페이지는 1페이지부터 totalPage까지 입니다."),
     ITEM_NOT_FOUND_IN_PAGE(HttpStatus.NOT_FOUND,"조건에 맞는 상품이 없습니다."),
@@ -54,6 +60,7 @@ public enum ErrorCode {
     COURSE_NOT_FOUND( HttpStatus.NOT_FOUND,"코스를 찾을 수 없습니다."),
     UNLINKFAIL(HttpStatus.FAILED_DEPENDENCY,"소셜로그인과 연동 해제에 실패했습니다." ),
     OAUTHORIZEDCLIENT_NULL(HttpStatus.NOT_FOUND,"oauthorizedclient가 null이다." );
+
 
     private final HttpStatus httpStatus;
     private final String message;

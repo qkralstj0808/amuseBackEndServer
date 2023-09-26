@@ -99,17 +99,17 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "user", cascade =CascadeType.ALL,orphanRemoval = true)
     private List<LikeItem> likeItems = new ArrayList<>();
 
-    // user와 order_item는 1:N 관계
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems = new ArrayList<>();
+//    // user와 order_item는 1:N 관계
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<OrderItem> orderItems = new ArrayList<>();
 
     // user와 item_estimation는 1:N 관계
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemReview> itemReviews = new ArrayList<>();
 
-    // user와 payment_info는 1:N 관계
-    @OneToMany(mappedBy = "user")
-    private List<PaymentInfo> paymentInfos = new ArrayList<>();
+//    // user와 payment_info는 1:N 관계
+//    @OneToMany(mappedBy = "user")
+//    private List<PaymentInfo> paymentInfos = new ArrayList<>();
 
     // user와 user_alarm는 1:N 관계
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

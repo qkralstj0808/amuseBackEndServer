@@ -1,5 +1,7 @@
 package com.example.amusetravelproejct.dto.request;
 
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.PaymentMethodInfo;
+import com.example.amusetravelproejct.domain.itemAdditionalInfo.TermsOfServiceInfo;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.domain.person_enum.Option;
 import lombok.*;
@@ -37,6 +39,10 @@ public class ProductRegisterDto {
     private String runningTime;
     private String activityIntensity;
     private String language;
+    private ReservationInfoDto reservationInfo;
+    private CancelPolicyInfoDto cancelPolicyInfo;
+    private PaymentMethodInfoDto paymentMethodInfo;
+    private TermsOfServiceInfoDto termsOfServiceInfo;
 
 
     @Data
@@ -87,6 +93,7 @@ public class ProductRegisterDto {
         private Long id;
         private String title;
         private String content;
+        private Long sequenceNum;
         private List<PriceListDto> priceList;
 
         // Getter, Setter, Constructor 생략
@@ -154,5 +161,83 @@ public class ProductRegisterDto {
         }
 
     }
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    public static class ReservationInfoDto{
+        private Long id;
+        private String name;
+        private String content;
+    }
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    public static class CancelPolicyInfoDto{
+        private Long id;
+        private String name;
+        private String content;
+    }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    public static class PaymentMethodInfoDto{
+        private Long id;
+        private String name;
+        private String content;
+    }
+
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @ToString
+    public static class TermsOfServiceInfoDto{
+        private Long id;
+        private String name;
+        private String content;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @ToString
+    public static class ReservationInfoUpdateDto{
+        private String name;
+        private String content;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @ToString
+    public static class CancelPolicyInfoUpdateDto{
+        private String name;
+        private String content;
+    }
+
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @ToString
+    public static class PaymentMethodInfoUpdateDto{
+        private String name;
+        private String content;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @ToString
+    public static class TermsOfServiceInfoUpdateDto{
+        private String name;
+        private String content;
+    }
 }

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,17 +47,6 @@ public class DetailPageService {
     }
 
 
-    public ResponseTemplate<DetailPageResponse.getIcon> getIcon(Long item_id) {
-
-        Item findItem = findItemByIdAndDisplayTrue(item_id);
-
-        return new ResponseTemplate<>(new DetailPageResponse.getIcon(findItem.getItemIcon_list().stream().map(
-                itemIcon -> new DetailPageResponse.IconInfo(itemIcon.getIcon().getIconImgUrl(),itemIcon.getText())
-        ).collect(Collectors.toList())));
-
-    }
-
-
     public ResponseTemplate<DetailPageResponse.getPicture> getPicture(Long item_id) {
         Item findItem = findItemByIdAndDisplayTrue(item_id);
 
@@ -76,12 +67,16 @@ public class DetailPageService {
         List<ItemTicket> itemTickets = findItem.getItemTickets();
 
         List<DetailPageResponse.TicketInfo> ticketInfos = itemTickets.stream().map(itemTicket ->
-                new DetailPageResponse.TicketInfo(itemTicket.getId(),itemTicket.getTitle(), itemTicket.getContent(),
+                new DetailPageResponse.TicketInfo(itemTicket.getId(),itemTicket.getTitle(), itemTicket.getContent(), itemTicket.getSequenceNum(),
                         itemTicket.getItemTicketPrices().stream().map(
                                 itemTicketPrice -> new DetailPageResponse.TicketPrice(
                                         itemTicketPrice.getStartDate(), itemTicketPrice.getPrice()
                                 )
                         ).collect(Collectors.toList()))).collect(Collectors.toList());
+
+        //
+        Collections.sort(ticketInfos, Comparator.comparing(DetailPageResponse.TicketInfo::getSequenceNum,
+                Comparator.nullsLast(Comparator.naturalOrder())));
 
         return new ResponseTemplate<>(new DetailPageResponse.getTicket(ticketInfos));
     }
