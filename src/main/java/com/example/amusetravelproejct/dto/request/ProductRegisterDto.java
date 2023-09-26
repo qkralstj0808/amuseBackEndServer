@@ -87,6 +87,7 @@ public class ProductRegisterDto {
         private Long id;
         private String title;
         private String content;
+        private Long sequenceNum;
         private List<PriceListDto> priceList;
 
         // Getter, Setter, Constructor 생략
