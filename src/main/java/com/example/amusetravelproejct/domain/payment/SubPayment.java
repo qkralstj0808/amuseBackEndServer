@@ -23,7 +23,7 @@ public class SubPayment extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String requestComment; // 추가 요청 사항
+    private String additionalRequest; // 추가 요청 사항
 
     private Integer itemCost; // 상품 가격 정보
 
@@ -35,6 +35,8 @@ public class SubPayment extends BaseEntity {
     private PayType payType; // 결제 방법
 
     private Integer pointAcquire; // 포인트 적립 정도
+
+    private Integer pointUse; // 포인트 사용 정도
 
     @Enumerated(value = EnumType.STRING)
     private CardType cardType; // 카드종류

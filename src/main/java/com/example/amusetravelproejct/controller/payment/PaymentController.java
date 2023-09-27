@@ -2,6 +2,7 @@ package com.example.amusetravelproejct.controller.payment;
 
 import com.example.amusetravelproejct.config.resTemplate.ResponseTemplate;
 import com.example.amusetravelproejct.domain.User;
+import com.example.amusetravelproejct.dto.request.payment.PaymentCompleteRequestDto;
 import com.example.amusetravelproejct.dto.request.payment.PaymentPageRequestDto;
 import com.example.amusetravelproejct.dto.response.payment.PaymentPageResponseDto;
 import com.example.amusetravelproejct.oauth.entity.UserPrincipal;
@@ -10,10 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 //
 @RequiredArgsConstructor
@@ -25,8 +23,7 @@ public class PaymentController {
 
 
     @GetMapping("")
-    public ResponseTemplate<PaymentPageResponseDto> getPaymentPage(@AuthenticationPrincipal UserPrincipal userPrincipal
-                                                                   )
+    public ResponseTemplate<PaymentPageResponseDto> getPaymentPage(@AuthenticationPrincipal UserPrincipal userPrincipal)
     {
         User findUser = userService.getUserByPrincipal(userPrincipal);
 
@@ -51,4 +48,12 @@ public class PaymentController {
 
         return  response;
     }
+
+//    @PostMapping("")
+//    public ResponseTemplate<PaymentPageResponseDto> savePayment(@AuthenticationPrincipal UserPrincipal userPrincipal,
+//                                                                @RequestBody PaymentCompleteRequestDto paymentCompleteRequestDto
+//    )
+//    {
+//
+//    }
 }

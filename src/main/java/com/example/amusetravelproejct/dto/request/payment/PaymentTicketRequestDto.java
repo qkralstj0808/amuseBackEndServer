@@ -7,7 +7,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-//@AllArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
-public class PaymentPageRequestDto {
+public class PaymentTicketRequestDto {
+
+    private Long ticketId; // 티켓 id
+
+    private Integer ticketCount; // 티켓 개수
+
 }
