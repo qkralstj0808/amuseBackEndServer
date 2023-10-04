@@ -50,7 +50,6 @@ public class AdminService {
 
 
     public ResponseTemplate<AdminResponse.getAllAccountsId> getAllAccountsId() {
-
         List<Admin> adminAllAccounts = adminRepository.findAll();
 
         return new ResponseTemplate(new AdminResponse.getAllAccountsId(adminAllAccounts.stream().map(
@@ -59,9 +58,7 @@ public class AdminService {
     }
 
     @Transactional
-    public ResponseTemplate<String> changeAdminPassword(Admin findAdmin, AuthRequest.changePassword request) {
-
-
+    public ResponseTemplate<String> changeAdminPassword(Admin findAdmin, AuthRequest.changeAdminPassword request) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String db_password = encoder.encode(request.getPassword_for_change());
 

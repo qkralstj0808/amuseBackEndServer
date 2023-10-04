@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.dto.request;
 
+import com.example.amusetravelproejct.domain.person_enum.Gender;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,5 +35,22 @@ public class UserRequest {
     @NoArgsConstructor
     public static class changeUserGrade {
         private Grade grade;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class searchId {
+        private String userName;    // ex) 홍길동
+        private String birthday;    // ex) 991224
+        private Gender gender; // MAN,WOMAN
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class searchPassword {
+        private String userId;
+        private String userName;
     }
 }

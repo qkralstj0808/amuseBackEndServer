@@ -8,7 +8,6 @@ import com.example.amusetravelproejct.domain.User;
 import com.example.amusetravelproejct.domain.person_enum.Grade;
 import com.example.amusetravelproejct.dto.request.AuthRequest;
 import com.example.amusetravelproejct.domain.UserRefreshToken;
-import com.example.amusetravelproejct.dto.request.EmailRequest;
 import com.example.amusetravelproejct.dto.response.AuthResponse;
 import com.example.amusetravelproejct.repository.AdminRepository;
 import com.example.amusetravelproejct.repository.UserRefreshTokenRepository;
@@ -262,9 +261,9 @@ public class AuthController {
 
     @PostMapping("/password/change")
     public ResponseTemplate<String> changeAdminPassword(
-            @RequestBody AuthRequest.changePassword authRequest
+            @RequestBody AuthRequest.changeAdminPassword authRequest
     ){
-        Optional<Admin> adminByAdminId = adminService.getAdminByAdminId(authRequest.getId());
+        Optional<Admin> adminByAdminId = adminService.getAdminByAdminId(authRequest.getAdminId());
         if(adminByAdminId.isEmpty()){
             throw new CustomException(ErrorCode.ID_NOT_EXIST);
         }
@@ -293,7 +292,6 @@ public class AuthController {
         adminService.deleteAdmin(findAdmin);
 
         return new ResponseTemplate("삭제 성공");
-
     }
 
     @PostMapping("/user/signup")
@@ -306,17 +304,29 @@ public class AuthController {
         String userId = authRequest.getEmail();
         String password = authRequest.getPassword();
 
-        User user = userRepository.findByUserId(userId);
+        // 이미 가입된 회원인지 검사
+        boolean exitByUserName = userRepository.existsByUsernameAndBirthdayAndGender(authRequest.getName(),authRequest.getBirthday(),authRequest.getGender());
 
-        // db에 없으면 새로 생성
-        if(user == null){
-            log.info("db에 없음");
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            String db_password = encoder.encode(password);
-            user = userService.createUser(authRequest,db_password);
-        }else{
+        if(exitByUserName) {       // 이미 가입된 유저면 회원가입 불가
+            log.info("이미 가입된 회원");
+            log.info("회원가입 불가");
+            throw new CustomException(ErrorCode.USER_EXIT);
+        }
+
+        // 아이디가 존재하는지 검사
+        boolean exitUserByUserId = userRepository.existsByUserId(userId);
+
+        if(exitUserByUserId){           // 아이디가 중복되면 회원가입 불가
+            log.info("아이디가 존재");
+            log.info("회원가입 불가");
             throw new CustomException(ErrorCode.ID_EXIST);
         }
+
+        // 가입된 회원도 아니고 아이디도 중복이 되지 않았다면 회원가입 진행
+        log.info("회원가입 진행");
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String db_password = encoder.encode(password);
+        userService.createUser(authRequest,db_password);
 
         Authentication authentication =  processAuth(userId, password);
 
@@ -382,13 +392,12 @@ public class AuthController {
 
     @PostMapping("/user/password/change")
     public ResponseTemplate<String> changeUserPassword(
-            @RequestBody AuthRequest.changePassword authRequest
+            @RequestBody AuthRequest.changeUserPassword authRequest
     ){
-        User findUser = userRepository.findByUserId(authRequest.getId());
+        User findUser = userRepository.findByUserIdAndUsername(authRequest.getUserId(),authRequest.getUserName());
         if(findUser == null){
             throw new CustomException(ErrorCode.ID_NOT_EXIST);
         }
-
         return userService.changeUserPassword(findUser,authRequest);
     }
 

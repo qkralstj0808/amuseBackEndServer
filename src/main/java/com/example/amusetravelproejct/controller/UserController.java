@@ -17,16 +17,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/info")
-    public ResponseTemplate<UserResponse.getUserInfo> createUserInfo(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                                                     @RequestBody UserRequest.createUserInfo request) throws Exception{
-        User findUser = userService.getUserByPrincipal(userPrincipal);
-
-        return userService.createUserInfo(findUser,request);
-
-
-    }
-
     @GetMapping("/info")
     public ResponseTemplate<UserResponse.getUserInfo> getUserInfo(@AuthenticationPrincipal UserPrincipal userPrincipal){
         User findUser = userService.getUserByPrincipal(userPrincipal);
@@ -56,17 +46,10 @@ public class UserController {
 
     @PostMapping("/login/info")
     public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> createUserInfoBeforeLogin(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                                                     @RequestBody UserRequest.createUserInfoBeforeLogin request) throws Exception{
+                                                                     @RequestBody UserRequest.createUserInfoBeforeLogin request){
         User findUser = userService.getUserByPrincipal(userPrincipal);
 
         return userService.createUserInfoBeforeLogin(findUser,request);
-    }
-
-    @GetMapping("/login/info")
-    public ResponseTemplate<UserResponse.getUserInfoBeforeLogin> getUserInfoBeforeLogin(@AuthenticationPrincipal UserPrincipal userPrincipal) throws Exception{
-        User findUser = userService.getUserByPrincipal(userPrincipal);
-
-        return userService.getUserInfoBeforeLogin(findUser);
     }
 
     @DeleteMapping("/withdraw")
@@ -74,6 +57,16 @@ public class UserController {
         User user = userService.getUserByPrincipal(userPrincipal);
         userService.withdrawReservation(user);
         return new ResponseTemplate<>("삭제 성공");
+    }
+
+    @GetMapping("/search/id")
+    public ResponseTemplate<UserResponse.searchId> searchId(@RequestBody UserRequest.searchId request){
+        return userService.searchId(request);
+    }
+
+    @GetMapping("/search/password")
+    public ResponseTemplate<String> searchPassword(@RequestBody UserRequest.searchPassword request){
+        return userService.searchPassword(request);
     }
 
 }
