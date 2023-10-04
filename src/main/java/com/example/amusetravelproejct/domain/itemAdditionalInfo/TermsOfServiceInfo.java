@@ -3,6 +3,7 @@ package com.example.amusetravelproejct.domain.itemAdditionalInfo;
 import com.example.amusetravelproejct.domain.Item;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdditionalInfoResponse;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,33 +19,37 @@ public class TermsOfServiceInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String title;
+    @Column(unique = true)
+    private String type;
+    private int sequenceNum;
+    private Boolean mandatory;
 
     @Column(length = 5000)
-    String content;
+    private String content;
 
-    @OneToMany(mappedBy = "termsOfServiceInfo")
-    private List<Item> items = new ArrayList<>();
-
-    private TermsOfServiceInfo(String name, String content) {
-        this.name = name;
+    @Builder
+    public TermsOfServiceInfo(String title, String type, int sequenceNum, Boolean mandatory, String content) {
+        this.title = title;
+        this.type = type;
+        this.sequenceNum = sequenceNum;
+        this.mandatory = mandatory;
         this.content = content;
     }
 
-    public static TermsOfServiceInfo createFromDto(ProductRegisterDto.TermsOfServiceInfoDto termsOfServiceInfo) {
-        return new TermsOfServiceInfo(termsOfServiceInfo.getName(), termsOfServiceInfo.getContent());
-    }
 
     public ProductRegisterDto.TermsOfServiceInfoDto createDto() {
-        return new ProductRegisterDto.TermsOfServiceInfoDto(this.getId(), this.getName(), this.getContent());
+        return new ProductRegisterDto.TermsOfServiceInfoDto(this.getId(), this.getTitle(),  this.getType(), this.getSequenceNum(), this.getMandatory(), this.getContent());
     }
 
-    public AdditionalInfoResponse.TermsOfServiceInfoResponse createResponseDto() {
-        return new AdditionalInfoResponse.TermsOfServiceInfoResponse(this.getId(), this.getName(), List.of(this.getContent().split("\n")));
+    public AdditionalInfoResponse.TermsOfServiceInfoContentResponse createResponseDto() {
+        return new AdditionalInfoResponse.TermsOfServiceInfoContentResponse(this.getId(), this.getType(), this.getTitle(), this.getSequenceNum(), this.getMandatory(), this.getContent());
     }
 
-    public void updateWithDto(ProductRegisterDto.TermsOfServiceInfoUpdateDto termsOfServiceInfoUpdateDto) {
-        this.name = termsOfServiceInfoUpdateDto.getName();
-        this.content = termsOfServiceInfoUpdateDto.getContent();
+    public void updateWithDto(ProductRegisterDto.TermsOfServiceInfoContentDto termsOfServiceInfoContentDto) {
+        this.title = termsOfServiceInfoContentDto.getTitle();
+        this.sequenceNum = termsOfServiceInfoContentDto.getSequenceNum();
+        this.mandatory = termsOfServiceInfoContentDto.getMandatory();
+        this.content = termsOfServiceInfoContentDto.getContent();
     }
 }

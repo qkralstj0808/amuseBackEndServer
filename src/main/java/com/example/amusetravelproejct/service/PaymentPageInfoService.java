@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -35,43 +34,59 @@ public class PaymentPageInfoService {
 
     private final ItemRepository itemRepository;
 
-    public ResponseTemplate<AdditionalInfoResponse> getAllAdditionalInfo() {
 
-        List<AdditionalInfoResponse.ReservationInfoResponse> reservationResponseList = new ArrayList();
-
-        List<AdditionalReservationInfo> additionalReservationInfos = additionalReservationInfoRepository.findAll();
-
-        for (AdditionalReservationInfo additionalReservationInfo : additionalReservationInfos) {
-            reservationResponseList.add(additionalReservationInfo.createResponseDto());
+    public ResponseTemplate<String> createCancelPolicyInfo(
+            ProductRegisterDto.CancelPolicyInfoCreateOrUpdateDto cancelPolicyInfoCreateOrUpdateDto
+    ) {
+        PaymentCancelPolicyInfo byType = paymentCancelPolicyInfoRepository.findByType(cancelPolicyInfoCreateOrUpdateDto.getType());
+        if (byType != null) {
+            throw new RuntimeException("이미 해당 타입의 취소 정책 내용이 있습니다.");
         }
-
-        List<AdditionalInfoResponse.CancelPolicyInfoResponse> cancelPolicyResponseList = new ArrayList();
-
-        List<PaymentCancelPolicyInfo> paymentCancelPolicyInfos = paymentCancelPolicyInfoRepository.findAll();
-
-        for (PaymentCancelPolicyInfo paymentCancelPolicyInfo : paymentCancelPolicyInfos) {
-            cancelPolicyResponseList.add(paymentCancelPolicyInfo.createResponseDto());
-        }
-
-        List<AdditionalInfoResponse.PaymentMethodInfoResponse> paymentMethodInfoResponseList = new ArrayList();
-
-        List<PaymentMethodInfo> paymentMethodInfos = paymentMethodInfoRepository.findAll();
-
-        for (PaymentMethodInfo paymentMethodInfo : paymentMethodInfos) {
-            paymentMethodInfoResponseList.add(paymentMethodInfo.createResponseDto());
-        }
-
-        List<AdditionalInfoResponse.TermsOfServiceInfoResponse> termsOrServiceResponseList = new ArrayList();
-
-        List<TermsOfServiceInfo> termsOfServiceInfos = termsOfServiceInoRepository.findAll();
-
-        for (TermsOfServiceInfo termsOfServiceInfo : termsOfServiceInfos) {
-            termsOrServiceResponseList.add(termsOfServiceInfo.createResponseDto());
-        }
-
-        return new ResponseTemplate<>(AdditionalInfoResponse.create(reservationResponseList, cancelPolicyResponseList, paymentMethodInfoResponseList, termsOrServiceResponseList));
+        PaymentCancelPolicyInfo paymentCancelPolicyInfo = PaymentCancelPolicyInfo.createFromDto(cancelPolicyInfoCreateOrUpdateDto);
+        paymentCancelPolicyInfoRepository.save(paymentCancelPolicyInfo);
+        return new ResponseTemplate<>("취소 정책이 생성되었습니다.");
     }
 
+    public ResponseTemplate<String> createTermsOfServiceInfo(
+            ProductRegisterDto.TermsOfServiceInfoCreateOrUpdateDto termsOfServiceInfoCreateDto
+    ) {
+        String type = termsOfServiceInfoCreateDto.getType();
+        List<ProductRegisterDto.TermsOfServiceInfoContentDto> contentList = termsOfServiceInfoCreateDto.getContent();
+
+        List<TermsOfServiceInfo> termsOfServiceInfos = termsOfServiceInoRepository.findAllByTypeOrderBySequenceNumAsc(type);
+        if (termsOfServiceInfos.size() != 0) {
+            throw new RuntimeException("이미 해당 타입의 약관 동의 내용이 있습니다.");
+        }
+
+        confirmSequenceNumDuple(termsOfServiceInfoCreateDto);
+
+        for (ProductRegisterDto.TermsOfServiceInfoContentDto content : contentList) {
+            TermsOfServiceInfo termsOfServiceInfo = TermsOfServiceInfo.builder()
+                    .title(content.getTitle())
+                    .type(type)
+                    .sequenceNum(content.getSequenceNum())
+                    .mandatory(content.getMandatory())
+                    .content(content.getContent())
+                    .build();
+
+            termsOfServiceInoRepository.save(termsOfServiceInfo);
+        }
+
+        return new ResponseTemplate<>("약관 정보 내용이 생성되었습니다.");
+    }
+
+    private void confirmSequenceNumDuple(ProductRegisterDto.TermsOfServiceInfoCreateOrUpdateDto termsOfServiceInfoCreateDto) {
+        List<Integer> numList = new ArrayList<>();
+
+        for (ProductRegisterDto.TermsOfServiceInfoContentDto content : termsOfServiceInfoCreateDto.getContent()) {
+            numList.add(content.getSequenceNum());
+        }
+
+        Set<Integer> numSet = new HashSet<>(numList);
+        if (numSet.size() != numList.size()) {
+            throw new RuntimeException("순서 번호가 중복되었습니다.");
+        }
+    }
 
     public ResponseTemplate<List<AdditionalInfoResponse.ReservationInfoResponse>> getReservationInfoList() {
         List<AdditionalInfoResponse.ReservationInfoResponse> responseList = new ArrayList();
@@ -109,8 +124,8 @@ public class PaymentPageInfoService {
         return new ResponseTemplate<>(responseList);
     }
 
-    public ResponseTemplate<List<AdditionalInfoResponse.TermsOfServiceInfoResponse>> getTermsOfServiceInfoList() {
-        List<AdditionalInfoResponse.TermsOfServiceInfoResponse> responseList = new ArrayList();
+    public ResponseTemplate<List<AdditionalInfoResponse.TermsOfServiceInfoContentResponse>> getTermsOfServiceInfoList() {
+        List<AdditionalInfoResponse.TermsOfServiceInfoContentResponse> responseList = new ArrayList();
 
         List<TermsOfServiceInfo> termsOfServiceInfos = termsOfServiceInoRepository.findAll();
 
@@ -148,13 +163,34 @@ public class PaymentPageInfoService {
     }
 
 
-    public ResponseTemplate<AdditionalInfoResponse.TermsOfServiceInfoResponse> getTermsOfServiceInfo(Long termsOfServiceInfoId) {
+    public ResponseTemplate<AdditionalInfoResponse.TermsOfServiceInfoContentResponse> getTermsOfServiceInfo(Long termsOfServiceInfoId) {
         TermsOfServiceInfo termsOfServiceInfo = termsOfServiceInoRepository.findById(termsOfServiceInfoId).orElseThrow(
                 () -> new CustomException(ErrorCode.TERMS_OF_SERVICE_INFO_NOT_FOUND)
         );
 
         return new ResponseTemplate<>(termsOfServiceInfo.createResponseDto());
     }
+
+    public ResponseTemplate<AdditionalInfoResponse.CancelPolicyInfoResponse> getCancelPolicyInfoByType(String type) {
+        PaymentCancelPolicyInfo paymentCancelPolicyInfo = paymentCancelPolicyInfoRepository.findByType(type);
+        if (paymentCancelPolicyInfo==null) {
+            throw new CustomException(ErrorCode.CANCEL_POLICY_INFO_NOT_FOUND);
+        }
+
+        return new ResponseTemplate<>(paymentCancelPolicyInfo.createResponseDto());
+    }
+
+    public ResponseTemplate<AdditionalInfoResponse.TermsOfServiceInfoResponse> getTermsOfServiceInfoByType(String type) {
+        List<TermsOfServiceInfo> termsOfServiceInfoList = termsOfServiceInoRepository.findAllByTypeOrderBySequenceNumAsc(type);
+        List<AdditionalInfoResponse.TermsOfServiceInfoContentResponse> contentList = new ArrayList<>();
+        for (TermsOfServiceInfo termsOfServiceInfo : termsOfServiceInfoList) {
+            contentList.add(termsOfServiceInfo.createResponseDto());
+        }
+
+        return new ResponseTemplate<>(new AdditionalInfoResponse.TermsOfServiceInfoResponse(type, contentList));
+    }
+
+
 
     @Transactional
     public ResponseTemplate<String> updateReservationInfo(Long reservationInfoId, ProductRegisterDto.ReservationInfoUpdateDto reservationInfoUpdateDto) {
@@ -167,7 +203,7 @@ public class PaymentPageInfoService {
     }
 
     @Transactional
-    public ResponseTemplate<String> updateCancelPolicyInfo(Long cancelPolicyInfoId, ProductRegisterDto.CancelPolicyInfoUpdateDto cancelPolicyInfoUpdateDto) {
+    public ResponseTemplate<String> updateCancelPolicyInfo(Long cancelPolicyInfoId, ProductRegisterDto.CancelPolicyInfoCreateOrUpdateDto cancelPolicyInfoUpdateDto) {
         PaymentCancelPolicyInfo paymentCancelPolicyInfo = paymentCancelPolicyInfoRepository.findById(cancelPolicyInfoId).orElseThrow(
                 () -> new CustomException(ErrorCode.CANCEL_POLICY_INFO_NOT_FOUND)
         );
@@ -187,12 +223,18 @@ public class PaymentPageInfoService {
     }
 
     @Transactional
-    public ResponseTemplate<String> updateTermsOfServiceInfo(Long termsOfServiceInfoId, ProductRegisterDto.TermsOfServiceInfoUpdateDto termsOfServiceInfoUpdateDto) {
-        TermsOfServiceInfo termsOfServiceInfo = termsOfServiceInoRepository.findById(termsOfServiceInfoId).orElseThrow(
-                () -> new CustomException(ErrorCode.TERMS_OF_SERVICE_INFO_NOT_FOUND)
-        );
+    public ResponseTemplate<String> updateTermsOfServiceInfo(ProductRegisterDto.TermsOfServiceInfoCreateOrUpdateDto termsOfServiceInfoCreateOrUpdateDto) {
+        String type = termsOfServiceInfoCreateOrUpdateDto.getType();
+        List<TermsOfServiceInfo> termsOfServiceInfoList = termsOfServiceInoRepository.findAllByTypeOrderBySequenceNumAsc(type);
 
-        termsOfServiceInfo.updateWithDto(termsOfServiceInfoUpdateDto);
+        if (termsOfServiceInfoList.size() != termsOfServiceInfoCreateOrUpdateDto.getContent().size()) {
+            throw new RuntimeException("약관 동의 내용 업데이트 오류 - 개수가 맞지 않습니다.");
+        }
+
+        for (int i = 0; i < termsOfServiceInfoList.size(); i++) {
+            TermsOfServiceInfo termsOfServiceInfo = termsOfServiceInfoList.get(i);
+            termsOfServiceInfo.updateWithDto(termsOfServiceInfoCreateOrUpdateDto.getContent().get(i));
+        }
         return new ResponseTemplate<>("약관동의 내용 업데이트 성공");
     }
 
@@ -218,14 +260,10 @@ public class PaymentPageInfoService {
         PaymentCancelPolicyInfo paymentCancelPolicyInfo = paymentCancelPolicyInfoRepository.findById(cancelPolicyInfoId).orElseThrow(
                 () -> new CustomException(ErrorCode.CANCEL_POLICY_INFO_NOT_FOUND)
         );
-
-        List<Item> itemList = itemRepository.findAllByPaymentCancelPolicyInfo(paymentCancelPolicyInfo);
-
-        for (Item item : itemList) {
-            item.changePaymentCancelPolicyInfo(null);
-        }
-
-        paymentCancelPolicyInfoRepository.delete(paymentCancelPolicyInfo);
+//
+//        List<Item> itemList = itemRepository.findAllByPaymentCancelPolicyInfo(paymentCancelPolicyInfo);
+//
+//        paymentCancelPolicyInfoRepository.delete(paymentCancelPolicyInfo);
     }
 
     @Transactional
@@ -234,13 +272,9 @@ public class PaymentPageInfoService {
                 () -> new CustomException(ErrorCode.PAYMENT_METHOD_INFO_NOT_FOUND)
         );
 
-        List<Item> itemList = itemRepository.findAllByPaymentMethodInfo(paymentMethodInfo);
-
-        for (Item item : itemList) {
-            item.changePaymentMethodInfo(null);
-        }
-
-        paymentMethodInfoRepository.delete(paymentMethodInfo);
+//        List<Item> itemList = itemRepository.findAllByPaymentMethodInfo(paymentMethodInfo);
+//
+//        paymentMethodInfoRepository.delete(paymentMethodInfo);
     }
 
     @Transactional
@@ -249,12 +283,39 @@ public class PaymentPageInfoService {
                 () -> new CustomException(ErrorCode.TERMS_OF_SERVICE_INFO_NOT_FOUND)
         );
 
-        List<Item> itemList = itemRepository.findAllByTermsOfServiceInfo(termsOfServiceInfo);
+//        List<Item> itemList = itemRepository.findAllByTermsOfServiceInfo(termsOfServiceInfo);
 
-        for (Item item : itemList) {
-            item.changeTermsOfServiceInfo(null);
+//        termsOfServiceInoRepository.delete(termsOfServiceInfo);
+    }
+
+
+    @Transactional
+    public void deleteCancelPolicyInfoByType(String type) {
+        paymentCancelPolicyInfoRepository.deleteAllByType(type);
+    }
+
+    @Transactional
+    public void deleteTermsOfServiceInfoByType(String type) {
+        termsOfServiceInoRepository.deleteAllByType(type);
+    }
+
+    public ResponseTemplate<AdditionalInfoResponse> getAllPaymentPageInfo(Long reservation_info_id, String type) {
+        AdditionalReservationInfo reservationInfo = additionalReservationInfoRepository.findById(reservation_info_id).orElseThrow(
+                () -> new CustomException(ErrorCode.RESERVATION_INFO_NOT_FOUND)
+        );
+        PaymentCancelPolicyInfo paymentCancelPolicyInfo = paymentCancelPolicyInfoRepository.findByType(type);
+        List<TermsOfServiceInfo> termsOfServiceInfoList = termsOfServiceInoRepository.findAllByTypeOrderBySequenceNumAsc(type);
+
+        List<AdditionalInfoResponse.TermsOfServiceInfoContentResponse> contentList = new ArrayList<>();
+        for (TermsOfServiceInfo termsOfServiceInfo : termsOfServiceInfoList) {
+            contentList.add(termsOfServiceInfo.createResponseDto());
         }
 
-        termsOfServiceInoRepository.delete(termsOfServiceInfo);
+        AdditionalInfoResponse.ReservationInfoResponse reservationInfoResponse = new AdditionalInfoResponse.ReservationInfoResponse(reservationInfo.getId(), reservationInfo.getName(), reservationInfo.getContent());
+        AdditionalInfoResponse.CancelPolicyInfoResponse cancelPolicyInfoResponse = new AdditionalInfoResponse.CancelPolicyInfoResponse(paymentCancelPolicyInfo.getId(), paymentCancelPolicyInfo.getType(), paymentCancelPolicyInfo.getContent());
+        AdditionalInfoResponse.TermsOfServiceInfoResponse termsOfServiceInfoResponse = new AdditionalInfoResponse.TermsOfServiceInfoResponse(type, contentList);
+
+
+        return new ResponseTemplate<>(new AdditionalInfoResponse(reservationInfoResponse, cancelPolicyInfoResponse, termsOfServiceInfoResponse));
     }
 }
