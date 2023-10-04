@@ -29,8 +29,17 @@ public class AuthRequest {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class changePassword {
-        private String id;
+    public static class changeUserPassword {
+        private String userId;
+        private String userName;
+        private String password_for_change;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class changeAdminPassword {
+        private String adminId;
         private String password_for_change;
     }
 

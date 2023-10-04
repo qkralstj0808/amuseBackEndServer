@@ -54,14 +54,15 @@ public enum ErrorCode {
     ASC_DESC_WORD_ERROR(HttpStatus.BAD_REQUEST,"asc_desc 칸에는 '오른차순' 또는 '내림차순' 둘 중 하나로 적어주세요"),
     SORT_FUNCTION_ERROR(HttpStatus.BAD_REQUEST,"sort 함수를 만드는 과정에서 Null이 발생했습니다."),
     CATEGORY_EXIT(HttpStatus.BAD_REQUEST,"이미 해당 이름의 category가 존재합니다. 수정을 원하면 PUT 해주세요" ),
-    ID_EXIST(HttpStatus.FOUND,"아이디가 존재합니다"),
+    ID_EXIST(HttpStatus.FOUND,"아이디가 중복됩니다. 이미 해당 아이디는 존재합니다."),
     ID_NOT_EXIST(HttpStatus.FOUND,"아이디가 존재하지 않습니다"),
     PASSWORD_INCORRECT(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS,"비밀번호가 일치하지 않습니다"),
     EMPTY(HttpStatus.NO_CONTENT,"값이 비었습니다"),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND,"이미지를 찾지 못했습니다."),
     COURSE_NOT_FOUND( HttpStatus.NOT_FOUND,"코스를 찾을 수 없습니다."),
     UNLINKFAIL(HttpStatus.FAILED_DEPENDENCY,"소셜로그인과 연동 해제에 실패했습니다." ),
-    OAUTHORIZEDCLIENT_NULL(HttpStatus.NOT_FOUND,"oauthorizedclient가 null이다." );
+    OAUTHORIZEDCLIENT_NULL(HttpStatus.NOT_FOUND,"oauthorizedclient가 null이다." ),
+    USER_EXIT(HttpStatus.FOUND,"이미 가입된 회원입니다." );
 
 
     private final HttpStatus httpStatus;

@@ -44,4 +44,11 @@ public class UserResponse {
         private Boolean advertisementTrue;
         private Boolean over14AgeTrue;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class searchId{
+        private String id;
+    }
 }

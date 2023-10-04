@@ -403,26 +403,25 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(AuthRequest.userSignUp request,String password) {
-        User user = new User();
-        user.setUserId(request.getEmail());
-        user.setEmail(request.getEmail());
-        user.setPassword(password);
-        user.setProviderType(ProviderType.LOCAL);
-        user.setGrade(Grade.Bronze);
-        user.setRoleType(RoleType.USER);
-        user.setGender(request.getGender());
-        user.setUsername(request.getName());
-        user.setBirthday(request.getBirthday());
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setEmailVerifiedYn("y");
-
+    public void createUser(AuthRequest.userSignUp request,String password) {
+        User user = User.builder()
+                .userId(request.getEmail())
+                .email(request.getEmail())
+                .password(password)
+                .providerType(ProviderType.LOCAL)
+                .grade(Grade.Bronze)
+                .roleType(RoleType.USER)
+                .gender(request.getGender())
+                .username(request.getName())
+                .birthday(request.getBirthday())
+                .phoneNumber(request.getPhoneNumber())
+                .emailVerifiedYn("y")
+                .build();
         userRepository.save(user);
-        return user;
     }
 
     @Transactional
-    public ResponseTemplate<String> changeUserPassword(User findUser, AuthRequest.changePassword request) {
+    public ResponseTemplate<String> changeUserPassword(User findUser, AuthRequest.changeUserPassword request) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String db_password = encoder.encode(request.getPassword_for_change());
 
@@ -431,14 +430,24 @@ public class UserService {
         return new ResponseTemplate("비밀 번호 변경 완료");
     }
 
-//    @Transactional
-//    public void createEmailUser(AuthRequest.emailAuth request) {
-//        User user = new User();
-//        user.setEmail(request.getEmail());
-//        user.setUsername(request.getName());
-//        user.setBirthday(request.getBirthday());
-//        user.setGender(request.getGender());
-//        user.setEmailVerifiedYn("Y");
-//        userRepository.save(user);
-//    }
+    public ResponseTemplate<UserResponse.searchId> searchId(UserRequest.searchId request) {
+        User findUser = userRepository.findByUsernameAndBirthdayAndGender(request.getUserName(), request.getBirthday(), request.getGender());
+
+        if(findUser == null){
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }else{
+            return new ResponseTemplate<>(new UserResponse.searchId(findUser.getUserId()));
+        }
+    }
+
+    public ResponseTemplate<String> searchPassword(UserRequest.searchPassword request) {
+        User findUser = userRepository.findByUserIdAndUsername(request.getUserId(),request.getUserName());
+
+        if(findUser == null){
+            return new ResponseTemplate<>("회원 아이디를 찾지 못했습니다.");
+        }else{
+            return new ResponseTemplate<>("유저 아이디를 찾았습니다. 비밀번호 변경 페이지로 이동해 주세요.");
+        }
+
+    }
 }
