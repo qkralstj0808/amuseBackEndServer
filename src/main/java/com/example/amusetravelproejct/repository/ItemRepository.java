@@ -27,9 +27,4 @@ public interface ItemRepository extends JpaRepository<Item, Long>, ItemRepositor
 
     List<Item> findAllByAdditionalReservationInfo(AdditionalReservationInfo additionalReservationInfo);
 
-    List<Item> findAllByPaymentCancelPolicyInfo(PaymentCancelPolicyInfo paymentCancelPolicyInfo);
-
-    List<Item> findAllByPaymentMethodInfo(PaymentMethodInfo paymentMethodInfo);
-
-    List<Item> findAllByTermsOfServiceInfo(TermsOfServiceInfo termsOfServiceInfo);
 }
