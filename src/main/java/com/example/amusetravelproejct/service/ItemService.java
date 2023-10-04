@@ -1134,6 +1134,7 @@ public class ItemService {
     @Transactional
     public void processAdditionalInfo(ProductRegisterDto productRegisterDto, Item item) {
 
+        // 추가 예약 정보 관련
         if (productRegisterDto.getReservationInfo().getId() == null) {
             AdditionalReservationInfo additionalReservationInfo = AdditionalReservationInfo.createFromDto(productRegisterDto.getReservationInfo());
             item.changeAdditionalReservationInfo(additionalReservationInfo);
@@ -1143,39 +1144,6 @@ public class ItemService {
                     .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_INFO_NOT_FOUND));
 
             item.changeAdditionalReservationInfo(additionalReservationInfo);
-        }
-
-        if (productRegisterDto.getCancelPolicyInfo().getId() == null) {
-            PaymentCancelPolicyInfo paymentCancelPolicyInfo = PaymentCancelPolicyInfo.createFromDto(productRegisterDto.getCancelPolicyInfo());
-            item.changePaymentCancelPolicyInfo(paymentCancelPolicyInfo);
-            paymentCancelPolicyInfoRepository.save(paymentCancelPolicyInfo);
-        }else{
-            PaymentCancelPolicyInfo paymentCancelPolicyInfo = paymentCancelPolicyInfoRepository.findById(productRegisterDto.getCancelPolicyInfo().getId())
-                    .orElseThrow(() -> new CustomException(ErrorCode.CANCEL_POLICY_INFO_NOT_FOUND));
-
-            item.changePaymentCancelPolicyInfo(paymentCancelPolicyInfo);
-        }
-
-        if (productRegisterDto.getPaymentMethodInfo().getId() == null) {
-            PaymentMethodInfo paymentMethodInfo = PaymentMethodInfo.createFromDto(productRegisterDto.getPaymentMethodInfo());
-            item.changePaymentMethodInfo(paymentMethodInfo);
-            paymentMethodInfoRepository.save(paymentMethodInfo);
-        }else{
-            PaymentMethodInfo paymentMethodInfo = paymentMethodInfoRepository.findById(productRegisterDto.getPaymentMethodInfo().getId())
-                    .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_METHOD_INFO_NOT_FOUND));
-
-            item.changePaymentMethodInfo(paymentMethodInfo);
-        }
-
-        if (productRegisterDto.getTermsOfServiceInfo().getId() == null) {
-            TermsOfServiceInfo termsOfServiceInfo = TermsOfServiceInfo.createFromDto(productRegisterDto.getTermsOfServiceInfo());
-            item.changeTermsOfServiceInfo(termsOfServiceInfo);
-            termsOfServiceInoRepository.save(termsOfServiceInfo);
-        }else{
-            TermsOfServiceInfo termsOfServiceInfo = termsOfServiceInoRepository.findById(productRegisterDto.getTermsOfServiceInfo().getId())
-                    .orElseThrow(() -> new CustomException(ErrorCode.TERMS_OF_SERVICE_INFO_NOT_FOUND));
-
-            item.changeTermsOfServiceInfo(termsOfServiceInfo);
         }
     }
 }

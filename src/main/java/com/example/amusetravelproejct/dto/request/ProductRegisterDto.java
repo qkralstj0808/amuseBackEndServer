@@ -1,12 +1,7 @@
 package com.example.amusetravelproejct.dto.request;
 
-import com.example.amusetravelproejct.domain.itemAdditionalInfo.PaymentMethodInfo;
-import com.example.amusetravelproejct.domain.itemAdditionalInfo.TermsOfServiceInfo;
-import com.example.amusetravelproejct.domain.person_enum.Grade;
-import com.example.amusetravelproejct.domain.person_enum.Option;
 import lombok.*;
 
-import javax.print.DocFlavor;
 import java.util.List;
 @Getter
 @Setter
@@ -40,10 +35,6 @@ public class ProductRegisterDto {
     private String activityIntensity;
     private String language;
     private ReservationInfoDto reservationInfo;
-    private CancelPolicyInfoDto cancelPolicyInfo;
-    private PaymentMethodInfoDto paymentMethodInfo;
-    private TermsOfServiceInfoDto termsOfServiceInfo;
-
 
     @Data
     @AllArgsConstructor
@@ -200,7 +191,10 @@ public class ProductRegisterDto {
     @ToString
     public static class TermsOfServiceInfoDto{
         private Long id;
-        private String name;
+        private String title;
+        private String type;
+        private int sequenceNum;
+        private Boolean mandatory;
         private String content;
     }
 
@@ -217,8 +211,8 @@ public class ProductRegisterDto {
     @AllArgsConstructor
     @Getter
     @ToString
-    public static class CancelPolicyInfoUpdateDto{
-        private String name;
+    public static class CancelPolicyInfoCreateOrUpdateDto {
+        private String type;
         private String content;
     }
 
@@ -236,8 +230,19 @@ public class ProductRegisterDto {
     @AllArgsConstructor
     @Getter
     @ToString
-    public static class TermsOfServiceInfoUpdateDto{
-        private String name;
+    public static class TermsOfServiceInfoCreateOrUpdateDto {
+        private String type;
+        private List<TermsOfServiceInfoContentDto> content;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @ToString
+    public static class TermsOfServiceInfoContentDto{
+        private String title;
+        private int sequenceNum;
+        private Boolean mandatory;
         private String content;
     }
 }

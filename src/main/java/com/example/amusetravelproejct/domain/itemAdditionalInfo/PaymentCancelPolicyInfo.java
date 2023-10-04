@@ -1,14 +1,11 @@
 package com.example.amusetravelproejct.domain.itemAdditionalInfo;
 
-import com.example.amusetravelproejct.domain.Item;
 import com.example.amusetravelproejct.dto.request.ProductRegisterDto;
 import com.example.amusetravelproejct.dto.response.AdditionalInfoResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -18,29 +15,28 @@ public class PaymentCancelPolicyInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Column(unique = true)
+    private String type;
 
     @Column(length = 5000)
     String content;
 
-    @OneToMany(mappedBy = "paymentCancelPolicyInfo")
-    private List<Item> items = new ArrayList<>();
 
     protected PaymentCancelPolicyInfo(String name, String content) {
-        this.name = name;
+        this.type = name;
         this.content = content;
     }
 
-    public static PaymentCancelPolicyInfo createFromDto(ProductRegisterDto.CancelPolicyInfoDto cancelPolicyInfo) {
-        return new PaymentCancelPolicyInfo(cancelPolicyInfo.getName(), cancelPolicyInfo.getContent());
+    public static PaymentCancelPolicyInfo createFromDto(ProductRegisterDto.CancelPolicyInfoCreateOrUpdateDto cancelPolicyInfoCreateOrUpdateDto) {
+        return new PaymentCancelPolicyInfo(cancelPolicyInfoCreateOrUpdateDto.getType(), cancelPolicyInfoCreateOrUpdateDto.getContent());
     }
 
     public AdditionalInfoResponse.CancelPolicyInfoResponse createResponseDto() {
-        return new AdditionalInfoResponse.CancelPolicyInfoResponse(this.id, this.name, this.content);
+        return new AdditionalInfoResponse.CancelPolicyInfoResponse(this.id, this.type, this.content);
     }
 
-    public void updateWithDto(ProductRegisterDto.CancelPolicyInfoUpdateDto cancelPolicyInfoUpdateDto) {
-        this.name = cancelPolicyInfoUpdateDto.getName();
+    public void updateWithDto(ProductRegisterDto.CancelPolicyInfoCreateOrUpdateDto cancelPolicyInfoUpdateDto) {
+        this.type = cancelPolicyInfoUpdateDto.getType();
         this.content = cancelPolicyInfoUpdateDto.getContent();
     }
 }

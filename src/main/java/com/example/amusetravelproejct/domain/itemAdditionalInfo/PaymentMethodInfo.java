@@ -18,16 +18,15 @@ public class PaymentMethodInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Column(unique = true)
+    private String type;
 
     @Column(length = 5000)
     String content;
 
-    @OneToMany(mappedBy = "paymentMethodInfo")
-    private List<Item> items = new ArrayList<>();
 
     public PaymentMethodInfo(String name, String content) {
-        this.name = name;
+        this.type = name;
         this.content = content;
     }
 
@@ -36,11 +35,11 @@ public class PaymentMethodInfo {
     }
 
     public AdditionalInfoResponse.PaymentMethodInfoResponse createResponseDto() {
-        return new AdditionalInfoResponse.PaymentMethodInfoResponse(this.getId(), this.getName(), this.getContent());
+        return new AdditionalInfoResponse.PaymentMethodInfoResponse(this.getId(), this.getType(), this.getContent());
     }
 
     public void updateWithDto(ProductRegisterDto.PaymentMethodInfoUpdateDto paymentMethodInfoUpdateDto) {
-        this.name = paymentMethodInfoUpdateDto.getName();
+        this.type = paymentMethodInfoUpdateDto.getName();
         this.content = paymentMethodInfoUpdateDto.getContent();
     }
 }
