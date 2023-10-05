@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Entity(name = "alarm")
 @EntityListeners(value = {AuditingEntityListener.class})
 

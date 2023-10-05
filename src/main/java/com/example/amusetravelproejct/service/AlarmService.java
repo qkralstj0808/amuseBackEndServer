@@ -2,6 +2,7 @@ package com.example.amusetravelproejct.service;
 
 import com.example.amusetravelproejct.config.resTemplate.CustomException;
 import com.example.amusetravelproejct.config.resTemplate.ErrorCode;
+import com.example.amusetravelproejct.domain.Admin;
 import com.example.amusetravelproejct.domain.Alarm;
 import com.example.amusetravelproejct.dto.request.AdminPageRequest;
 import com.example.amusetravelproejct.dto.response.AdminPageResponse;
@@ -21,26 +22,42 @@ public class AlarmService {
     private final AlarmRepository alarmRepository;
 
     public AdminPageResponse.noticeRegister processRegisterNotice(AdminPageRequest.noticeRegister noticeRegisterDto, AdminService adminService, AlarmService alarmService) {
-        Alarm alarm = new Alarm();
-        alarm.setTitle(noticeRegisterDto.getTitle());
-        alarm.setContent(noticeRegisterDto.getContent());
-        alarm.setAdmin(adminService.getAdminByAdminId(noticeRegisterDto.getCreatedBy()).get());
-        alarm.setContent(noticeRegisterDto.getContent());
+        Alarm alarm = Alarm.builder()
+            .title(noticeRegisterDto.getTitle())
+            .content(noticeRegisterDto.getContent())
+            .admin(adminService.getAdminByAdminId(noticeRegisterDto.getCreatedBy()).get())
+            .content(noticeRegisterDto.getContent())
+            .build();
         alarm = alarmRepository.save(alarm);
 
-
-        return new AdminPageResponse.noticeRegister(alarm.getId(), alarm.getTitle(), alarm.getContent(),alarm.getCreatedAt() , alarm.getAdmin().getAdminId());
+        return new AdminPageResponse.noticeRegister(alarm.getId(), alarm.getTitle(), alarm.getContent(), alarm.getCreatedAt(), alarm.getAdmin().getAdminId());
     }
 
-    public AdminPageResponse.noticeEdit processEditNotice(AdminPageRequest.noticeEdit noticeEditDto,AdminService adminService){
+    public AdminPageResponse.noticeEdit processEditNotice(AdminPageRequest.noticeEdit noticeEditDto, AdminService adminService){
         Alarm alarm = alarmRepository.findById(noticeEditDto.getId()).get();
-        alarm.setTitle(noticeEditDto.getTitle());
-        alarm.setContent(noticeEditDto.getContent());
-        alarm.setUpdateAdmin(adminService.getAdminByAdminId(noticeEditDto.getUpdatedBy()).get());
+        Admin updateAdmin = adminService.getAdminByAdminId(noticeEditDto.getUpdatedBy()).get();
+
+        alarm = Alarm.builder()
+            .id(alarm.getId())
+            .title(noticeEditDto.getTitle())
+            .content(noticeEditDto.getContent())
+            .admin(alarm.getAdmin())
+            .updateAdmin(updateAdmin)
+            .build();
+
         alarm = alarmRepository.save(alarm);
 
-        return new AdminPageResponse.noticeEdit(alarm.getId(), alarm.getTitle(), alarm.getContent(), alarm.getCreatedAt(),alarm.getAdmin().getAdminId(), alarm.getUpdatedAt(),alarm.getUpdateAdmin().getAdminId());
+        return new AdminPageResponse.noticeEdit(
+            alarm.getId(),
+            alarm.getTitle(),
+            alarm.getContent(),
+            alarm.getCreatedAt(),
+            alarm.getAdmin().getAdminId(),
+            alarm.getUpdatedAt(),
+            alarm.getUpdateAdmin().getAdminId()
+        );
     }
+
 
 
 

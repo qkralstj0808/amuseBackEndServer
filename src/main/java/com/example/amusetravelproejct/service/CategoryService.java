@@ -22,23 +22,33 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final AdminRepository adminRepository;
-    public AdminPageResponse.categoryRegister processRegisterCategory(AdminPageRequest.categoryRegister categoryRegisterDto, AdminService adminService, UtilMethod utilMethod) {
 
-        Category category = new Category();
+    public AdminPageResponse.categoryRegister processRegisterCategory(AdminPageRequest.categoryRegister categoryRegisterDto, AdminService adminService, UtilMethod utilMethod) {
         Admin admin = adminService.getAdminByAdminId(categoryRegisterDto.getCreatedBy()).orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
 
+        Category category = Category.builder()
+            .category_name(categoryRegisterDto.getCategory())
+            .sequence(categoryRepository.count())
+            .admin(admin)
+            .mainDescription(categoryRegisterDto.getMainDescription())
+            .subDescription(categoryRegisterDto.getSubDescription())
+            .imgUrl(utilMethod.getImgUrl(categoryRegisterDto.getBase64Data(), categoryRegisterDto.getFileName()))
+            .build();
 
-        category.setCategory_name(categoryRegisterDto.getCategory());
-        category.setSequence(categoryRepository.count());
-        category.setAdmin(admin);
-        category.setMainDescription(categoryRegisterDto.getMainDescription());
-        category.setSubDescription(categoryRegisterDto.getSubDescription());
-        category.setImgUrl(utilMethod.getImgUrl(categoryRegisterDto.getBase64Data(), categoryRegisterDto.getFileName()));
         category = categoryRepository.save(category);
 
-
-        return new AdminPageResponse.categoryRegister(category.getId(),category.getCategory_name(),category.getImgUrl(),category.getSequence(),category.getMainDescription(),category.getSubDescription(),category.getCreatedDate(),category.getAdmin().getAdminId());
+        return new AdminPageResponse.categoryRegister(
+            category.getId(),
+            category.getCategory_name(),
+            category.getImgUrl(),
+            category.getSequence(),
+            category.getMainDescription(),
+            category.getSubDescription(),
+            category.getCreatedDate(),
+            category.getAdmin().getAdminId()
+        );
     }
+
 
 
     public AdminPageResponse.categoryEdit processEditCategory(AdminPageRequest.categoryEdit categoryEditDto,AdminService adminService, UtilMethod utilMethod){

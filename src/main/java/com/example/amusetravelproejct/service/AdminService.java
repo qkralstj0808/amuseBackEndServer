@@ -31,9 +31,10 @@ public class AdminService {
 
    @Transactional
     public void createAdmin(String adminId, String password){
-        Admin admin = new Admin();
-        admin.setAdminId(adminId);
-        admin.setPassword(password);
+       Admin admin = Admin.builder()
+           .adminId("admin123")
+           .password("password123")
+           .build();
 
         adminRepository.save(admin);
     }

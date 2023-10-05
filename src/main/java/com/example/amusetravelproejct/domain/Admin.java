@@ -11,6 +11,8 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Builder
 @Entity(name = "admin")
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter

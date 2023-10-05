@@ -39,42 +39,37 @@ public class PageService {
 
     @Transactional
     public ResponseTemplate<String> createPage(
-            AdminPageRequest.createPage request, UtilMethod utilMethod, Admin admin) {
+        AdminPageRequest.createPage request, UtilMethod utilMethod, Admin admin) {
 
-        Category category = new Category();
-        Category findCategory = categoryRepository.findByCategoryName(request.getName());
-
-        if(findCategory != null){
-            throw new CustomException(ErrorCode.CATEGORY_EXIT);
-        }
-
-
-        category.setCategory_name(request.getName());
-        category.setSequence(request.getSequence());
-        category.setAdmin(admin);
-        category.setMainDescription(request.getMainDescription());
-        category.setSubDescription(request.getSubDescription());
-        category.setImgUrl(utilMethod.getImgUrl(request.getBase64Data(), request.getFileName()));
+        Category category = Category.builder()
+            .category_name(request.getName())
+            .sequence(request.getSequence())
+            .admin(admin)
+            .mainDescription(request.getMainDescription())
+            .subDescription(request.getSubDescription())
+            .imgUrl(utilMethod.getImgUrl(request.getBase64Data(), request.getFileName()))
+            .build();
 
         List<Long> newPageComponentId = new ArrayList<>();
         List<Long> sequenceList = new ArrayList<>();
-        HashMap<Long,Long> pageComponent_sequence = new HashMap<>();
+        HashMap<Long, Long> pageComponent_sequence = new HashMap<>();
         List<AdminPageRequest.PageComponentInfo> pageComponentInfos = request.getPageComponentInfos();
 
         for (AdminPageRequest.PageComponentInfo pageComponentInfo : pageComponentInfos) {
             newPageComponentId.add(pageComponentInfo.getComponentId());
-            pageComponent_sequence.put(pageComponentInfo.getComponentId(),pageComponentInfo.getSequence());
+            pageComponent_sequence.put(pageComponentInfo.getComponentId(), pageComponentInfo.getSequence());
         }
 
         List<PageComponent> pageComponentList = pageComponentRepository.findListByPageComponentIdList(newPageComponentId);
 
         List<CategoryPageComponent> categoryPageComponentArrayList = new ArrayList<>();
 
-        for(PageComponent pageComponent:pageComponentList){
-            CategoryPageComponent categoryPageComponent = new CategoryPageComponent();
-            categoryPageComponent.setPageComponent(pageComponent);
-            categoryPageComponent.setCategory(category);
-            categoryPageComponent.setSequence(pageComponent_sequence.get(pageComponent.getId()));
+        for (PageComponent pageComponent : pageComponentList) {
+            CategoryPageComponent categoryPageComponent = CategoryPageComponent.builder()
+                .pageComponent(pageComponent)
+                .category(category)
+                .sequence(pageComponent_sequence.get(pageComponent.getId()))
+                .build();
             categoryPageComponentArrayList.add(categoryPageComponent);
         }
         category.setCategoryPageComponents(categoryPageComponentArrayList);
@@ -83,8 +78,8 @@ public class PageService {
 
         category = categoryRepository.save(category);
         return new ResponseTemplate("페이지 생성 완료하였습니다.");
-
     }
+
 
     @Transactional
     public ResponseTemplate<AdminPageResponse.updatePage> updatePage(Long page_id, AdminPageRequest.updatePage request, UtilMethod utilMethod, Admin admin) {
