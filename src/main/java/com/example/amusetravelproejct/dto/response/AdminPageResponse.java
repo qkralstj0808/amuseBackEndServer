@@ -13,6 +13,7 @@ public class AdminPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class advertisementRegister {
         private Long id;
         private String title;
@@ -27,6 +28,7 @@ public class AdminPageResponse {
         private String createdBy;
     }
 
+    @Builder
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

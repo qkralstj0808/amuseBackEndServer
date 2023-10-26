@@ -1,8 +1,10 @@
 package com.example.amusetravelproejct.domain;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -12,28 +14,31 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
+@Builder
 @Entity(name = "advertisement")
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Advertisement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String Title;
+    private String title;
 
     @Column(columnDefinition = "TEXT")
-    private String Content;
+    private String content;
 
-    private Date StartDate;
-    private Date EndDate;
+    private Date startDate;
+    private Date endDate;
 
-    private String PcBannerUrl;
-    private String PcBannerLink;
+    private String pcBannerUrl;
+    private String pcBannerLink;
 
-    private String MobileBannerUrl;
-    private String MobileBannerLink;
+    private String mobileBannerUrl;
+    private String mobileBannerLink;
 
     @CreatedDate
     private LocalDateTime createdAt;

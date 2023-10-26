@@ -1,7 +1,9 @@
 package com.example.amusetravelproejct.dto.request;
 
 import com.example.amusetravelproejct.domain.person_enum.DisplayStatus;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,6 +14,7 @@ import java.util.List;
 public class AdminPageRequest {
 
 
+    @Builder
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -30,6 +33,7 @@ public class AdminPageRequest {
         private String createdBy;
     }
 
+    @Builder
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

@@ -1,5 +1,6 @@
 package com.example.amusetravelproejct.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,11 +10,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
-//@Builder
+@Builder
 @Entity
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 //@Where(clause = "item.display = true")
 public class MainPage extends BaseEntity{

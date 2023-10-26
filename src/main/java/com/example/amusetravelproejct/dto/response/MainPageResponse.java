@@ -2,6 +2,7 @@ package com.example.amusetravelproejct.dto.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
@@ -14,6 +15,7 @@ public class MainPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class getCategory {
         private List<CategoryInfo> categories;
     }
@@ -21,6 +23,7 @@ public class MainPageResponse {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class CategoryInfo {
         private Long categoryId;
         private Long sequence;
